@@ -1,0 +1,35 @@
+{
+  "id": "vortioxetine-to-venlafaxine",
+  "fromDrugId": "vortioxetine",
+  "toDrugId": "venlafaxine",
+  "strategy": "cross-taper",
+  "rationale": "Vortioxetine (SMS; t½ ~66h; low discontinuation syndrome risk) to venlafaxine (SNRI; t½ ~5h parent/11h metabolite; HIGH discontinuation syndrome risk). Vortioxetine's long half-life provides natural self-taper — switch is primarily driven by starting venlafaxine. Both are serotonergic — additive serotonergic effects during brief overlap are low risk at standard therapeutic doses. Start venlafaxine at full starting dose from day 1. Vortioxetine residual levels decline gradually — not a clinical concern. Once venlafaxine is established, vortioxetine levels have largely cleared. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 7,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 20,
+      "toDoseMg": 75,
+      "notes": "Stop vortioxetine. Start venlafaxine XR 75 mg. Vortioxetine's long half-life means residual levels persist 1–2 weeks. Counsel patient about venlafaxine early side effects (nausea, sweating, headache) — take with food. Always use XR formulation."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 0,
+      "toDoseMg": 75,
+      "notes": "Vortioxetine largely cleared. Continue venlafaxine XR 75 mg. Titrate to 150 mg at 4 weeks if response inadequate. Important: venlafaxine carries high discontinuation syndrome risk — never stop abruptly once established."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 20,
+    "toTargetDoseMg": 75,
+    "equivalencyNote": "Vortioxetine 20 mg → venlafaxine 75 mg (standard starting effective doses). Not pharmacologically equivalent. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["vortioxetine_cyp2d6_interaction"],
+  "citations": [
+    "maudsley15_ch3_vortioxetine_profile",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

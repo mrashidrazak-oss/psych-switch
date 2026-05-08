@@ -1,0 +1,51 @@
+{
+  "id": "moclobemide",
+  "genericName": "Moclobemide",
+  "drugClass": "MAOI-A",
+  "hidden": true,
+  "isMAOI": true,
+  "maoiClearanceDays": 1,
+  "malaysianBrandNames": [
+    "Aurorix",
+    "Manerix"
+  ],
+  "halfLife": {
+    "meanHours": 2,
+    "rangeHours": [1, 4],
+    "notes": "Very short half-life. Twice- or thrice-daily dosing typical. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": null,
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "No clinically significant active metabolite."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP2C19", "CYP2D6"],
+    "inhibitorOf": ["MAO-A (reversible)"],
+    "switchingRelevance": "Reversible, selective MAO-A inhibition — fundamentally different from irreversible MAOIs (phenelzine, tranylcypromine). Clearance time after stopping moclobemide is ~24h, vs 14 days for irreversible MAOIs. PENDING_CLINICAL_REVIEW."
+  },
+  "maoiWashout": {
+    "daysOffBeforeMAOI": 1,
+    "daysOffAfterMAOI": 14,
+    "notes": "Switching FROM moclobemide TO another serotonergic: ~24h washout typical due to reversibility. FROM an irreversible MAOI to moclobemide: standard 14 days. The engine's MAOI hard-block uses these values. PENDING_CLINICAL_REVIEW."
+  },
+  "discontinuationSyndromeRisk": {
+    "score": "low",
+    "notes": "Low discontinuation risk due to short half-life and reversible mechanism. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 150,
+    "typicalTargetRangeMg": [300, 600],
+    "maxDoseMg": 600,
+    "increments": [150, 300, 450, 600],
+    "formulationsAvailableMy": ["150 mg tab", "300 mg tab"]
+  },
+  "formulationNotes": "Tablets available. Generally tyramine-safe at therapeutic doses but counsel patients to take after meals and avoid very high-tyramine foods. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_ch3_p369_moclobemide_profile",
+    "bap2015_antidepressants_moclobemide"
+  ],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

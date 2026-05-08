@@ -1,0 +1,54 @@
+{
+  "id": "amisulpride-to-aripiprazole",
+  "fromDrugId": "amisulpride",
+  "toDrugId": "aripiprazole",
+  "strategy": "cross-taper",
+  "rationale": "Amisulpride (full D2 antagonist) to aripiprazole (partial D2/D3 agonist). Common reasons: prolactin elevation causing sexual dysfunction or amenorrhoea, QTc concerns, desire for weight-neutral drug, or akathisia unexpectedly better tolerated. Aripiprazole's partial D2 agonism carries a significant akathisia risk when switching from a full D2 antagonist — patients stabilised on high D2 blockade may find the relative dopaminergic activation distressing. This risk is highest in the first 2–4 weeks. Cross-taper preferred over direct switch to allow gradual receptor adaptation. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 400,
+      "toDoseMg": 10,
+      "notes": "Start aripiprazole 10 mg. Continue amisulpride 400 mg. Counsel patient about akathisia risk — restlessness, inability to sit still, worst in first 2 weeks. Propranolol or low-dose diazepam can be used if severe."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 400,
+      "toDoseMg": 15,
+      "notes": "Increase aripiprazole to 15 mg (target). Plateau amisulpride. Akathisia peak risk period — review at end of week 1. QTc risk begins to reduce as aripiprazole does not prolong QTc."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 200,
+      "toDoseMg": 15,
+      "notes": "Reduce amisulpride to 200 mg. Aripiprazole at target dose. Insomnia and activation may emerge as amisulpride's sedative effect diminishes."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 100,
+      "toDoseMg": 15,
+      "notes": "Reduce amisulpride to 100 mg. Monitor for sleep onset difficulties. Melatonin or short-term promethazine can bridge sleep difficulties."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 15,
+      "notes": "Stop amisulpride. Continue aripiprazole 15 mg. Prolactin normalises rapidly after amisulpride stops. Counsel female patients about possible menstrual cycle restoration."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 400,
+    "toTargetDoseMg": 15,
+    "equivalencyNote": "Amisulpride 400 mg ≈ aripiprazole 15 mg (Leucht et al. CMD method, Schizophrenia Bulletin 2015). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["akathisia_risk_aripiprazole", "prolactin_normalisation"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "leucht2015_cmd_schizophrenia_bulletin",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

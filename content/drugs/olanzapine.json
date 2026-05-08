@@ -1,0 +1,57 @@
+{
+  "id": "olanzapine",
+  "genericName": "Olanzapine",
+  "drugClass": "SGA (atypical antipsychotic)",
+  "category": "antipsychotic",
+  "malaysianBrandNames": [
+    "Zyprexa",
+    "Olexa",
+    "Olanex"
+  ],
+  "halfLife": {
+    "meanHours": 30,
+    "rangeHours": [21, 54],
+    "notes": "Once-daily dosing typical, often at night because of sedation. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": null,
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "No clinically significant active metabolite."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP1A2", "CYP2D6"],
+    "inhibitorOf": [],
+    "switchingRelevance": "Strong CYP1A2 inhibitors (fluvoxamine, ciprofloxacin) markedly raise olanzapine levels — avoid combining; smoking induces CYP1A2 so smokers may need higher doses. Relevant when cross-tapering with fluvoxamine. PENDING_CLINICAL_REVIEW."
+  },
+  "epsRisk": "low",
+  "metabolicRisk": {
+    "score": "very high",
+    "notes": "Among the worst SGAs for weight gain, glucose dysregulation, and dyslipidaemia. A primary driver of switches off olanzapine. PENDING_CLINICAL_REVIEW."
+  },
+  "prolactinRisk": "low",
+  "qtcRisk": "low",
+  "sedation": "moderate",
+  "lai": {
+    "available": true,
+    "notes": "Zyprexa Relprevv (olanzapine pamoate). Use restricted in MY due to post-injection delirium/sedation syndrome risk requiring 3-hour observation. PENDING_CLINICAL_REVIEW."
+  },
+  "reboundPsychosisRisk": {
+    "score": "moderate",
+    "notes": "Cholinergic and histaminergic rebound on abrupt cessation; consider gradual taper if stopping. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 5,
+    "typicalTargetRangeMg": [10, 20],
+    "maxDoseMg": 20,
+    "increments": [2.5, 5, 7.5, 10, 15, 20],
+    "formulationsAvailableMy": ["2.5 mg tab", "5 mg tab", "10 mg tab", "5 mg orodispersible", "10 mg orodispersible"]
+  },
+  "formulationNotes": "Standard tablets and orodispersible (Zydis) tablets available. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_schizophrenia_olanzapine_profile",
+    "bap2020_psychosis_olanzapine"
+  ],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

@@ -1,0 +1,41 @@
+{
+  "id": "escitalopram-to-sertraline",
+  "fromDrugId": "escitalopram",
+  "toDrugId": "sertraline",
+  "strategy": "cross-taper",
+  "rationale": "Common first-line SSRI swap when escitalopram is ineffective or poorly tolerated. Both drugs have clean PK profiles; a brief cross-taper is sufficient. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 10,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 10,
+      "toDoseMg": 25,
+      "notes": "Start sertraline 25 mg in the morning. Hold escitalopram 10 mg."
+    },
+    {
+      "day": 5,
+      "fromDoseMg": 5,
+      "toDoseMg": 50,
+      "notes": "Halve escitalopram to 5 mg. Increase sertraline to 50 mg."
+    },
+    {
+      "day": 10,
+      "fromDoseMg": 0,
+      "toDoseMg": 100,
+      "notes": "Stop escitalopram. Continue sertraline 100 mg target."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 10,
+    "toTargetDoseMg": 100,
+    "equivalencyNote": "Approximate clinical equivalency: escitalopram 10 mg ≈ sertraline 100 mg (Maudsley 14th). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_p369_table_3_7",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

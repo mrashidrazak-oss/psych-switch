@@ -1,0 +1,48 @@
+{
+  "id": "lurasidone-to-haloperidol",
+  "fromDrugId": "lurasidone",
+  "toDrugId": "haloperidol",
+  "strategy": "cross-taper",
+  "rationale": "Lurasidone (SGA, low EPS, low QTc) to haloperidol (FGA, high EPS, moderate QTc). An uncommon switch typically driven by need for IM administration (acute psychosis), cost, or formulary constraints. The EPS burden increases significantly with haloperidol — particularly dystonia risk in young males and akathisia. Anticholinergic prophylaxis (procyclidine) should be prescribed PRN. QTc rises on haloperidol — ECG required. Both drugs have moderate prolactin elevation; prolactin may increase further on haloperidol. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 21,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 80,
+      "toDoseMg": 2,
+      "notes": "Start haloperidol 2 mg. Continue lurasidone 80 mg with main meal. Baseline ECG. Prescribe procyclidine 5 mg PRN for acute dystonia — particularly important for young males. Warn about EPS risk."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 40,
+      "toDoseMg": 5,
+      "notes": "Increase haloperidol to 4 mg. Reduce lurasidone to 40 mg. Monitor for EPS — stiffness, akathisia. If EPS develops, consider lower haloperidol dose rather than adding long-term anticholinergics."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 20,
+      "toDoseMg": 5,
+      "notes": "Reduce lurasidone to 20 mg. Haloperidol at target. Check ECG at 2 weeks."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 0,
+      "toDoseMg": 5,
+      "notes": "Stop lurasidone. Continue haloperidol 4 mg. Repeat ECG at 4–6 weeks. Monitor for tardive dyskinesia risk with long-term haloperidol use."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 80,
+    "toTargetDoseMg": 5,
+    "equivalencyNote": "Lurasidone 80 mg ≈ haloperidol 4 mg (inferred from DDD equivalence: both ≈ olanzapine 10 mg by proxy). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["eps_risk_increase", "qtc_monitoring_required"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "leucht2016_ddd_schizophrenia_bulletin",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

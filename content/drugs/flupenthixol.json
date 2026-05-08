@@ -1,0 +1,55 @@
+{
+  "id": "flupenthixol",
+  "genericName": "Flupenthixol",
+  "drugClass": "FGA (typical antipsychotic) — oral",
+  "category": "antipsychotic",
+  "formulation": "oral",
+  "hidden": true,
+  "malaysianBrandNames": ["Fluanxol"],
+  "halfLife": {
+    "meanHours": 35,
+    "rangeHours": [24, 48],
+    "notes": "Oral flupenthixol t½ ~35 hours. CYP2D6 substrate. Used at low doses as an antidepressant augment; higher doses for psychosis. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": "Flupenthixol sulfoxide",
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "Sulfoxide metabolite has low activity. PENDING_CLINICAL_REVIEW."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP2D6"],
+    "inhibitorOf": [],
+    "switchingRelevance": "CYP2D6 inhibitors (e.g. fluoxetine, paroxetine) may increase levels. Monitor for EPS. PENDING_CLINICAL_REVIEW."
+  },
+  "epsRisk": "high",
+  "metabolicRisk": {
+    "score": "low",
+    "notes": "FGA — lower metabolic risk than SGAs. PENDING_CLINICAL_REVIEW."
+  },
+  "prolactinRisk": "high",
+  "qtcRisk": "moderate",
+  "sedation": "low",
+  "lai": {
+    "available": true,
+    "notes": "LAI form = Fluanxol Depot (flupenthixol decanoate)."
+  },
+  "reboundPsychosisRisk": {
+    "score": "moderate",
+    "notes": "Gradual taper recommended when switching from depot to oral. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 3,
+    "typicalTargetRangeMg": [3, 18],
+    "maxDoseMg": 40,
+    "increments": [0.5, 1, 1.5, 3, 6, 9, 12, 18],
+    "formulationsAvailableMy": ["Fluanxol 0.5 mg tab", "Fluanxol 3 mg tab"]
+  },
+  "formulationNotes": "Available as tablets for oral use. LAI form is flupenthixol decanoate (Fluanxol Depot). PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_schizophrenia_fga",
+    "bap2020_psychosis"
+  ],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

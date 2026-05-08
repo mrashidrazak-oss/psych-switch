@@ -1,0 +1,48 @@
+{
+  "id": "venlafaxine-to-vortioxetine",
+  "fromDrugId": "venlafaxine",
+  "toDrugId": "vortioxetine",
+  "strategy": "cross-taper",
+  "rationale": "Venlafaxine (SNRI; t½ ~5h parent/~11h metabolite; HIGH discontinuation syndrome risk) to vortioxetine (SMS; t½ ~66h). Venlafaxine requires careful, graded tapering — do not stop abruptly. Vortioxetine can be started during the venlafaxine taper. Both drugs are serotonergic — additive effects during overlap are low risk at standard doses. Venlafaxine is not a strong CYP2D6 inhibitor at standard doses — no dose adjustment needed for vortioxetine. After venlafaxine is stopped, vortioxetine's long half-life means it provides smooth ongoing coverage. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 150,
+      "toDoseMg": 10,
+      "notes": "Start vortioxetine 10 mg. Continue venlafaxine XR 150 mg. Low serotonin syndrome risk at these doses. Counsel patient: venlafaxine taper will cause discontinuation symptoms — these are related to venlafaxine, not vortioxetine."
+    },
+    {
+      "day": 5,
+      "fromDoseMg": 75,
+      "toDoseMg": 10,
+      "notes": "Reduce venlafaxine to 75 mg XR. Hold vortioxetine. Monitor for discontinuation symptoms — dizziness, brain zaps, sweating."
+    },
+    {
+      "day": 10,
+      "fromDoseMg": 37.5,
+      "toDoseMg": 10,
+      "notes": "Reduce venlafaxine to 37.5 mg (lowest available). Discontinuation symptoms may be notable — hold at this dose for longer if severe."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 10,
+      "notes": "Stop venlafaxine. Continue vortioxetine 10 mg. Titrate vortioxetine to 20 mg at 2 weeks if response inadequate. Vortioxetine's long half-life provides a smooth pharmacokinetic landing."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 150,
+    "toTargetDoseMg": 10,
+    "equivalencyNote": "Venlafaxine 150 mg → vortioxetine 10 mg (start dose; titrate to 20 mg). Not pharmacologically equivalent. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["vortioxetine_cyp2d6_interaction"],
+  "citations": [
+    "maudsley15_ch3_vortioxetine_profile",
+    "maudsley15_ch3_p369_table_3_7",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

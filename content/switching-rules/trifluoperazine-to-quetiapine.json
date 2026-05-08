@@ -1,0 +1,53 @@
+{
+  "id": "trifluoperazine-to-quetiapine",
+  "fromDrugId": "trifluoperazine",
+  "toDrugId": "quetiapine",
+  "strategy": "cross-taper",
+  "rationale": "Trifluoperazine (high-potency piperazine FGA; high EPS, dystonia risk; moderate anticholinergic activity; high prolactin; moderate QTc) to quetiapine (broad SGA: D2, 5-HT2A, H1, M1, α1/α2; low EPS; metabolic risk; antidepressant profile via norquetiapine). EPS and prolactin should improve significantly. Trifluoperazine has moderate anticholinergic activity — quetiapine's M1 blockade partially mitigates cholinergic rebound. Both carry moderate QTc risk. Unmasking of withdrawal dyskinesias (including tardive dyskinesia) is a risk as trifluoperazine reduces — document baseline involuntary movements. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 10,
+      "toDoseMg": 100,
+      "notes": "Start quetiapine 100 mg nocte. Continue trifluoperazine 10 mg. Baseline metabolic parameters and AIMS assessment. ECG at baseline. Warn patient about initial sedation and postural hypotension from quetiapine."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 10,
+      "toDoseMg": 200,
+      "notes": "Increase quetiapine to 200 mg. Plateau trifluoperazine. EPS burden should begin to ease. Review postural hypotension."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 5,
+      "toDoseMg": 400,
+      "notes": "Increase quetiapine to 400 mg (target). Reduce trifluoperazine to 5 mg. Monitor for withdrawal dyskinesias — unmasking of latent tardive dyskinesia is possible at this stage."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 5,
+      "toDoseMg": 400,
+      "notes": "Reduce trifluoperazine to 5 mg. Quetiapine well established. Anticholinergic agents used for EPS can now be reviewed for gradual withdrawal."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 400,
+      "notes": "Stop trifluoperazine. Continue quetiapine 400 mg. Repeat AIMS assessment. Metabolic monitoring at 4 and 12 weeks. QTc check if clinically indicated."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 10,
+    "toTargetDoseMg": 400,
+    "equivalencyNote": "Trifluoperazine 10 mg ≈ quetiapine 400 mg (CPZ equivalence: trifluoperazine 5 mg ≈ CPZ 100 mg ≈ quetiapine 200 mg; therefore trifluoperazine 10 mg ≈ CPZ 200 mg ≈ quetiapine 400 mg). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["metabolic_monitoring_required", "qtc_monitoring_required", "eps_risk_increase"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

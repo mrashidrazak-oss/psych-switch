@@ -1,0 +1,41 @@
+{
+  "id": "escitalopram-to-fluoxetine",
+  "fromDrugId": "escitalopram",
+  "toDrugId": "fluoxetine",
+  "strategy": "cross-taper",
+  "rationale": "Switch to fluoxetine when a longer-half-life SSRI is preferred (poor adherence, planned tapering down the line, breastfeeding considerations). Brief overlap is sufficient given fluoxetine's slow wash-in. Escitalopram is reduced as fluoxetine begins to accumulate. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 10,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 10,
+      "toDoseMg": 20,
+      "notes": "Start fluoxetine 20 mg. Hold escitalopram 10 mg."
+    },
+    {
+      "day": 5,
+      "fromDoseMg": 5,
+      "toDoseMg": 20,
+      "notes": "Halve escitalopram to 5 mg. Hold fluoxetine."
+    },
+    {
+      "day": 10,
+      "fromDoseMg": 0,
+      "toDoseMg": 20,
+      "notes": "Stop escitalopram. Continue fluoxetine 20 mg. Counsel patient about future 5-week MAOI washout obligation."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 10,
+    "toTargetDoseMg": 20,
+    "equivalencyNote": "Approximate clinical equivalency: escitalopram 10 mg ≈ fluoxetine 20 mg (Maudsley 14th). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_p369_table_3_7",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

@@ -1,0 +1,62 @@
+{
+  "id": "carbamazepine",
+  "genericName": "Carbamazepine",
+  "drugClass": "Mood stabilizer / Anticonvulsant",
+  "category": "mood-stabilizer",
+  "malaysianBrandNames": ["Tegretol", "Carbarol", "Carpaz"],
+  "halfLife": {
+    "meanHours": 15,
+    "rangeHours": [12, 17],
+    "notes": "Half-life shortens over the first 1–4 weeks due to autoinduction of CYP3A4 (the drug induces its own metabolism). Initial half-life is ~25–65h; chronic half-life is 12–17h. Dose adjustments may be needed 2–4 weeks after initiation. Use carbamazepine-CR (controlled-release) to reduce peak-related side effects. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": "Carbamazepine-10,11-epoxide",
+    "halfLifeHours": 6,
+    "clinicallySignificant": true,
+    "notes": "Active and potentially toxic metabolite. Co-administration of valproate raises the epoxide level without raising the parent CBZ level — patients can develop toxicity at therapeutic CBZ levels when valproate is added. PENDING_CLINICAL_REVIEW."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP3A4", "CYP2C8"],
+    "inhibitorOf": [],
+    "switchingRelevance": "Carbamazepine is a POWERFUL broad-spectrum enzyme inducer (CYP1A2, CYP2C9, CYP2C19, CYP3A4, P-gp). It significantly reduces plasma levels of: antipsychotics (haloperidol, risperidone, olanzapine, quetiapine, aripiprazole, clozapine), lamotrigine, valproate, hormonal contraceptives, warfarin, methadone, and many others. When STOPPING carbamazepine in a patient on other drugs, levels of those drugs RISE — dose reduction of the co-medication may be needed. When STARTING CBZ, levels FALL — doses may need increasing. PENDING_CLINICAL_REVIEW."
+  },
+  "qtcRisk": "low",
+  "sedation": "moderate",
+  "reboundPsychosisRisk": {
+    "score": "low",
+    "notes": "No rebound psychosis but stopping carbamazepine triggers a major drug interaction cascade: all co-prescribed drugs that were induced now rise to pre-CBZ levels. This is especially dangerous with clozapine (seizure threshold lowered) and antipsychotics. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 100,
+    "typicalTargetRangeMg": [400, 1200],
+    "maxDoseMg": 1600,
+    "increments": [100, 200, 400, 600, 800, 1000, 1200],
+    "formulationsAvailableMy": [
+      "Tegretol 100 mg tablet",
+      "Tegretol 200 mg tablet",
+      "Tegretol 400 mg CR tablet",
+      "Tegretol 200 mg/5 ml oral suspension",
+      "Tegretol CR 200 mg tablet",
+      "Tegretol CR 400 mg tablet"
+    ]
+  },
+  "formulationNotes": "Controlled-release (Tegretol CR) preferred — reduces peak-trough fluctuation and lowers peak-related side effects (diplopia, dizziness, nausea). Switch between formulations is not always 1:1 in dose — may need monitoring. PENDING_CLINICAL_REVIEW.",
+  "specialConsiderations": [
+    "HLA-B*1502 SCREENING MANDATORY IN ASIANS (DANGER): Steven-Johnson syndrome / TEN risk is dramatically higher (up to 10×) in HLA-B*1502-positive patients. This allele occurs in ~15% of Han Chinese, Thai, and Filipino populations — prevalent in Malaysian Chinese, Malay (some), and Iban. Screen ALL Asian patients with HLA-B*1502 before prescribing. Do NOT start if positive (consider alternative).",
+    "HLA-A*3101 in European populations (less relevant in Malaysia): associated with SJS/DRESS risk — screen if available.",
+    "Drug interactions (autoinduction): CBZ reduces its own levels over 1–4 weeks. Recheck levels after 4–6 weeks and adjust dose.",
+    "Contraceptive failure: carbamazepine reduces OCP efficacy. Warn patients — use barrier method in addition, or use non-hormonal IUD.",
+    "Monitoring: FBC, U&E, LFTs, and CBZ levels at baseline and 3-monthly. Target level 17–50 µmol/L (for mood). Agranulocytosis: rare but dangerous — any unexpected infection or bruising → urgent FBC.",
+    "Hyponatraemia: SIADH is a recognised side effect — check sodium in elderly patients or those on concurrent diuretics.",
+    "Withdrawal: taper SLOWLY (over ≥ 4 weeks). Stopping carbamazepine causes all induced co-medications to rise — monitor levels and clinical response carefully."
+  ],
+  "citations": [
+    "Maudsley Prescribing Guidelines 14th Edition — Carbamazepine",
+    "BAP 2016 Guidelines for Bipolar Disorder",
+    "NICE CG185: Bipolar disorder",
+    "HLA-B*1502 and Stevens-Johnson syndrome. Chung et al. NEJM 2004.",
+    "Tegretol (carbamazepine) Summary of Product Characteristics. Novartis."
+  ],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

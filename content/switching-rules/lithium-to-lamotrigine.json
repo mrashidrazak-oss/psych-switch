@@ -1,0 +1,72 @@
+{
+  "id": "lithium-to-lamotrigine",
+  "fromDrugId": "lithium",
+  "toDrugId": "lamotrigine",
+  "strategy": "cross-taper",
+  "rationale": "Lithium to lamotrigine: Commonly indicated for bipolar II disorder (lamotrigine superior for bipolar II depressive episodes; lithium superior for mania prevention — discuss with patient that lamotrigine has limited anti-manic efficacy). Lamotrigine requires a mandatory slow titration (at least 8–10 weeks to therapeutic dose) to minimise Stevens-Johnson Syndrome risk. Lithium MUST be maintained throughout the entire lamotrigine titration and overlapped until lamotrigine reaches at least 100 mg/day (therapeutic range). Only then should lithium be tapered. Abrupt lithium discontinuation causes rebound mania risk — taper slowly. No pharmacokinetic interaction between lithium and lamotrigine. Total duration approximately 12–14 weeks. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 84,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 1000,
+      "toDoseMg": 25,
+      "notes": "Start lamotrigine 25 mg/day (weeks 1–2). Continue lithium 1000 mg/day unchanged. Use the standard (non-VPA-inhibited, non-CBZ-induced) titration schedule. Counsel patient about SJS risk — stop immediately if rash develops and seek urgent review."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 1000,
+      "toDoseMg": 50,
+      "notes": "Increase lamotrigine to 50 mg/day (weeks 3–4). Hold lithium. No dose change in lithium — full cover maintained."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 1000,
+      "toDoseMg": 100,
+      "notes": "Increase lamotrigine to 100 mg/day (weeks 5–6). Hold lithium. Lamotrigine now at minimum therapeutic dose — continue overlap for consolidation."
+    },
+    {
+      "day": 42,
+      "fromDoseMg": 1000,
+      "toDoseMg": 150,
+      "notes": "Increase lamotrigine to 150 mg/day. Begin lithium taper: reduce lithium to 800 mg/day. Check lithium level. Lamotrigine now providing meaningful mood cover."
+    },
+    {
+      "day": 56,
+      "fromDoseMg": 600,
+      "toDoseMg": 200,
+      "notes": "Increase lamotrigine to 200 mg/day (target maintenance dose). Reduce lithium to 600 mg/day. Monitor for early mood symptoms during lithium reduction."
+    },
+    {
+      "day": 70,
+      "fromDoseMg": 400,
+      "toDoseMg": 200,
+      "notes": "Reduce lithium to 400 mg/day. Lamotrigine consolidated at 200 mg/day. Further lithium taper safe if stable."
+    },
+    {
+      "day": 84,
+      "fromDoseMg": 0,
+      "toDoseMg": 200,
+      "notes": "Stop lithium. Continue lamotrigine 200 mg/day. Note: lamotrigine has limited mania prevention efficacy — counsel patient to have a relapse prevention plan. Monitor for manic symptoms for 3 months post-lithium withdrawal."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 1000,
+    "toTargetDoseMg": 200,
+    "equivalencyNote": "Not dose-equivalent. Lamotrigine maintenance target for bipolar disorder: 100–200 mg/day (monotherapy). Slow titration is mandatory (SJS risk) — cannot compress schedule below Maudsley/SPC minimum rates. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [
+    "lithium_rebound_mania_risk",
+    "lithium_narrow_therapeutic_index",
+    "sjs_risk_lamotrigine",
+    "bipolar_relapse_monitor"
+  ],
+  "citations": [
+    "maudsley15_bipolar_p331_stopping_mood_stabilisers",
+    "bap2016_bipolar_guidelines",
+    "nice_cg185_bipolar",
+    "calabrese1999_lamictal_placebo_bipolar_i"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

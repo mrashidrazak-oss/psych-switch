@@ -1,0 +1,41 @@
+{
+  "id": "mirtazapine-to-desvenlafaxine",
+  "fromDrugId": "mirtazapine",
+  "toDrugId": "desvenlafaxine",
+  "strategy": "cross-taper",
+  "rationale": "Mirtazapine (NaSSA; t½ ~20–40h; heavy sedation; significant weight gain) to desvenlafaxine (SNRI; t½ ~11h; weight neutral; activating). Switch reasons: weight gain, excessive sedation, or inadequate antidepressant response. Switching FROM mirtazapine TO an activating SNRI: expect reduced sedation and appetite as mirtazapine is tapered — insomnia may emerge temporarily. Desvenlafaxine's noradrenergic activity during cross-taper combined with mirtazapine's α2-antagonism: additive noradrenergic stimulation possible — monitor for agitation, tachycardia. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 30,
+      "toDoseMg": 50,
+      "notes": "Start desvenlafaxine 50 mg. Continue mirtazapine 30 mg nocte. Monitor for additive noradrenergic effects during overlap (agitation, sweating, tachycardia). Counsel patient: sleep quality may worsen and appetite will reduce as mirtazapine is tapered."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 15,
+      "toDoseMg": 50,
+      "notes": "Reduce mirtazapine to 15 mg nocte. Continue desvenlafaxine 50 mg. Rebound insomnia possible — short-term sleep hygiene advice. Monitor mood."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 50,
+      "notes": "Stop mirtazapine. Continue desvenlafaxine 50 mg. Sleep will likely improve over 2–4 weeks as pharmacology normalises. Weight reduction expected over months. Titrate desvenlafaxine to 100 mg at 4 weeks if response inadequate."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 30,
+    "toTargetDoseMg": 50,
+    "equivalencyNote": "Mirtazapine 30 mg → desvenlafaxine 50 mg (standard effective doses). Not pharmacologically equivalent — different mechanisms. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_snri_profile",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

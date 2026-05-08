@@ -1,0 +1,49 @@
+{
+  "id": "paroxetine",
+  "genericName": "Paroxetine",
+  "drugClass": "SSRI",
+  "malaysianBrandNames": [
+    "Seroxat",
+    "Paxil",
+    "Paxetin"
+  ],
+  "halfLife": {
+    "meanHours": 21,
+    "rangeHours": [3, 65],
+    "notes": "Half-life is highly variable and dose-dependent due to non-linear PK (saturable CYP2D6 auto-inhibition). PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": null,
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "No clinically significant active metabolite."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP2D6"],
+    "inhibitorOf": ["CYP2D6 (potent)"],
+    "switchingRelevance": "Potent CYP2D6 inhibition raises levels of co-prescribed CYP2D6 substrates. Auto-inhibits its own metabolism, complicating dose titration and washout. PENDING_CLINICAL_REVIEW."
+  },
+  "maoiWashout": {
+    "daysOffBeforeMAOI": 14,
+    "daysOffAfterMAOI": 14,
+    "notes": "Standard 14-day washout. PENDING_CLINICAL_REVIEW."
+  },
+  "discontinuationSyndromeRisk": {
+    "score": "very high",
+    "notes": "Highest discontinuation risk among the 8 drugs in v0.1. Symptoms can begin within 24-48 hours of a missed dose. Slow taper essential. Anticholinergic rebound is also notable. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 10,
+    "typicalTargetRangeMg": [20, 50],
+    "maxDoseMg": 60,
+    "increments": [10, 20, 30, 40, 50, 60],
+    "formulationsAvailableMy": ["20 mg tab", "30 mg tab"]
+  },
+  "formulationNotes": "Tablets available. Controlled-release form not consistently stocked in Malaysia. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_ch3_p369_paroxetine_profile",
+    "bap2015_antidepressants_paroxetine"
+  ],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

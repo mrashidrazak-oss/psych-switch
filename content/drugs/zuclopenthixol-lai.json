@@ -1,0 +1,63 @@
+{
+  "id": "zuclopenthixol-lai",
+  "genericName": "Zuclopenthixol Decanoate LAI",
+  "drugClass": "FGA (thioxanthene) — depot",
+  "category": "antipsychotic",
+  "formulation": "lai",
+  "laiDetails": {
+    "injectionIntervalDays": 21,
+    "initiationProtocol": "Test dose 100 mg deep gluteal IM; observe for 7 days. Maintenance 200-400 mg every 2-4 weeks. Adjust interval (14-28 days) and dose to clinical response. Note: zuclopenthixol ACETATE (Clopixol Acuphase) is a SHORT-acting depot for acute use — do NOT use as a maintenance LAI.",
+    "needsOralOverlap": true,
+    "oralOverlapDurationDays": 14
+  },
+  "malaysianBrandNames": [
+    "Clopixol Depot",
+    "Cisordinol Depot"
+  ],
+  "halfLife": {
+    "meanHours": 456,
+    "rangeHours": [336, 504],
+    "notes": "Effective half-life ~19 days. Steady state in 8-12 weeks of regular dosing. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": null,
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "No clinically significant active metabolite."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP2D6"],
+    "inhibitorOf": [],
+    "switchingRelevance": "CYP2D6 inhibitors (paroxetine, fluoxetine, bupropion) raise levels and worsen EPS — depot kinetics amplify the consequence. PENDING_CLINICAL_REVIEW."
+  },
+  "epsRisk": "high",
+  "metabolicRisk": {
+    "score": "low",
+    "notes": "Minimal metabolic burden — a reason FGA depots persist in long-term use despite EPS profile. PENDING_CLINICAL_REVIEW."
+  },
+  "prolactinRisk": "high",
+  "qtcRisk": "moderate",
+  "sedation": "moderate",
+  "lai": {
+    "available": true,
+    "notes": "This entry IS the LAI. Oral zuclopenthixol exists but is not in v0.2 registry."
+  },
+  "reboundPsychosisRisk": {
+    "score": "moderate",
+    "notes": "Long depot tail provides natural taper after last injection. Tardive dyskinesia after long-term use is the dominant concern. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 100,
+    "typicalTargetRangeMg": [200, 400],
+    "maxDoseMg": 600,
+    "increments": [100, 200, 300, 400, 500, 600],
+    "formulationsAvailableMy": ["Clopixol Depot 200 mg/mL"]
+  },
+  "formulationNotes": "Viscous oily solution (vegetable oil vehicle). Deep gluteal IM. Warm vial to body temperature before injection to ease delivery. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_schizophrenia_zuclopenthixol_lai",
+    "bap2020_psychosis_lai"
+  ],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

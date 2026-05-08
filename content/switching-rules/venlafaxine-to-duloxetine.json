@@ -1,0 +1,47 @@
+{
+  "id": "venlafaxine-to-duloxetine",
+  "fromDrugId": "venlafaxine",
+  "toDrugId": "duloxetine",
+  "strategy": "cross-taper",
+  "rationale": "SNRI-to-SNRI swap, often considered when venlafaxine causes dose-dependent hypertension, sexual dysfunction, or insufficient response. Both drugs share serotonergic and noradrenergic activity; cross-taper can be brief but venlafaxine's very high discontinuation-syndrome risk requires a graded reduction. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 150,
+      "toDoseMg": 30,
+      "notes": "Start duloxetine 30 mg. Hold venlafaxine XR 150 mg."
+    },
+    {
+      "day": 5,
+      "fromDoseMg": 75,
+      "toDoseMg": 30,
+      "notes": "Halve venlafaxine to 75 mg XR. Hold duloxetine 30 mg. Watch for serotonergic excess (tremor, hyperreflexia) and discontinuation symptoms."
+    },
+    {
+      "day": 10,
+      "fromDoseMg": 37.5,
+      "toDoseMg": 60,
+      "notes": "Reduce venlafaxine to 37.5 mg XR. Increase duloxetine to 60 mg target."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 60,
+      "notes": "Stop venlafaxine. Continue duloxetine 60 mg. If discontinuation symptoms emerge, slow the final step."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 150,
+    "toTargetDoseMg": 60,
+    "equivalencyNote": "Approximate clinical equivalency: venlafaxine 150 mg XR ≈ duloxetine 60 mg. Equivalency is approximate; titrate to clinical response. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_p369_table_3_7",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

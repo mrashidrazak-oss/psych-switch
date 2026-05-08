@@ -1,0 +1,49 @@
+{
+  "id": "escitalopram",
+  "genericName": "Escitalopram",
+  "drugClass": "SSRI",
+  "malaysianBrandNames": [
+    "Lexapro",
+    "Cipralex",
+    "Esita"
+  ],
+  "halfLife": {
+    "meanHours": 30,
+    "rangeHours": [27, 32],
+    "notes": "Steady state in ~7 days. Generally clean PK. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": "S-desmethylcitalopram",
+    "halfLifeHours": 60,
+    "clinicallySignificant": false,
+    "notes": "Far weaker than parent; not clinically significant for switching. PENDING_CLINICAL_REVIEW."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP2C19", "CYP3A4", "CYP2D6"],
+    "inhibitorOf": ["CYP2D6 (mild)"],
+    "switchingRelevance": "Minor inhibition of CYP2D6; not generally a concern when switching. PENDING_CLINICAL_REVIEW."
+  },
+  "maoiWashout": {
+    "daysOffBeforeMAOI": 14,
+    "daysOffAfterMAOI": 14,
+    "notes": "Standard 14-day washout in both directions. PENDING_CLINICAL_REVIEW."
+  },
+  "discontinuationSyndromeRisk": {
+    "score": "moderate",
+    "notes": "Moderate discontinuation symptom risk; lower than paroxetine or venlafaxine. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 5,
+    "typicalTargetRangeMg": [10, 20],
+    "maxDoseMg": 20,
+    "increments": [5, 10, 15, 20],
+    "formulationsAvailableMy": ["5 mg tab", "10 mg tab", "20 mg tab"]
+  },
+  "formulationNotes": "Tablets widely available in Malaysia. Liquid drops in some pharmacies. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_ch3_p369_escitalopram_profile",
+    "bap2015_antidepressants_escitalopram"
+  ],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

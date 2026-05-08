@@ -1,0 +1,60 @@
+{
+  "id": "chlorpromazine",
+  "genericName": "Chlorpromazine",
+  "drugClass": "FGA (typical antipsychotic, phenothiazine)",
+  "category": "antipsychotic",
+  "malaysianBrandNames": ["Largactil"],
+  "halfLife": {
+    "meanHours": 30,
+    "rangeHours": [16, 45],
+    "notes": "Long and variable half-life due to extensive hepatic metabolism and active metabolites. Once- or twice-daily dosing typical; nocte dosing preferred for sedative effect. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": "7-hydroxychlorpromazine",
+    "halfLifeHours": null,
+    "clinicallySignificant": true,
+    "notes": "Multiple active metabolites contribute to prolonged and unpredictable pharmacokinetics. Accumulation possible with long-term use. PENDING_CLINICAL_REVIEW."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP2D6", "CYP1A2", "CYP3A4"],
+    "inhibitorOf": ["CYP2D6 (moderate)"],
+    "switchingRelevance": "Strong CYP2D6 inhibitors raise chlorpromazine levels and worsen EPS/sedation. Carbamazepine (CYP3A4 inducer) reduces levels. Fluvoxamine (CYP1A2 inhibitor) raises levels. PENDING_CLINICAL_REVIEW."
+  },
+  "epsRisk": "moderate",
+  "metabolicRisk": {
+    "score": "high",
+    "notes": "Significant weight gain, glucose dysregulation. Anticholinergic effects add to metabolic burden. PENDING_CLINICAL_REVIEW."
+  },
+  "prolactinRisk": "high",
+  "qtcRisk": "high",
+  "sedation": "high",
+  "lai": {
+    "available": false,
+    "notes": "No long-acting injectable formulation in current clinical use in Malaysia."
+  },
+  "reboundPsychosisRisk": {
+    "score": "moderate",
+    "notes": "Strong anticholinergic and antihistaminergic properties — significant cholinergic and histaminergic rebound on abrupt cessation. Taper gradually. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 25,
+    "typicalTargetRangeMg": [100, 400],
+    "maxDoseMg": 1000,
+    "increments": [25, 50, 100, 200, 300, 400],
+    "formulationsAvailableMy": ["Largactil 25 mg tablet", "Largactil 100 mg tablet", "Largactil 25 mg/mL syrup", "Largactil 25 mg/mL injection"]
+  },
+  "formulationNotes": "Tablets, syrup and IM injection available. Photosensitivity is a notable side effect — counsel patients about sun protection. Monitor QTc. PENDING_CLINICAL_REVIEW.",
+  "specialConsiderations": [
+    "Phenothiazine class — highest QTc risk among FGAs; ECG mandatory at baseline and on dose escalation.",
+    "Significant anticholinergic burden — dry mouth, constipation, urinary retention, cognitive impairment.",
+    "Photosensitivity — advise sun protection.",
+    "Jaundice (cholestatic hepatitis) — rare but serious; monitor LFTs.",
+    "Neuroleptic malignant syndrome risk — common to all antipsychotics but particularly with FGAs."
+  ],
+  "citations": [
+    "maudsley15_schizophrenia_chlorpromazine_profile",
+    "bap2020_psychosis_fga"
+  ],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

@@ -1,0 +1,66 @@
+{
+  "id": "chlorpromazine-to-risperidone",
+  "fromDrugId": "chlorpromazine",
+  "toDrugId": "risperidone",
+  "strategy": "cross-taper",
+  "rationale": "Chlorpromazine (high anticholinergic/antihistaminergic FGA) to risperidone (low anticholinergic SGA). The reduction in anticholinergic burden is significant — risperidone has minimal muscarinic activity. This means cholinergic rebound from CPZ withdrawal is NOT attenuated by risperidone (unlike the CPZ→olanzapine or CPZ→quetiapine switch). Cholinergic rebound symptoms must be anticipated and managed explicitly. The QTc risk from CPZ will decrease but risperidone also has moderate QTc prolongation. EPS profile moves from low-potency FGA (more sedating, less EPS) to moderate-potency SGA (more EPS than olanzapine/quetiapine). PENDING_CLINICAL_REVIEW.",
+  "durationDays": 42,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 400,
+      "toDoseMg": 1,
+      "notes": "Start risperidone 1 mg. Continue chlorpromazine 400 mg. ECG at baseline. Warn about cholinergic rebound as CPZ is tapered — risperidone does not attenuate muscarinic rebound."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 400,
+      "toDoseMg": 2,
+      "notes": "Increase risperidone to 2 mg. Plateau chlorpromazine. Allow risperidone to establish before tapering CPZ."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 300,
+      "toDoseMg": 4,
+      "notes": "Increase risperidone to 4 mg (target). Reduce chlorpromazine to 300 mg. Cholinergic rebound likely — nausea, insomnia, diaphoresis."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 200,
+      "toDoseMg": 4,
+      "notes": "Reduce chlorpromazine to 200 mg. Monitor QTc — additive risk during overlap though reducing as CPZ dose falls."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 100,
+      "toDoseMg": 4,
+      "notes": "Reduce chlorpromazine to 100 mg. Prolactin rising on risperidone — monitor for sexual side effects."
+    },
+    {
+      "day": 35,
+      "fromDoseMg": 50,
+      "toDoseMg": 4,
+      "notes": "Reduce chlorpromazine to 50 mg. EPS review — risperidone has more EPS burden than CPZ at these doses."
+    },
+    {
+      "day": 42,
+      "fromDoseMg": 0,
+      "toDoseMg": 4,
+      "notes": "Stop chlorpromazine. Continue risperidone 4 mg. Repeat ECG at 4–6 weeks. Review EPS and prolactin."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 400,
+    "toTargetDoseMg": 4,
+    "equivalencyNote": "Chlorpromazine 400 mg ≈ risperidone 4 mg (CPZ-equivalence: 100 mg CPZ ≈ 1 mg risperidone per Maudsley 15th). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["cholinergic_rebound", "qtc_monitoring_required", "prolactin_elevation"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "bap2020_psychosis_switching",
+    "spanish_society_psychiatry_switching_antipsychotics_2011"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

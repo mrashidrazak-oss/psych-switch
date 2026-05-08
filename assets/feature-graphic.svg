@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 500" width="1024" height="500">
+  <!--
+    Play Store feature graphic — 1024×500.
+
+    Required by Google Play for the listing hero. JPG/PNG, no alpha
+    channel in the rasterized output. Layout: mark on the left, wordmark
+    + tagline stacked on the right.
+
+    Layout audit (v0.4.20.1):
+      • Mark scaled 0.27 → ~277px square, padded 60px from the top/left.
+      • Right column starts at x=400, fits in the remaining 564px.
+      • Largest text ("PsychSwitch") at font-size 78 → ~480px wide.
+      • Tagline truncated to two lines that fit comfortably.
+
+    Rasterise:
+      rsvg-convert -w 1024 feature-graphic.svg > feature-graphic.png
+      # then strip alpha if Play complains:
+      magick feature-graphic.png -background '#0b0f14' -alpha remove feature-graphic.png
+  -->
+
+  <!-- Solid backdrop, no gradient (rule from BRAND_KIT.md) -->
+  <rect width="1024" height="500" fill="#0b0f14"/>
+
+  <!-- Mark — sized to ~280px square, vertically centred, padded 60px from left -->
+  <g transform="translate(60, 110) scale(0.27)">
+    <rect width="1024" height="1024" rx="224" fill="#0b0f14"/>
+
+    <path d="M 232 296
+             C 392 296, 392 512, 512 512
+             C 632 512, 632 728, 792 728"
+          fill="none" stroke="#60a5fa" stroke-width="48" stroke-linecap="round"/>
+
+    <path d="M 232 728
+             C 392 728, 392 512, 512 512
+             C 632 512, 632 296, 792 296"
+          fill="none" stroke="#34d399" stroke-width="48" stroke-linecap="round"/>
+
+    <circle cx="232" cy="296" r="38" fill="#60a5fa"/>
+    <circle cx="792" cy="728" r="38" fill="#60a5fa"/>
+    <circle cx="232" cy="728" r="38" fill="#34d399"/>
+    <circle cx="792" cy="296" r="38" fill="#34d399"/>
+  </g>
+
+  <!-- Wordmark, vertically grouped right of the mark -->
+  <text x="400" y="200"
+        font-family="Helvetica Neue, Arial, sans-serif"
+        font-size="78"
+        font-weight="800"
+        fill="#e6edf3"
+        letter-spacing="-2">
+    PsychSwitch
+  </text>
+
+  <text x="400" y="240"
+        font-family="Helvetica Neue, Arial, sans-serif"
+        font-size="22"
+        font-weight="600"
+        fill="#8b949e"
+        letter-spacing="9">
+    ASEAN EDITION
+  </text>
+
+  <!-- Tagline -->
+  <text x="400" y="316"
+        font-family="Helvetica Neue, Arial, sans-serif"
+        font-size="26"
+        font-weight="500"
+        fill="#8b949e">
+    Reviewed cross-titration,
+  </text>
+  <text x="400" y="350"
+        font-family="Helvetica Neue, Arial, sans-serif"
+        font-size="26"
+        font-weight="500"
+        fill="#8b949e">
+    cited at every step.
+  </text>
+
+  <!-- Subtle byline at the bottom -->
+  <text x="400" y="416"
+        font-family="Helvetica Neue, Arial, sans-serif"
+        font-size="16"
+        font-weight="700"
+        fill="#3b82f6"
+        letter-spacing="3">
+    BUILT FOR THE BEDSIDE
+  </text>
+</svg>

@@ -1,0 +1,59 @@
+{
+  "id": "sulpiride",
+  "genericName": "Sulpiride",
+  "drugClass": "FGA (substituted benzamide, selective D2/D3 antagonist)",
+  "category": "antipsychotic",
+  "malaysianBrandNames": ["Sulpitac", "Dogmatil"],
+  "halfLife": {
+    "meanHours": 8,
+    "rangeHours": [6, 10],
+    "notes": "Twice-daily dosing required. Renally cleared — dose adjustment essential in renal impairment. No hepatic metabolism — no CYP interactions. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": null,
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "No active metabolite. Renally excreted unchanged."
+  },
+  "cypInteractions": {
+    "substrateOf": [],
+    "inhibitorOf": [],
+    "switchingRelevance": "No CYP interactions — sulpiride is renally cleared unchanged. This makes it unusual among antipsychotics and simplifies polypharmacy management. PENDING_CLINICAL_REVIEW."
+  },
+  "epsRisk": "moderate",
+  "metabolicRisk": {
+    "score": "low",
+    "notes": "Minimal weight gain, minimal metabolic burden. One of the most metabolically neutral antipsychotics. PENDING_CLINICAL_REVIEW."
+  },
+  "prolactinRisk": "high",
+  "qtcRisk": "low",
+  "sedation": "low",
+  "lai": {
+    "available": false,
+    "notes": "No long-acting injectable formulation."
+  },
+  "reboundPsychosisRisk": {
+    "score": "moderate",
+    "notes": "Selective D2/D3 antagonism — rebound psychosis risk on abrupt cessation. Taper preferred. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 200,
+    "typicalTargetRangeMg": [400, 800],
+    "maxDoseMg": 2400,
+    "increments": [200, 400, 600, 800, 1200],
+    "formulationsAvailableMy": ["Sulpitac 200 mg tablet", "Sulpitac 400 mg tablet", "Dogmatil 50 mg capsule", "Dogmatil 200 mg tablet"]
+  },
+  "formulationNotes": "Twice-daily dosing essential due to short half-life. Avoid in renal impairment — renally cleared. PENDING_CLINICAL_REVIEW.",
+  "specialConsiderations": [
+    "No hepatic metabolism — safe in hepatic impairment; adjust dose in renal impairment.",
+    "Very high prolactin elevation — most potent prolactin-raising antipsychotic; monitor for galactorrhoea, amenorrhoea, sexual dysfunction.",
+    "Antiemetic effect at low doses (50–100 mg) — used for nausea and gastroparesis in some settings.",
+    "No CYP interactions — useful in complex polypharmacy."
+  ],
+  "citations": [
+    "maudsley15_schizophrenia_fga_profile",
+    "bap2020_psychosis_fga"
+  ],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

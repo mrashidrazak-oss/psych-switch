@@ -1,0 +1,60 @@
+{
+  "id": "valproate",
+  "genericName": "Sodium valproate",
+  "drugClass": "Mood stabilizer / Anticonvulsant",
+  "category": "mood-stabilizer",
+  "malaysianBrandNames": ["Epilim", "Depakote", "Epival", "Encorate Chrono"],
+  "halfLife": {
+    "meanHours": 13,
+    "rangeHours": [9, 16],
+    "notes": "Half-life shorter than the clinical response window. Chrono (extended-release) formulation allows once-daily dosing in some patients. Valproate INHIBITS LTG metabolism — LTG dose must be halved when co-prescribed. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": "Valproate-4-ene (minor)",
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "No clinically significant active metabolite for mood purposes. The hepatotoxic metabolite (4-ene-valproate) is relevant in overdose and paediatric use."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP2C9", "UGT"],
+    "inhibitorOf": ["CYP2C9", "UGT1A4"],
+    "switchingRelevance": "Valproate is a potent UGT inhibitor — it roughly DOUBLES lamotrigine levels. When starting valproate in a patient on lamotrigine, halve the lamotrigine dose. When stopping valproate in a patient on lamotrigine, increase lamotrigine dose (levels will fall). Interaction with carbamazepine is complex: CBZ induces valproate clearance, reducing VPA levels. PENDING_CLINICAL_REVIEW."
+  },
+  "qtcRisk": "low",
+  "sedation": "moderate",
+  "reboundPsychosisRisk": {
+    "score": "low",
+    "notes": "No major rebound psychosis risk but abrupt discontinuation can precipitate seizures or mood relapse. Taper recommended. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 500,
+    "typicalTargetRangeMg": [1000, 2000],
+    "maxDoseMg": 3000,
+    "increments": [200, 500, 1000, 1500, 2000, 2500],
+    "formulationsAvailableMy": [
+      "Epilim 200 mg enteric-coated tablet",
+      "Epilim 500 mg enteric-coated tablet",
+      "Epilim 200 mg/5 ml syrup",
+      "Epilim Chrono 500 mg prolonged-release tablet",
+      "Depakote 250 mg tablet (divalproex)",
+      "Depakote 500 mg tablet (divalproex)"
+    ]
+  },
+  "formulationNotes": "Epilim Chrono (extended-release) preferred for BD dosing and smoother levels. Divalproex (Depakote) may have better GI tolerability. ALL formulations carry the same teratogenicity risk. PENDING_CLINICAL_REVIEW.",
+  "specialConsiderations": [
+    "TERATOGENICITY (DANGER): Highest teratogenic risk among mood stabilizers. Associated with neural tube defects, major congenital malformations (6–11%), and neurodevelopmental disorders in children exposed in utero. CONTRAINDICATED in women of childbearing potential unless all alternatives are inadequate and EURAP-equivalent risk minimisation is in place.",
+    "EURAP / MIMS Malaysia restriction: As of 2023, valproate may only be prescribed to women of reproductive age under a risk minimisation programme. Document consent and contraceptive use.",
+    "Monitoring: LFTs and full blood count at baseline and 6-monthly. Valproate levels not routinely required for mood disorders unless toxicity suspected.",
+    "Weight gain: significant — counsel from initiation. Associated with polycystic ovary syndrome in women.",
+    "Hair loss (alopecia): can occur — consider zinc/selenium supplementation.",
+    "Hepatotoxicity: rare but potentially fatal in children under 3 years on polypharmacy. Adults lower risk but check LFTs."
+  ],
+  "citations": [
+    "Maudsley Prescribing Guidelines 14th Edition — Valproate",
+    "BAP 2016 Guidelines for Bipolar Disorder",
+    "MHRA Valproate Medicines Update (2018, applicable in Malaysian prescribing context)",
+    "NICE CG185: Bipolar disorder"
+  ],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

@@ -1,0 +1,41 @@
+{
+  "id": "haloperidol-lai-to-paliperidone-lai",
+  "fromDrugId": "haloperidol-lai",
+  "toDrugId": "paliperidone-lai",
+  "strategy": "cross-taper",
+  "rationale": "The most clinically common FGA depot-to-SGA depot conversion — escaping haloperidol decanoate's EPS, tardive dyskinesia risk, hyperprolactinaemia and QTc burden while maintaining the adherence benefits of depot administration. Paliperidone palmitate's two-dose deltoid loading protocol (150 mg day 1, 100 mg day 8) reaches therapeutic levels quickly without needing a separate oral overlap. The haloperidol decanoate depot tail (half-life ~21 days; full clearance ~10 weeks) provides ongoing D2 cover during the PP-LAI loading period — combined exposure is clinically acceptable and preferred over a bare switch. Skip the next scheduled decanoate injection and commence PP-LAI loading. Monitor QTc: haloperidol's high QTc contribution will diminish over weeks as the depot clears. EPS, prolactin and tardive symptoms should be reviewed at 3 months when haloperidol has substantially cleared. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 36,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 100,
+      "toDoseMg": 150,
+      "notes": "Skip next Haldol decanoate injection. Give Invega Sustenna 150 mg deltoid (loading dose 1). Haloperidol depot tail continues releasing — good D2 cover maintained. Counsel patient on expected improvement in EPS over coming months."
+    },
+    {
+      "day": 8,
+      "fromDoseMg": 100,
+      "toDoseMg": 100,
+      "notes": "Invega Sustenna 100 mg deltoid (loading dose 2, day 8 ± 2 days). Haloperidol depot still present. PP-LAI levels building toward therapeutic range. QTc beginning to improve as haloperidol clears."
+    },
+    {
+      "day": 36,
+      "fromDoseMg": 0,
+      "toDoseMg": 100,
+      "notes": "First maintenance Sustenna injection (100 mg; deltoid or gluteal). Haloperidol decanoate substantially cleared. Assess EPS, tardive movements, prolactin. Monthly Sustenna thereafter."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 100,
+    "toTargetDoseMg": 100,
+    "equivalencyNote": "Approximate clinical equivalency: haloperidol decanoate 100 mg/4 weeks ≈ paliperidone palmitate 100 mg/4 weeks (Maudsley 15th, LAI equivalence). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_schizophrenia_p231_paliperidone_lai",
+    "bap2020_psychosis_lai_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

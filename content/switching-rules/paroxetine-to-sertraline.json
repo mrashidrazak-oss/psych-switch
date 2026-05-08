@@ -1,0 +1,48 @@
+{
+  "id": "paroxetine-to-sertraline",
+  "fromDrugId": "paroxetine",
+  "toDrugId": "sertraline",
+  "strategy": "cross-taper",
+  "rationale": "Common scenario: switching off paroxetine to escape its high discontinuation-syndrome and anticholinergic burden, while preserving SSRI cover. Slow taper essential because paroxetine has short half-life and severe withdrawal risk. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 20,
+      "toDoseMg": 25,
+      "notes": "Start sertraline 25 mg in the morning. Hold paroxetine 20 mg."
+    },
+    {
+      "day": 5,
+      "fromDoseMg": 10,
+      "toDoseMg": 50,
+      "notes": "Halve paroxetine to 10 mg. Increase sertraline to 50 mg. Warn patient about possible discontinuation symptoms."
+    },
+    {
+      "day": 10,
+      "fromDoseMg": 10,
+      "toDoseMg": 100,
+      "notes": "Hold paroxetine 10 mg. Increase sertraline to 100 mg target."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 100,
+      "notes": "Stop paroxetine. Continue sertraline 100 mg. If discontinuation symptoms emerge, slow this final step or use compounded liquid paroxetine for a longer taper."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 20,
+    "toTargetDoseMg": 100,
+    "equivalencyNote": "Approximate clinical equivalency: paroxetine 20 mg ≈ sertraline 100 mg (Maudsley 14th). Hyperbolic tapering principles favour smaller-than-linear final steps; consider compounded liquid for patients with prior failed paroxetine tapers. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_p369_table_3_7",
+    "maudsley15_ch3_p374_withdrawal",
+    "horowitz2020_hyperbolic_tapering"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

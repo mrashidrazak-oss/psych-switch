@@ -1,0 +1,50 @@
+{
+  "id": "tranylcypromine",
+  "genericName": "Tranylcypromine",
+  "drugClass": "Irreversible MAOI",
+  "category": "antidepressant",
+  "hidden": true,
+  "isMAOI": true,
+  "maoiClearanceDays": 14,
+  "malaysianBrandNames": ["Parnate"],
+  "halfLife": {
+    "meanHours": 2.5,
+    "rangeHours": [1.5, 3.5],
+    "notes": "Plasma half-life is short, but tranylcypromine irreversibly inhibits MAO-A and MAO-B. Clinical effect persists for 10–14 days after stopping until new enzyme is synthesised. Often considered more activating than phenelzine — used in atypical/refractory depression. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": null,
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "No clinically significant active metabolite for mood purposes. Some amphetamine-like metabolites contribute to the 'activating' clinical profile."
+  },
+  "cypInteractions": {
+    "substrateOf": ["MAO"],
+    "inhibitorOf": ["MAO-A", "MAO-B"],
+    "switchingRelevance": "Irreversible MAOI — same washout principles as phenelzine. 14-day washout required before any serotonergic agent. Tyramine-rich food crisis risk identical to phenelzine. Tranylcypromine has additional sympathomimetic activity, so caution with other indirectly-acting sympathomimetics. PENDING_CLINICAL_REVIEW."
+  },
+  "maoiWashout": {
+    "daysOffBeforeMAOI": 14,
+    "daysOffAfterMAOI": 14,
+    "notes": "14-day washout in either direction. Specialist supervision required for MAOI-to-MAOI switches (rare)."
+  },
+  "discontinuationSyndromeRisk": {
+    "score": "high",
+    "notes": "Withdrawal (especially abrupt cessation in chronic users) can cause severe agitation, psychotic symptoms, cognitive impairment, and sympathomimetic withdrawal features. Taper slowly over 4+ weeks. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 10,
+    "typicalTargetRangeMg": [20, 60],
+    "maxDoseMg": 60,
+    "increments": [10, 20, 30, 40, 50, 60],
+    "formulationsAvailableMy": ["Parnate 10 mg tablet (limited availability)"]
+  },
+  "formulationNotes": "Limited availability in Malaysian formulary. Specialist supply only. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_ch3_p369_table_3_7",
+    "maudsley15_ch3_p374_withdrawal",
+    "Parnate (tranylcypromine) Summary of Product Characteristics."
+  ],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

@@ -1,0 +1,62 @@
+{
+  "id": "lamotrigine",
+  "genericName": "Lamotrigine",
+  "drugClass": "Mood stabilizer / Anticonvulsant",
+  "category": "mood-stabilizer",
+  "malaysianBrandNames": ["Lamictal", "Lamdra", "Lamitor"],
+  "halfLife": {
+    "meanHours": 29,
+    "rangeHours": [24, 35],
+    "notes": "Half-life is dramatically affected by co-medications. With valproate (UGT inhibitor): half-life ~70h — lamotrigine doses must be roughly HALVED. With carbamazepine/phenytoin/rifampicin (UGT inducers): half-life ~12–15h — lamotrigine doses must be roughly DOUBLED. Always check for enzyme inducers/inhibitors before prescribing. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": null,
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "No active metabolite. Glucuronidated by UGT1A4 and UGT2B7."
+  },
+  "cypInteractions": {
+    "substrateOf": ["UGT1A4", "UGT2B7"],
+    "inhibitorOf": [],
+    "switchingRelevance": "Lamotrigine is a UGT substrate — not CYP. Critical interactions: Valproate INHIBITS LTG metabolism (double levels → halve dose). Carbamazepine/phenytoin/hormonal contraceptives INDUCE LTG metabolism (halve levels → double dose). Starting or stopping either of these drugs requires systematic LTG dose adjustment to avoid toxicity (SJS) or loss of efficacy. PENDING_CLINICAL_REVIEW."
+  },
+  "qtcRisk": "low",
+  "sedation": "low",
+  "reboundPsychosisRisk": {
+    "score": "low",
+    "notes": "No rebound psychosis. Abrupt discontinuation can precipitate breakthrough mood episodes or (in epilepsy) seizures. Taper over 2 weeks recommended. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 25,
+    "typicalTargetRangeMg": [100, 200],
+    "maxDoseMg": 400,
+    "increments": [25, 50, 75, 100, 125, 150, 175, 200, 250, 300, 400],
+    "formulationsAvailableMy": [
+      "Lamictal 25 mg tablet",
+      "Lamictal 50 mg tablet",
+      "Lamictal 100 mg tablet",
+      "Lamictal 200 mg tablet",
+      "Lamictal 2 mg dispersible tablet",
+      "Lamictal 5 mg dispersible tablet",
+      "Lamictal 25 mg dispersible tablet"
+    ]
+  },
+  "formulationNotes": "Dispersible tablets allow precise slow titration — important for SJS risk minimisation. Always titrate SLOWLY regardless of formulation. The specific titration rate depends entirely on whether valproate, carbamazepine, or neither is co-prescribed. PENDING_CLINICAL_REVIEW.",
+  "specialConsiderations": [
+    "SLOW TITRATION MANDATORY (DANGER): Stevens-Johnson syndrome (SJS) and toxic epidermal necrolysis (TEN) risk is dramatically increased by rapid dose escalation. The titration schedule depends on concurrent medications — follow the regime-specific schedule exactly.",
+    "Titration with valproate: start at 25 mg every OTHER day for 2 weeks, then 25 mg OD for 2 weeks, then increase in 25–50 mg steps every 1–2 weeks.",
+    "Titration without enzyme modifier: start at 25 mg OD for 2 weeks, then 50 mg OD for 2 weeks, then increase in 50 mg steps every 1–2 weeks.",
+    "Titration with CBZ/inducer: start at 50 mg OD for 2 weeks, then 100 mg OD (in divided doses) for 2 weeks, then increase in 100 mg steps every 1–2 weeks.",
+    "Rash warning: any rash in the first 8 weeks must be evaluated urgently — stop lamotrigine unless rash clearly unrelated to the drug.",
+    "Pregnancy: lowest teratogenic risk of the mood stabilizers — preferred choice in women who may become pregnant (risk not zero; neural tube defect risk small, no neurodevelopmental signal). High-dose folic acid pre-conception recommended.",
+    "Hormonal contraception interaction: combined OCP reduces lamotrigine levels by ~50%. Warn patients on OCP — may need dose adjustment. Pill-free week causes LTG level fluctuation."
+  ],
+  "citations": [
+    "Maudsley Prescribing Guidelines 14th Edition — Lamotrigine",
+    "BAP 2016 Guidelines for Bipolar Disorder",
+    "NICE CG185: Bipolar disorder",
+    "Lamictal (lamotrigine) Summary of Product Characteristics. GSK."
+  ],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

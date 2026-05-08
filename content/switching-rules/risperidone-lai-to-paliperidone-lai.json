@@ -1,0 +1,41 @@
+{
+  "id": "risperidone-lai-to-paliperidone-lai",
+  "fromDrugId": "risperidone-lai",
+  "toDrugId": "paliperidone-lai",
+  "strategy": "direct",
+  "rationale": "Pharmacologically the same molecule (paliperidone is risperidone's active metabolite, 9-OH-risperidone). Switching is primarily for dosing convenience: monthly Sustenna instead of fortnightly Consta. No washout needed — give Sustenna in place of the next scheduled Consta dose, using deltoid loading protocol. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 38,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 25,
+      "toDoseMg": 150,
+      "notes": "Inject Invega Sustenna 150 mg deltoid (loading dose 1) in place of the next scheduled Consta. Do NOT give Consta on this day."
+    },
+    {
+      "day": 8,
+      "fromDoseMg": 25,
+      "toDoseMg": 100,
+      "notes": "Inject Invega Sustenna 100 mg deltoid (loading dose 2). Consta tail still releasing — combined exposure is acceptable because it's the same molecule."
+    },
+    {
+      "day": 38,
+      "fromDoseMg": 0,
+      "toDoseMg": 75,
+      "notes": "First maintenance Sustenna 75 mg gluteal (or deltoid). Continue monthly. Consta has cleared."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 25,
+    "toTargetDoseMg": 75,
+    "equivalencyNote": "Approximate clinical equivalency: Consta 25 mg every 2 weeks ≈ Sustenna 75 mg monthly (Maudsley 14th). For higher Consta doses (37.5, 50 mg), use Sustenna 100 or 150 mg maintenance. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_schizophrenia_p231_paliperidone_lai",
+    "bap2020_psychosis_lai_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

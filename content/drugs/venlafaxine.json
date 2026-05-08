@@ -1,0 +1,49 @@
+{
+  "id": "venlafaxine",
+  "genericName": "Venlafaxine",
+  "drugClass": "SNRI",
+  "malaysianBrandNames": [
+    "Efexor XR",
+    "Effexor",
+    "Velaxin"
+  ],
+  "halfLife": {
+    "meanHours": 5,
+    "rangeHours": [3, 7],
+    "notes": "Short parent half-life. ER formulation produces flatter levels but does not extend clinical half-life meaningfully. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": "O-desmethylvenlafaxine (ODV)",
+    "halfLifeHours": 11,
+    "clinicallySignificant": true,
+    "notes": "ODV is itself active and is marketed separately as desvenlafaxine. Contributes meaningfully to total exposure. PENDING_CLINICAL_REVIEW."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP2D6", "CYP3A4"],
+    "inhibitorOf": ["CYP2D6 (weak)"],
+    "switchingRelevance": "Mild CYP2D6 inhibition; clinically minor. Levels can be markedly raised by potent CYP2D6 inhibitors (e.g. fluoxetine, paroxetine, bupropion) — relevant on overlap. PENDING_CLINICAL_REVIEW."
+  },
+  "maoiWashout": {
+    "daysOffBeforeMAOI": 14,
+    "daysOffAfterMAOI": 14,
+    "notes": "Standard 14-day washout. PENDING_CLINICAL_REVIEW."
+  },
+  "discontinuationSyndromeRisk": {
+    "score": "very high",
+    "notes": "Among the worst for discontinuation symptoms (electric-shock sensations, dizziness, irritability). Slow taper required, especially from doses >150 mg. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 37.5,
+    "typicalTargetRangeMg": [75, 225],
+    "maxDoseMg": 375,
+    "increments": [37.5, 75, 112.5, 150, 225, 300, 375],
+    "formulationsAvailableMy": ["37.5 mg XR cap", "75 mg XR cap", "150 mg XR cap"]
+  },
+  "formulationNotes": "Extended-release capsules dominate the Malaysian market; immediate-release rare. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_ch3_p369_venlafaxine_profile",
+    "bap2015_antidepressants_venlafaxine"
+  ],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

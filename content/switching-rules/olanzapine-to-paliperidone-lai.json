@@ -1,0 +1,47 @@
+{
+  "id": "olanzapine-to-paliperidone-lai",
+  "fromDrugId": "olanzapine",
+  "toDrugId": "paliperidone-lai",
+  "strategy": "cross-taper",
+  "rationale": "Common transition for patients on oral olanzapine who need improved adherence via depot, but where the metabolic burden of olanzapine is being tolerated or is less of a concern than non-adherence. Paliperidone palmitate (Invega Sustenna) uses a deltoid loading protocol (150 mg day 1, 100 mg day 8) that eliminates the need for a separate oral overlap period — the loading doses reach therapeutic concentrations quickly. Oral olanzapine is therefore tapered DURING the PP-LAI loading period, not stopped beforehand. Cholinergic and histaminergic rebound from olanzapine reduction is monitored; paliperidone's lower anticholinergic activity means partial rebound symptoms (insomnia, anxiety) are possible. CYP interactions: olanzapine's CYP1A2 substrate status means smokers on olanzapine may need upward dose review of paliperidone if co-medications change. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 36,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 10,
+      "toDoseMg": 150,
+      "notes": "PP-LAI loading dose 1: 150 mg deltoid (MUST be deltoid for loading). Continue oral olanzapine 10 mg. Advise patient that PP-LAI needs 2 loading injections to establish therapeutic levels."
+    },
+    {
+      "day": 8,
+      "fromDoseMg": 10,
+      "toDoseMg": 100,
+      "notes": "PP-LAI loading dose 2: 100 mg deltoid (day 8 ± 2 days). Continue oral olanzapine 10 mg. PP-LAI levels are building."
+    },
+    {
+      "day": 22,
+      "fromDoseMg": 5,
+      "toDoseMg": 100,
+      "notes": "PP-LAI reaching therapeutic concentration. Begin tapering oral olanzapine to 5 mg. Monitor for cholinergic/histaminergic rebound symptoms (insomnia, anxiety) as olanzapine reduces."
+    },
+    {
+      "day": 36,
+      "fromDoseMg": 0,
+      "toDoseMg": 100,
+      "notes": "Stop oral olanzapine. PP-LAI first maintenance injection (100 mg deltoid or gluteal, due day 36-38 after first loading dose). Monthly maintenance thereafter. Review metabolic parameters — paliperidone has lower metabolic burden than olanzapine."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 10,
+    "toTargetDoseMg": 100,
+    "equivalencyNote": "Approximate clinical equivalency: oral olanzapine 10 mg ≈ paliperidone palmitate 100 mg monthly (Maudsley 15th, AP dose-equivalence table). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_schizophrenia_p231_paliperidone_lai",
+    "bap2020_psychosis_lai"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

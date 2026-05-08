@@ -1,0 +1,948 @@
+{
+  "id": "maudsley15-strategy-matrix",
+  "rationale": "Switching strategy matrix derived from The Maudsley Prescribing Guidelines in Psychiatry, 15th Edition. Covers antidepressants (Table 3.7) and mood stabilizers (bipolar chapters). Maudsley uses broad strategy categories rather than rigid day-by-day schedules. When a specific reviewed rule exists for a pair, that takes precedence; otherwise the engine falls back to this class-level lookup. PENDING_CLINICAL_REVIEW — Rashid Razak.",
+  "drugClassMap": {
+    "fluoxetine": "fluoxetine",
+    "fluvoxamine": "fluvoxamine",
+    "sertraline": "ssri_other",
+    "escitalopram": "ssri_other",
+    "paroxetine": "ssri_other",
+    "venlafaxine": "snri",
+    "duloxetine": "snri",
+    "desvenlafaxine": "snri",
+    "mirtazapine": "mirtazapine",
+    "vortioxetine": "vortioxetine",
+    "agomelatine": "agomelatine",
+    "moclobemide": "moclobemide",
+    "phenelzine": "irreversible_maoi",
+    "tranylcypromine": "irreversible_maoi",
+    "lithium": "lithium",
+    "valproate": "valproate",
+    "lamotrigine": "lamotrigine",
+    "carbamazepine": "carbamazepine",
+    "clozapine": "ap_sga",
+    "olanzapine": "ap_sga",
+    "risperidone": "ap_sga",
+    "quetiapine": "ap_sga",
+    "amisulpride": "ap_sga",
+    "lurasidone": "ap_sga",
+    "haloperidol": "ap_fga",
+    "chlorpromazine": "ap_fga",
+    "trifluoperazine": "ap_fga",
+    "sulpiride": "ap_fga",
+    "aripiprazole": "ap_partial_agonist",
+    "paliperidone-lai": "ap_lai_sga",
+    "aripiprazole-lai": "ap_lai_partial",
+    "zuclopenthixol-lai": "ap_lai_fga",
+    "flupenthixol-lai": "ap_lai_fga",
+    "fluphenazine-lai": "ap_lai_fga"
+  },
+  "rules": [
+    {
+      "fromClass": "ssri_other",
+      "toClass": "ssri_other",
+      "strategy": "direct_switch",
+      "headline": "Direct switch possible",
+      "detail": "Most SSRIs (sertraline, escitalopram, citalopram, paroxetine) can be switched directly to another SSRI without a cross-taper or washout. Stop the first drug and start the new one the next day at a low-to-typical starting dose, titrate as tolerated. Watch for discontinuation symptoms with the drug being stopped (especially paroxetine).",
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_p368_general_guidelines"]
+    },
+    {
+      "fromClass": "ssri_other",
+      "toClass": "fluoxetine",
+      "strategy": "direct_switch",
+      "headline": "Direct switch possible",
+      "detail": "Stop the current SSRI and start fluoxetine the next day. Fluoxetine's long half-life provides a self-tapering effect that reduces discontinuation symptoms from the original drug. Particularly useful as a 'fluoxetine bridge' from paroxetine.",
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "fluoxetine",
+      "toClass": "ssri_other",
+      "strategy": "taper_then_wait",
+      "headline": "Stop fluoxetine, wait 4–7 days, start the new SSRI at low dose",
+      "detail": "Because of fluoxetine's long half-life and the active metabolite norfluoxetine (~7–9 day half-life), a brief washout is needed before starting another SSRI to avoid pharmacokinetic interaction (CYP2D6 inhibition). Start the new SSRI at a low dose and titrate cautiously.",
+      "waitDays": 5,
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "ssri_other",
+      "toClass": "snri",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously",
+      "detail": "Both drugs are serotonergic — there is mild serotonin syndrome risk during overlap. Reduce the SSRI gradually over 1–2 weeks while introducing and titrating the SNRI. Watch for tremor, hyperreflexia, autonomic instability.",
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "snri",
+      "toClass": "ssri_other",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously",
+      "detail": "Reduce the SNRI gradually over 1–2 weeks while introducing the SSRI. SNRI discontinuation symptoms (especially venlafaxine — affecting up to 80–100% of patients) are usually the dominant issue — taper slowly and consider hyperbolic tapering for the final reductions.",
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_p374_withdrawal"]
+    },
+    {
+      "fromClass": "snri",
+      "toClass": "fluoxetine",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — fluoxetine bridge useful for venlafaxine",
+      "detail": "Reduce the SNRI while introducing fluoxetine. The long half-life of fluoxetine offers a 'bridge' effect that mitigates SNRI discontinuation symptoms — especially valuable for venlafaxine, where withdrawal is particularly troublesome.",
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_p376_fluoxetine_bridge"]
+    },
+    {
+      "fromClass": "snri",
+      "toClass": "snri",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously",
+      "detail": "Both drugs are serotonergic and noradrenergic — mild serotonin syndrome risk during overlap. Reduce the original SNRI gradually while introducing the new one. Beware additive sympathomimetic and gastrointestinal effects.",
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "ssri_other",
+      "toClass": "mirtazapine",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously",
+      "detail": "Mirtazapine has a different mechanism (NaSSA) so theoretically less serotonin syndrome risk, but mirtazapine + SSRI is sometimes used as deliberate augmentation. Reduce the SSRI gradually while introducing mirtazapine 15 mg nocte, increasing as tolerated.",
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "mirtazapine",
+      "toClass": "ssri_other",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously",
+      "detail": "Mirtazapine has a low-to-moderate withdrawal profile but anxiety, irritability and insomnia can occur on stopping. Reduce mirtazapine gradually while introducing the SSRI at a low starting dose.",
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_p374_withdrawal"]
+    },
+    {
+      "fromClass": "snri",
+      "toClass": "mirtazapine",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously",
+      "detail": "Reduce the SNRI gradually while introducing mirtazapine. Useful combination: the SNRI 'covers' SNRI withdrawal while mirtazapine is being titrated up. Watch for excessive sedation as mirtazapine is added.",
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "mirtazapine",
+      "toClass": "snri",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously",
+      "detail": "Reduce mirtazapine gradually while introducing the SNRI. Discontinuation symptoms with mirtazapine are uncommon but possible — anxiety and insomnia are typical.",
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "ssri_other",
+      "toClass": "moclobemide",
+      "strategy": "taper_then_wait",
+      "headline": "Stop the SSRI, wait 14 days, then start moclobemide",
+      "detail": "Moclobemide is a reversible MAOI (RIMA). Despite the reversibility, a 14-day washout from a serotonergic agent is required before starting moclobemide to avoid serotonin syndrome. Fluoxetine requires a 5-week (35-day) washout because of norfluoxetine.",
+      "waitDays": 14,
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_p366_general_guidelines"]
+    },
+    {
+      "fromClass": "fluoxetine",
+      "toClass": "moclobemide",
+      "strategy": "taper_then_wait",
+      "headline": "Stop fluoxetine, wait 5–6 weeks, then start moclobemide",
+      "detail": "Fluoxetine's 5-week (35-day) washout before any MAOI — including the reversible moclobemide — is non-negotiable. Norfluoxetine's 7–9 day half-life means trace levels persist for over a month.",
+      "waitDays": 35,
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "snri",
+      "toClass": "moclobemide",
+      "strategy": "taper_then_wait",
+      "headline": "Taper the SNRI, wait 14 days, then start moclobemide",
+      "detail": "Cross-tapering serotonergic drugs with an MAOI risks serotonin syndrome. Taper the SNRI to zero (consider hyperbolic taper for venlafaxine) and wait 14 days before starting moclobemide.",
+      "waitDays": 14,
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "mirtazapine",
+      "toClass": "moclobemide",
+      "strategy": "taper_then_wait",
+      "headline": "Taper mirtazapine, wait 14 days, then start moclobemide",
+      "detail": "Although mirtazapine is not a primary serotonergic agent, a 14-day washout is recommended before starting any MAOI for safety.",
+      "waitDays": 14,
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "moclobemide",
+      "toClass": "ssri_other",
+      "strategy": "taper_then_wait",
+      "headline": "Stop moclobemide, wait 24 hours, then start the SSRI",
+      "detail": "Moclobemide is a reversible MAOI — its enzyme inhibition resolves within 24 hours of stopping. After this short washout, an SSRI can be started.",
+      "waitDays": 1,
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "moclobemide",
+      "toClass": "fluoxetine",
+      "strategy": "taper_then_wait",
+      "headline": "Stop moclobemide, wait 24 hours, then start fluoxetine",
+      "detail": "After 24 hours of moclobemide clearance, fluoxetine can be safely started.",
+      "waitDays": 1,
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "moclobemide",
+      "toClass": "snri",
+      "strategy": "taper_then_wait",
+      "headline": "Stop moclobemide, wait 24 hours, then start the SNRI",
+      "detail": "After 24 hours of moclobemide clearance, an SNRI can be safely started. Titrate cautiously.",
+      "waitDays": 1,
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "moclobemide",
+      "toClass": "mirtazapine",
+      "strategy": "taper_then_wait",
+      "headline": "Stop moclobemide, wait 24 hours, then start mirtazapine",
+      "detail": "After 24 hours of moclobemide clearance, mirtazapine can be safely started.",
+      "waitDays": 1,
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "irreversible_maoi",
+      "toClass": "ssri_other",
+      "strategy": "taper_then_wait",
+      "headline": "Stop the MAOI, wait 14 days, then start the SSRI",
+      "detail": "Irreversible MAOIs (phenelzine, tranylcypromine) require a full 14-day washout before any serotonergic drug to allow new MAO enzyme synthesis. Starting an SSRI before 14 days risks fatal serotonin syndrome.",
+      "waitDays": 14,
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "irreversible_maoi",
+      "toClass": "fluoxetine",
+      "strategy": "taper_then_wait",
+      "headline": "Stop the MAOI, wait 14 days, then start fluoxetine",
+      "detail": "Same as for any SSRI: 14-day washout from the irreversible MAOI is required.",
+      "waitDays": 14,
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "irreversible_maoi",
+      "toClass": "snri",
+      "strategy": "taper_then_wait",
+      "headline": "Stop the MAOI, wait 14 days, then start the SNRI",
+      "detail": "14-day washout from the irreversible MAOI is required before any serotonergic agent.",
+      "waitDays": 14,
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "irreversible_maoi",
+      "toClass": "mirtazapine",
+      "strategy": "taper_then_wait",
+      "headline": "Stop the MAOI, wait 14 days, then start mirtazapine",
+      "detail": "Although mirtazapine is not a primary serotonergic agent, a 14-day washout from any irreversible MAOI is recommended.",
+      "waitDays": 14,
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+
+    {
+      "fromClass": "ssri_other",
+      "toClass": "vortioxetine",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously",
+      "detail": "Both drugs are serotonergic. Reduce the SSRI gradually over 1–2 weeks while introducing vortioxetine at 5–10 mg. Vortioxetine's long half-life (~66 h) means it accumulates slowly — titrate up once the SSRI is fully stopped. Watch for additive serotonergic effects during overlap.",
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_vortioxetine_profile"]
+    },
+    {
+      "fromClass": "vortioxetine",
+      "toClass": "ssri_other",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — vortioxetine self-tapers due to long half-life",
+      "detail": "Vortioxetine's long half-life (~66 h) provides a degree of self-tapering on stopping, making discontinuation syndrome uncommon. Reduce vortioxetine gradually while introducing the SSRI at a standard starting dose. Serotonin syndrome risk during overlap is low but not zero.",
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_vortioxetine_profile"]
+    },
+    {
+      "fromClass": "fluoxetine",
+      "toClass": "vortioxetine",
+      "strategy": "taper_then_wait",
+      "headline": "Stop fluoxetine, wait 5–7 days, then start vortioxetine at half dose",
+      "detail": "Fluoxetine is a potent CYP2D6 inhibitor that roughly doubles vortioxetine plasma levels. Even after stopping fluoxetine, inhibition persists for 5–7 days due to norfluoxetine's long half-life. Start vortioxetine at 5 mg (half the usual 10 mg starting dose) and titrate cautiously once CYP2D6 inhibition has resolved.",
+      "waitDays": 6,
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_vortioxetine_profile", "trintellix_spc_cyp2d6_interaction"]
+    },
+    {
+      "fromClass": "vortioxetine",
+      "toClass": "fluoxetine",
+      "strategy": "direct_switch",
+      "headline": "Direct switch possible — vortioxetine's long half-life bridges the transition",
+      "detail": "Stop vortioxetine and start fluoxetine the next day at a standard starting dose. Vortioxetine's long half-life (~66 h) provides gradual decline. Note: once fluoxetine is established, its CYP2D6 inhibition would raise vortioxetine levels if the switch is reversed — but in the forward direction this is not a concern.",
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_vortioxetine_profile"]
+    },
+    {
+      "fromClass": "snri",
+      "toClass": "vortioxetine",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously",
+      "detail": "Both are serotonergic. Reduce the SNRI gradually (especially venlafaxine — prone to troublesome discontinuation symptoms) while introducing vortioxetine at 5–10 mg. Vortioxetine's long half-life means it accumulates over several days — titrate once the SNRI is stopped or near-stopped.",
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_vortioxetine_profile"]
+    },
+    {
+      "fromClass": "vortioxetine",
+      "toClass": "snri",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously",
+      "detail": "Reduce vortioxetine while introducing the SNRI. The overlap period carries mild serotonin syndrome risk. Vortioxetine's long half-life means even after stopping the dose, serotonergic activity declines slowly — avoid aggressive titration of the SNRI during this phase.",
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "mirtazapine",
+      "toClass": "vortioxetine",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously",
+      "detail": "Mirtazapine is not primarily serotonergic, but serotonin syndrome risk exists during overlap with any serotonergic drug. Reduce mirtazapine gradually while introducing vortioxetine at 5–10 mg nocte. Watch for insomnia as mirtazapine's sedating antihistaminergic effect is withdrawn.",
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "vortioxetine",
+      "toClass": "mirtazapine",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously",
+      "detail": "Reduce vortioxetine while introducing mirtazapine 15 mg nocte. Vortioxetine's long half-life provides gradual serotonergic decline — this makes the overlap period relatively low risk for serotonin syndrome.",
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "vortioxetine",
+      "toClass": "agomelatine",
+      "strategy": "direct_switch",
+      "headline": "Direct switch possible — agomelatine is not serotonergic",
+      "detail": "Agomelatine acts via melatonin receptors (MT1/MT2) and 5-HT2C antagonism, not via serotonin transporter inhibition. There is no meaningful serotonin syndrome risk when switching FROM vortioxetine TO agomelatine. Stop vortioxetine and start agomelatine the same or next day. Ensure LFTs are checked at baseline before starting agomelatine.",
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_agomelatine_profile"]
+    },
+    {
+      "fromClass": "agomelatine",
+      "toClass": "vortioxetine",
+      "strategy": "direct_switch",
+      "headline": "Direct switch possible",
+      "detail": "Agomelatine has no clinically significant drug interactions with vortioxetine. Stop agomelatine and start vortioxetine the same or next day at 10 mg. No washout required. Note: agomelatine requires LFT monitoring — confirm no hepatic dysfunction before starting any new drug.",
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "vortioxetine",
+      "toClass": "moclobemide",
+      "strategy": "taper_then_wait",
+      "headline": "Stop vortioxetine, wait 14 days, then start moclobemide",
+      "detail": "Vortioxetine is serotonergic — despite moclobemide's reversibility, a 14-day washout from any serotonergic agent is required before starting moclobemide to avoid serotonin syndrome. Vortioxetine's long half-life (~66 h) means levels are negligible after 14 days.",
+      "waitDays": 14,
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "moclobemide",
+      "toClass": "vortioxetine",
+      "strategy": "taper_then_wait",
+      "headline": "Stop moclobemide, wait 24 hours, then start vortioxetine",
+      "detail": "Moclobemide is a reversible MAOI; MAO-A inhibition resolves within 24 hours of stopping. After this washout, vortioxetine can be safely started at 10 mg.",
+      "waitDays": 1,
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "vortioxetine",
+      "toClass": "irreversible_maoi",
+      "strategy": "taper_then_wait",
+      "headline": "Stop vortioxetine, wait 14 days, then start the MAOI",
+      "detail": "A 14-day washout from vortioxetine (a serotonergic drug) is required before starting any irreversible MAOI to prevent serotonin syndrome. Vortioxetine's 66-hour half-life means levels are negligible by day 14.",
+      "waitDays": 14,
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "irreversible_maoi",
+      "toClass": "vortioxetine",
+      "strategy": "taper_then_wait",
+      "headline": "Stop the MAOI, wait 14 days, then start vortioxetine",
+      "detail": "Irreversible MAOIs require a full 14-day washout before any serotonergic agent. After 14 days, vortioxetine can be started at 5–10 mg and titrated as tolerated.",
+      "waitDays": 14,
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+
+    {
+      "fromClass": "ssri_other",
+      "toClass": "agomelatine",
+      "strategy": "direct_switch",
+      "headline": "Direct switch possible — agomelatine is not serotonergic",
+      "detail": "Agomelatine's melatonergic mechanism means there is no meaningful serotonergic overlap when switching from an SSRI. Stop the SSRI and start agomelatine 25 mg nocte on the next day. Obtain baseline LFTs before starting agomelatine. Be aware that agomelatine may take 2–4 weeks to reach full effect — brief discontinuation symptoms from the SSRI (especially paroxetine) may occur.",
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_agomelatine_profile"]
+    },
+    {
+      "fromClass": "agomelatine",
+      "toClass": "ssri_other",
+      "strategy": "direct_switch",
+      "headline": "Direct switch possible",
+      "detail": "Stop agomelatine and start the SSRI the same or next day at a standard starting dose. Agomelatine has no serotonergic activity — there is no serotonin syndrome risk during this transition.",
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "fluoxetine",
+      "toClass": "agomelatine",
+      "strategy": "direct_switch",
+      "headline": "Direct switch possible — but allow 5–7 days for fluoxetine CYP effect to resolve",
+      "detail": "Agomelatine is primarily a CYP1A2 substrate (not CYP2D6), so fluoxetine's CYP2D6 inhibition does not meaningfully affect it. A serotonin syndrome washout is not required as agomelatine is not serotonergic. However, a brief 5–7 day gap after stopping fluoxetine is pragmatic to allow any residual CYP inhibition to resolve before agomelatine titration. Obtain baseline LFTs before starting agomelatine.",
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_agomelatine_profile"]
+    },
+    {
+      "fromClass": "agomelatine",
+      "toClass": "fluoxetine",
+      "strategy": "direct_switch",
+      "headline": "Direct switch possible",
+      "detail": "Stop agomelatine and start fluoxetine the next day at 20 mg. No washout required. Fluoxetine is a CYP2D6 inhibitor but agomelatine is a CYP1A2 substrate — no pharmacokinetic interaction in this direction.",
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "snri",
+      "toClass": "agomelatine",
+      "strategy": "direct_switch",
+      "headline": "Direct switch possible — but taper SNRI first to manage discontinuation",
+      "detail": "Agomelatine is not serotonergic so there is no serotonin syndrome risk when adding it to a tapering SNRI. Taper the SNRI gradually (especially venlafaxine — hyperbolic taper for high doses) and start agomelatine 25 mg nocte once the SNRI is stopped or at a low dose. Obtain baseline LFTs.",
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_agomelatine_profile"]
+    },
+    {
+      "fromClass": "agomelatine",
+      "toClass": "snri",
+      "strategy": "direct_switch",
+      "headline": "Direct switch possible",
+      "detail": "Stop agomelatine and start the SNRI at a standard starting dose the same or next day. No serotonin syndrome risk — agomelatine is not serotonergic.",
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "mirtazapine",
+      "toClass": "agomelatine",
+      "strategy": "direct_switch",
+      "headline": "Direct switch possible — monitor for insomnia on stopping mirtazapine",
+      "detail": "Mirtazapine's sedating antihistaminergic effect will be lost when stopped. Start agomelatine 25 mg nocte while tapering mirtazapine. Agomelatine itself has a mild sleep-onset benefit via melatonin agonism, but the transition period may involve rebound insomnia. Obtain baseline LFTs.",
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_agomelatine_profile"]
+    },
+    {
+      "fromClass": "agomelatine",
+      "toClass": "mirtazapine",
+      "strategy": "direct_switch",
+      "headline": "Direct switch possible",
+      "detail": "Stop agomelatine and start mirtazapine 15 mg nocte the same or next day. Mirtazapine's sedative effect may be prominent initially — warn the patient.",
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "agomelatine",
+      "toClass": "moclobemide",
+      "strategy": "taper_then_wait",
+      "headline": "Stop agomelatine, wait 24–48 hours, then start moclobemide",
+      "detail": "Agomelatine is not a classical serotonergic drug, but caution is warranted given its 5-HT2C antagonism. A brief 1–2 day gap after stopping agomelatine before starting any MAOI is prudent.",
+      "waitDays": 2,
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_agomelatine_profile"]
+    },
+    {
+      "fromClass": "moclobemide",
+      "toClass": "agomelatine",
+      "strategy": "direct_switch",
+      "headline": "Stop moclobemide, wait 24 hours, then start agomelatine",
+      "detail": "Moclobemide's reversible MAO-A inhibition resolves within 24 hours. Agomelatine is not a serotonergic drug, so the risk of serotonin syndrome is very low. A 24-hour gap is sufficient for safety.",
+      "waitDays": 1,
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "agomelatine",
+      "toClass": "irreversible_maoi",
+      "strategy": "taper_then_wait",
+      "headline": "Stop agomelatine, wait 14 days, then start the MAOI",
+      "detail": "While agomelatine is not primarily serotonergic, a standard 14-day conservative washout before starting an irreversible MAOI is appropriate given agomelatine's 5-HT2C activity.",
+      "waitDays": 14,
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+    {
+      "fromClass": "irreversible_maoi",
+      "toClass": "agomelatine",
+      "strategy": "taper_then_wait",
+      "headline": "Stop the MAOI, wait 14 days, then start agomelatine",
+      "detail": "Standard 14-day irreversible MAOI washout applies before introducing any psychotropic agent. After 14 days, agomelatine 25 mg nocte can be started. Obtain baseline LFTs.",
+      "waitDays": 14,
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+
+    {
+      "fromClass": "fluvoxamine",
+      "toClass": "agomelatine",
+      "strategy": "taper_then_wait",
+      "headline": "Stop fluvoxamine, wait 7 days for CYP1A2 recovery, then start agomelatine at 12.5 mg",
+      "detail": "Fluvoxamine is a potent CYP1A2 inhibitor and agomelatine is a CYP1A2 substrate — co-administration is absolutely contraindicated. After stopping fluvoxamine, CYP1A2 activity recovers over approximately 1 week. Wait at least 7 days before starting agomelatine, then begin at a cautiously low dose (12.5 mg if available, or 25 mg with extra LFT vigilance) as residual CYP1A2 inhibition may persist.",
+      "waitDays": 7,
+      "citations": ["maudsley15_ch3_agomelatine_profile", "valdoxan_spc_fluvoxamine_contraindication"]
+    },
+    {
+      "fromClass": "agomelatine",
+      "toClass": "fluvoxamine",
+      "strategy": "direct_switch",
+      "headline": "Stop agomelatine, then start fluvoxamine — do NOT re-start agomelatine while on fluvoxamine",
+      "detail": "Stop agomelatine and start fluvoxamine at its standard starting dose. This direction does not carry a specific pharmacokinetic interaction risk — the concern is the reverse (fluvoxamine ON agomelatine). Counsel the patient explicitly that agomelatine must never be restarted while taking fluvoxamine.",
+      "citations": ["maudsley15_ch3_agomelatine_profile", "valdoxan_spc_fluvoxamine_contraindication"]
+    },
+
+    {
+      "fromClass": "lithium",
+      "toClass": "valproate",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — load valproate while tapering lithium",
+      "detail": "Lithium and valproate can be overlapped safely. Start valproate at 200–400 mg/day and titrate to a therapeutic level while reducing lithium over 4–6 weeks. Both are antimanic agents with complementary mechanisms. Monitor lithium levels through the taper — lithium has a narrow therapeutic window (target 0.6–0.8 mmol/L for maintenance). Check renal function before and 3 months after lithium is stopped. If mood stability is fragile, slow the lithium taper or consider a longer overlap period.",
+      "citations": ["maudsley15_bipolar_ch5_switching", "bap2016_bipolar_lithium"]
+    },
+    {
+      "fromClass": "valproate",
+      "toClass": "lithium",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — titrate lithium to level before tapering valproate",
+      "detail": "Start lithium and titrate to a therapeutic serum level (0.6–0.8 mmol/L) before beginning the valproate taper — do not taper valproate until lithium is stable. Valproate withdrawal can precipitate mania; cover is essential throughout. Reduce valproate over 4–6 weeks once lithium is established. Ensure renal function and thyroid function are checked before starting lithium.",
+      "citations": ["maudsley15_bipolar_ch5_switching", "bap2016_bipolar_lithium"]
+    },
+    {
+      "fromClass": "lithium",
+      "toClass": "lamotrigine",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — titrate lamotrigine slowly before tapering lithium",
+      "detail": "Lamotrigine requires slow titration (standard schedule: 25 mg/day for 2 weeks, then 50 mg/day for 2 weeks, then increase by 50 mg every 2 weeks) to minimise Stevens-Johnson syndrome risk. Do not begin tapering lithium until lamotrigine reaches 100–150 mg/day and the patient is clinically stable. Total transition time is typically 10–12 weeks. Lithium and lamotrigine can be safely co-prescribed during the overlap. Lamotrigine has better evidence for bipolar depression than mania — ensure the indication aligns.",
+      "citations": ["maudsley15_bipolar_ch5_lamotrigine", "bap2016_bipolar_lamotrigine"]
+    },
+    {
+      "fromClass": "lamotrigine",
+      "toClass": "lithium",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — establish lithium level before tapering lamotrigine",
+      "detail": "Start lithium and titrate to a therapeutic serum level (0.6–0.8 mmol/L) before beginning lamotrigine taper. Lamotrigine levels are not affected by lithium (no pharmacokinetic interaction). Taper lamotrigine over 4–6 weeks once lithium is stable. Lamotrigine can generally be tapered more rapidly than it was introduced, but abrupt discontinuation should be avoided due to risk of rebound seizures and mood instability.",
+      "citations": ["maudsley15_bipolar_ch5_switching", "bap2016_bipolar_lamotrigine"]
+    },
+    {
+      "fromClass": "lithium",
+      "toClass": "carbamazepine",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — allow 4 weeks for carbamazepine autoinduction before tapering lithium",
+      "detail": "Carbamazepine undergoes hepatic autoinduction of its own metabolism over 3–4 weeks after initiation — initial doses that produce therapeutic levels become sub-therapeutic as induction occurs. Start carbamazepine at 100–200 mg/day, check levels at 2 weeks, increase to reach target (4–10 mg/L), and allow 4 weeks before beginning lithium taper. Monitor CBZ levels closely during titration. CBZ mildly increases renal lithium clearance — lithium levels may fall slightly as CBZ is added; check lithium level during the overlap.",
+      "citations": ["maudsley15_bipolar_ch5_carbamazepine", "bap2016_bipolar_carbamazepine"]
+    },
+    {
+      "fromClass": "carbamazepine",
+      "toClass": "lithium",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — monitor lithium level as carbamazepine tapers",
+      "detail": "Start lithium and titrate to therapeutic level (0.6–0.8 mmol/L) while carbamazepine is still at full dose. As CBZ tapers, the mild induction of renal lithium clearance reduces — lithium levels may rise. Recheck lithium level at each CBZ dose reduction step. Taper carbamazepine over 4–6 weeks. Carbamazepine withdrawal can rarely trigger seizures; if the patient has a seizure history, taper more slowly.",
+      "citations": ["maudsley15_bipolar_ch5_switching", "bap2016_bipolar_carbamazepine"]
+    },
+    {
+      "fromClass": "valproate",
+      "toClass": "carbamazepine",
+      "strategy": "special",
+      "headline": "Complex switch — pharmacokinetic interaction in both directions; specialist guidance recommended",
+      "detail": "This switch carries two simultaneous pharmacokinetic hazards: (1) Valproate inhibits carbamazepine-10,11-epoxide hydrolase — as carbamazepine is added, the toxic epoxide metabolite accumulates, causing CBZ toxicity (diplopia, ataxia, nausea) at seemingly normal CBZ plasma levels. Monitor for toxicity symptoms, not just CBZ levels. (2) Carbamazepine induces valproate metabolism — as CBZ titrates up, VPA levels fall; the VPA dose may need increasing, or the VPA taper may need slowing. Start carbamazepine at a low dose (100 mg/day) and titrate very slowly while monitoring for epoxide toxicity. Overlap should be minimised — transition to CBZ while tapering VPA, ideally with specialist oversight.",
+      "citations": ["maudsley15_bipolar_ch5_carbamazepine", "bap2016_bipolar_carbamazepine"]
+    },
+    {
+      "fromClass": "carbamazepine",
+      "toClass": "valproate",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — valproate dose requirements increase while CBZ is present, then fall after CBZ stops",
+      "detail": "Carbamazepine is a potent enzyme inducer that significantly increases valproate metabolism. While CBZ is present, higher-than-usual valproate doses will be needed to achieve therapeutic levels. As CBZ is tapered and enzyme induction resolves, valproate levels will rise — plan to reduce the valproate dose when CBZ is stopped or near-stopped, otherwise toxicity (tremor, nausea, encephalopathy) may occur. Start valproate at a cautious dose, titrate to levels, and closely re-check VPA levels 1–2 weeks after each CBZ reduction.",
+      "citations": ["maudsley15_bipolar_ch5_carbamazepine", "bap2016_bipolar_valproate"]
+    },
+    {
+      "fromClass": "lamotrigine",
+      "toClass": "valproate",
+      "strategy": "special",
+      "headline": "Caution — valproate doubles lamotrigine levels; taper LTG carefully as VPA is added",
+      "detail": "Valproate inhibits lamotrigine glucuronidation (UGT1A4), approximately doubling lamotrigine plasma levels. As valproate is introduced and titrated up, lamotrigine levels will rise — this risks LTG toxicity (dizziness, diplopia, ataxia) even if the LTG dose is unchanged. As VPA is added, halve the lamotrigine dose to compensate for the inhibitory effect. Once VPA is at a stable dose and LTG has been reduced, taper LTG to zero. Conversely, if LTG is being completely stopped, the VPA-induced LTG elevation is less relevant, but monitor for LTG toxicity during the early overlap.",
+      "citations": ["maudsley15_bipolar_ch5_lamotrigine", "bap2016_bipolar_lamotrigine"]
+    },
+    {
+      "fromClass": "lamotrigine",
+      "toClass": "carbamazepine",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — carbamazepine halves lamotrigine levels via enzyme induction",
+      "detail": "Carbamazepine is a potent inducer of UGT1A4 and CYP enzymes that approximately halves lamotrigine plasma levels. As CBZ is added, LTG levels will fall — if the LTG dose is not compensated, under-treatment may occur during the transition. Since the goal is to switch TO carbamazepine (and stop LTG), the falling LTG levels during the CBZ titration phase are less problematic, but ensure CBZ reaches therapeutic levels (4–10 mg/L) before lamotrigine is fully stopped to prevent a coverage gap. Allow 4 weeks for CBZ autoinduction to stabilise before stopping LTG.",
+      "citations": ["maudsley15_bipolar_ch5_carbamazepine", "bap2016_bipolar_lamotrigine"]
+    },
+
+    {
+      "fromClass": "ap_sga",
+      "toClass": "ap_sga",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously over 2–4 weeks",
+      "detail": "Most SGA-to-SGA switches can be managed with a 2–4 week cross-taper. Overlap both drugs during titration. Key considerations vary by pair: switching TO olanzapine or quetiapine carries high metabolic risk — monitor weight and glucose. Switching AWAY from olanzapine/quetiapine may cause rebound insomnia and anxiety (H1/α1 withdrawal) as the dose falls below 200 mg (quetiapine) or 7.5 mg (olanzapine). Prolactin will rise when switching TO risperidone or amisulpride; normalisation expected when switching AWAY. Amisulpride and sulpiride are renally cleared — no CYP interactions to consider. Check the individual drug profiles for QTc risk if cardiac concerns apply.",
+      "citations": ["maudsley15_schizophrenia_p231", "bap2020_psychosis_switching"]
+    },
+    {
+      "fromClass": "ap_sga",
+      "toClass": "ap_fga",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — EPS risk increases when introducing an FGA",
+      "detail": "Switching from an SGA to an FGA increases the risk of extrapyramidal side effects (EPS: akathisia, parkinsonism, dystonia). Cross-taper over 2–4 weeks. If the patient has had EPS previously, consider starting or continuing anticholinergic cover (e.g. benzhexol). QTc monitoring is important if switching TO haloperidol or chlorpromazine — both carry high QTc risk. Metabolic burden typically improves when leaving high-metabolic SGAs (olanzapine, quetiapine). Trifluoperazine and haloperidol are high-EPS agents — titrate cautiously.",
+      "citations": ["maudsley15_schizophrenia_p231", "bap2020_psychosis_switching"]
+    },
+    {
+      "fromClass": "ap_sga",
+      "toClass": "ap_partial_agonist",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — significant akathisia risk when introducing aripiprazole",
+      "detail": "Aripiprazole's D2 partial agonism causes akathisia when introduced while D2 receptors are still occupied by a full antagonist SGA. The higher the prior SGA dose, the more pronounced the akathisia risk. Plateau cross-taper is preferred: start aripiprazole while keeping the SGA at full dose, then taper the SGA only after aripiprazole is tolerated at a therapeutic dose (15–30 mg). Warn the patient explicitly about akathisia before switching. Have a low threshold to add propranolol 10–30 mg twice daily if akathisia occurs. Metabolic improvement is expected when moving away from olanzapine or quetiapine.",
+      "citations": ["maudsley15_schizophrenia_p231", "bap2020_psychosis_switching"]
+    },
+    {
+      "fromClass": "ap_fga",
+      "toClass": "ap_sga",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — EPS improves, metabolic and sedation profile changes",
+      "detail": "Switching from an FGA to an SGA typically improves EPS but alters the metabolic and sedation profile. Cross-taper over 2–4 weeks. If switching TO olanzapine or quetiapine, counsel about weight gain, sedation, and glucose dysregulation — obtain baseline metabolics. Patients on long-term FGAs may have tardive dyskinesia that becomes unmasked as dopamine blockade is reduced — monitor during taper. If the patient is on an anticholinergic agent for FGA-related EPS, review whether it can be tapered once the FGA is stopped. Prolactin will normalise if switching to aripiprazole.",
+      "citations": ["maudsley15_schizophrenia_p231", "bap2020_psychosis_switching"]
+    },
+    {
+      "fromClass": "ap_fga",
+      "toClass": "ap_fga",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — monitor EPS and QTc throughout",
+      "detail": "FGA-to-FGA switches carry additive EPS risk during the overlap period. Cross-taper over 2–4 weeks. Monitor closely for worsening EPS and maintain anticholinergic cover if needed. QTc additive risk is a specific concern if both drugs carry high QTc burden (e.g. haloperidol and chlorpromazine) — obtain ECG before and during the switch. Sulpiride and amisulpride are renally cleared benzamides — lower EPS burden than phenothiazines or butyrophenones. High-potency FGAs (haloperidol, trifluoperazine) carry higher EPS risk than low-potency agents (chlorpromazine, sulpiride).",
+      "citations": ["maudsley15_schizophrenia_p231", "bap2020_psychosis_switching"]
+    },
+    {
+      "fromClass": "ap_fga",
+      "toClass": "ap_partial_agonist",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — akathisia risk when introducing aripiprazole from a full-antagonist FGA",
+      "detail": "The transition from a full D2 antagonist FGA to aripiprazole (partial agonist) carries substantial akathisia risk. The higher the pre-existing D2 occupancy, the more pronounced the effect. Use a plateau cross-taper: start aripiprazole at 10–15 mg while maintaining the FGA at its current dose, wait 1–2 weeks, then taper the FGA. Warn the patient about akathisia early and check at every visit. Propranolol 10–30 mg twice daily can manage akathisia if it occurs. Metabolic profile will improve.",
+      "citations": ["maudsley15_schizophrenia_p231", "bap2020_psychosis_switching"]
+    },
+    {
+      "fromClass": "ap_partial_agonist",
+      "toClass": "ap_sga",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously",
+      "detail": "Switching from aripiprazole (partial agonist) to an SGA is generally straightforward. Cross-taper over 2–4 weeks. The SGA's full D2 antagonism will establish progressively as aripiprazole is tapered — there is no akathisia risk with this direction. Key considerations: if switching TO olanzapine or quetiapine, counsel about metabolic changes and obtain baseline weight and glucose. If switching TO risperidone or amisulpride, prolactin will rise — counsel patients with prior prolactin sensitivity.",
+      "citations": ["maudsley15_schizophrenia_p231", "bap2020_psychosis_switching"]
+    },
+    {
+      "fromClass": "ap_partial_agonist",
+      "toClass": "ap_fga",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — EPS risk increases when introducing FGA",
+      "detail": "Switching from aripiprazole to an FGA will increase EPS risk and prolactin. Cross-taper over 2–4 weeks. Consider starting or continuing anticholinergic cover when introducing the FGA, especially high-potency agents (haloperidol, trifluoperazine). There is no akathisia risk in this direction — the opposite of switching TO aripiprazole. QTc monitoring required for haloperidol and chlorpromazine.",
+      "citations": ["maudsley15_schizophrenia_p231", "bap2020_psychosis_switching"]
+    },
+
+    {
+      "fromClass": "ap_sga",
+      "toClass": "ap_lai_sga",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — follow the LAI's initiation protocol",
+      "detail": "When switching from an oral SGA to an SGA LAI, follow the specific LAI's initiation protocol. Paliperidone palmitate (Invega Sustenna) uses a two-dose deltoid loading protocol (150 mg day 1, 100 mg day 8) — no oral overlap required. Risperidone Consta requires 21 days of oral risperidone cover after the first injection. During the loading phase, the oral SGA can be continued for antipsychotic cover then tapered once the LAI reaches therapeutic levels. Counsel the patient on injection schedule, site rotation, and cold-chain handling.",
+      "citations": ["maudsley15_schizophrenia_p231_paliperidone_lai", "bap2020_psychosis_lai"]
+    },
+    {
+      "fromClass": "ap_sga",
+      "toClass": "ap_lai_partial",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — mandatory 14-day oral aripiprazole overlap for Abilify Maintena",
+      "detail": "Aripiprazole LAI (Abilify Maintena) requires a mandatory 14-day oral aripiprazole overlap after the first 400 mg injection, as the microsphere depot takes this time to establish therapeutic levels. Akathisia risk is significant when introducing aripiprazole into a patient on a full-antagonist SGA — use a plateau cross-taper: administer Maintena and start the oral aripiprazole overlap while keeping the current SGA at full dose. Taper the SGA only after the 14-day oral overlap is complete and the depot is therapeutic.",
+      "citations": ["maudsley15_schizophrenia_p231_aripiprazole_lai", "bap2020_psychosis_lai"]
+    },
+    {
+      "fromClass": "ap_sga",
+      "toClass": "ap_lai_fga",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — continue oral SGA during FGA LAI loading phase",
+      "detail": "FGA LAIs (zuclopenthixol decanoate, flupenthixol decanoate, fluphenazine decanoate) have a slow absorption phase after each injection — therapeutic levels take 2–4 weeks to establish. Continue the oral SGA during the LAI loading phase. EPS risk increases when introducing an FGA LAI — maintain or start anticholinergic cover. Once the LAI has reached steady state (typically by the second injection), taper and stop the oral SGA. Monitor for tardive dyskinesia with long-term FGA LAI use.",
+      "citations": ["maudsley15_schizophrenia_p231", "bap2020_psychosis_lai"]
+    },
+    {
+      "fromClass": "ap_fga",
+      "toClass": "ap_lai_sga",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — follow the SGA LAI's initiation protocol",
+      "detail": "When switching from an oral FGA to an SGA LAI, follow the specific depot's initiation protocol. Paliperidone palmitate uses a two-dose deltoid loading protocol (150 mg day 1, 100 mg day 8) and does not require oral paliperidone overlap. Continue the oral FGA during the loading period for antipsychotic cover, then taper. EPS should improve as the FGA is stopped. Review and taper anticholinergic cover once the FGA is fully stopped. Prolactin may remain elevated with paliperidone palmitate — counsel accordingly.",
+      "citations": ["maudsley15_schizophrenia_p231_paliperidone_lai", "bap2020_psychosis_lai"]
+    },
+    {
+      "fromClass": "ap_fga",
+      "toClass": "ap_lai_partial",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — mandatory 14-day oral aripiprazole overlap; akathisia risk",
+      "detail": "Aripiprazole LAI requires a mandatory 14-day oral aripiprazole overlap. When the from-drug is an FGA, the high pre-existing D2 occupancy makes akathisia particularly likely. Use a plateau cross-taper: start Maintena 400 mg and the 14-day oral aripiprazole while keeping the FGA at full dose. Taper the FGA only after the oral overlap is complete. Propranolol 10–30 mg twice daily for akathisia management if needed.",
+      "citations": ["maudsley15_schizophrenia_p231_aripiprazole_lai", "bap2020_psychosis_lai"]
+    },
+    {
+      "fromClass": "ap_fga",
+      "toClass": "ap_lai_fga",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — continue oral FGA during LAI loading (typically 4 weeks)",
+      "detail": "FGA LAI initiation requires 4 weeks of oral FGA overlap while the depot establishes therapeutic levels. The standard loading dose for haloperidol decanoate is 10–15× the daily oral dose (capped at 100 mg first injection). For zuclopenthixol, flupenthixol and fluphenazine decanoate, the first injection establishes slowly — continue oral cover at a reduced dose (typically 50%) for 4 weeks. QTc monitoring is essential if the FGA or its LAI carries high QTc risk (particularly haloperidol decanoate). Monitor for cumulative EPS.",
+      "citations": ["maudsley15_schizophrenia_p231_haloperidol_lai", "bap2020_psychosis_lai"]
+    },
+    {
+      "fromClass": "ap_partial_agonist",
+      "toClass": "ap_lai_sga",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — follow the SGA LAI's initiation protocol",
+      "detail": "Switching from aripiprazole to an SGA LAI is relatively straightforward. For paliperidone palmitate, use the two-dose deltoid loading protocol (150 mg day 1, 100 mg day 8) while continuing oral aripiprazole. Taper aripiprazole once the LAI loading is complete (after day 8). No akathisia risk in this direction — the SGA is a full antagonist. Prolactin will rise with paliperidone palmitate — counsel the patient.",
+      "citations": ["maudsley15_schizophrenia_p231_paliperidone_lai", "bap2020_psychosis_lai"]
+    },
+    {
+      "fromClass": "ap_partial_agonist",
+      "toClass": "ap_lai_fga",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — continue oral aripiprazole during FGA LAI loading (4 weeks)",
+      "detail": "Continue oral aripiprazole during the 4-week FGA LAI loading phase. EPS risk increases when introducing an FGA LAI — start or maintain anticholinergic cover. No akathisia risk in this direction. Monitor QTc if the FGA LAI carries high QTc burden. Taper and stop oral aripiprazole once the LAI has reached steady state (second injection onwards).",
+      "citations": ["maudsley15_schizophrenia_p231", "bap2020_psychosis_lai"]
+    },
+
+    {
+      "fromClass": "ap_lai_sga",
+      "toClass": "ap_sga",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Overlap oral SGA during LAI tail — allow for depot washout",
+      "detail": "When discontinuing an SGA LAI and starting an oral SGA, begin the oral SGA at the time the next injection would have been due (or one injection cycle before if bridging is needed). The depot has a long elimination tail — for paliperidone palmitate the effective half-life is ~25–50 days, meaning therapeutic levels persist for weeks after the last injection. The oral SGA overlaps the LAI tail, then continues as monotherapy. No specific loading required. Counsel the patient on the transition from injectable to oral dosing.",
+      "citations": ["maudsley15_schizophrenia_p231", "bap2020_psychosis_lai"]
+    },
+    {
+      "fromClass": "ap_lai_sga",
+      "toClass": "ap_fga",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Start oral FGA at next injection interval — EPS risk increases",
+      "detail": "Begin the oral FGA at the time the LAI injection would next be due. The SGA LAI's long elimination tail provides cover during the transition. EPS risk increases when introducing an FGA — start anticholinergic cover. QTc monitoring for high-risk FGAs. The long depot tail means both drugs are present for several weeks — monitor for additive side effects.",
+      "citations": ["maudsley15_schizophrenia_p231", "bap2020_psychosis_lai"]
+    },
+    {
+      "fromClass": "ap_lai_sga",
+      "toClass": "ap_partial_agonist",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Start aripiprazole at next injection interval — akathisia risk from LAI tail overlap",
+      "detail": "Start oral aripiprazole 10–15 mg at the time the next LAI injection would be due. The SGA LAI's long tail means full D2 occupancy persists — this is the window of highest akathisia risk. Consider starting aripiprazole at a lower dose (5–10 mg) and titrating cautiously. Monitor for akathisia at 1–2 weeks. The LAI tail provides antipsychotic cover, so there is no gap risk — the priority is managing the partial-agonist transition period.",
+      "citations": ["maudsley15_schizophrenia_p231", "bap2020_psychosis_switching"]
+    },
+    {
+      "fromClass": "ap_lai_fga",
+      "toClass": "ap_sga",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Start oral SGA at next injection interval — FGA LAI tail provides cover",
+      "detail": "Begin the oral SGA at the time the next FGA LAI injection would have been due (i.e. skip the injection and start the oral drug instead). The FGA depot has a long tail (haloperidol decanoate: effective half-life ~21 days; fluphenazine/flupenthixol/zuclopenthixol: similar). The oral SGA can be titrated up while the FGA LAI level declines. EPS should improve as the FGA level falls. Tardive dyskinesia unmasking is possible with long-term FGA LAI patients — monitor carefully. Metabolic baseline before starting any new SGA.",
+      "citations": ["maudsley15_schizophrenia_p231", "bap2020_psychosis_lai"]
+    },
+    {
+      "fromClass": "ap_lai_fga",
+      "toClass": "ap_fga",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Start new oral FGA at next injection interval — avoid double FGA loading",
+      "detail": "When transitioning from an FGA LAI to a different oral FGA, start the new oral FGA at the time the last injection's effects are declining (typically around the next injection interval). Avoid double-loading — the LAI tail will provide some cover. Monitor for cumulative EPS from both FGA agents. QTc additive risk if both carry high QTc burden (e.g. haloperidol and chlorpromazine) — ECG monitoring.",
+      "citations": ["maudsley15_schizophrenia_p231", "bap2020_psychosis_switching"]
+    },
+    {
+      "fromClass": "ap_lai_fga",
+      "toClass": "ap_partial_agonist",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Start aripiprazole at next injection interval — akathisia risk from FGA LAI tail",
+      "detail": "Start oral aripiprazole 10–15 mg at the time the next FGA LAI injection would be due (skipping the injection). The FGA depot tail means D2 occupancy persists for weeks — the window of highest akathisia risk. Start aripiprazole at a low dose (10 mg) and titrate cautiously. If akathisia occurs, propranolol 10–30 mg twice daily. The FGA LAI tail provides antipsychotic cover during transition.",
+      "citations": ["maudsley15_schizophrenia_p231", "bap2020_psychosis_switching"]
+    },
+    {
+      "fromClass": "ap_lai_fga",
+      "toClass": "ap_lai_sga",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Start SGA LAI at next injection interval — FGA tail covers gap",
+      "detail": "When switching between FGA LAI and SGA LAI (e.g. fluphenazine decanoate to paliperidone palmitate), administer the first SGA LAI injection at the time the next FGA injection would have been due. For paliperidone palmitate, use the full two-dose deltoid loading protocol (150 mg day 1, 100 mg day 8) — the FGA tail provides cover during loading. EPS should improve progressively as the FGA level declines. Prolactin remains elevated with paliperidone. No oral overlap required for PP-LAI loading.",
+      "citations": ["maudsley15_schizophrenia_p231_paliperidone_lai", "bap2020_psychosis_lai"]
+    },
+    {
+      "fromClass": "ap_lai_fga",
+      "toClass": "ap_lai_partial",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Start aripiprazole LAI at next injection interval — mandatory 14-day oral aripiprazole overlap; akathisia risk",
+      "detail": "Administer Abilify Maintena 400 mg at the time the next FGA LAI injection would have been due. The 14-day oral aripiprazole overlap is mandatory. The FGA LAI tail provides antipsychotic cover during the initiation period. Akathisia risk is significant — the residual FGA occupancy overlaps with aripiprazole's partial agonism. Start the oral aripiprazole at 10 mg and monitor closely. Propranolol 10–30 mg twice daily if akathisia occurs. Taper and stop oral aripiprazole at day 14.",
+      "citations": ["maudsley15_schizophrenia_p231_aripiprazole_lai", "bap2020_psychosis_lai"]
+    },
+    {
+      "fromClass": "ap_lai_fga",
+      "toClass": "ap_lai_fga",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Switch FGA LAI at the next injection interval",
+      "detail": "When switching between two FGA LAIs, administer the first dose of the new depot at the time the next injection of the old depot would have been due. No oral cover is required as the old LAI's tail provides a smooth bridge. Dose equivalence between FGA depots varies — consult the Maudsley dose-equivalence tables. Monitor EPS throughout; cumulative EPS risk from two FGA agents overlapping is real. QTc monitoring required if switching between high-QTc agents.",
+      "citations": ["maudsley15_schizophrenia_p231", "bap2020_psychosis_lai"]
+    },
+    {
+      "fromClass": "ap_lai_partial",
+      "toClass": "ap_sga",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Start oral SGA when aripiprazole LAI level begins to decline",
+      "detail": "Aripiprazole LAI has a long effective half-life (~46 days from Maintena). When stopping and switching to an oral SGA, start the oral drug at the time the next injection would have been due. No akathisia risk in this direction. Titrate the oral SGA to therapeutic dose while the LAI level declines. Metabolic monitoring if switching to a high-metabolic SGA (olanzapine, quetiapine). Prolactin will rise if switching to risperidone or amisulpride.",
+      "citations": ["maudsley15_schizophrenia_p231", "bap2020_psychosis_lai"]
+    },
+    {
+      "fromClass": "ap_lai_partial",
+      "toClass": "ap_fga",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Start oral FGA when aripiprazole LAI level begins to decline — EPS risk increases",
+      "detail": "Start the oral FGA at the time the next aripiprazole LAI injection would have been due. The aripiprazole LAI long tail provides antipsychotic cover during the transition. EPS increases with the introduction of an FGA — start anticholinergic cover. QTc monitoring for high-risk FGAs. No akathisia risk in this direction.",
+      "citations": ["maudsley15_schizophrenia_p231", "bap2020_psychosis_switching"]
+    },
+
+    {
+      "fromClass": "ap_lai_partial",
+      "toClass": "ap_partial_agonist",
+      "strategy": "direct_switch",
+      "headline": "Start oral aripiprazole at the time of the next injection — same active molecule",
+      "detail": "Aripiprazole LAI (Abilify Maintena) and oral aripiprazole share the same active molecule. When discontinuing the depot and switching to oral, start oral aripiprazole 10–15 mg on the day the next injection would have been due. The LAI depot has a long elimination half-life (~46 days) so a significant reservoir remains — the oral dose supplements rather than replaces the depot level initially. No washout, loading, or antipsychotic gap to manage. Titrate oral aripiprazole to the therapeutic dose used previously.",
+      "citations": ["maudsley15_schizophrenia_p231_aripiprazole_lai", "bap2020_psychosis_lai"]
+    },
+    {
+      "fromClass": "ap_lai_partial",
+      "toClass": "ap_lai_fga",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Switch at next injection interval — aripiprazole LAI tail provides cover; EPS risk increases",
+      "detail": "When switching from aripiprazole LAI to an FGA LAI, administer the first FGA LAI dose at the time the next aripiprazole injection would have been due (skipping the aripiprazole injection). The aripiprazole LAI long tail (~46-day effective half-life) provides antipsychotic cover for several weeks. EPS risk increases significantly when introducing an FGA LAI — start anticholinergic cover early. For FGA LAIs requiring oral cover (zuclopenthixol, flupenthixol, fluphenazine decanoate), add oral cover at a reduced dose for 4 weeks alongside the first depot injection. QTc monitoring required for the new FGA LAI. No akathisia risk in this direction — moving away from partial agonism to full D2 antagonism.",
+      "citations": ["maudsley15_schizophrenia_p231", "bap2020_psychosis_lai"]
+    },
+    {
+      "fromClass": "ap_lai_partial",
+      "toClass": "ap_lai_sga",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Switch at next injection interval — follow the SGA LAI initiation protocol",
+      "detail": "When switching from aripiprazole LAI to an SGA LAI (e.g. paliperidone palmitate), administer the first SGA LAI dose at the time the next aripiprazole LAI injection would have been due. The aripiprazole LAI long tail provides antipsychotic cover during the SGA LAI loading phase. For paliperidone palmitate, use the two-dose deltoid loading protocol (150 mg day 1, 100 mg day 8). No oral overlap required for PP-LAI loading. No akathisia risk switching in this direction. Prolactin will rise with paliperidone palmitate — counsel the patient.",
+      "citations": ["maudsley15_schizophrenia_p231_paliperidone_lai", "bap2020_psychosis_lai"]
+    },
+    {
+      "fromClass": "ap_lai_sga",
+      "toClass": "ap_lai_fga",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Switch at next injection interval — SGA LAI tail covers gap; EPS risk increases",
+      "detail": "When switching from an SGA LAI (e.g. paliperidone palmitate) to an FGA LAI, administer the first FGA LAI dose at the time the next SGA injection would have been due. The SGA LAI long tail (paliperidone palmitate effective half-life ~25–50 days) provides antipsychotic cover during the FGA LAI loading phase. EPS risk increases when introducing an FGA LAI — start anticholinergic cover early, especially for high-potency FGA LAIs (fluphenazine, zuclopenthixol, flupenthixol decanoate). Continue oral FGA cover at a reduced dose for 4 weeks alongside the first FGA depot injection as the LAI establishes. QTc monitoring required. Tardive dyskinesia risk increases with long-term FGA LAI use.",
+      "citations": ["maudsley15_schizophrenia_p231", "bap2020_psychosis_lai"]
+    },
+    {
+      "fromClass": "ap_lai_sga",
+      "toClass": "ap_lai_partial",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Switch at next injection interval — mandatory 14-day oral aripiprazole overlap; akathisia risk from SGA LAI tail",
+      "detail": "Administer aripiprazole LAI (Abilify Maintena 400 mg) at the time the next SGA LAI injection would have been due. The mandatory 14-day oral aripiprazole overlap must be started concurrently with the first Maintena injection. The SGA LAI tail provides antipsychotic cover. Akathisia is a significant risk: the residual SGA LAI D2 occupancy overlaps with aripiprazole's partial agonism during the initiation period. Warn the patient explicitly; have propranolol 10–30 mg twice daily ready. Taper and stop oral aripiprazole at day 14. Prolactin will normalise as the SGA LAI clears.",
+      "citations": ["maudsley15_schizophrenia_p231_aripiprazole_lai", "bap2020_psychosis_lai"]
+    },
+
+    {
+      "fromClass": "fluoxetine",
+      "toClass": "snri",
+      "strategy": "taper_then_wait",
+      "headline": "Stop fluoxetine, wait 5–7 days for CYP2D6 activity to recover, then start the SNRI at low dose",
+      "detail": "Fluoxetine is a potent CYP2D6 inhibitor. Most SNRIs are CYP2D6 substrates (venlafaxine's active metabolite ODV is generated by CYP2D6; duloxetine is also partially CYP2D6-mediated). Initiating an SNRI while fluoxetine/norfluoxetine CYP2D6 inhibition is present risks elevated SNRI exposure and additive serotonergic effects. After stopping fluoxetine, wait approximately 5–7 days for the main phase of CYP2D6 inhibition to resolve before starting the SNRI at its lowest available dose. Titrate the SNRI cautiously over the first 2–3 weeks; CYP2D6 activity continues to recover for several weeks until norfluoxetine is fully eliminated (~5–6 weeks).",
+      "waitDays": 6,
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_fluoxetine_cyp_interactions"]
+    },
+    {
+      "fromClass": "fluoxetine",
+      "toClass": "mirtazapine",
+      "strategy": "taper_then_wait",
+      "headline": "Stop fluoxetine, wait 5–7 days, then start mirtazapine at low dose",
+      "detail": "Mirtazapine is a CYP2D6 and CYP1A2 substrate. Fluoxetine's potent CYP2D6 inhibition raises mirtazapine plasma levels when both are present. Stopping fluoxetine and immediately starting mirtazapine risks supra-therapeutic mirtazapine exposure (excessive sedation, weight gain) until the CYP2D6 inhibition resolves. Allow 5–7 days after stopping fluoxetine before starting mirtazapine at 15 mg nocte. Titrate cautiously. The main serotonin syndrome risk is low between these two agents (mirtazapine is not primarily serotonergic), but the CYP interaction is the primary concern.",
+      "waitDays": 6,
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_fluoxetine_cyp_interactions"]
+    },
+    {
+      "fromClass": "mirtazapine",
+      "toClass": "fluoxetine",
+      "strategy": "direct_switch",
+      "headline": "Direct switch possible — taper mirtazapine and start fluoxetine",
+      "detail": "Stop mirtazapine and start fluoxetine 20 mg the next day. There is no significant pharmacokinetic interaction in this direction: fluoxetine inhibits CYP2D6 but mirtazapine is being stopped (not started). The main clinical issue is the loss of mirtazapine's sedating antihistaminergic effect — warn the patient about potential rebound insomnia during the transition. Fluoxetine takes 4–6 weeks to reach full effect; brief antidepressant discontinuation symptoms from mirtazapine are possible. A brief cross-taper overlapping both drugs by 1 week is also acceptable if the transition needs to be gentler.",
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    },
+
+    {
+      "fromClass": "fluvoxamine",
+      "toClass": "ssri_other",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — fluvoxamine's CYP inhibition resolves as dose falls",
+      "detail": "Fluvoxamine is a potent CYP1A2 and CYP2C19 inhibitor (and moderate CYP3A4 inhibitor). As the fluvoxamine dose is tapered down, these enzyme inhibitions resolve, which may affect plasma levels of any co-prescribed drugs that are CYP1A2/2C19 substrates. During the cross-taper, introduce the new SSRI at a standard starting dose while reducing fluvoxamine gradually over 1–2 weeks. Watch for serotonergic overlap symptoms (tremor, myoclonus, agitation). Review all co-medications for CYP1A2/2C19 substrate interactions before and after the switch.",
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_fluvoxamine_cyp"]
+    },
+    {
+      "fromClass": "ssri_other",
+      "toClass": "fluvoxamine",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — introducing fluvoxamine adds potent CYP1A2/2C19 inhibition",
+      "detail": "When starting fluvoxamine, its potent CYP1A2 and CYP2C19 inhibition begins to develop within days of dosing. Any co-prescribed drugs that are CYP1A2/2C19/3A4 substrates (e.g. clozapine, olanzapine, theophylline, warfarin, omeprazole) will have their plasma levels rise — review and adjust doses of affected drugs before starting fluvoxamine. Cross-taper over 1–2 weeks. Watch for serotonergic symptoms during overlap. Fluvoxamine also inhibits agomelatine metabolism (CYP1A2) — co-prescription with agomelatine is contraindicated and must be stopped before fluvoxamine is introduced.",
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_fluvoxamine_cyp"]
+    },
+    {
+      "fromClass": "fluvoxamine",
+      "toClass": "snri",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — fluvoxamine inhibits venlafaxine/duloxetine metabolism via CYP2C19",
+      "detail": "Fluvoxamine inhibits CYP2C19 (and to a lesser extent CYP2D6 and CYP3A4), relevant to SNRI metabolism. Venlafaxine is a CYP2C19 substrate — if venlafaxine is introduced while fluvoxamine inhibition is still present, venlafaxine levels may be higher than expected. Reduce fluvoxamine gradually over 1–2 weeks while introducing the SNRI at a low starting dose. Additive serotonergic and noradrenergic effects are possible during overlap. Venlafaxine discontinuation syndrome risk is also relevant as the SNRI is being introduced — titrate the SNRI upwards once fluvoxamine is fully stopped.",
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_fluvoxamine_cyp"]
+    },
+    {
+      "fromClass": "snri",
+      "toClass": "fluvoxamine",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — introducing fluvoxamine raises SNRI levels via CYP inhibition",
+      "detail": "Fluvoxamine inhibits CYP2C19 which metabolizes venlafaxine — starting fluvoxamine while the SNRI is still being tapered will inhibit SNRI clearance and raise SNRI plasma levels unexpectedly. Introduce fluvoxamine at a low dose (50 mg) once the SNRI is at its lowest step, then taper and stop the SNRI. Additive serotonergic effects during overlap. SNRI discontinuation syndrome (particularly venlafaxine) is a key risk — consider hyperbolic taper for venlafaxine. Review all co-medications for new CYP1A2/2C19 substrate interactions once fluvoxamine is established.",
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_fluvoxamine_cyp"]
+    },
+    {
+      "fromClass": "fluvoxamine",
+      "toClass": "mirtazapine",
+      "strategy": "taper_then_wait",
+      "headline": "Taper and stop fluvoxamine, wait 7 days for CYP1A2 recovery, then start mirtazapine at low dose",
+      "detail": "Fluvoxamine is a potent CYP1A2 inhibitor, and mirtazapine is a primary CYP1A2 substrate. Co-prescribing fluvoxamine with mirtazapine dramatically raises mirtazapine levels — this combination is clinically hazardous. When transitioning to mirtazapine, taper and stop fluvoxamine completely, then wait approximately 7 days for CYP1A2 activity to recover before starting mirtazapine. Start mirtazapine at 15 mg nocte (low dose, not the usual starting dose) and titrate cautiously once CYP1A2 inhibition is resolved. Starting mirtazapine before fluvoxamine has fully cleared risks severe sedation, hypotension, and toxicity from supra-therapeutic mirtazapine exposure.",
+      "waitDays": 7,
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_fluvoxamine_cyp"]
+    },
+    {
+      "fromClass": "mirtazapine",
+      "toClass": "fluvoxamine",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — as fluvoxamine titrates up, it inhibits CYP1A2 and raises mirtazapine levels",
+      "detail": "When starting fluvoxamine while tapering mirtazapine, be aware that fluvoxamine's rising CYP1A2 inhibition will progressively increase mirtazapine plasma levels — even as the mirtazapine dose is reduced, levels may not fall as expected. Ensure mirtazapine is tapered briskly once fluvoxamine has been introduced (do not let both be at full dose simultaneously). Mirtazapine should ideally be stopped before fluvoxamine is titrated above 100 mg. Monitor for excessive sedation during the overlap period. Loss of mirtazapine's antihistaminergic sedation may cause rebound insomnia.",
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_fluvoxamine_cyp"]
+    },
+    {
+      "fromClass": "fluvoxamine",
+      "toClass": "fluoxetine",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — both drugs are high-inhibitor SSRIs; prolonged serotonergic overlap expected",
+      "detail": "Both fluvoxamine and fluoxetine are potent CYP inhibitors with different enzyme targets (fluvoxamine: CYP1A2/2C19/3A4; fluoxetine: CYP2D6/2C9). Cross-tapering introduces additive serotonin syndrome risk and complex bidirectional CYP interactions. Fluvoxamine inhibits CYP2C9 which metabolizes fluoxetine — as fluvoxamine is tapered, fluoxetine clearance increases and levels may fall. Introduce fluoxetine at a low dose (10–20 mg) while reducing fluvoxamine over 1–2 weeks. Note that fluoxetine's long half-life (plus norfluoxetine) means effective levels persist for 5–6 weeks after the last dose — once established, fluoxetine provides a long 'bridge'. CYP inhibition patterns shift during the transition; review all co-medications.",
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_fluvoxamine_cyp", "maudsley15_ch3_fluoxetine_cyp_interactions"]
+    },
+    {
+      "fromClass": "fluoxetine",
+      "toClass": "fluvoxamine",
+      "strategy": "taper_then_wait",
+      "headline": "Stop fluoxetine, wait 5–7 days, then start fluvoxamine — allow full washout before titrating fluvoxamine",
+      "detail": "Fluoxetine (and norfluoxetine) inhibits CYP2D6, which is involved in fluvoxamine metabolism. Starting fluvoxamine while fluoxetine's CYP2D6 inhibition is still active risks elevated fluvoxamine levels and unpredictable CYP1A2/2C19 inhibition onset. After stopping fluoxetine, allow 5–7 days before starting fluvoxamine at its standard starting dose (50 mg). Note that norfluoxetine has a 7–9 day half-life — full CYP2D6 recovery takes several weeks, so fluvoxamine titration should proceed cautiously over the first month. Review all CYP1A2/2C19 substrate co-medications before introducing fluvoxamine.",
+      "waitDays": 6,
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_fluvoxamine_cyp", "maudsley15_ch3_fluoxetine_cyp_interactions"]
+    },
+    {
+      "fromClass": "fluvoxamine",
+      "toClass": "vortioxetine",
+      "strategy": "taper_then_wait",
+      "headline": "Taper and stop fluvoxamine, wait 7 days for CYP inhibition to resolve, then start vortioxetine at half dose",
+      "detail": "Fluvoxamine inhibits multiple CYP enzymes involved in vortioxetine metabolism (CYP2C9, CYP2C19, CYP3A4). Starting vortioxetine while fluvoxamine's CYP inhibition is still present will result in significantly elevated vortioxetine plasma levels. Taper and stop fluvoxamine, then wait 7 days before starting vortioxetine at 5 mg (half the standard 10 mg starting dose). Titrate cautiously over the following 2–3 weeks. The serotonergic overlap risk (from residual fluvoxamine) combined with elevated vortioxetine levels could precipitate serotonin syndrome if the transition is rushed.",
+      "waitDays": 7,
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_fluvoxamine_cyp", "maudsley15_ch3_vortioxetine_profile"]
+    },
+    {
+      "fromClass": "vortioxetine",
+      "toClass": "fluvoxamine",
+      "strategy": "cross_taper_cautiously",
+      "headline": "Cross-taper cautiously — as fluvoxamine titrates up it inhibits CYP enzymes metabolising vortioxetine",
+      "detail": "When fluvoxamine is introduced while vortioxetine is being tapered, rising fluvoxamine-mediated CYP2C9/2C19 inhibition will raise vortioxetine plasma levels — even as the vortioxetine dose is reduced, levels may remain unexpectedly high. Ensure vortioxetine is tapered briskly once fluvoxamine has been started. Vortioxetine's long half-life (~66 h) means serotonergic activity declines slowly. Monitor for additive serotonergic symptoms (tremor, agitation, myoclonus) during the overlap. Review all CYP1A2/2C19 substrate co-medications before fluvoxamine is fully titrated.",
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_fluvoxamine_cyp", "maudsley15_ch3_vortioxetine_profile"]
+    },
+    {
+      "fromClass": "fluvoxamine",
+      "toClass": "moclobemide",
+      "strategy": "taper_then_wait",
+      "headline": "Taper and stop fluvoxamine, wait 14 days, then start moclobemide",
+      "detail": "Fluvoxamine is a serotonergic agent — despite moclobemide's reversibility, a 14-day washout from any serotonergic drug is required before starting moclobemide to avoid serotonin syndrome. Additionally, fluvoxamine inhibits CYP1A2 which metabolizes moclobemide — waiting 14 days also allows the CYP1A2 inhibition from fluvoxamine to fully resolve before moclobemide is introduced. Taper fluvoxamine to zero before starting the washout period.",
+      "waitDays": 14,
+      "citations": ["maudsley15_ch3_p369_table_3_7", "maudsley15_ch3_fluvoxamine_cyp"]
+    },
+    {
+      "fromClass": "moclobemide",
+      "toClass": "fluvoxamine",
+      "strategy": "taper_then_wait",
+      "headline": "Stop moclobemide, wait 24 hours, then start fluvoxamine",
+      "detail": "Moclobemide is a reversible MAOI; its MAO-A inhibition resolves within 24 hours of stopping. After this short washout, fluvoxamine can be safely started at its standard dose (50 mg once daily). Note: once fluvoxamine is established, it inhibits CYP1A2 which metabolizes moclobemide — if moclobemide is ever reintroduced, the dose would need to be reduced. Counsel the patient accordingly.",
+      "waitDays": 1,
+      "citations": ["maudsley15_ch3_p369_table_3_7"]
+    }
+  ],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

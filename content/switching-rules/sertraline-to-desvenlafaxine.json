@@ -1,0 +1,41 @@
+{
+  "id": "sertraline-to-desvenlafaxine",
+  "fromDrugId": "sertraline",
+  "toDrugId": "desvenlafaxine",
+  "strategy": "cross-taper",
+  "rationale": "Sertraline (SSRI; moderate CYP2D6 inhibitor) to desvenlafaxine (SNRI; not primarily CYP2D6-metabolised). Sertraline's moderate CYP2D6 inhibition has minimal effect on desvenlafaxine levels (unlike venlafaxine, desvenlafaxine bypasses CYP2D6 metabolism to a large extent). Standard SSRI→SNRI cross-taper: start desvenlafaxine, overlap briefly, taper sertraline. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 100,
+      "toDoseMg": 50,
+      "notes": "Start desvenlafaxine 50 mg. Continue sertraline 100 mg. Sertraline's moderate CYP2D6 inhibition has minimal effect on desvenlafaxine (largely non-CYP2D6 metabolised). Standard dose — no adjustment required."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 50,
+      "toDoseMg": 50,
+      "notes": "Reduce sertraline to 50 mg. Continue desvenlafaxine 50 mg. Monitor for sertraline discontinuation symptoms."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 50,
+      "notes": "Stop sertraline. Continue desvenlafaxine 50 mg. Titrate to 100 mg at 4 weeks if response inadequate."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 100,
+    "toTargetDoseMg": 50,
+    "equivalencyNote": "Sertraline 100 mg → desvenlafaxine 50 mg (standard effective doses). Not pharmacologically equivalent. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_snri_profile",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

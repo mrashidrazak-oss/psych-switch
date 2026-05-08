@@ -1,0 +1,62 @@
+{
+  "id": "aripiprazole-lai",
+  "genericName": "Aripiprazole LAI",
+  "drugClass": "SGA (D2 partial agonist) — depot",
+  "category": "antipsychotic",
+  "formulation": "lai",
+  "laiDetails": {
+    "injectionIntervalDays": 28,
+    "initiationProtocol": "First injection 400 mg gluteal/deltoid plus 14 days oral aripiprazole 10-20 mg/day. Maintenance 400 mg monthly (300 mg if intolerable or strong CYP3A4/2D6 inhibitor co-prescribed).",
+    "needsOralOverlap": true,
+    "oralOverlapDurationDays": 14
+  },
+  "malaysianBrandNames": [
+    "Abilify Maintena"
+  ],
+  "halfLife": {
+    "meanHours": 760,
+    "rangeHours": [720, 1100],
+    "notes": "Effective half-life ~30-46 days. Steady state reached after 4-5 monthly injections. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": "Dehydro-aripiprazole",
+    "halfLifeHours": 94,
+    "clinicallySignificant": true,
+    "notes": "Same active metabolite as oral aripiprazole. Combined long half-life enables monthly dosing. PENDING_CLINICAL_REVIEW."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP2D6", "CYP3A4"],
+    "inhibitorOf": [],
+    "switchingRelevance": "Strong CYP2D6 (paroxetine, fluoxetine) or CYP3A4 (clarithromycin, ketoconazole) inhibitors raise levels — reduce LAI dose to 300 mg if combined for >14 days. PENDING_CLINICAL_REVIEW."
+  },
+  "epsRisk": "low",
+  "metabolicRisk": {
+    "score": "low",
+    "notes": "Among the most metabolically neutral LAIs. Frequently chosen when escaping olanzapine. PENDING_CLINICAL_REVIEW."
+  },
+  "prolactinRisk": "low",
+  "qtcRisk": "low",
+  "sedation": "low",
+  "lai": {
+    "available": true,
+    "notes": "This entry IS the LAI."
+  },
+  "reboundPsychosisRisk": {
+    "score": "low",
+    "notes": "Akathisia rather than relapse is the dominant switch concern. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 400,
+    "typicalTargetRangeMg": [300, 400],
+    "maxDoseMg": 400,
+    "increments": [300, 400],
+    "formulationsAvailableMy": ["Abilify Maintena 300 mg", "Abilify Maintena 400 mg"]
+  },
+  "formulationNotes": "Pre-filled dual-chamber syringe. Cannot be split. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_schizophrenia_p231_aripiprazole_lai",
+    "bap2020_psychosis_lai"
+  ],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

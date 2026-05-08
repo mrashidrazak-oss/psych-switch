@@ -1,0 +1,60 @@
+{
+  "id": "amisulpride",
+  "genericName": "Amisulpride",
+  "drugClass": "SGA (atypical antipsychotic, substituted benzamide)",
+  "category": "antipsychotic",
+  "malaysianBrandNames": ["Solian"],
+  "halfLife": {
+    "meanHours": 12,
+    "rangeHours": [10, 15],
+    "notes": "Once- or twice-daily dosing. Renally cleared — dose adjustment in renal impairment. No significant hepatic CYP metabolism. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": null,
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "No active metabolite. Primarily renally excreted unchanged."
+  },
+  "cypInteractions": {
+    "substrateOf": [],
+    "inhibitorOf": [],
+    "switchingRelevance": "Minimal CYP interactions — renally cleared. Fewer pharmacokinetic interactions than most antipsychotics. PENDING_CLINICAL_REVIEW."
+  },
+  "epsRisk": "moderate",
+  "metabolicRisk": {
+    "score": "low",
+    "notes": "Minimal weight gain — one of the more metabolically neutral SGAs. Better profile than olanzapine and risperidone for metabolic parameters. PENDING_CLINICAL_REVIEW."
+  },
+  "prolactinRisk": "high",
+  "qtcRisk": "moderate",
+  "sedation": "low",
+  "lai": {
+    "available": false,
+    "notes": "No long-acting injectable formulation widely available in Malaysia."
+  },
+  "reboundPsychosisRisk": {
+    "score": "moderate",
+    "notes": "Taper preferred over abrupt cessation. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 50,
+    "typicalTargetRangeMg": [400, 800],
+    "maxDoseMg": 1200,
+    "increments": [50, 100, 200, 400, 800],
+    "formulationsAvailableMy": ["Solian 50 mg tablet", "Solian 100 mg tablet", "Solian 200 mg tablet", "Solian 400 mg tablet"]
+  },
+  "formulationNotes": "Biphasic D2/D3 pharmacology: low doses (50–300 mg/day) predominantly block presynaptic autoreceptors — may improve negative symptoms and depression. Higher doses (400–800 mg) provide full postsynaptic D2 blockade for positive symptoms. PENDING_CLINICAL_REVIEW.",
+  "specialConsiderations": [
+    "Dose-dependent mechanism: low doses may worsen positive symptoms if used below therapeutic antipsychotic range — be explicit about the treatment goal when dosing.",
+    "QTc risk is moderate — ECG at baseline; more QTc prolongation than risperidone.",
+    "Very high prolactin elevation — similar to risperidone; monitor for hormonal side effects.",
+    "No CYP interactions — useful in complex polypharmacy.",
+    "Renal clearance — dose halving in moderate renal impairment (CrCl 10–30 mL/min)."
+  ],
+  "citations": [
+    "maudsley15_schizophrenia_amisulpride_profile",
+    "bap2020_psychosis_sga"
+  ],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

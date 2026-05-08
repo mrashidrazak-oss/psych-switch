@@ -1,0 +1,66 @@
+{
+  "id": "haloperidol-lai-to-haloperidol",
+  "fromDrugId": "haloperidol-lai",
+  "toDrugId": "haloperidol",
+  "strategy": "overlap-taper",
+  "rationale": "Switching from haloperidol decanoate (long-acting depot) to oral haloperidol. Haloperidol decanoate has a t½ of ~21 days (range 14–35 days) and continues releasing for 6–8 weeks after the last injection. Start oral haloperidol when the next depot injection would have been due; the decanoate provides a natural taper. The oral/depot dose equivalence is approximately 1:10–15 (mg daily oral : mg decanoate per 4 weeks). PENDING_CLINICAL_REVIEW.",
+  "durationDays": 70,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 50,
+      "toDoseMg": 2,
+      "notes": "Skip the next scheduled decanoate injection. Start oral haloperidol 2 mg/day. Decanoate continues releasing — monitor for combined effect, particularly EPS."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 30,
+      "toDoseMg": 5,
+      "notes": "Decanoate level declining. Increase oral haloperidol to 5 mg/day. Monitor EPS (akathisia, parkinsonism) and clinical state."
+    },
+    {
+      "day": 42,
+      "fromDoseMg": 10,
+      "toDoseMg": 5,
+      "notes": "Decanoate substantially cleared (~6 weeks). Oral haloperidol 5 mg/day approaching sole therapeutic agent."
+    },
+    {
+      "day": 70,
+      "fromDoseMg": 0,
+      "toDoseMg": 5,
+      "notes": "Decanoate cleared (~2 months). Oral haloperidol 5 mg/day monotherapy. Adjust 2–10 mg based on clinical response. Consider anticholinergic cover for EPS."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 50,
+    "toTargetDoseMg": 5,
+    "equivalencyNote": "Haloperidol decanoate 50 mg/month ≈ oral haloperidol 5 mg/day (Maudsley 15th; ratio ~1:10). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [
+    {
+      "key": "eps_risk_high",
+      "title": "EPS risk (FGA)",
+      "body": "Haloperidol is a high-potency FGA with significant EPS risk. Ensure anticholinergic prophylaxis is available. Monitor for akathisia, parkinsonism, and tardive dyskinesia.",
+      "severity": "warning"
+    },
+    {
+      "key": "qtc_monitoring_required",
+      "title": "ECG / QTc",
+      "body": "Haloperidol prolongs QTc. Obtain baseline ECG and monitor, especially at higher doses.",
+      "severity": "warning"
+    },
+    {
+      "key": "lai_long_tail",
+      "title": "Decanoate tail",
+      "body": "Haloperidol decanoate t½ ~21 days. Therapeutic levels persist 6–8 weeks after the last injection. Start oral dose conservatively.",
+      "severity": "warning"
+    }
+  ],
+  "citations": [
+    "maudsley15_schizophrenia_p232_haloperidol_lai",
+    "bap2020_psychosis_lai_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

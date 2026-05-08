@@ -1,0 +1,47 @@
+{
+  "id": "haloperidol-to-paliperidone-lai",
+  "fromDrugId": "haloperidol",
+  "toDrugId": "paliperidone-lai",
+  "strategy": "cross-taper",
+  "rationale": "A common FGA-to-SGA depot switch — switching from oral haloperidol (high EPS, high QTc, no metabolic burden) to paliperidone palmitate LAI (lower EPS, moderate metabolic burden, same high prolactin burden). Paliperidone palmitate's two-dose deltoid loading protocol (150 mg day 1, 100 mg day 8) achieves therapeutic concentrations immediately — no oral paliperidone run-in is required. Oral haloperidol is continued alongside the PP loading to prevent a coverage gap, then tapered once PP reaches steady state at approximately 3–4 weeks. EPS will improve on switching from haloperidol to paliperidone, but not eliminate entirely — maintain anticholinergic agents until the transition is stable. QTc: haloperidol has high QTc risk; paliperidone LAI has low QTc risk — the switch itself reduces cardiac risk, but monitor QTc during the taper overlap as both are present briefly. Prolactin remains elevated — both haloperidol and paliperidone are high-prolactin agents. Metabolic monitoring from baseline as paliperidone carries moderate metabolic burden where haloperidol is near-zero. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 36,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 5,
+      "toDoseMg": 150,
+      "notes": "Give Invega Sustenna 150 mg deltoid IM (loading dose 1). Continue oral haloperidol 5 mg. Counsel patient: 2 loading injections required at day 1 and day 8; maintenance monthly thereafter. Continue anticholinergic cover if prescribed. Baseline QTc."
+    },
+    {
+      "day": 8,
+      "fromDoseMg": 5,
+      "toDoseMg": 100,
+      "notes": "Invega Sustenna 100 mg deltoid IM (loading dose 2, day 8 ± 2 days). Continue oral haloperidol 5 mg. PP-LAI building toward therapeutic range. Brief period of haloperidol + paliperidone overlap — QTc monitoring if cardiac risk factors present."
+    },
+    {
+      "day": 22,
+      "fromDoseMg": 2,
+      "toDoseMg": 100,
+      "notes": "PP-LAI now therapeutic. Taper oral haloperidol to 2 mg. EPS may ease as haloperidol reduces — anticholinergic review. Metabolic baseline: weight, glucose."
+    },
+    {
+      "day": 36,
+      "fromDoseMg": 0,
+      "toDoseMg": 100,
+      "notes": "Stop oral haloperidol. First maintenance Sustenna injection (100 mg; deltoid or gluteal). Monthly thereafter. QTc recheck: should improve with haloperidol cessation. Prolactin check at 3 months."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 5,
+    "toTargetDoseMg": 100,
+    "equivalencyNote": "Approximate clinical equivalency: haloperidol 5 mg/day ≈ paliperidone palmitate 100 mg/4 weeks (Maudsley 15th, AP dose-equivalence table + LAI conversion). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_schizophrenia_p231_paliperidone_lai",
+    "bap2020_psychosis_lai"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

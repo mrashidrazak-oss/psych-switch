@@ -1,0 +1,63 @@
+{
+  "id": "flupenthixol-lai",
+  "genericName": "Flupenthixol Decanoate LAI",
+  "drugClass": "FGA (thioxanthene) — depot",
+  "category": "antipsychotic",
+  "formulation": "lai",
+  "laiDetails": {
+    "injectionIntervalDays": 21,
+    "initiationProtocol": "Test dose 20 mg deep gluteal IM; observe for 5-10 days. Maintenance 20-40 mg every 2-4 weeks (range 20-200 mg every 2-3 weeks). Has activating effect at low dose — sometimes preferred for predominantly negative-symptom presentations.",
+    "needsOralOverlap": true,
+    "oralOverlapDurationDays": 14
+  },
+  "malaysianBrandNames": [
+    "Fluanxol Depot",
+    "Depixol"
+  ],
+  "halfLife": {
+    "meanHours": 408,
+    "rangeHours": [336, 504],
+    "notes": "Effective half-life ~17 days. Steady state in ~8 weeks of regular dosing. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": null,
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "No clinically significant active metabolite."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP2D6"],
+    "inhibitorOf": [],
+    "switchingRelevance": "CYP2D6 inhibitors raise levels and worsen EPS. PENDING_CLINICAL_REVIEW."
+  },
+  "epsRisk": "high",
+  "metabolicRisk": {
+    "score": "low",
+    "notes": "Minimal metabolic burden. PENDING_CLINICAL_REVIEW."
+  },
+  "prolactinRisk": "high",
+  "qtcRisk": "low",
+  "sedation": "low",
+  "lai": {
+    "available": true,
+    "notes": "This entry IS the LAI. Activating profile — not first choice when sedation is desired."
+  },
+  "reboundPsychosisRisk": {
+    "score": "moderate",
+    "notes": "Long depot tail. Tardive dyskinesia after long-term use is the main concern. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 20,
+    "typicalTargetRangeMg": [20, 80],
+    "maxDoseMg": 200,
+    "increments": [20, 40, 60, 80, 100, 200],
+    "formulationsAvailableMy": ["Fluanxol Depot 20 mg/mL", "Fluanxol Depot 100 mg/mL"]
+  },
+  "formulationNotes": "Oily solution (coconut oil/sesame oil derivative vehicle). Deep gluteal IM. Lower volumes preferred — split injections if >2 mL. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_schizophrenia_flupenthixol_lai",
+    "bap2020_psychosis_lai"
+  ],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

@@ -1,0 +1,53 @@
+{
+  "id": "haloperidol-to-olanzapine",
+  "fromDrugId": "haloperidol",
+  "toDrugId": "olanzapine",
+  "strategy": "cross-taper",
+  "rationale": "FGA-to-SGA switch, typically driven by EPS burden (parkinsonism, akathisia, tardive risk) or as part of a long-term treatment quality-of-life improvement. Introduce olanzapine first at half-target and stabilise before reducing haloperidol. Olanzapine's strong anticholinergic and antihistaminergic properties will provide cholinergic cover during the transition, reducing the risk of cholinergic rebound from haloperidol cessation. Warning: metabolic monitoring (weight, glucose, lipids) is mandatory — olanzapine has the highest metabolic burden among SGAs. If the patient is on an anticholinergic agent (e.g. benzhexol) for EPS, review the need to continue once haloperidol is stopped. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 5,
+      "toDoseMg": 5,
+      "notes": "Start olanzapine 5 mg nocte. Continue haloperidol 5 mg. Advise patient that EPS should improve over the coming weeks. Initial sedation from olanzapine expected."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 5,
+      "toDoseMg": 10,
+      "notes": "Increase olanzapine to 10 mg nocte (target dose). Hold haloperidol at 5 mg for one more week to allow olanzapine to stabilise."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 2,
+      "toDoseMg": 10,
+      "notes": "Reduce haloperidol to 2 mg. Olanzapine now providing primary antipsychotic cover. Review continuing anticholinergic agents — may no longer be needed."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 1,
+      "toDoseMg": 10,
+      "notes": "Reduce haloperidol to 1 mg. EPS should be substantially improved. Review QTc — haloperidol's QTc contribution is reducing."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 10,
+      "notes": "Stop haloperidol. Continue olanzapine 10 mg. Establish baseline metabolic markers if not done at initiation. Withdraw anticholinergic agent if still prescribed."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 5,
+    "toTargetDoseMg": 10,
+    "equivalencyNote": "Approximate clinical equivalency: haloperidol 5 mg ≈ olanzapine 10 mg (Maudsley 15th, AP dose-equivalence table). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["metabolic_monitoring_required"],
+  "citations": [
+    "maudsley15_schizophrenia_p230_ap_swap_table",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

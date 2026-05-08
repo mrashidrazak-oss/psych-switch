@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Errata — PsychSwitch</title>
+  <meta name="description" content="Open audit trail of every accepted PsychSwitch clinical-content correction." />
+  <link rel="canonical" href="https://psychswitch.health/errata" />
+  <style>
+    body { font-family: -apple-system, system-ui, sans-serif; max-width: 820px; margin: 0 auto; padding: 32px 24px; background: #0b0f14; color: #e6edf3; line-height: 1.55; }
+    a { color: #3b82f6; }
+    h1 { font-size: 32px; letter-spacing: -0.02em; margin: 0 0 8px; }
+    .meta { color: #8b949e; font-size: 13px; margin-top: 4px; }
+    .nav { color: #8b949e; font-size: 13px; margin-bottom: 24px; }
+    .summary { background: #141a22; border: 1px solid #1f2933; border-radius: 12px; padding: 16px; margin: 16px 0 24px; font-size: 14px; }
+    .feed { font-size: 14px; }
+    .row { background: #141a22; border: 1px solid #1f2933; border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
+    .row-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .row-title { font-weight: 600; line-height: 1.4; flex: 1; }
+    .row-date { color: #8b949e; font-size: 12px; font-family: Menlo, monospace; white-space: nowrap; }
+    .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; margin-right: 6px; }
+    .sev-critical    { background: rgba(239,68,68,0.12);  color: #ef4444; }
+    .sev-significant { background: rgba(245,158,11,0.12); color: #f59e0b; }
+    .sev-moderate    { background: rgba(59,130,246,0.12); color: #3b82f6; }
+    .sev-minor       { background: rgba(31,41,51,0.6);    color: #8b949e; }
+    .scope { color: #8b949e; font-size: 12px; margin-top: 6px; font-family: Menlo, monospace; }
+    code { background: #0b0f14; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+    .json-link { display: inline-block; background: #1f2933; color: #e6edf3; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-family: Menlo, monospace; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <a href="/">PsychSwitch</a> · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/errata">Errata</a>
+  </div>
+
+  <h1>Errata</h1>
+  <p class="meta">Append-only audit trail · last updated 2026-05-08</p>
+
+  <div class="summary">
+    Every accepted change to the PsychSwitch clinical content is logged
+    here with a date, scope, severity, before/after diff, rationale,
+    reviewer signature and supporting citations.
+    <strong>No quiet rewrites.</strong>
+    <br/><br/>
+    Machine-readable feed: <a class="json-link" href="/errata.json">/errata.json</a>
+    (schema <code>psychswitch.errata.v1</code>).
+  </div>
+
+  <div class="feed">
+    <div class="row">
+      <div class="row-head">
+        <div class="row-title">PP3M 525 mg eq → PP1M bridge corrected to 100 mg eq (was 150)</div>
+        <div class="row-date">2026-05-08</div>
+      </div>
+      <div>
+        <span class="pill sev-significant">Significant</span>
+        <span style="font-size: 12px; color: #8b949e;">Dose · Reviewed by Rashid Razak</span>
+      </div>
+      <div class="scope">scope: engine.depotLai · v0.1.0</div>
+    </div>
+
+    <div class="row">
+      <div class="row-head">
+        <div class="row-title">Paroxetine pregnancy tier now trimester-specific (1st = avoid, 2nd-3rd = caution)</div>
+        <div class="row-date">2026-05-08</div>
+      </div>
+      <div>
+        <span class="pill sev-significant">Significant</span>
+        <span style="font-size: 12px; color: #8b949e;">Safety flag · Reviewed by Rashid Razak</span>
+      </div>
+      <div class="scope">scope: paroxetine · v0.4.3</div>
+    </div>
+
+    <div class="row">
+      <div class="row-head">
+        <div class="row-title">Predicted AE engine now takes higher of drug-field vs reverse-lookup tiers</div>
+        <div class="row-date">2026-05-08</div>
+      </div>
+      <div>
+        <span class="pill sev-moderate">Moderate</span>
+        <span style="font-size: 12px; color: #8b949e;">Engine · Reviewed by Rashid Razak</span>
+      </div>
+      <div class="scope">scope: engine.predictedAeProfile · v0.3.4</div>
+    </div>
+
+    <div class="row">
+      <div class="row-head">
+        <div class="row-title">Adapted schedules now substitute reference dose mentions in notes</div>
+        <div class="row-date">2026-05-07</div>
+      </div>
+      <div>
+        <span class="pill sev-moderate">Moderate</span>
+        <span style="font-size: 12px; color: #8b949e;">Engine · Reviewed by Rashid Razak</span>
+      </div>
+      <div class="scope">scope: engine.scaleSchedule · v0.3.1</div>
+    </div>
+
+    <div class="row">
+      <div class="row-head">
+        <div class="row-title">Adapted schedules drop one evidence grade (A → B etc)</div>
+        <div class="row-date">2026-05-07</div>
+      </div>
+      <div>
+        <span class="pill sev-minor">Minor</span>
+        <span style="font-size: 12px; color: #8b949e;">Engine · Reviewed by Rashid Razak</span>
+      </div>
+      <div class="scope">scope: engine.scaleSchedule · v0.3.1</div>
+    </div>
+
+    <div class="row">
+      <div class="row-head">
+        <div class="row-title">Clozapine FBC cadence corrected to weekly ×18, fortnightly ×34, then monthly</div>
+        <div class="row-date">2026-05-06</div>
+      </div>
+      <div>
+        <span class="pill sev-moderate">Moderate</span>
+        <span style="font-size: 12px; color: #8b949e;">Monitoring · Reviewed by Rashid Razak</span>
+      </div>
+      <div class="scope">scope: engine.monitoring · v0.2.0</div>
+    </div>
+
+    <div class="row">
+      <div class="row-head">
+        <div class="row-title">First public release of the reviewed rule set</div>
+        <div class="row-date">2026-05-04</div>
+      </div>
+      <div>
+        <span class="pill sev-critical">Critical</span>
+        <span style="font-size: 12px; color: #8b949e;">New rule · Reviewed by Rashid Razak</span>
+      </div>
+      <div class="scope">scope: content · v0.1.0</div>
+    </div>
+  </div>
+
+  <p style="margin-top: 32px; color: #8b949e; font-size: 13px;">
+    To report a new issue, use the in-app "Report an issue with this rule" button on any Result screen, or email
+    <a href="mailto:errata@psychswitch.health">errata@psychswitch.health</a>.
+  </p>
+</body>
+</html>

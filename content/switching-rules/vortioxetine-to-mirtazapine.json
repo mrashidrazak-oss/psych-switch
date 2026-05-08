@@ -1,0 +1,35 @@
+{
+  "id": "vortioxetine-to-mirtazapine",
+  "fromDrugId": "vortioxetine",
+  "toDrugId": "mirtazapine",
+  "strategy": "cross-taper",
+  "rationale": "Vortioxetine (SMS; t½ ~66h; minimal sedation; cognitive benefits) to mirtazapine (NaSSA: α2-antagonist, 5-HT2/3 antagonist, H1 blocker; significant sedation and weight gain). Switch reasons: sleep problems, need for greater appetite stimulation, or after non-response. Vortioxetine self-tapers due to long half-life. Mirtazapine is 5-HT2 antagonist — combined with vortioxetine's serotonergic effects during brief overlap; low serotonin syndrome risk at standard doses but additive sedation possible. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 7,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 20,
+      "toDoseMg": 15,
+      "notes": "Stop vortioxetine. Start mirtazapine 15 mg nocte. Vortioxetine levels decline gradually (t½ 66h). Counsel patient about increased sedation and appetite from mirtazapine — take at night. Weight gain is expected and can be significant."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 0,
+      "toDoseMg": 15,
+      "notes": "Vortioxetine cleared. Continue mirtazapine 15 mg. Titrate to 30 mg at 2 weeks if response inadequate (30 mg is less sedating than 15 mg due to additional noradrenergic activation at higher doses)."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 20,
+    "toTargetDoseMg": 15,
+    "equivalencyNote": "Vortioxetine 20 mg → mirtazapine 15 mg (start dose; target 30–45 mg). Not pharmacologically equivalent. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_vortioxetine_profile",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

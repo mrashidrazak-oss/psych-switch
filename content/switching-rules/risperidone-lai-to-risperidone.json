@@ -1,0 +1,66 @@
+{
+  "id": "risperidone-lai-to-risperidone",
+  "fromDrugId": "risperidone-lai",
+  "toDrugId": "risperidone",
+  "strategy": "overlap-taper",
+  "rationale": "Switching from Risperdal Consta (risperidone microspheres LAI) to oral risperidone. Consta has a t½ of ~3–6 weeks after the last injection. Start oral risperidone when the next Consta injection would have been due; the depot provides a natural taper. Oral risperidone and its active metabolite paliperidone (9-OH-risperidone) continue the pharmacological effect. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 56,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 25,
+      "toDoseMg": 2,
+      "notes": "Skip the next scheduled Consta injection. Start oral risperidone 2 mg. Consta continues releasing — monitor for combined effect. Titrate oral if needed."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 25,
+      "toDoseMg": 3,
+      "notes": "Increase oral risperidone to 3 mg. Consta level still measurable. Monitor EPS and prolactin."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 15,
+      "toDoseMg": 4,
+      "notes": "Consta level declining. Oral risperidone 4 mg — approximately equivalent maintenance target."
+    },
+    {
+      "day": 42,
+      "fromDoseMg": 5,
+      "toDoseMg": 4,
+      "notes": "Consta substantially cleared (~6 weeks post-last-injection). Oral monotherapy."
+    },
+    {
+      "day": 56,
+      "fromDoseMg": 0,
+      "toDoseMg": 4,
+      "notes": "Consta cleared. Oral risperidone 4 mg as monotherapy. Adjust 2–8 mg based on clinical response."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 25,
+    "toTargetDoseMg": 4,
+    "equivalencyNote": "Risperdal Consta 25 mg every 2 weeks ≈ oral risperidone 4 mg/day (approximate; Maudsley 15th). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [
+    {
+      "key": "prolactin_monitoring",
+      "title": "Prolactinaemia",
+      "body": "Risperidone causes sustained prolactin elevation — monitor prolactin at baseline and 3 months. Consider switching to a prolactin-sparing agent if symptomatic.",
+      "severity": "info"
+    },
+    {
+      "key": "lai_long_tail",
+      "title": "Consta depot tail",
+      "body": "Risperdal Consta t½ ~3–6 weeks after the last injection. Combined oral + depot levels may be elevated for the first 4–6 weeks.",
+      "severity": "warning"
+    }
+  ],
+  "citations": [
+    "maudsley15_schizophrenia_p230_risperidone_lai",
+    "bap2020_psychosis_lai_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

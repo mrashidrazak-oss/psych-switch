@@ -1,0 +1,58 @@
+{
+  "id": "quetiapine",
+  "genericName": "Quetiapine",
+  "drugClass": "SGA (atypical antipsychotic)",
+  "category": "antipsychotic",
+  "malaysianBrandNames": [
+    "Seroquel",
+    "Seroquel XR",
+    "Quetapex",
+    "Q-Pin"
+  ],
+  "halfLife": {
+    "meanHours": 6,
+    "rangeHours": [4, 12],
+    "notes": "Short half-life. IR formulation typically twice daily; XR allows once-daily dosing. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": "N-desalkylquetiapine",
+    "halfLifeHours": 12,
+    "clinicallySignificant": true,
+    "notes": "N-desalkylquetiapine has noradrenaline reuptake inhibition and 5-HT1A partial agonism, contributing to antidepressant-like effects at low doses. PENDING_CLINICAL_REVIEW."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP3A4"],
+    "inhibitorOf": [],
+    "switchingRelevance": "Strong CYP3A4 inhibitors (clarithromycin, ketoconazole, ritonavir) markedly raise quetiapine levels. CYP3A4 inducers (carbamazepine, phenytoin, rifampicin) reduce levels and may precipitate relapse on co-prescription. PENDING_CLINICAL_REVIEW."
+  },
+  "epsRisk": "low",
+  "metabolicRisk": {
+    "score": "high",
+    "notes": "Significant weight gain and metabolic risk, somewhat less than olanzapine. Particularly common on higher doses (≥300 mg). PENDING_CLINICAL_REVIEW."
+  },
+  "prolactinRisk": "low",
+  "qtcRisk": "moderate",
+  "sedation": "high",
+  "lai": {
+    "available": false,
+    "notes": "No long-acting injectable formulation."
+  },
+  "reboundPsychosisRisk": {
+    "score": "low",
+    "notes": "Generally smooth on taper. Rebound insomnia and anxiety can occur due to histaminergic and α1 effects. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 25,
+    "typicalTargetRangeMg": [300, 600],
+    "maxDoseMg": 800,
+    "increments": [25, 50, 100, 200, 300, 400, 600, 800],
+    "formulationsAvailableMy": ["25 mg tab", "100 mg tab", "200 mg tab", "300 mg tab", "50 mg XR", "150 mg XR", "200 mg XR", "300 mg XR", "400 mg XR"]
+  },
+  "formulationNotes": "IR and XR formulations both available. XR cannot be split or crushed. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_schizophrenia_quetiapine_profile",
+    "bap2020_psychosis_quetiapine"
+  ],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

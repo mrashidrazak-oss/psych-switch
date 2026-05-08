@@ -1,0 +1,76 @@
+{
+  "id": "clozapine-safety",
+  "considerations": [
+    {
+      "id": "agranulocytosis",
+      "severity": "danger",
+      "title": "Agranulocytosis / severe neutropenia",
+      "body": "Lifetime cumulative incidence ~0.8%. Highest risk weeks 6-18, but can occur at any time. Mandatory FBC + ANC monitoring per schedule. ANC <1.5 × 10⁹/L: STOP clozapine immediately, daily FBCs, refer haematology. Do NOT re-challenge without specialist review.",
+      "monitoring": "FBC + ANC weekly weeks 1-18, fortnightly weeks 19-52, monthly thereafter — for life."
+    },
+    {
+      "id": "myocarditis",
+      "severity": "danger",
+      "title": "Clozapine-induced myocarditis",
+      "body": "Peak risk weeks 2-4. Australian rates suggest ~1% of initiations. Red flags: fever, persistent tachycardia (HR consistently >100), chest pain, dyspnoea, flu-like symptoms in the first 6 weeks. Investigate immediately with troponin + CRP + ECG. Echocardiography if abnormal.",
+      "monitoring": "Baseline troponin, CRP, ECG. Repeat if symptomatic. Some centres repeat routinely at week 2-4."
+    },
+    {
+      "id": "constipation-ileus",
+      "severity": "danger",
+      "title": "Constipation and paralytic ileus",
+      "body": "Clozapine has potent M3 antagonism, slowing GI motility. Paralytic ileus is a leading cause of clozapine-related death — more lives lost than agranulocytosis in some series. Universal prophylactic laxatives. Document bowel function daily during inpatient titration and at every clinic visit thereafter. Any patient reporting no bowel motion >3 days requires urgent review.",
+      "monitoring": "Bowel chart during titration. Stool softener + stimulant laxative routinely (e.g. docusate + senna). Investigate any abdominal pain or distension promptly."
+    },
+    {
+      "id": "seizures",
+      "severity": "warning",
+      "title": "Seizures (dose-dependent)",
+      "body": "Risk rises sharply above 600 mg/day. Myoclonic jerks and drop attacks may precede generalised seizures. EEG and prophylactic anticonvulsant (sodium valproate typical) consideration above 600 mg/day or in patients with prior seizure history.",
+      "monitoring": "Clinical monitoring during titration. EEG if dose ≥600 mg or if myoclonus, drop attacks, or seizure-like activity reported."
+    },
+    {
+      "id": "smoking-interaction",
+      "severity": "warning",
+      "title": "Smoking — sudden cessation can DOUBLE clozapine levels",
+      "body": "Tobacco smoking is a potent CYP1A2 inducer. Patients stable on clozapine who suddenly stop smoking (e.g. on hospital admission, NRT initiation) can see plasma levels double within 1-2 weeks, with risk of toxicity, sedation and seizures. Counsel every smoker on stable clozapine at every visit. Reduce dose proactively if planned cessation; recheck plasma levels after 1-2 weeks.",
+      "monitoring": "Document smoking status at every clinic visit. Plasma level 1-2 weeks after any change in smoking habits."
+    },
+    {
+      "id": "hypersalivation",
+      "severity": "info",
+      "title": "Hypersalivation",
+      "body": "Almost universal, paradoxical despite clozapine's strong anticholinergic profile (M4 partial agonism is implicated). Typically nocturnal. Manage with positioning (towel on pillow) first. Pharmacological options (hyoscine, glycopyrrolate, atropine drops sublingually) only if severe and bothersome.",
+      "monitoring": "Ask at every visit. Severe hypersalivation can compromise sleep and adherence."
+    },
+    {
+      "id": "metabolic-syndrome",
+      "severity": "warning",
+      "title": "Weight gain, glucose dysregulation, dyslipidaemia",
+      "body": "Among the worst antipsychotics for metabolic burden. New-onset type 2 diabetes can occur even without weight gain. Mandatory metabolic monitoring at baseline, 3 months, 6 months, then annually. Lifestyle counseling at every visit; consider metformin co-prescription for weight gain.",
+      "monitoring": "Weight, BMI, waist, BP, fasting glucose / HbA1c, lipid profile per the milestone schedule."
+    },
+    {
+      "id": "orthostatic-hypotension",
+      "severity": "warning",
+      "title": "Orthostatic hypotension during titration",
+      "body": "Most pronounced in first 2 weeks. Slow titration, lying-and-standing BP at every visit during titration, fall precautions. Severe orthostasis warrants slowing the titration or, rarely, halting and re-challenging at lower doses.",
+      "monitoring": "Lying and standing BP and pulse at every titration step."
+    },
+    {
+      "id": "interruption-rule",
+      "severity": "danger",
+      "title": "Re-titration after interruption ≥48 hours",
+      "body": "Tolerance to orthostasis and sedation is lost rapidly. ANY interruption of 48 hours or more mandates re-titration starting at 12.5 mg, regardless of how high the previous maintenance dose was. This is non-negotiable. Re-titration follows the inpatient or community schedule depending on setting.",
+      "monitoring": "Confirm continuous dosing at every clinic visit. Re-start protocol if any doubt."
+    }
+  ],
+  "citations": [
+    "maudsley15_schizophrenia_p238_clozapine_safety",
+    "novartis_clozaril_smpc_2024",
+    "ronaldson2010_myocarditis",
+    "bap2020_psychosis_clozapine"
+  ],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

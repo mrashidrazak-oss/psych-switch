@@ -1,0 +1,47 @@
+{
+  "id": "sertraline-to-venlafaxine",
+  "fromDrugId": "sertraline",
+  "toDrugId": "venlafaxine",
+  "strategy": "cross-taper",
+  "rationale": "SSRI-to-SNRI swap, often considered after non-response to a serotonergic-only agent. Brief cross-taper is sufficient because sertraline disc risk is moderate and venlafaxine titrates slowly anyway. Watch baseline blood pressure before starting venlafaxine. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 100,
+      "toDoseMg": 37.5,
+      "notes": "Start venlafaxine XR 37.5 mg. Hold sertraline 100 mg. Check baseline blood pressure."
+    },
+    {
+      "day": 5,
+      "fromDoseMg": 50,
+      "toDoseMg": 75,
+      "notes": "Halve sertraline to 50 mg. Increase venlafaxine XR to 75 mg."
+    },
+    {
+      "day": 10,
+      "fromDoseMg": 25,
+      "toDoseMg": 150,
+      "notes": "Reduce sertraline to 25 mg. Increase venlafaxine XR to 150 mg target. Re-check blood pressure."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 150,
+      "notes": "Stop sertraline. Continue venlafaxine XR 150 mg. Counsel re very-high disc risk if venlafaxine is later stopped."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 100,
+    "toTargetDoseMg": 150,
+    "equivalencyNote": "Approximate clinical equivalency: sertraline 100 mg ≈ venlafaxine 150 mg XR (Maudsley 14th). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_p369_table_3_7",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

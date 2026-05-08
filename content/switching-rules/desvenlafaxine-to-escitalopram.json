@@ -1,0 +1,41 @@
+{
+  "id": "desvenlafaxine-to-escitalopram",
+  "fromDrugId": "desvenlafaxine",
+  "toDrugId": "escitalopram",
+  "strategy": "cross-taper",
+  "rationale": "Desvenlafaxine (SNRI; t½ ~11h; high discontinuation syndrome risk) to escitalopram (SSRI; t½ ~27h; moderate discontinuation syndrome risk). Switch from SNRI to SSRI — reducing noradrenergic activity, often for blood pressure or sweating. Escitalopram is not a CYP2D6 inhibitor — no interaction with desvenlafaxine during cross-taper. Both are serotonergic — low serotonin syndrome risk at standard doses. Desvenlafaxine must be tapered carefully to avoid discontinuation syndrome. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 50,
+      "toDoseMg": 10,
+      "notes": "Start escitalopram 10 mg. Continue desvenlafaxine 50 mg. Both drugs present: combined serotonergic load at standard doses is clinically acceptable."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 50,
+      "toDoseMg": 10,
+      "notes": "Continue both at same doses. Assess tolerability. If excessive serotonergic symptoms (agitation, tremor, tachycardia) reduce desvenlafaxine earlier."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 10,
+      "notes": "Stop desvenlafaxine. Continue escitalopram 10 mg. Desvenlafaxine discontinuation syndrome possible at this step — if symptoms emerge, slower taper may be needed. Titrate escitalopram to 20 mg at 4 weeks if response inadequate."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 50,
+    "toTargetDoseMg": 10,
+    "equivalencyNote": "Desvenlafaxine 50 mg → escitalopram 10 mg (standard effective doses). Not pharmacologically equivalent — different mechanisms. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_snri_profile",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

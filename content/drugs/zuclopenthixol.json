@@ -1,0 +1,55 @@
+{
+  "id": "zuclopenthixol",
+  "genericName": "Zuclopenthixol",
+  "drugClass": "FGA (typical antipsychotic) — oral",
+  "category": "antipsychotic",
+  "formulation": "oral",
+  "hidden": true,
+  "malaysianBrandNames": ["Clopixol"],
+  "halfLife": {
+    "meanHours": 20,
+    "rangeHours": [14, 28],
+    "notes": "Oral zuclopenthixol t½ ~20 hours. CYP2D6 substrate. Notably sedating compared to other FGAs. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": null,
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "No clinically significant active metabolites. PENDING_CLINICAL_REVIEW."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP2D6"],
+    "inhibitorOf": [],
+    "switchingRelevance": "CYP2D6 inhibitors may increase levels. PENDING_CLINICAL_REVIEW."
+  },
+  "epsRisk": "high",
+  "metabolicRisk": {
+    "score": "low-moderate",
+    "notes": "Moderate sedation and anticholinergic effects. PENDING_CLINICAL_REVIEW."
+  },
+  "prolactinRisk": "high",
+  "qtcRisk": "moderate",
+  "sedation": "moderate",
+  "lai": {
+    "available": true,
+    "notes": "LAI form = Clopixol Depot (zuclopenthixol decanoate). Also available as Clopixol Acuphase (zuclopenthixol acetate — short-acting IM for acute agitation)."
+  },
+  "reboundPsychosisRisk": {
+    "score": "moderate",
+    "notes": "Gradual taper recommended when switching from depot to oral. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 10,
+    "typicalTargetRangeMg": [20, 40],
+    "maxDoseMg": 100,
+    "increments": [2, 5, 10, 25, 40],
+    "formulationsAvailableMy": ["Clopixol 2 mg tab", "Clopixol 10 mg tab", "Clopixol 25 mg tab"]
+  },
+  "formulationNotes": "Oral tablets (Clopixol). LAI form = zuclopenthixol decanoate (Clopixol Depot) 200 mg/mL. Oral dose is approximately 8× the mg of decanoate dose per injection cycle. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_schizophrenia_fga",
+    "bap2020_psychosis"
+  ],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

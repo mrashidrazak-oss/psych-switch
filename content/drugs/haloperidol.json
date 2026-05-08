@@ -1,0 +1,56 @@
+{
+  "id": "haloperidol",
+  "genericName": "Haloperidol",
+  "drugClass": "FGA (typical antipsychotic, butyrophenone)",
+  "category": "antipsychotic",
+  "malaysianBrandNames": [
+    "Haldol",
+    "Serenace"
+  ],
+  "halfLife": {
+    "meanHours": 18,
+    "rangeHours": [14, 26],
+    "notes": "Once- or twice-daily oral dosing typical. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": "Reduced haloperidol",
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "Reduced haloperidol can be re-oxidised to parent and contribute mildly to exposure but not considered clinically dominant. PENDING_CLINICAL_REVIEW."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP3A4", "CYP2D6"],
+    "inhibitorOf": ["CYP2D6 (moderate)"],
+    "switchingRelevance": "CYP2D6 inhibitors raise haloperidol levels and worsen EPS. CYP3A4 inducers (carbamazepine) reduce levels. PENDING_CLINICAL_REVIEW."
+  },
+  "epsRisk": "high",
+  "metabolicRisk": {
+    "score": "low",
+    "notes": "Minimal metabolic burden — historically a reason FGAs persist for some patient profiles despite EPS risk. PENDING_CLINICAL_REVIEW."
+  },
+  "prolactinRisk": "high",
+  "qtcRisk": "high",
+  "sedation": "low",
+  "lai": {
+    "available": true,
+    "notes": "Haldol Decanoate (4-weekly). Long-established LAI option but EPS and tardive risk on chronic use are notable. PENDING_CLINICAL_REVIEW."
+  },
+  "reboundPsychosisRisk": {
+    "score": "moderate",
+    "notes": "Standard relapse risk on abrupt cessation. Less anticholinergic rebound than olanzapine. Withdrawal dyskinesia possible after long-term use. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 0.5,
+    "typicalTargetRangeMg": [2, 10],
+    "maxDoseMg": 20,
+    "increments": [0.5, 1, 1.5, 2, 5, 10, 15, 20],
+    "formulationsAvailableMy": ["0.5 mg tab", "1.5 mg tab", "5 mg tab", "10 mg tab", "5 mg/mL injection"]
+  },
+  "formulationNotes": "Tablets and IM injection (acute use). QTc check at baseline and on dose increases above 5 mg/day is prudent. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_schizophrenia_haloperidol_profile",
+    "bap2020_psychosis_haloperidol"
+  ],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

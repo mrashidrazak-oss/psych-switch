@@ -1,0 +1,41 @@
+{
+  "id": "risperidone-lai-to-aripiprazole-lai",
+  "fromDrugId": "risperidone-lai",
+  "toDrugId": "aripiprazole-lai",
+  "strategy": "cross-taper",
+  "rationale": "LAI-to-LAI depot switch, most commonly driven by metabolic concerns (weight gain, glycaemic deterioration) or hyperprolactinaemia on risperidone Consta. Aripiprazole LAI (Abilify Maintena) requires a mandatory 14-day oral aripiprazole overlap after the first injection because the depot takes ~2 weeks to reach therapeutic release. Risperidone Consta's residual depot provides D2 cover throughout this oral overlap period. Skip the next scheduled Consta injection when giving the first Maintena. Akathisia is the main switch concern — as aripiprazole's partial agonism replaces risperidone's full D2 antagonism, inner restlessness may emerge. Counsel the patient early. Prolactin will fall substantially as risperidone (high prolactin) is replaced by aripiprazole (prolactin-sparing) — patients with hyperprolactinaemia symptoms should notice improvement within weeks. Metabolic improvement expected progressively. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 29,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 25,
+      "toDoseMg": 400,
+      "notes": "Skip next Consta injection. Give Abilify Maintena 400 mg IM (gluteal or deltoid). Start oral aripiprazole 10 mg/day — 14-day oral overlap MANDATORY. Risperidone Consta tail provides D2 cover. Counsel on akathisia risk."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 25,
+      "toDoseMg": 400,
+      "notes": "STOP oral aripiprazole today (14 days overlap complete). Abilify Maintena now therapeutic. Risperidone depot still fading. Prolactin should be falling — patients notice menstrual or sexual function improvement."
+    },
+    {
+      "day": 29,
+      "fromDoseMg": 0,
+      "toDoseMg": 400,
+      "notes": "Second Maintena 400 mg injection. Risperidone Consta substantially cleared. Review prolactin, metabolic parameters, akathisia. Monthly Maintena thereafter."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 25,
+    "toTargetDoseMg": 400,
+    "equivalencyNote": "Approximate clinical equivalency: risperidone Consta 25 mg/2 weeks ≈ aripiprazole LAI 400 mg/4 weeks (Maudsley 15th, LAI equivalence). For Consta 37.5 or 50 mg, consider aripiprazole LAI 400 mg with close monitoring. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_schizophrenia_p231_aripiprazole_lai",
+    "bap2020_psychosis_lai_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

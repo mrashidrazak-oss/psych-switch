@@ -1,0 +1,53 @@
+{
+  "id": "aripiprazole-to-risperidone",
+  "fromDrugId": "aripiprazole",
+  "toDrugId": "risperidone",
+  "strategy": "cross-taper",
+  "rationale": "Most often driven by inadequate psychotic symptom control on aripiprazole (partial agonism insufficient for positive symptoms in some patients), or by akathisia where a full D2 antagonist provides better symptom suppression. Cross-taper: introduce risperidone at low dose while aripiprazole is still running, then taper aripiprazole once risperidone is at therapeutic range. Aripiprazole's long half-life means it washes out gradually — abrupt cessation is not needed and not preferred. Counsel about the pharmacological shift: moving to full D2 antagonism will increase prolactin and raise (not lower) EPS risk. Prolactin monitoring at 3 months is prudent. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 15,
+      "toDoseMg": 1,
+      "notes": "Start risperidone 1 mg. Continue aripiprazole 15 mg. Overlap is safe — aripiprazole's partial agonism and risperidone's full antagonism co-exist without problematic pharmacodynamic clash at low risperidone doses."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 15,
+      "toDoseMg": 2,
+      "notes": "Increase risperidone to 2 mg. Plateau aripiprazole — allow risperidone to build before tapering."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 10,
+      "toDoseMg": 3,
+      "notes": "Increase risperidone to 3 mg. Begin reducing aripiprazole to 10 mg. EPS monitoring begins — risperidone EPS risk increases above 4 mg."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 5,
+      "toDoseMg": 4,
+      "notes": "Risperidone at 4 mg target. Reduce aripiprazole to 5 mg. Aripiprazole washout in progress — residual partial agonism diminishing."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 4,
+      "notes": "Stop aripiprazole. Continue risperidone 4 mg. Check prolactin at 3 months if clinically relevant. Monitor EPS above 4 mg."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 15,
+    "toTargetDoseMg": 4,
+    "equivalencyNote": "Approximate clinical equivalency: aripiprazole 15 mg ≈ risperidone 4 mg (Maudsley 15th, AP dose-equivalence table). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_schizophrenia_p230_ap_swap_table",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

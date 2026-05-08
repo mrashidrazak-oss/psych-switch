@@ -1,0 +1,62 @@
+{
+  "id": "fluphenazine-lai",
+  "genericName": "Fluphenazine Decanoate LAI",
+  "drugClass": "FGA (phenothiazine) — depot",
+  "category": "antipsychotic",
+  "formulation": "lai",
+  "laiDetails": {
+    "injectionIntervalDays": 21,
+    "initiationProtocol": "Test dose 12.5 mg deep gluteal IM; observe for 4-7 days. Maintenance 12.5-50 mg every 2-4 weeks (range up to 100 mg every 2-4 weeks). Higher EPS risk than thioxanthene depots — counsel patient about dystonia, akathisia.",
+    "needsOralOverlap": true,
+    "oralOverlapDurationDays": 14
+  },
+  "malaysianBrandNames": [
+    "Modecate"
+  ],
+  "halfLife": {
+    "meanHours": 240,
+    "rangeHours": [144, 360],
+    "notes": "Effective half-life ~10 days — shorter than thioxanthene depots, allowing closer titration. Steady state in ~6 weeks. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": null,
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "No clinically significant active metabolite."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP2D6"],
+    "inhibitorOf": ["CYP2D6 (mild)"],
+    "switchingRelevance": "CYP2D6 inhibitors raise levels and worsen EPS. PENDING_CLINICAL_REVIEW."
+  },
+  "epsRisk": "high",
+  "metabolicRisk": {
+    "score": "low",
+    "notes": "Minimal metabolic burden. PENDING_CLINICAL_REVIEW."
+  },
+  "prolactinRisk": "high",
+  "qtcRisk": "moderate",
+  "sedation": "moderate",
+  "lai": {
+    "available": true,
+    "notes": "This entry IS the LAI. Long-established but EPS burden has reduced first-line use in modern practice."
+  },
+  "reboundPsychosisRisk": {
+    "score": "moderate",
+    "notes": "Tardive dyskinesia after long-term use is the main concern. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 12.5,
+    "typicalTargetRangeMg": [25, 50],
+    "maxDoseMg": 100,
+    "increments": [12.5, 25, 37.5, 50, 75, 100],
+    "formulationsAvailableMy": ["Modecate 25 mg/mL"]
+  },
+  "formulationNotes": "Oily solution (sesame oil vehicle). Deep gluteal IM. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_schizophrenia_fluphenazine_lai",
+    "bap2020_psychosis_lai"
+  ],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

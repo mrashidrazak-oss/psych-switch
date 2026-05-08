@@ -1,0 +1,41 @@
+{
+  "id": "sertraline-to-fluoxetine",
+  "fromDrugId": "sertraline",
+  "toDrugId": "fluoxetine",
+  "strategy": "cross-taper",
+  "rationale": "Common reasons to switch: simplifying dosing, leveraging fluoxetine's long half-life to auto-taper, or planning a future switch where the long norfluoxetine washout is acceptable. Brief cross-taper is sufficient because fluoxetine reaches steady state slowly and sertraline is moderate-disc-risk only. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 8,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 100,
+      "toDoseMg": 20,
+      "notes": "Start fluoxetine 20 mg in the morning. Hold sertraline 100 mg."
+    },
+    {
+      "day": 4,
+      "fromDoseMg": 50,
+      "toDoseMg": 20,
+      "notes": "Halve sertraline to 50 mg. Hold fluoxetine 20 mg."
+    },
+    {
+      "day": 8,
+      "fromDoseMg": 0,
+      "toDoseMg": 20,
+      "notes": "Stop sertraline. Continue fluoxetine 20 mg. Norfluoxetine will auto-taper any residual sertraline-like effect over weeks."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 100,
+    "toTargetDoseMg": 20,
+    "equivalencyNote": "Approximate clinical equivalency: sertraline 100 mg ≈ fluoxetine 20 mg (Maudsley 14th). Note: this switch commits the patient to a multi-week wash-IN of fluoxetine and a 5-week washout requirement before any future MAOI. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_p369_table_3_7",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

@@ -1,0 +1,55 @@
+{
+  "id": "olanzapine-to-lurasidone",
+  "fromDrugId": "olanzapine",
+  "toDrugId": "lurasidone",
+  "strategy": "cross-taper",
+  "rationale": "Olanzapine (high metabolic risk, strong anticholinergic, antihistaminergic) to lurasidone (weight-neutral, low QTc, food-dependent). Common reason: metabolic syndrome on olanzapine — weight gain, dyslipidaemia, glucose dysregulation. Lurasidone is one of the most metabolically neutral antipsychotics. Critical: lurasidone must be taken with at least 350 kcal food — this must be explicitly taught before starting. Olanzapine withdrawal must be gradual to manage cholinergic rebound and to avoid abrupt loss of H1-mediated sedation (insomnia). Weight loss and metabolic improvement occur gradually over weeks to months. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 10,
+      "toDoseMg": 40,
+      "notes": "Start lurasidone 40 mg with the main meal. Continue olanzapine 10 mg. CRITICAL counselling: lurasidone must be taken with ≥350 kcal of food every day — bioavailability is halved without food."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 10,
+      "toDoseMg": 80,
+      "notes": "Increase lurasidone to 80 mg with main meal. Plateau olanzapine. Food counselling reinforcement — check patient understands the requirement."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 7.5,
+      "toDoseMg": 80,
+      "notes": "Reduce olanzapine to 7.5 mg. Cholinergic rebound risk — nausea, insomnia, sweating. Go slowly if rebound is symptomatic. Loss of sedation begins."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 5,
+      "toDoseMg": 80,
+      "notes": "Reduce olanzapine to 5 mg. Insomnia may be prominent. Short-term melatonin or promethazine can bridge sleep. Lurasidone well established by now."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 80,
+      "notes": "Stop olanzapine. Continue lurasidone 80 mg with main meal. Monitor weight and metabolic parameters at 4, 12, and 26 weeks — improvement expected but gradual."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 10,
+    "toTargetDoseMg": 80,
+    "equivalencyNote": "Olanzapine 10 mg ≈ lurasidone 80 mg (inferred from DDD equivalence; limited direct lurasidone equivalence data). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["lurasidone_food_requirement", "cholinergic_rebound"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "leucht2016_ddd_schizophrenia_bulletin",
+    "australian_prescriber_ap_switching_tool",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

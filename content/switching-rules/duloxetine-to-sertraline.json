@@ -1,0 +1,47 @@
+{
+  "id": "duloxetine-to-sertraline",
+  "fromDrugId": "duloxetine",
+  "toDrugId": "sertraline",
+  "strategy": "cross-taper",
+  "rationale": "SNRI-to-SSRI swap, often when noradrenergic adverse effects predominate or response was insufficient. Duloxetine's high discontinuation-syndrome risk requires a graded reduction; sertraline is started low and titrated. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 60,
+      "toDoseMg": 25,
+      "notes": "Start sertraline 25 mg. Hold duloxetine 60 mg."
+    },
+    {
+      "day": 5,
+      "fromDoseMg": 30,
+      "toDoseMg": 50,
+      "notes": "Halve duloxetine to 30 mg. Increase sertraline to 50 mg. Watch for discontinuation symptoms."
+    },
+    {
+      "day": 10,
+      "fromDoseMg": 30,
+      "toDoseMg": 100,
+      "notes": "Hold duloxetine. Increase sertraline to 100 mg target."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 100,
+      "notes": "Stop duloxetine. Continue sertraline 100 mg. Slow this final step if disc symptoms emerge."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 60,
+    "toTargetDoseMg": 100,
+    "equivalencyNote": "Approximate clinical equivalency: duloxetine 60 mg ≈ sertraline 100 mg (Maudsley 14th). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_p369_table_3_7",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

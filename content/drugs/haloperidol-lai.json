@@ -1,0 +1,63 @@
+{
+  "id": "haloperidol-lai",
+  "hidden": true,
+  "genericName": "Haloperidol Decanoate LAI",
+  "drugClass": "FGA (typical antipsychotic) — depot",
+  "category": "antipsychotic",
+  "formulation": "lai",
+  "laiDetails": {
+    "injectionIntervalDays": 28,
+    "initiationProtocol": "Loading: 10-15× total daily oral haloperidol dose, capped at 100 mg per injection (split across two injections if >100 mg total). Continue oral haloperidol at half dose for ~4 weeks post first injection. Maintenance every 4 weeks.",
+    "needsOralOverlap": true,
+    "oralOverlapDurationDays": 28
+  },
+  "malaysianBrandNames": [
+    "Haldol Decanoate"
+  ],
+  "halfLife": {
+    "meanHours": 500,
+    "rangeHours": [400, 600],
+    "notes": "Effective half-life ~21 days. Steady state in 2-3 months. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": "Reduced haloperidol",
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "Same as oral haloperidol — minor contribution. PENDING_CLINICAL_REVIEW."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP3A4", "CYP2D6"],
+    "inhibitorOf": ["CYP2D6 (moderate)"],
+    "switchingRelevance": "Same CYP profile as oral haloperidol. Inhibitors worsen EPS at depot dose; depot kinetics amplify the consequence. PENDING_CLINICAL_REVIEW."
+  },
+  "epsRisk": "high",
+  "metabolicRisk": {
+    "score": "low",
+    "notes": "Minimal metabolic burden — historical reason FGA depots persist. PENDING_CLINICAL_REVIEW."
+  },
+  "prolactinRisk": "high",
+  "qtcRisk": "high",
+  "sedation": "low",
+  "lai": {
+    "available": true,
+    "notes": "This entry IS the LAI."
+  },
+  "reboundPsychosisRisk": {
+    "score": "moderate",
+    "notes": "Slow depot taper provides smoother withdrawal than oral. Tardive dyskinesia after long-term use is the main concern, not rebound. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 50,
+    "typicalTargetRangeMg": [50, 200],
+    "maxDoseMg": 300,
+    "increments": [50, 100, 150, 200],
+    "formulationsAvailableMy": ["Haldol Decanoate 50 mg/mL", "Haldol Decanoate 100 mg/mL"]
+  },
+  "formulationNotes": "Sesame oil vehicle. Deep gluteal IM. QTc check at baseline and after dose stabilisation. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_schizophrenia_p231_haloperidol_lai",
+    "bap2020_psychosis_lai"
+  ],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

@@ -1,0 +1,48 @@
+{
+  "id": "aripiprazole-to-lurasidone",
+  "fromDrugId": "aripiprazole",
+  "toDrugId": "lurasidone",
+  "strategy": "cross-taper",
+  "rationale": "Aripiprazole (partial D2/D3 agonist, very long half-life ~75 h) to lurasidone (full D2 antagonist, short-moderate half-life ~18 h). Both are metabolically neutral and low-QTc-risk SGAs. Common reasons: intolerable akathisia on aripiprazole, insufficient positive symptom control, or simplifying food-independent dosing replaced by food-dependent dosing (a trade-off). Lurasidone must be taken with ≥350 kcal — a critical patient education point. Aripiprazole's very long half-life means effective levels persist well after stopping — this provides a natural buffer during the transition. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 21,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 15,
+      "toDoseMg": 40,
+      "notes": "Start lurasidone 40 mg with main meal. Continue aripiprazole 15 mg. Counsel patient: lurasidone must be taken with ≥350 kcal of food every day for adequate absorption."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 10,
+      "toDoseMg": 80,
+      "notes": "Increase lurasidone to 80 mg with main meal. Reduce aripiprazole to 10 mg. Akathisia should begin to resolve as aripiprazole dose reduces."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 5,
+      "toDoseMg": 80,
+      "notes": "Reduce aripiprazole to 5 mg. Aripiprazole's long half-life means residual partial D2 agonism is still present — smooth transition."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 0,
+      "toDoseMg": 80,
+      "notes": "Stop aripiprazole. Continue lurasidone 80 mg with main meal. Residual aripiprazole will continue to wash out over 3–4 weeks after stopping — monitor for any akathisia recurrence."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 15,
+    "toTargetDoseMg": 80,
+    "equivalencyNote": "Aripiprazole 15 mg ≈ lurasidone 80 mg (inferred from DDD equivalence; both ≈ olanzapine 10 mg by proxy). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["lurasidone_food_requirement"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "leucht2016_ddd_schizophrenia_bulletin",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

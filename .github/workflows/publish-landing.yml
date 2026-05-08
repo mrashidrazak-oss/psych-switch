@@ -1,0 +1,70 @@
+# Publish docs/landing/ to GitHub Pages.
+#
+# Privacy + terms pages MUST be reachable at a stable URL for the Play
+# Console (and any future store) to accept the listing. This workflow
+# publishes the static HTML in docs/landing/ to GitHub Pages on every
+# push to main, and supports a custom domain via the CNAME file.
+#
+# Setup once (UI):
+#   1. Repo → Settings → Pages → Build and deployment:
+#        Source: GitHub Actions
+#   2. (Optional) Settings → Pages → Custom domain: psychswitch.health
+#      Add the DNS CNAME / A record as Pages prompts.
+#
+# After that, every push to main republishes:
+#   https://feistz.github.io/psych-switch/  (or the custom domain)
+
+name: Publish landing pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/landing/**'
+      - '.github/workflows/publish-landing.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Single concurrent deploy queue — never overlap.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Stage site
+        run: |
+          mkdir -p _site
+          cp -r docs/landing/* _site/
+          # Copy the live errata feed alongside the static pages so
+          # /errata.json resolves to the canonical engine snapshot.
+          if [ -f docs/errata.json ]; then
+            cp docs/errata.json _site/errata.json
+          fi
+          # CNAME file (only present if Pages custom domain is on).
+          if [ -f docs/landing/CNAME ]; then
+            cp docs/landing/CNAME _site/CNAME
+          fi
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

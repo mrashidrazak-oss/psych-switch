@@ -1,0 +1,112 @@
+{
+  "id": "clozapine-monitoring",
+  "rationale": "Mandatory monitoring schedule based on Maudsley 14th edition, Novartis Clozaril SmPC and the UK CPMS / Malaysian clozapine monitoring service standards. Failure to monitor is a recognised cause of clozapine-related agranulocytosis death. PENDING_CLINICAL_REVIEW.",
+  "phases": [
+    {
+      "phase": "weekly",
+      "weekStart": 1,
+      "weekEnd": 18,
+      "frequency": "every 7 days",
+      "test": "FBC + ANC",
+      "notes": "Mandatory weekly haematological monitoring for the first 18 weeks. Highest agranulocytosis risk window."
+    },
+    {
+      "phase": "fortnightly",
+      "weekStart": 19,
+      "weekEnd": 52,
+      "frequency": "every 14 days",
+      "test": "FBC + ANC",
+      "notes": "Reduced frequency from week 19 to end of year 1, provided counts remain in green range."
+    },
+    {
+      "phase": "monthly",
+      "weekStart": 53,
+      "weekEnd": null,
+      "frequency": "every 28 days",
+      "test": "FBC + ANC",
+      "notes": "Indefinite monthly FBC + ANC for as long as clozapine is prescribed. NO ceiling — monitoring continues lifelong."
+    }
+  ],
+  "milestones": [
+    {
+      "id": "baseline",
+      "timepoint": "Baseline (before first dose)",
+      "weekFromStart": null,
+      "tests": ["FBC", "ANC", "U&E", "LFT", "lipid profile", "fasting glucose / HbA1c", "ECG", "troponin", "CRP", "weight", "BMI", "waist circumference", "BP supine and standing"],
+      "criticalNotes": "Confirm registration on local clozapine monitoring service before first dose. Confirm ANC ≥2.0 × 10⁹/L and WBC ≥3.5 × 10⁹/L (or BEN-adjusted thresholds). Document pregnancy status if applicable."
+    },
+    {
+      "id": "week-2",
+      "timepoint": "Week 2",
+      "weekFromStart": 2,
+      "tests": ["FBC", "ANC", "weight", "BP"],
+      "criticalNotes": "Myocarditis risk window opens. Low threshold for troponin + CRP if any of: fever, persistent tachycardia (HR >100), chest pain, dyspnoea, fatigue, flu-like symptoms."
+    },
+    {
+      "id": "week-4",
+      "timepoint": "Week 4",
+      "weekFromStart": 4,
+      "tests": ["FBC", "ANC", "weight", "BP"],
+      "criticalNotes": "Myocarditis risk peak. Continue cardiac vigilance. Some centres routinely repeat troponin + CRP at this milestone."
+    },
+    {
+      "id": "month-3",
+      "timepoint": "Month 3",
+      "weekFromStart": 12,
+      "tests": ["FBC", "ANC", "fasting glucose / HbA1c", "lipid profile", "LFT", "weight", "BMI", "waist circumference", "BP", "ECG", "plasma clozapine level"],
+      "criticalNotes": "First scheduled metabolic and cardiac re-screen. Plasma clozapine level — aim 350-600 ng/mL (clozapine), interpret with norclozapine."
+    },
+    {
+      "id": "month-6",
+      "timepoint": "Month 6",
+      "weekFromStart": 26,
+      "tests": ["FBC", "ANC", "fasting glucose / HbA1c", "lipid profile", "weight"],
+      "criticalNotes": "Repeat metabolic screen."
+    },
+    {
+      "id": "year-1",
+      "timepoint": "Year 1",
+      "weekFromStart": 52,
+      "tests": ["FBC", "ANC", "fasting glucose / HbA1c", "lipid profile", "LFT", "U&E", "weight", "BMI", "waist circumference", "BP", "ECG", "plasma clozapine level"],
+      "criticalNotes": "Comprehensive annual review. Document continued indication, tolerability and response. Frequency of FBC + ANC drops to monthly from now on."
+    },
+    {
+      "id": "annual",
+      "timepoint": "Annually thereafter",
+      "weekFromStart": null,
+      "tests": ["FBC", "ANC (monthly)", "fasting glucose / HbA1c", "lipid profile", "LFT", "U&E", "weight", "BMI", "BP", "ECG"],
+      "criticalNotes": "Repeat the comprehensive panel each year. Continue MONTHLY FBC + ANC indefinitely."
+    }
+  ],
+  "fbcThresholds": {
+    "ancGreenAtOrAbove": 2.0,
+    "ancAmberRange": [1.5, 2.0],
+    "ancRedBelow": 1.5,
+    "wbcGreenAtOrAbove": 3.5,
+    "wbcAmberRange": [3.0, 3.5],
+    "wbcRedBelow": 3.0,
+    "unit": "× 10⁹/L",
+    "actions": {
+      "green": "Continue clozapine. Continue monitoring schedule.",
+      "amber": "Continue clozapine but increase FBC + ANC to twice weekly until counts stabilise in green or fall to red.",
+      "red": "STOP clozapine immediately. Daily FBC + ANC. Refer to haematology. Do NOT re-challenge without specialist review and clozapine monitoring service approval."
+    },
+    "benAdjustment": {
+      "ancGreenAtOrAbove": 1.5,
+      "ancAmberRange": [1.0, 1.5],
+      "ancRedBelow": 1.0,
+      "wbcGreenAtOrAbove": 3.0,
+      "wbcAmberRange": [2.5, 3.0],
+      "wbcRedBelow": 2.5,
+      "notes": "BEN-adjusted thresholds for documented Benign Ethnic Neutropenia (relevant for some Malaysian, African, Middle Eastern and South Asian patients). Confirm BEN diagnosis with haematology before applying. Cutoffs follow Maudsley / CPMS-UK guidance; precise numbers vary slightly by reference. PENDING_CLINICAL_REVIEW."
+    }
+  },
+  "citations": [
+    "maudsley15_schizophrenia_p237_clozapine_monitoring",
+    "novartis_clozaril_smpc_2024",
+    "cpms_uk_protocol",
+    "bap2020_psychosis_clozapine"
+  ],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

@@ -1,0 +1,47 @@
+{
+  "id": "risperidone-lai-to-aripiprazole",
+  "fromDrugId": "risperidone-lai",
+  "toDrugId": "aripiprazole",
+  "strategy": "cross-taper",
+  "rationale": "Switching off Consta to oral aripiprazole — typically driven by adherence improvement on aripiprazole-LAI, prolactin/sexual side effects, or patient preference. Skip the next Consta injection; aripiprazole is started early because Consta's depot continues releasing for weeks (effective natural taper). Akathisia is the dominant concern. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 42,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 25,
+      "toDoseMg": 5,
+      "notes": "Skip the next scheduled Consta injection. Start aripiprazole 5 mg in the morning. Counsel patient about depot tail (Consta continues for ~6 weeks)."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 25,
+      "toDoseMg": 10,
+      "notes": "Increase aripiprazole to 10 mg. Consta level still significant. Watch for akathisia."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 25,
+      "toDoseMg": 15,
+      "notes": "Increase aripiprazole to 15 mg target. Consta level falling but still measurable."
+    },
+    {
+      "day": 42,
+      "fromDoseMg": 0,
+      "toDoseMg": 15,
+      "notes": "Consta substantially cleared. Aripiprazole 15 mg as monotherapy."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 25,
+    "toTargetDoseMg": 15,
+    "equivalencyNote": "Approximate clinical equivalency: Consta 25 mg every 2 weeks ≈ aripiprazole 15 mg/day (Maudsley 14th). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_schizophrenia_p230_risperidone_lai",
+    "bap2020_psychosis_lai_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

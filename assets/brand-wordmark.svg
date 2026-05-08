@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1280" width="1024" height="1280">
+  <!--
+    PsychSwitch wordmark variant — mark stacked above the wordmark.
+    Used in the splash screen, landing page hero, and OG card.
+
+    Layout: 1024×1280 portrait canvas. Mark fills the top 1024×1024
+    square. Wordmark sits in the bottom 256px strip with consistent
+    padding from the mark.
+
+    Rasterise:
+      rsvg-convert -w 1242 brand-wordmark.svg > splash-content.png
+      (then centre on 1284×2778 #0b0f14 canvas — see ASSET_PIPELINE.md)
+  -->
+
+  <!-- Backdrop -->
+  <rect width="1024" height="1280" fill="#0b0f14"/>
+
+  <!-- ── Mark — same as brand-mark.svg, scaled into the top 720px square. ──
+       Slightly smaller than the full canvas so the mark and wordmark feel
+       grouped rather than crammed. -->
+  <g transform="translate(152, 32) scale(0.7031)">
+    <rect width="1024" height="1024" rx="224" fill="#0b0f14"/>
+
+    <path d="M 232 296
+             C 392 296, 392 512, 512 512
+             C 632 512, 632 728, 792 728"
+          fill="none" stroke="#60a5fa" stroke-width="48" stroke-linecap="round"/>
+
+    <path d="M 232 728
+             C 392 728, 392 512, 512 512
+             C 632 512, 632 296, 792 296"
+          fill="none" stroke="#34d399" stroke-width="48" stroke-linecap="round"/>
+
+    <circle cx="232" cy="296" r="38" fill="#60a5fa"/>
+    <circle cx="792" cy="728" r="38" fill="#60a5fa"/>
+    <circle cx="232" cy="728" r="38" fill="#34d399"/>
+    <circle cx="792" cy="296" r="38" fill="#34d399"/>
+  </g>
+
+  <!-- Primary wordmark -->
+  <text x="512" y="850"
+        text-anchor="middle"
+        font-family="Helvetica Neue, Arial, sans-serif"
+        font-size="120"
+        font-weight="800"
+        fill="#e6edf3"
+        letter-spacing="-2">
+    PsychSwitch
+  </text>
+
+  <!-- Subtitle / regional descriptor -->
+  <text x="512" y="930"
+        text-anchor="middle"
+        font-family="Helvetica Neue, Arial, sans-serif"
+        font-size="36"
+        font-weight="600"
+        fill="#8b949e"
+        letter-spacing="14">
+    ASEAN
+  </text>
+
+  <!-- Tagline (optional in some lockups — comment out if not wanted) -->
+  <text x="512" y="1040"
+        text-anchor="middle"
+        font-family="Helvetica Neue, Arial, sans-serif"
+        font-size="32"
+        font-weight="500"
+        fill="#8b949e"
+        letter-spacing="2">
+    Reviewed cross-titration, cited
+  </text>
+</svg>

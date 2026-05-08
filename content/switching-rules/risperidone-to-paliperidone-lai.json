@@ -1,0 +1,47 @@
+{
+  "id": "risperidone-to-paliperidone-lai",
+  "fromDrugId": "risperidone",
+  "toDrugId": "paliperidone-lai",
+  "strategy": "cross-taper",
+  "rationale": "Pharmacologically the smoothest oral-to-LAI transition in the registry: paliperidone IS the 9-OH-risperidone active metabolite of oral risperidone, so patients are already tolerant of the active molecule. Switching from risperidone oral to paliperidone palmitate LAI provides the adherence benefits of a monthly depot with no pharmacological novelty risk. Paliperidone's loading protocol (150 mg deltoid day 1, 100 mg deltoid day 8) removes the need for an oral paliperidone run-in. Oral risperidone is tapered during loading — there is no therapeutic gap. Prolactin remains high (both agents are prolactin-raising) — no change expected. Clinical equivalency is well-established. No separate oral paliperidone bridge required. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 36,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 4,
+      "toDoseMg": 150,
+      "notes": "Give Invega Sustenna 150 mg deltoid (loading dose 1). Continue oral risperidone 4 mg. Patient is already tolerant of the active molecule (paliperidone). Counsel: 2 loading injections, then monthly maintenance."
+    },
+    {
+      "day": 8,
+      "fromDoseMg": 4,
+      "toDoseMg": 100,
+      "notes": "Invega Sustenna 100 mg deltoid (loading dose 2, day 8 ± 2 days). Continue oral risperidone 4 mg. PP-LAI building — combined risperidone + paliperidone exposure is the same active molecule."
+    },
+    {
+      "day": 22,
+      "fromDoseMg": 2,
+      "toDoseMg": 100,
+      "notes": "PP-LAI now at therapeutic maintenance levels. Halve oral risperidone to 2 mg. Total active drug exposure unchanged."
+    },
+    {
+      "day": 36,
+      "fromDoseMg": 0,
+      "toDoseMg": 100,
+      "notes": "Stop oral risperidone. First maintenance Sustenna injection (100 mg; deltoid or gluteal). Monthly thereafter."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 4,
+    "toTargetDoseMg": 100,
+    "equivalencyNote": "Established clinical equivalency: oral risperidone 4 mg/day ≈ paliperidone palmitate 100 mg/4 weeks. Paliperidone is risperidone's active metabolite (9-OH-risperidone) — conversion is direct. For risperidone 2 mg/day, use Sustenna 75 mg. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_schizophrenia_p231_paliperidone_lai",
+    "bap2020_psychosis_lai"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

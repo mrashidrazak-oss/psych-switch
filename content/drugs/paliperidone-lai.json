@@ -1,0 +1,62 @@
+{
+  "id": "paliperidone-lai",
+  "genericName": "Paliperidone Palmitate LAI",
+  "drugClass": "SGA (atypical antipsychotic) — depot",
+  "category": "antipsychotic",
+  "formulation": "lai",
+  "laiDetails": {
+    "injectionIntervalDays": 28,
+    "initiationProtocol": "Loading dose: 150 mg deltoid on day 1, then 100 mg deltoid on day 8. Maintenance from day 38: 75-150 mg gluteal monthly. No oral overlap required if loading protocol followed.",
+    "needsOralOverlap": false
+  },
+  "malaysianBrandNames": [
+    "Invega Sustenna",
+    "Invega Trinza (3-monthly variant)"
+  ],
+  "halfLife": {
+    "meanHours": 750,
+    "rangeHours": [600, 1200],
+    "notes": "Effective half-life ~25-49 days depending on injection site (deltoid faster, gluteal slower). PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": null,
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "Paliperidone IS itself the 9-OH-risperidone metabolite — no further active metabolites of clinical relevance."
+  },
+  "cypInteractions": {
+    "substrateOf": [],
+    "inhibitorOf": [],
+    "switchingRelevance": "Minimal CYP metabolism — primary clearance is renal. Notably stable across CYP-mediated DDIs, an advantage over risperidone. PENDING_CLINICAL_REVIEW."
+  },
+  "epsRisk": "moderate",
+  "metabolicRisk": {
+    "score": "moderate",
+    "notes": "Comparable to risperidone. PENDING_CLINICAL_REVIEW."
+  },
+  "prolactinRisk": "high",
+  "qtcRisk": "low",
+  "sedation": "low",
+  "lai": {
+    "available": true,
+    "notes": "This entry IS the LAI."
+  },
+  "reboundPsychosisRisk": {
+    "score": "low",
+    "notes": "Very long tail provides smooth taper after last injection. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 150,
+    "typicalTargetRangeMg": [75, 150],
+    "maxDoseMg": 150,
+    "increments": [25, 50, 75, 100, 150],
+    "formulationsAvailableMy": ["Invega Sustenna 50 mg", "Invega Sustenna 75 mg", "Invega Sustenna 100 mg", "Invega Sustenna 150 mg"]
+  },
+  "formulationNotes": "Pre-filled syringe. Loading doses (150 mg day 1, 100 mg day 8) MUST be deltoid — gluteal loading is suboptimal. Maintenance can be deltoid or gluteal. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_schizophrenia_p231_paliperidone_lai",
+    "bap2020_psychosis_lai"
+  ],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

@@ -1,0 +1,59 @@
+{
+  "id": "quetiapine-to-aripiprazole-lai",
+  "fromDrugId": "quetiapine",
+  "toDrugId": "aripiprazole-lai",
+  "strategy": "plateau-cross-taper",
+  "rationale": "A clinically common switch combining adherence improvement (LAI) with metabolic improvement (escaping quetiapine's high metabolic burden and sedation). Aripiprazole LAI (Abilify Maintena) requires a mandatory 14-day oral aripiprazole overlap after the first injection. Plateau cross-taper: administer Maintena with the oral overlap while keeping quetiapine at its current dose, then taper quetiapine only after the oral overlap completes and the depot is at therapeutic levels. Quetiapine's discontinuation syndrome is clinically significant — rebound insomnia and anxiety via histaminergic (H1) and α1-adrenergic withdrawal become pronounced as doses fall below 200 mg. Taper slowly through the final 200–100 mg steps. Akathisia risk from aripiprazole is substantial when D2 receptors have been heavily occupied by quetiapine — warn the patient early and have a low threshold to add a short-course propranolol. Metabolic improvement (weight, glucose, lipids) typically begins 4–8 weeks after quetiapine is stopped. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 35,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 400,
+      "toDoseMg": 400,
+      "notes": "Administer Abilify Maintena 400 mg IM (deltoid or gluteal). Start oral aripiprazole 10 mg/day — 14-day oral overlap MANDATORY. Continue quetiapine 400 mg. Warn patient about akathisia — advise to report restlessness immediately. Do NOT reduce quetiapine yet."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 400,
+      "toDoseMg": 400,
+      "notes": "Day 7 check: Continue oral aripiprazole 10 mg + quetiapine 400 mg. Depot reaching therapeutic levels. Assess akathisia. Sedation remains from quetiapine — advise on driving."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 200,
+      "toDoseMg": 400,
+      "notes": "STOP oral aripiprazole (14-day overlap complete). Depot now therapeutic. Begin tapering quetiapine to 200 mg. Warn patient: this is the step most likely to trigger H1/α1 rebound — insomnia and anxiety are common. Sleep hygiene advice."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 100,
+      "toDoseMg": 400,
+      "notes": "Reduce quetiapine to 100 mg. Rebound insomnia risk is high at this step. Consider temporary low-dose melatonin if sleep significantly disrupted. Metabolic improvement beginning — document weight."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 400,
+      "notes": "Stop quetiapine completely. Second Maintena injection due today (400 mg). Confirm akathisia absent or managed. Baseline metabolics: weight, fasting glucose, lipids."
+    },
+    {
+      "day": 35,
+      "fromDoseMg": 0,
+      "toDoseMg": 400,
+      "notes": "Ongoing: monthly Maintena 400 mg. Weight and glucose at 4 and 12 weeks post-quetiapine-cessation. Full metabolic improvement expected over 3–6 months."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 400,
+    "toTargetDoseMg": 400,
+    "equivalencyNote": "Approximate clinical equivalency: quetiapine 400 mg/day ≈ aripiprazole LAI 400 mg/4 weeks (Maudsley 15th, AP dose-equivalence table + LAI conversion). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["cholinergic_rebound"],
+  "citations": [
+    "maudsley15_schizophrenia_p231_aripiprazole_lai",
+    "bap2020_psychosis_lai"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

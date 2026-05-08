@@ -1,0 +1,48 @@
+{
+  "id": "lurasidone-to-risperidone",
+  "fromDrugId": "lurasidone",
+  "toDrugId": "risperidone",
+  "strategy": "cross-taper",
+  "rationale": "Lurasidone (D2, 5-HT2A, 5-HT7, partial 5-HT1A) to risperidone (D2/D3 + 5-HT2A + α1/α2 + H1). Common reasons: formulary, cost, or need for LAI (risperidone LAI or paliperidone LAI available). Relatively straightforward switch — both are moderate-sedation SGAs. Prolactin will rise on risperidone (lurasidone raises prolactin moderately). Both drugs have minimal anticholinergic activity so cross-taper can proceed at a standard pace. QTc: risperidone has moderate QTc effect (less than amisulpride/haloperidol) and lurasidone has minimal — net QTc neutral to slight increase; ECG if risk factors. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 21,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 80,
+      "toDoseMg": 2,
+      "notes": "Start risperidone 2 mg. Continue lurasidone 80 mg with main meal. Baseline clinical assessment."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 40,
+      "toDoseMg": 4,
+      "notes": "Increase risperidone to 4 mg (target). Reduce lurasidone to 40 mg. Prolactin elevation likely increasing as risperidone titrates up."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 20,
+      "toDoseMg": 4,
+      "notes": "Reduce lurasidone to 20 mg. Risperidone at target dose. Clinical stability should be maintained."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 0,
+      "toDoseMg": 4,
+      "notes": "Stop lurasidone. Continue risperidone 4 mg. Prolactin elevation expected — check if LAI transition is planned for next step."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 80,
+    "toTargetDoseMg": 4,
+    "equivalencyNote": "Lurasidone 80 mg ≈ risperidone 4 mg (inferred from DDD equivalence; limited direct lurasidone equivalence data). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["prolactin_elevation"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "leucht2016_ddd_schizophrenia_bulletin",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

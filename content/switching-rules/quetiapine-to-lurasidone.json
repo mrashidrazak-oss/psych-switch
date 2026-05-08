@@ -1,0 +1,54 @@
+{
+  "id": "quetiapine-to-lurasidone",
+  "fromDrugId": "quetiapine",
+  "toDrugId": "lurasidone",
+  "strategy": "cross-taper",
+  "rationale": "Quetiapine (high H1, muscarinic, α1 blockade; moderate metabolic risk; moderate QTc) to lurasidone (selective, weight-neutral, low QTc; food-dependent). Common reasons: excessive sedation on quetiapine, weight gain, or metabolic concerns. The quetiapine-to-lurasidone switch is one of the more challenging transitions: quetiapine's heavy anticholinergic and antihistaminergic receptor burden means withdrawal produces significant cholinergic rebound (insomnia, nausea, sweating, agitation). The taper must be gradual and the patient forewarned. Lurasidone food requirement is a critical point of education — must be taken with ≥350 kcal. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 400,
+      "toDoseMg": 40,
+      "notes": "Start lurasidone 40 mg with main meal. Continue quetiapine 400 mg. Food counselling: lurasidone requires ≥350 kcal for adequate absorption. Warn about likely insomnia as quetiapine is later reduced."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 400,
+      "toDoseMg": 80,
+      "notes": "Increase lurasidone to 80 mg with main meal. Plateau quetiapine. Lurasidone approaching therapeutic levels."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 200,
+      "toDoseMg": 80,
+      "notes": "Reduce quetiapine to 200 mg. Cholinergic rebound begins — nausea, sweating, sleep disturbance. Do not rush. Melatonin or short-term antihistamine can bridge insomnia."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 100,
+      "toDoseMg": 80,
+      "notes": "Reduce quetiapine to 100 mg. Sedation reducing — driving capability should improve. Postural hypotension improving."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 80,
+      "notes": "Stop quetiapine. Continue lurasidone 80 mg with main meal. Monitor weight and metabolic parameters at 4 and 12 weeks. Improvement expected gradually."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 400,
+    "toTargetDoseMg": 80,
+    "equivalencyNote": "Quetiapine 400 mg ≈ lurasidone 80 mg (inferred from DDD equivalence; both ≈ olanzapine 10 mg by proxy). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["lurasidone_food_requirement", "cholinergic_rebound"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "leucht2016_ddd_schizophrenia_bulletin",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

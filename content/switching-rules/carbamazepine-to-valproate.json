@@ -1,0 +1,72 @@
+{
+  "id": "carbamazepine-to-valproate",
+  "fromDrugId": "carbamazepine",
+  "toDrugId": "valproate",
+  "strategy": "cross-taper",
+  "rationale": "Carbamazepine to valproate: Indicated for treatment failure on CBZ, teratogenicity risk minimisation (valproate is higher teratogenic risk — discuss carefully), or intolerance. KEY PHARMACOKINETIC HAZARD: Carbamazepine is a potent CYP inducer. As CBZ is tapered and withdrawn, induction of CYP3A4/2C9 is progressively reversed — this causes rising plasma levels of any co-medications that are CYP3A4/2C9 substrates (enzyme reversal). Valproate itself is partially CYP2C9-metabolised, so valproate levels may RISE as CBZ is withdrawn — monitor closely and be prepared to reduce valproate dose if toxicity emerges. Also: VPA inhibits CBZ-epoxide hydrolase during overlap, increasing CBZ-epoxide toxicity (see valproate-to-carbamazepine for full discussion). Start valproate low and titrate before CBZ is substantially reduced. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 56,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 800,
+      "toDoseMg": 500,
+      "notes": "Start valproate 500 mg/day. Continue carbamazepine 800 mg/day. CBZ induction active — valproate levels will be lower than expected during co-prescription phase. Check baseline LFTs, FBC. EURAP/teratogenicity counselling documented for women of reproductive age if initiating valproate."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 800,
+      "toDoseMg": 1000,
+      "notes": "Increase valproate to 1000 mg/day. Hold carbamazepine. Monitor for CBZ-epoxide toxicity symptoms (double vision, ataxia, dizziness) — VPA inhibits epoxide hydrolase, raising CBZ-E levels."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 600,
+      "toDoseMg": 1500,
+      "notes": "Increase valproate to 1500 mg/day (target). Begin CBZ taper: reduce carbamazepine to 600 mg/day. As CBZ reduces, enzyme induction reverses and valproate levels will begin to rise — watch for VPA side effects (sedation, tremor)."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 400,
+      "toDoseMg": 1500,
+      "notes": "Reduce carbamazepine to 400 mg/day. Check valproate level — levels likely rising as CBZ induction reverses. May need to reduce valproate dose if side effects or high level."
+    },
+    {
+      "day": 42,
+      "fromDoseMg": 200,
+      "toDoseMg": 1500,
+      "notes": "Reduce carbamazepine to 200 mg/day. Confirm valproate level. Carbamazepine enzyme reversal almost complete — VPA level may have risen significantly. Adjust VPA dose to level."
+    },
+    {
+      "day": 49,
+      "fromDoseMg": 100,
+      "toDoseMg": 1500,
+      "notes": "Reduce carbamazepine to 100 mg/day. Final step. Recheck valproate level — enzyme induction fully reversed by this stage."
+    },
+    {
+      "day": 56,
+      "fromDoseMg": 0,
+      "toDoseMg": 1500,
+      "notes": "Stop carbamazepine. Continue valproate (dose adjusted to level, typically 50–100 mg/L). Recheck valproate level 2–4 weeks after CBZ stopped to confirm stability. Carbamazepine enzyme-inducing effects persist for up to 4 weeks after stopping — continue close level monitoring."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 800,
+    "toTargetDoseMg": 1500,
+    "equivalencyNote": "Not dose-equivalent. Valproate dose during CBZ co-prescription phase will appear sub-therapeutic due to enzyme induction — do not over-increase. Target monotherapy valproate 1000–2000 mg/day (level 50–100 mg/L). Re-establish level 4 weeks after CBZ fully withdrawn. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [
+    "carbamazepine_enzyme_reversal",
+    "valproate_teratogenicity_warning",
+    "bipolar_relapse_monitor"
+  ],
+  "citations": [
+    "maudsley15_bipolar_p331_stopping_mood_stabilisers",
+    "bap2016_bipolar_guidelines",
+    "nice_cg185_bipolar"
+  ],
+  "contraindications": [
+    "Current pregnancy or planning pregnancy — valproate is highly teratogenic. Switch only if no safer alternative and full risk minimisation in place."
+  ],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

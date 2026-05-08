@@ -1,0 +1,49 @@
+{
+  "id": "duloxetine",
+  "genericName": "Duloxetine",
+  "drugClass": "SNRI",
+  "malaysianBrandNames": [
+    "Cymbalta",
+    "Duzela",
+    "Dulane"
+  ],
+  "halfLife": {
+    "meanHours": 12,
+    "rangeHours": [8, 17],
+    "notes": "Once-daily dosing typical. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": null,
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "Metabolites are not clinically active."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP1A2", "CYP2D6"],
+    "inhibitorOf": ["CYP2D6 (moderate)"],
+    "switchingRelevance": "Moderate CYP2D6 inhibition can elevate levels of co-prescribed CYP2D6 substrates. Levels of duloxetine itself are sensitive to CYP1A2 inhibitors (e.g. fluvoxamine — generally avoid co-administration). PENDING_CLINICAL_REVIEW."
+  },
+  "maoiWashout": {
+    "daysOffBeforeMAOI": 14,
+    "daysOffAfterMAOI": 14,
+    "notes": "Standard 14-day washout. PENDING_CLINICAL_REVIEW."
+  },
+  "discontinuationSyndromeRisk": {
+    "score": "high",
+    "notes": "High risk of discontinuation symptoms; not as severe as venlafaxine but worse than the long-half-life SSRIs. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 30,
+    "typicalTargetRangeMg": [60, 120],
+    "maxDoseMg": 120,
+    "increments": [30, 60, 90, 120],
+    "formulationsAvailableMy": ["30 mg cap", "60 mg cap"]
+  },
+  "formulationNotes": "Delayed-release capsules. Cannot be split or crushed. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_ch3_p369_duloxetine_profile",
+    "bap2015_antidepressants_duloxetine"
+  ],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

@@ -1,0 +1,53 @@
+{
+  "id": "desvenlafaxine",
+  "genericName": "Desvenlafaxine",
+  "drugClass": "SNRI",
+  "category": "antidepressant",
+  "malaysianBrandNames": ["Pristiq"],
+  "halfLife": {
+    "meanHours": 11,
+    "rangeHours": [9, 13],
+    "notes": "Active metabolite of venlafaxine (O-desmethylvenlafaxine). Predictable pharmacokinetics — less CYP2D6 variability than venlafaxine. Once-daily dosing. Steady state in ~4-5 days. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": null,
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "Desvenlafaxine IS the active metabolite of venlafaxine. No further active metabolites of clinical significance."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP3A4 (minor)"],
+    "inhibitorOf": ["CYP2D6 (moderate)"],
+    "switchingRelevance": "Unlike venlafaxine, desvenlafaxine is not significantly metabolised by CYP2D6 — plasma levels are less variable across CYP2D6 phenotypes. Moderate CYP2D6 inhibitor — may raise levels of co-prescribed CYP2D6 substrates (risperidone, haloperidol). No washout advantage over venlafaxine for switching purposes. PENDING_CLINICAL_REVIEW."
+  },
+  "maoiWashout": {
+    "daysOffBeforeMAOI": 14,
+    "daysOffAfterMAOI": 14,
+    "notes": "Same MAOI washout rules as venlafaxine — 14 days off desvenlafaxine before starting any MAOI; 14 days off any MAOI before starting desvenlafaxine. PENDING_CLINICAL_REVIEW."
+  },
+  "discontinuationSyndromeRisk": {
+    "score": "high",
+    "notes": "Similar discontinuation syndrome to venlafaxine — dizziness, nausea, 'brain zaps', sweating on abrupt cessation. Taper over at least 2 weeks; consider hyperbolic taper for long-term users. PENDING_CLINICAL_REVIEW."
+  },
+  "qtcRisk": "low",
+  "sedation": "low",
+  "dosing": {
+    "startingDoseMg": 50,
+    "typicalTargetRangeMg": [50, 100],
+    "maxDoseMg": 100,
+    "increments": [50, 100],
+    "formulationsAvailableMy": ["Pristiq 50 mg extended-release tablet", "Pristiq 100 mg extended-release tablet"]
+  },
+  "formulationNotes": "Extended-release tablets — do NOT crush, cut or chew. Swallow whole. 50 mg/day is the recommended effective dose for most patients; 100 mg/day offers no clear additional efficacy but higher side-effect burden. PENDING_CLINICAL_REVIEW.",
+  "specialConsiderations": [
+    "Therapeutic equivalency to venlafaxine is not direct — dose conversion is approximate. Venlafaxine 75 mg ≈ desvenlafaxine 50 mg is a common reference.",
+    "CYP2D6 inhibition (moderate) — monitor risperidone, TCAs, opioids metabolised by CYP2D6.",
+    "Avoid in severe renal impairment (CrCl <30 mL/min) — dose adjustment required."
+  ],
+  "citations": [
+    "maudsley15_ch3_snri_profile",
+    "bap2015_evidence_antidepressants"
+  ],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

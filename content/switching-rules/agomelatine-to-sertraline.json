@@ -1,0 +1,41 @@
+{
+  "id": "agomelatine-to-sertraline",
+  "fromDrugId": "agomelatine",
+  "toDrugId": "sertraline",
+  "strategy": "cross-taper",
+  "rationale": "Agomelatine (MT1/MT2 agonist, 5-HT2C antagonist; t½ ~2h; no discontinuation syndrome; no serotonergic reuptake activity) to sertraline (SSRI). Agomelatine clears within hours — no washout needed. No pharmacodynamic serotonin overlap hazard. Agomelatine can be stopped the same day sertraline is started. A brief 7-day overlap is used for clinical comfort and LFT exit monitoring. Sertraline has a favourable interaction profile — no CYP1A2 inhibition concerns. Exit LFTs should be checked before stopping agomelatine. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 7,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 25,
+      "toDoseMg": 50,
+      "notes": "Start sertraline 50 mg. Continue agomelatine 25 mg nocte. Check exit LFTs (agomelatine final hepatotoxicity monitoring check). Sertraline: start at 50 mg, GI side effects common in first 1–2 weeks — take with food."
+    },
+    {
+      "day": 4,
+      "fromDoseMg": 25,
+      "toDoseMg": 50,
+      "notes": "Review sertraline tolerability. Continue agomelatine."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 0,
+      "toDoseMg": 50,
+      "notes": "Stop agomelatine. Continue sertraline 50 mg. No discontinuation syndrome from agomelatine. Titrate sertraline to 100 mg at 4 weeks if response inadequate."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 25,
+    "toTargetDoseMg": 50,
+    "equivalencyNote": "Agomelatine 25 mg ≈ sertraline 50 mg (standard effective starting doses for MDD). Different mechanisms — not pharmacologically equivalent. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["agomelatine_lft_monitoring"],
+  "citations": [
+    "maudsley15_ch3_agomelatine_profile",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

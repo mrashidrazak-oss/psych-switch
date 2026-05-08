@@ -1,0 +1,48 @@
+{
+  "id": "venlafaxine-to-mirtazapine",
+  "fromDrugId": "venlafaxine",
+  "toDrugId": "mirtazapine",
+  "strategy": "cross-taper",
+  "rationale": "Switch out of the SSRI/SNRI class entirely after non-response or for tolerability (sexual dysfunction, GI upset, hypertension). Different mechanisms reduce direct serotonergic-overlap concern but venlafaxine's very high discontinuation-syndrome risk requires graded reduction. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 150,
+      "toDoseMg": 15,
+      "notes": "Start mirtazapine 15 mg at night. Hold venlafaxine XR 150 mg. Counsel re sedation initially."
+    },
+    {
+      "day": 5,
+      "fromDoseMg": 75,
+      "toDoseMg": 30,
+      "notes": "Halve venlafaxine to 75 mg XR. Increase mirtazapine to 30 mg."
+    },
+    {
+      "day": 10,
+      "fromDoseMg": 37.5,
+      "toDoseMg": 30,
+      "notes": "Reduce venlafaxine to 37.5 mg XR. Hold mirtazapine 30 mg. Watch closely for venlafaxine discontinuation symptoms."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 30,
+      "notes": "Stop venlafaxine. Continue mirtazapine 30 mg. Slow this final step if disc symptoms emerge."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 150,
+    "toTargetDoseMg": 30,
+    "equivalencyNote": "Mirtazapine and venlafaxine are not directly equipotent — mapping reflects typical effective doses for major depression. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_p369_table_3_7",
+    "maudsley15_ch3_p369_table_3_7",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

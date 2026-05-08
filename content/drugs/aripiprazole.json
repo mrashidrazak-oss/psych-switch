@@ -1,0 +1,57 @@
+{
+  "id": "aripiprazole",
+  "genericName": "Aripiprazole",
+  "drugClass": "SGA (D2 partial agonist)",
+  "category": "antipsychotic",
+  "malaysianBrandNames": [
+    "Abilify",
+    "Aripi",
+    "Ariplus"
+  ],
+  "halfLife": {
+    "meanHours": 75,
+    "rangeHours": [47, 94],
+    "notes": "Long half-life supports once-daily dosing. Steady state in 2 weeks. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": "Dehydro-aripiprazole",
+    "halfLifeHours": 94,
+    "clinicallySignificant": true,
+    "notes": "Active metabolite contributes ~40% of total exposure; half-life ~94h. Combined effective half-life is what enables LAI dosing intervals. PENDING_CLINICAL_REVIEW."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP2D6", "CYP3A4"],
+    "inhibitorOf": [],
+    "switchingRelevance": "Strong CYP2D6 inhibitors (paroxetine, fluoxetine) and CYP3A4 inhibitors raise levels — halve dose if combined. PENDING_CLINICAL_REVIEW."
+  },
+  "epsRisk": "low",
+  "metabolicRisk": {
+    "score": "low",
+    "notes": "Among the most metabolically neutral SGAs — frequently chosen as a switch target when olanzapine or quetiapine cause weight gain. PENDING_CLINICAL_REVIEW."
+  },
+  "prolactinRisk": "low",
+  "qtcRisk": "low",
+  "sedation": "low",
+  "lai": {
+    "available": true,
+    "notes": "Abilify Maintena (monthly). Switching from oral to LAI requires oral overlap during initial titration. PENDING_CLINICAL_REVIEW."
+  },
+  "reboundPsychosisRisk": {
+    "score": "low",
+    "notes": "Long half-life provides intrinsic taper. Akathisia rather than rebound is the main switch concern. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 5,
+    "typicalTargetRangeMg": [10, 30],
+    "maxDoseMg": 30,
+    "increments": [5, 10, 15, 20, 30],
+    "formulationsAvailableMy": ["5 mg tab", "10 mg tab", "15 mg tab", "20 mg tab", "30 mg tab"]
+  },
+  "formulationNotes": "Tablets only in MY. Akathisia is the most common dose-limiting AE — counsel patients to report restlessness early. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_schizophrenia_aripiprazole_profile",
+    "bap2020_psychosis_aripiprazole"
+  ],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

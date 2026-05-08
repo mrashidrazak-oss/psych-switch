@@ -1,0 +1,41 @@
+{
+  "id": "venlafaxine-to-desvenlafaxine",
+  "fromDrugId": "venlafaxine",
+  "toDrugId": "desvenlafaxine",
+  "strategy": "cross-taper",
+  "rationale": "Venlafaxine to desvenlafaxine: Desvenlafaxine is the active metabolite of venlafaxine. Reasons for switch: more predictable pharmacokinetics (desvenlafaxine has less CYP2D6-dependent metabolism — plasma levels are more uniform across CYP2D6 phenotypes), or drug interaction simplification. Both have equivalent SNRI mechanism and high discontinuation syndrome risk. Dose conversion: venlafaxine 75 mg ≈ desvenlafaxine 50 mg. Smooth pharmacological switch — start desvenlafaxine at equivalent dose and taper venlafaxine over 1–2 weeks. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 75,
+      "toDoseMg": 50,
+      "notes": "Start desvenlafaxine 50 mg. Continue venlafaxine XR 75 mg. Pharmacologically almost identical switch. Both at equivalent doses during the overlap period. No serotonin syndrome risk of clinical significance."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 37.5,
+      "toDoseMg": 50,
+      "notes": "Reduce venlafaxine to 37.5 mg XR. Continue desvenlafaxine 50 mg. Monitor for discontinuation symptoms during venlafaxine reduction."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 50,
+      "notes": "Stop venlafaxine. Continue desvenlafaxine 50 mg. Titrate to 100 mg at 4 weeks if response inadequate (limited additional efficacy but some patients benefit)."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 75,
+    "toTargetDoseMg": 50,
+    "equivalencyNote": "Venlafaxine 75 mg ≈ desvenlafaxine 50 mg (commonly used conversion). Individual variation exists. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_snri_profile",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

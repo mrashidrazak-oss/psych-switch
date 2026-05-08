@@ -1,0 +1,41 @@
+{
+  "id": "desvenlafaxine-to-venlafaxine",
+  "fromDrugId": "desvenlafaxine",
+  "toDrugId": "venlafaxine",
+  "strategy": "cross-taper",
+  "rationale": "Desvenlafaxine to venlafaxine: Desvenlafaxine IS the active metabolite of venlafaxine (O-desmethylvenlafaxine). This is essentially a formulation/prodrug switch within the same pharmacological class. The pharmacokinetic overlap is favourable — both drugs act on the same targets (SERT + NET). Discontinuation syndrome risk is high for both. Approach: start venlafaxine at approximate equivalent dose, then taper desvenlafaxine. Dose conversion: desvenlafaxine 50 mg ≈ venlafaxine 75 mg (approximate; individual variation expected). Both carry high discontinuation syndrome risk — never stop either abruptly. The switch should be smooth given the pharmacological similarity. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 50,
+      "toDoseMg": 75,
+      "notes": "Start venlafaxine XR 75 mg. Continue desvenlafaxine 50 mg. Pharmacologically very similar switch — smooth transition expected. No serotonin syndrome risk of clinical concern at these doses."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 50,
+      "toDoseMg": 75,
+      "notes": "Assess tolerability on dual SNRI. If excess side effects (tachycardia, sweating, nausea), reduce desvenlafaxine sooner."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 75,
+      "notes": "Stop desvenlafaxine. Continue venlafaxine XR 75 mg. If stopping desvenlafaxine causes discontinuation symptoms, use a slower taper (50 mg → 25 mg for 1 week → stop). Titrate venlafaxine to 150 mg at 4 weeks if response inadequate."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 50,
+    "toTargetDoseMg": 75,
+    "equivalencyNote": "Desvenlafaxine 50 mg ≈ venlafaxine 75 mg (approximate conversion; desvenlafaxine 50 mg ≈ venlafaxine 75 mg is a commonly used reference). Individual variation expected. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_snri_profile",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

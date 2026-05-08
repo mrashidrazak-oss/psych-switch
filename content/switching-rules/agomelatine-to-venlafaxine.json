@@ -1,0 +1,41 @@
+{
+  "id": "agomelatine-to-venlafaxine",
+  "fromDrugId": "agomelatine",
+  "toDrugId": "venlafaxine",
+  "strategy": "cross-taper",
+  "rationale": "Agomelatine (MT1/MT2 agonist; t½ ~2h; no discontinuation syndrome; no serotonergic reuptake activity) to venlafaxine (SNRI). Agomelatine clears within hours — no washout needed. No pharmacodynamic serotonin overlap hazard since agomelatine does not inhibit serotonin reuptake. Start venlafaxine at low dose (37.5 mg or 75 mg XR) and titrate. Agomelatine can be stopped the same day venlafaxine is started. Brief overlap for clinical continuity. Exit LFT check before stopping agomelatine. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 7,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 25,
+      "toDoseMg": 75,
+      "notes": "Start venlafaxine XR 75 mg. Continue agomelatine 25 mg nocte. Check exit LFTs. Counsel patient: venlafaxine may cause nausea, sweating, headache in first 1–2 weeks. Take with food. Always use XR formulation where available."
+    },
+    {
+      "day": 4,
+      "fromDoseMg": 25,
+      "toDoseMg": 75,
+      "notes": "Review venlafaxine tolerability. Continue agomelatine."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 0,
+      "toDoseMg": 75,
+      "notes": "Stop agomelatine. Continue venlafaxine XR 75 mg. No discontinuation syndrome from agomelatine (t½ ~2h). Titrate venlafaxine to 150 mg at 4 weeks if response inadequate."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 25,
+    "toTargetDoseMg": 75,
+    "equivalencyNote": "Agomelatine 25 mg ≈ venlafaxine 75 mg (standard starting effective doses). Not pharmacologically equivalent — different mechanisms. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["agomelatine_lft_monitoring"],
+  "citations": [
+    "maudsley15_ch3_agomelatine_profile",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

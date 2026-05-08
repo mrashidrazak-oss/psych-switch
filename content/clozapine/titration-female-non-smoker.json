@@ -1,0 +1,37 @@
+{
+  "id": "clozapine-titration-female-non-smoker",
+  "variant": { "sex": "female", "smoker": false },
+  "targetDoseMg": 225,
+  "rationale": "Per Maudsley 15th edition (Schizophrenia chapter, p.216–217). Female non-smokers have the lowest CYP1A2-mediated clozapine clearance, so the target maintenance dose is 225 mg/day — the lowest of the four pharmacokinetic variants. The schedule is gentle: 6.25 mg evening for the first two days, slow build-up over 20 days. PENDING_CLINICAL_REVIEW.",
+  "totalDays": 20,
+  "steps": [
+    { "day": 1, "morningMg": 0, "eveningMg": 6.25, "totalMg": 6.25, "notes": "First test dose 6.25 mg evening. Lying and standing BP at 1, 2 and 4 hours post-dose. Pulse and temperature 4-hourly." },
+    { "day": 2, "morningMg": 0, "eveningMg": 6.25, "totalMg": 6.25, "notes": "Continue 6.25 mg evening only. Repeat lying/standing BP morning, post-dose × 3." },
+    { "day": 3, "morningMg": 6.25, "eveningMg": 6.25, "totalMg": 12.5, "notes": "Begin BD dosing. BP monitoring continues." },
+    { "day": 4, "morningMg": 6.25, "eveningMg": 12.5, "totalMg": 18.75, "notes": "Watch for postural drop. Counsel about hypersalivation and constipation." },
+    { "day": 5, "morningMg": 12.5, "eveningMg": 12.5, "totalMg": 25, "notes": "Start prophylactic laxative if not already (constipation is universal)." },
+    { "day": 6, "morningMg": 12.5, "eveningMg": 12.5, "totalMg": 25, "notes": "Daily BP, pulse, temperature." },
+    { "day": 7, "morningMg": 25, "eveningMg": 25, "totalMg": 50, "notes": "Hypersalivation typically emerges around days 3–7." },
+    { "day": 8, "morningMg": 25, "eveningMg": 25, "totalMg": 50, "notes": "Document bowel function daily." },
+    { "day": 9, "morningMg": 25, "eveningMg": 50, "totalMg": 75, "notes": "Continue gradual increase." },
+    { "day": 10, "morningMg": 25, "eveningMg": 50, "totalMg": 75, "notes": "Halfway to target. Reassess tolerability." },
+    { "day": 11, "morningMg": 50, "eveningMg": 50, "totalMg": 100, "notes": "Tachycardia commonly persists — usually self-limiting." },
+    { "day": 12, "morningMg": 50, "eveningMg": 50, "totalMg": 100, "notes": "Watch for sedation, weight gain trajectory." },
+    { "day": 13, "morningMg": 50, "eveningMg": 75, "totalMg": 125, "notes": "Continue increment." },
+    { "day": 14, "morningMg": 50, "eveningMg": 75, "totalMg": 125, "notes": "FBC due (week 2 from start)." },
+    { "day": 15, "morningMg": 75, "eveningMg": 75, "totalMg": 150, "notes": "Reassess myocarditis warning signs (chest pain, palpitations, fever, dyspnoea)." },
+    { "day": 16, "morningMg": 75, "eveningMg": 75, "totalMg": 150, "notes": "Continue." },
+    { "day": 17, "morningMg": 75, "eveningMg": 100, "totalMg": 175, "notes": "Approaching target." },
+    { "day": 18, "morningMg": 75, "eveningMg": 100, "totalMg": 175, "notes": "Hold and reassess if any concerns." },
+    { "day": 19, "morningMg": 100, "eveningMg": 100, "totalMg": 200, "notes": "One step from target." },
+    { "day": 20, "morningMg": 100, "eveningMg": 125, "totalMg": 225, "notes": "Maintenance target reached. Continue with weekly FBC, troponin/CRP at weeks 2 and 4." }
+  ],
+  "postTitrationGuidance": "Maintain at 225 mg/day. Plasma level optimisation may follow once stable (target 350–600 ng/mL). Weekly FBC for first 18 weeks, then fortnightly for weeks 19–52, then monthly indefinitely. Faster titrations may be appropriate in younger patients without prominent dose-related side effects, particularly when cross-tapering from a previous antipsychotic.",
+  "missedDoseRule": "Doses missed for more than 48 hours mandate retitration. Use the Interruption Restart Wizard for the appropriate restart strategy. Restarting at the previous dose after a gap can cause severe hypotension and cardiovascular collapse.",
+  "citations": [
+    "maudsley15_schizophrenia_p216_clozapine_titration",
+    "maudsley15_schizophrenia_p214_clozapine_dosing"
+  ],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

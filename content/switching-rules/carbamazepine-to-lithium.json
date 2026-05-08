@@ -1,0 +1,72 @@
+{
+  "id": "carbamazepine-to-lithium",
+  "fromDrugId": "carbamazepine",
+  "toDrugId": "lithium",
+  "strategy": "cross-taper",
+  "rationale": "Carbamazepine to lithium: Indicated when greater mania prevention is needed, or for CBZ intolerance/failure. KEY HAZARDS: (1) Carbamazepine enzyme reversal — CBZ is a potent CYP inducer; as it is tapered, induction of CYP3A4/2C9/2B6 reverses over 2–4 weeks, causing rising plasma levels of all co-medications that are CYP substrates (note: lithium has NO CYP metabolism — it is renally cleared, so this hazard affects other concurrent medications, not lithium itself). (2) Neurotoxicity during overlap — both CBZ and lithium can cause CNS toxicity; even at therapeutic levels, the combination can cause additive effects (ataxia, confusion, tremor). Monitor carefully during overlap phase. (3) Lithium narrow therapeutic index — titrate to serum levels, not weight. Start lithium while CBZ is still present; do not reduce CBZ until lithium is established at therapeutic level. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 56,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 800,
+      "toDoseMg": 400,
+      "notes": "Start lithium 400 mg/day. Continue carbamazepine 800 mg/day. Baseline renal function, TFT, U&E, ECG. Check lithium level at day 5. Counsel patient about double CNS effect during overlap — may experience more drowsiness, tremor. Warn about sick-day rules for lithium."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 800,
+      "toDoseMg": 800,
+      "notes": "Increase lithium to 800 mg/day if level below target and well tolerated. Hold carbamazepine. Check lithium level at day 12."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 800,
+      "toDoseMg": 1000,
+      "notes": "Increase lithium to 1000 mg/day if level <0.6 mmol/L (12 h post-dose). Begin CBZ taper: reduce carbamazepine to 600 mg/day. As CBZ reduces, CYP enzyme induction reverses — check any co-medications that may have rising levels (e.g. antidepressants, antipsychotics, oral contraceptives)."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 600,
+      "toDoseMg": 1000,
+      "notes": "Reduce carbamazepine to 600 mg/day. Lithium level check — ensure therapeutic. CBZ enzyme reversal ongoing — monitor co-medication toxicity."
+    },
+    {
+      "day": 35,
+      "fromDoseMg": 400,
+      "toDoseMg": 1000,
+      "notes": "Reduce carbamazepine to 400 mg/day. Lithium is primary mood stabiliser. Enzyme induction largely reversed by this stage."
+    },
+    {
+      "day": 49,
+      "fromDoseMg": 200,
+      "toDoseMg": 1000,
+      "notes": "Reduce carbamazepine to 200 mg/day. Final step before stopping. Recheck lithium level — confirm 0.6–1.0 mmol/L."
+    },
+    {
+      "day": 56,
+      "fromDoseMg": 0,
+      "toDoseMg": 1000,
+      "notes": "Stop carbamazepine. Continue lithium (dose adjusted to level). Recheck lithium level 2–4 weeks after CBZ stopped to confirm no change (lithium has no CYP interactions so level should be stable). Also review levels of any other medications previously affected by CBZ induction — now enzyme reversal is complete, levels will be elevated."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 800,
+    "toTargetDoseMg": 1000,
+    "equivalencyNote": "Not dose-equivalent. Lithium target defined by serum level (0.6–1.0 mmol/L maintenance; 12 h post-dose). Note: lithium does not interact pharmacokinetically with carbamazepine (no CYP involvement for lithium). Neurotoxicity during overlap is a pharmacodynamic interaction. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [
+    "carbamazepine_enzyme_reversal",
+    "lithium_narrow_therapeutic_index",
+    "bipolar_relapse_monitor"
+  ],
+  "citations": [
+    "maudsley15_bipolar_p331_stopping_mood_stabilisers",
+    "bap2016_bipolar_guidelines",
+    "nice_cg185_bipolar"
+  ],
+  "contraindications": [
+    "Severe renal impairment (eGFR <30 mL/min) — lithium contraindicated."
+  ],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

@@ -1,0 +1,59 @@
+{
+  "id": "risperidone-to-olanzapine",
+  "fromDrugId": "risperidone",
+  "toDrugId": "olanzapine",
+  "strategy": "cross-taper",
+  "rationale": "Typically an EPS-driven switch — risperidone's moderate EPS burden (especially above 4 mg) prompts a move to olanzapine's lower EPS profile. Introduce olanzapine first and stabilise at target before tapering risperidone, to avoid a window of sub-therapeutic cover. Counsel the patient that metabolic risk increases with olanzapine — weight, glucose and lipid monitoring is mandatory. Cholinergic and histaminergic effects of olanzapine will produce sedation initially; dose at night. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 35,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 4,
+      "toDoseMg": 5,
+      "notes": "Start olanzapine 5 mg nocte. Continue risperidone 4 mg. Warn patient about initial sedation and weight gain trajectory."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 4,
+      "toDoseMg": 10,
+      "notes": "Increase olanzapine to 10 mg nocte (target dose). Hold risperidone 4 mg — allow olanzapine to stabilise before tapering."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 3,
+      "toDoseMg": 10,
+      "notes": "Begin tapering risperidone: reduce to 3 mg. Olanzapine at steady state, antipsychotic cover maintained."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 2,
+      "toDoseMg": 10,
+      "notes": "Reduce risperidone to 2 mg. Prolactin will begin to normalise as risperidone withdraws — counsel accordingly."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 1,
+      "toDoseMg": 10,
+      "notes": "Reduce risperidone to 1 mg. Watch for any emergence of psychotic symptoms at this low dose."
+    },
+    {
+      "day": 35,
+      "fromDoseMg": 0,
+      "toDoseMg": 10,
+      "notes": "Stop risperidone. Continue olanzapine 10 mg. Establish baseline weight, fasting glucose and lipids if not done at switch initiation."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 4,
+    "toTargetDoseMg": 10,
+    "equivalencyNote": "Approximate clinical equivalency: risperidone 4 mg ≈ olanzapine 10 mg (Maudsley 15th, AP dose-equivalence table). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["metabolic_monitoring_required"],
+  "citations": [
+    "maudsley15_schizophrenia_p230_ap_swap_table",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

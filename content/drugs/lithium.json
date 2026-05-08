@@ -1,0 +1,57 @@
+{
+  "id": "lithium",
+  "genericName": "Lithium",
+  "drugClass": "Mood stabilizer",
+  "category": "mood-stabilizer",
+  "malaysianBrandNames": ["Priadel", "Camcolit", "Liskonum"],
+  "halfLife": {
+    "meanHours": 24,
+    "rangeHours": [18, 36],
+    "notes": "Half-life increases with age and in renal impairment. Renally cleared — dose proportional to GFR. Twice-daily dosing common in Malaysia; some evidence for single nocte dosing. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": null,
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "No active metabolite. Unchanged lithium ion is excreted by kidneys."
+  },
+  "cypInteractions": {
+    "substrateOf": [],
+    "inhibitorOf": [],
+    "switchingRelevance": "Lithium has no CYP interactions — it is excreted renally unchanged. Key interactions: NSAIDs and ACE inhibitors raise lithium levels (reduce renal clearance). Diuretics (especially thiazides) markedly raise lithium levels. Dehydration and low sodium intake raise levels. Relevant in Ramadan (fasting, dehydration risk). PENDING_CLINICAL_REVIEW."
+  },
+  "qtcRisk": "low",
+  "sedation": "low",
+  "reboundPsychosisRisk": {
+    "score": "moderate",
+    "notes": "Abrupt lithium discontinuation can precipitate manic rebound — taper over at least 2–4 weeks if stopping. Discontinuation-induced mania may be more severe than pre-treatment episodes. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 400,
+    "typicalTargetRangeMg": [800, 1200],
+    "maxDoseMg": 2000,
+    "increments": [200, 400, 600, 800, 1000, 1200, 1600],
+    "formulationsAvailableMy": [
+      "Priadel 400 mg controlled-release tablet",
+      "Camcolit 250 mg tablet",
+      "Camcolit 400 mg tablet"
+    ]
+  },
+  "formulationNotes": "Controlled-release (Priadel) preferred for lower peak levels, less polyuria, and potentially better tolerability. Standard-release tablets allow more flexible dosing. Both are available in Malaysia. PENDING_CLINICAL_REVIEW.",
+  "specialConsiderations": [
+    "Narrow therapeutic index: target serum level 0.6–1.0 mmol/L (maintenance), 0.8–1.0 mmol/L (acute mania). Check 12 h post-dose.",
+    "Mandatory baseline and monitoring: U&E, eGFR, TFT, Ca²⁺, weight, ECG in patients > 40 years.",
+    "Teratogenicity: Ebstein's anomaly risk (relative risk modest but counsel all women of reproductive age).",
+    "Toxicity: starts at > 1.5 mmol/L (coarse tremor, vomiting, diarrhoea). Severe at > 2.0 mmol/L. Emergency: haemodialysis.",
+    "Dehydration risk: any illness causing sweating, diarrhoea or vomiting can cause toxicity — patients must be counselled to hold dose and seek review.",
+    "Ramadan: Fasting and dehydration risk — check levels more frequently during Ramadan. Consider twice-daily dosing at Suhoor + Iftar. Do NOT skip doses."
+  ],
+  "citations": [
+    "maudsley15_bipolar_p331_stopping_mood_stabilisers",
+    "maudsley15_bipolar_p333_box_2_3_lithium_regimen",
+    "BAP 2016 Guidelines for Bipolar Disorder",
+    "NICE CG185: Bipolar disorder: assessment and management"
+  ],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

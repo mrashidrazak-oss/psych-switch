@@ -1,0 +1,51 @@
+{
+  "id": "venlafaxine-to-agomelatine",
+  "fromDrugId": "venlafaxine",
+  "toDrugId": "agomelatine",
+  "strategy": "cross-taper",
+  "rationale": "Venlafaxine (SNRI; t½ ~5h parent + ~11h metabolite; HIGH discontinuation syndrome risk) to agomelatine (MT1/MT2 agonist; t½ ~2h; no serotonin/noradrenaline reuptake inhibition). Venlafaxine carries the highest discontinuation syndrome risk of all antidepressants — brain zaps, dizziness, nausea, flu-like symptoms can be severe even with short half-life gaps. Taper venlafaxine slowly. Agomelatine can be started during the venlafaxine taper without serotonin syndrome risk (no serotonergic reuptake activity). Baseline LFTs before starting agomelatine. Switch reasons: sexual dysfunction, excessive sweating, blood pressure elevation, weight considerations. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 21,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 150,
+      "toDoseMg": 25,
+      "notes": "Start agomelatine 25 mg nocte. Continue venlafaxine XR 150 mg. CHECK BASELINE LFTs. No serotonin overlap hazard. Warn patient: venlafaxine taper will still cause discontinuation symptoms — this is expected and related to venlafaxine, not agomelatine."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 75,
+      "toDoseMg": 25,
+      "notes": "Reduce venlafaxine to 75 mg XR. Continue agomelatine 25 mg. Monitor for discontinuation symptoms — dizziness, brain zaps, sweating. These are mild at this step for most patients."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 37.5,
+      "toDoseMg": 25,
+      "notes": "Reduce venlafaxine to 37.5 mg (lowest available dose). Discontinuation symptoms may intensify at this step — some patients need a slower taper. Consider holding at 37.5 mg for 1–2 additional weeks if symptoms severe."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 0,
+      "toDoseMg": 25,
+      "notes": "Stop venlafaxine. Continue agomelatine 25 mg nocte. Venlafaxine discontinuation symptoms peak 1–2 days post-stop then resolve over 1–2 weeks. Titrate agomelatine to 50 mg at 2 weeks if response inadequate."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 150,
+    "toTargetDoseMg": 25,
+    "equivalencyNote": "Venlafaxine 150 mg → agomelatine 25 mg (start dose). Different mechanisms — not pharmacologically equivalent. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["agomelatine_lft_monitoring"],
+  "citations": [
+    "maudsley15_ch3_agomelatine_profile",
+    "maudsley15_ch3_p369_table_3_7",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [
+    "Hepatic impairment — agomelatine contraindicated.",
+    "ALT >3× ULN at baseline — do not start agomelatine."
+  ],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

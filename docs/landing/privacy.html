@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy — PsychSwitch</title>
+  <meta name="description" content="PsychSwitch privacy policy. Local-first. No tracking. No PHI ever transits our servers." />
+  <link rel="canonical" href="https://psychswitch.health/privacy" />
+  <style>
+    body { font-family: -apple-system, system-ui, sans-serif; max-width: 720px; margin: 0 auto; padding: 32px 24px; background: #0b0f14; color: #e6edf3; line-height: 1.6; }
+    a { color: #3b82f6; }
+    h1 { font-size: 32px; letter-spacing: -0.02em; margin: 0 0 8px; }
+    h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 2px; color: #3b82f6; margin: 28px 0 8px; font-weight: 700; }
+    p, ul { font-size: 15px; }
+    ul { padding-left: 20px; }
+    li { margin-bottom: 6px; }
+    .meta { color: #8b949e; font-size: 13px; margin-top: 4px; }
+    .nav { color: #8b949e; font-size: 13px; margin-bottom: 24px; }
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <a href="/">PsychSwitch</a> · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a> · <a href="/errata.json">Errata</a>
+  </div>
+
+  <h1>Privacy</h1>
+  <p class="meta">Last updated 2026-05-08</p>
+
+  <p>
+    PsychSwitch is privacy-first. The app does not require an
+    account, does not transmit clinical inputs to any server, and
+    does not track its users.
+  </p>
+
+  <h2>What stays on your device</h2>
+  <ul>
+    <li>Patient context (age band, renal/hepatic, comorbidities) — stored as parameters, never as a patient record.</li>
+    <li>Saved cases (your own free-form labels and switch parameters).</li>
+    <li>Reviewer sign-offs and starred cases.</li>
+    <li>Notification schedule index (per saved case).</li>
+    <li>App-level preferences (theme, text size, reminder time).</li>
+    <li>Onboarding seen flag.</li>
+  </ul>
+
+  <h2>What is sent off your device</h2>
+  <ul>
+    <li><strong>Crash reports</strong> — anonymous, stack traces only, opt-in via Settings → Privacy. Off by default. Never includes clinical inputs.</li>
+    <li><strong>Over-the-air updates</strong> — pulled from Expo on app start. One-way: server to device. No data uploaded in the request.</li>
+    <li><strong>Only when you tap "Share schedule"</strong>: the formatted plan goes to whichever app you choose (WhatsApp, email, etc.). PsychSwitch sees no copy.</li>
+  </ul>
+
+  <h2>What we never collect</h2>
+  <ul>
+    <li>Patient name, NRIC, MRN or DOB.</li>
+    <li>Location, contacts, photos, calendar.</li>
+    <li>Browser history or cross-app fingerprinting.</li>
+    <li>Analytics on which rules you view or which patients.</li>
+  </ul>
+
+  <h2>Removing your data</h2>
+  <p>
+    Uninstalling the app deletes all locally-stored data. From within
+    the app: <em>Settings → Reset → "Clear all local data"</em>
+    wipes patient context, saved cases, sign-offs, notification
+    schedules and preferences in one tap.
+  </p>
+
+  <h2>Verifying these claims</h2>
+  <p>
+    The app source is open at
+    <a href="https://github.com/feistz/psych-switch">github.com/feistz/psych-switch</a>.
+    Search the repo for any networking / analytics primitive — you
+    won't find any except the Expo OTA download endpoint and the
+    optional Sentry DSN (which is gated by your opt-in).
+  </p>
+
+  <h2>Contact</h2>
+  <p>
+    Questions about privacy? Open a
+    <a href="https://github.com/feistz/psych-switch/issues">GitHub issue</a>
+    or email <a href="mailto:privacy@psychswitch.health">privacy@psychswitch.health</a>.
+  </p>
+</body>
+</html>

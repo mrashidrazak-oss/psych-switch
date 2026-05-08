@@ -1,0 +1,74 @@
+{
+  "id": "lithium-to-carbamazepine",
+  "fromDrugId": "lithium",
+  "toDrugId": "carbamazepine",
+  "strategy": "cross-taper",
+  "rationale": "Lithium to carbamazepine: Indicated for rapid cycling bipolar, lithium intolerance/nephropathy, or mixed states. This switch carries two major hazards: (1) Carbamazepine autoinduction — CBZ induces its own metabolism (CYP3A4), so doses must be increased over 4–6 weeks to achieve target levels. Initial doses produce higher levels than final steady-state levels. (2) Neurotoxicity risk during overlap — both lithium and carbamazepine can cause CNS side effects (tremor, ataxia, confusion); the combination carries additive neurotoxic risk even at therapeutic levels. Monitor closely during overlap. (3) Lithium rebound mania risk on rapid withdrawal — taper lithium over at least 4 weeks. Check CBZ level at 2 and 6 weeks (autoinduction reduces levels mid-taper). PENDING_CLINICAL_REVIEW.",
+  "durationDays": 56,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 1000,
+      "toDoseMg": 200,
+      "notes": "Start carbamazepine 200 mg/day (CBZ levels will initially be higher — autoinduction not yet active). Continue lithium 1000 mg/day. Check baseline LFTs, FBC, Na⁺, U&E. Warn patient about double CNS effects during overlap phase."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 1000,
+      "toDoseMg": 400,
+      "notes": "Increase carbamazepine to 400 mg/day. Hold lithium. Autoinduction begins within 1–2 weeks — CBZ levels may actually fall as dose increases due to self-induction."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 1000,
+      "toDoseMg": 600,
+      "notes": "Increase carbamazepine to 600 mg/day. Hold lithium. Check CBZ level — expected 4–10 mg/L therapeutic range. Also check lithium level. Monitor for neurotoxicity (diplopia, ataxia, confusion)."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 800,
+      "toDoseMg": 800,
+      "notes": "Reduce lithium to 800 mg/day. Carbamazepine at or near target dose. Autoinduction largely complete by 4 weeks — recheck CBZ level if neurological symptoms present."
+    },
+    {
+      "day": 35,
+      "fromDoseMg": 400,
+      "toDoseMg": 800,
+      "notes": "Reduce lithium to 400 mg/day. CBZ autoinduction stable. Monitor mood and neurological symptoms."
+    },
+    {
+      "day": 49,
+      "fromDoseMg": 200,
+      "toDoseMg": 800,
+      "notes": "Reduce lithium to 200 mg/day. CBZ well established. Check CBZ level to confirm therapeutic (4–10 mg/L)."
+    },
+    {
+      "day": 56,
+      "fromDoseMg": 0,
+      "toDoseMg": 800,
+      "notes": "Stop lithium. Continue carbamazepine 800 mg/day. Recheck CBZ level 2 weeks after lithium stopped (stopping lithium removes a CBZ interaction; also confirm autoinduction complete). Monitor for renal function improvement if switch was due to lithium nephropathy."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 1000,
+    "toTargetDoseMg": 800,
+    "equivalencyNote": "Not dose-equivalent. Carbamazepine target for bipolar: 400–1200 mg/day titrated to serum level 4–10 mg/L (or higher for some patients with seizure history). Autoinduction means dose must be increased incrementally over 4–6 weeks even after a 'target' is reached. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [
+    "lithium_rebound_mania_risk",
+    "lithium_narrow_therapeutic_index",
+    "carbamazepine_autoinduction",
+    "bipolar_relapse_monitor"
+  ],
+  "citations": [
+    "maudsley15_bipolar_p331_stopping_mood_stabilisers",
+    "bap2016_bipolar_guidelines",
+    "nice_cg185_bipolar"
+  ],
+  "contraindications": [
+    "HLA-B*1502 allele positive (South Asian, South-East Asian ancestry) — carbamazepine contraindicated; SJS risk up to 25× higher. Screen before prescribing in Malaysian patients.",
+    "Active bone marrow suppression — carbamazepine causes aplastic anaemia (rare but potentially fatal)."
+  ],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

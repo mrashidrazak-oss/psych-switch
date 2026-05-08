@@ -1,0 +1,52 @@
+# Verify — runs on every push + PR. Catches regressions before they
+# get anywhere near a build. Fast: ~1 min cold, ~30s warm.
+#
+# Three checks, all must pass:
+#   1. typecheck       — `tsc --noEmit` across the whole repo
+#   2. jest            — 302 engine + util tests
+#   3. mcp smoke       — 24 tool handler smoke tests
+#
+# Add new checks by extending the matrix `step.name` list, not by
+# splitting into multiple jobs — keeping the cache warm across all
+# steps is the whole reason this is fast.
+
+name: Verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    name: typecheck + tests + MCP smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install root deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Install MCP server deps
+        run: pnpm install --frozen-lockfile --ignore-workspace
+        working-directory: mcp-server
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Engine + util tests
+        run: pnpm test --ci
+
+      - name: MCP smoke
+        run: pnpm test
+        working-directory: mcp-server

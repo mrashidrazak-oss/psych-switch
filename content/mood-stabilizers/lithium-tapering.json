@@ -1,0 +1,74 @@
+{
+  "id": "lithium-tapering-and-discontinuation",
+  "title": "Stopping lithium",
+  "rationale": "Per Maudsley 15th edition (Bipolar disorder chapter, pp.331–333). Stopping lithium carries a substantial risk of mood relapse — particularly manic rebound. Time to a new mood episode after lithium discontinuation is approximately 1.7 months on average, vs ~11.6 months between episodes in untreated bipolar disorder: a sevenfold increase in relapse rate. Most of this excess relapse is concentrated in the first 3 months post-discontinuation. Lithium should NOT be stopped abruptly unless a serious adverse effect demands it. PENDING_CLINICAL_REVIEW — Rashid Razak.",
+  "whenToConsiderStopping": [
+    "Patient request after informed discussion of relapse risk",
+    "Tolerability problems: diarrhoea (~13%), tremor (~11%), polyuria/polydipsia/diabetes insipidus (~9%), creatinine rise (~9%), weight gain (~7%)",
+    "Significant adverse effects: thyroid dysfunction, persistent renal impairment, neurotoxicity",
+    "Pregnancy planning (Ebstein's anomaly risk in first trimester — discuss specialist switch)",
+    "Long-term remission with prescriber agreement that taper trial is justified"
+  ],
+  "withdrawalEffects": {
+    "rationale": "Withdrawal effects are thought to result from dopaminergic hypersensitivity and changes in neuronal membranes that develop during long-term lithium treatment. They may be misinterpreted as relapse — extending the withdrawal period helps distinguish withdrawal-related rebound from true relapse.",
+    "physical": [
+      "Tremor",
+      "Polydipsia / polyuria",
+      "Weight loss",
+      "Drowsiness",
+      "Dizziness or balance disturbance"
+    ],
+    "psychological": [
+      "Increased anxiety",
+      "Depression",
+      "Mania (most concerning — rebound mood episode)",
+      "Sleep disturbance",
+      "Irritability",
+      "Fatigue or lassitude"
+    ]
+  },
+  "tapering": {
+    "principle": "Hyperbolic tapering — reduce by the same percentage of the CURRENT dose each step, so that the absolute reduction becomes smaller and smaller as the total dose decreases. This mitigates abrupt receptor occupancy changes which underlie withdrawal symptoms.",
+    "rapidVsGradual": "Rapid (1–14 day) discontinuation produces substantially higher relapse rates than gradual (15–30 day) tapering. NICE recommends a minimum 4-week to 5-month taper. Some evidence suggests even 2–5 month tapering yields higher relapse than continuation, supporting an even slower taper where possible.",
+    "initialReduction": "10–25% reduction of the current dose, with monitoring of withdrawal and mood symptoms for at least 4 weeks before further reduction.",
+    "minimumDoseBeforeStop": "Final pre-stop dose may be very small — e.g. ~1% of therapeutic dose (around 10 mg for lithium) — because small doses have disproportionately large effects on target receptors. Compounded capsules from specialist pharmacy may be needed in some settings.",
+    "maudsleyRegimen": {
+      "title": "Suggested slow reduction regimen for lithium (Maudsley 15, Box 2.3)",
+      "steps": [
+        { "phase": "Phase 1", "stepDoseMg": 200, "interval": "every month", "untilDoseMg": 800, "notes": "Reduce by 200 mg each month until total daily dose reaches 800 mg." },
+        { "phase": "Phase 2", "stepDoseMg": 100, "interval": "every month", "untilDoseMg": 400, "notes": "Reduce by 100 mg each month until 400 mg/day." },
+        { "phase": "Phase 3", "stepDoseMg": 50, "interval": "every month", "untilDoseMg": 200, "notes": "Reduce by 50 mg each month until 200 mg/day." },
+        { "phase": "Phase 4", "stepDoseMg": 25, "interval": "every month", "untilDoseMg": 0, "notes": "Reduce by 25 mg each month until completely stopped." }
+      ],
+      "totalDurationMonths": 12,
+      "totalDurationNote": "From a typical maintenance dose of around 1000 mg/day, this regimen takes roughly 12 months to reach zero. A slower regimen is acceptable and often preferable; a faster regimen is appropriate only if a serious adverse effect mandates earlier discontinuation."
+    }
+  },
+  "monitoringDuringTaper": [
+    "Mood state (PHQ-9 / mood diary at minimum, plus clinical review)",
+    "Withdrawal symptoms (physical and psychological, see table)",
+    "Lithium level (every 1–2 months during taper, since clearance is unchanged but compliance is checked)",
+    "Renal function (U&E, eGFR) and TFTs at baseline and 3-monthly",
+    "Pause or reverse the taper if early manic features (sleep changes, increased energy, racing thoughts) emerge"
+  ],
+  "ifSymptomsEmerge": [
+    "Pause the current dose and observe — many withdrawal effects resolve within 2–4 weeks",
+    "Slow the taper — extend the interval between steps, or reduce step size",
+    "Revert to the previously effective dose if relapse is confirmed",
+    "Difficulty reducing does NOT preclude future attempts — it usually indicates a more gradual schedule is needed",
+    "Consider adjunctive psychotherapy, psychoeducation, or social rhythm therapy throughout the tapering period"
+  ],
+  "neverDoThis": [
+    "Stop lithium abruptly unless a serious adverse effect (lithium toxicity, severe rash, NMS) demands it — abrupt cessation has produced manic episodes in up to 13% of patients in some studies",
+    "Skip mood monitoring during the taper — early signs of mood elevation are the warning sign",
+    "Confuse withdrawal-induced symptoms with true relapse during the first 4–8 weeks of tapering — extend the taper to clarify"
+  ],
+  "otherMoodStabilizers": "Withdrawal effects are also documented for valproate, lamotrigine and carbamazepine, although evidence is less robust than for lithium. The same hyperbolic taper principle and slow timeline apply: reduce by 10–25% of current dose, monitor for ≥4 weeks at each step, and continue indefinitely until zero or until destabilisation halts the process. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_bipolar_p331_stopping_mood_stabilisers",
+    "maudsley15_bipolar_p332_evidence_long_term",
+    "maudsley15_bipolar_p333_box_2_3_lithium_regimen"
+  ],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

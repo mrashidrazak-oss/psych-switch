@@ -1,0 +1,53 @@
+{
+  "id": "haloperidol-to-quetiapine",
+  "fromDrugId": "haloperidol",
+  "toDrugId": "quetiapine",
+  "strategy": "cross-taper",
+  "rationale": "FGA-to-SGA switch where sedation, sleep benefit or mood stabilisation is a therapeutic goal alongside antipsychotic efficacy. Quetiapine's strong H1 and α1-adrenergic antagonism provides immediate sleep and anxiolytic benefits even at the starting 50 mg dose. Cross-taper: introduce quetiapine in the evening (nocte) while maintaining haloperidol, then taper haloperidol as quetiapine builds to antipsychotic-range doses (≥200 mg). Note QTc: both haloperidol (high) and quetiapine (moderate) prolong QTc — check baseline ECG and consider repeating at the point of maximum combined dose exposure (around day 7–14). Sedation will be more pronounced during the overlap phase; advise driving caution. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 5,
+      "toDoseMg": 50,
+      "notes": "Start quetiapine 50 mg nocte. Continue haloperidol 5 mg. Advise patient about sedation — best taken at bedtime. ECG at baseline if not recently done."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 5,
+      "toDoseMg": 100,
+      "notes": "Increase quetiapine to 100 mg nocte. Plateau haloperidol. Consider repeat ECG — dual QTc burden peaks around this phase."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 2,
+      "toDoseMg": 200,
+      "notes": "Increase quetiapine to 200 mg (divided or nocte). Reduce haloperidol to 2 mg. EPS improvement should be apparent."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 1,
+      "toDoseMg": 300,
+      "notes": "Quetiapine at 300 mg target. Reduce haloperidol to 1 mg. Anticholinergic agent review — likely can be stopped as EPS driver withdraws."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 300,
+      "notes": "Stop haloperidol. Continue quetiapine 300 mg. Repeat QTc — haloperidol's contribution has cleared. Metabolic monitoring: baseline weight and fasting glucose."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 5,
+    "toTargetDoseMg": 300,
+    "equivalencyNote": "Approximate clinical equivalency: haloperidol 5 mg ≈ quetiapine 300 mg (Maudsley 15th, AP dose-equivalence table). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["qtc_additive_overlap"],
+  "citations": [
+    "maudsley15_schizophrenia_p230_ap_swap_table",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

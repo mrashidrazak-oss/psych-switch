@@ -1,0 +1,47 @@
+{
+  "id": "venlafaxine-to-sertraline",
+  "fromDrugId": "venlafaxine",
+  "toDrugId": "sertraline",
+  "strategy": "cross-taper",
+  "rationale": "SNRI-to-SSRI swap, often when noradrenergic activity isn't tolerated (sympathomimetic effects, hypertension) or has failed to add benefit. Venlafaxine's very high discontinuation-syndrome risk demands a graded reduction. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 150,
+      "toDoseMg": 25,
+      "notes": "Start sertraline 25 mg. Hold venlafaxine XR 150 mg."
+    },
+    {
+      "day": 5,
+      "fromDoseMg": 75,
+      "toDoseMg": 50,
+      "notes": "Halve venlafaxine to 75 mg XR. Increase sertraline to 50 mg. Watch for venlafaxine discontinuation symptoms (electric-shock sensations, dizziness)."
+    },
+    {
+      "day": 10,
+      "fromDoseMg": 37.5,
+      "toDoseMg": 100,
+      "notes": "Reduce venlafaxine to 37.5 mg XR. Increase sertraline to 100 mg target."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 100,
+      "notes": "Stop venlafaxine. Continue sertraline 100 mg. If discontinuation symptoms emerge, slow the final step."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 150,
+    "toTargetDoseMg": 100,
+    "equivalencyNote": "Approximate clinical equivalency: venlafaxine 150 mg XR ≈ sertraline 100 mg (Maudsley 14th, conservative mapping for typical effective doses). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_p369_table_3_7",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

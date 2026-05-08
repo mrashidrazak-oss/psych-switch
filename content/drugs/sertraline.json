@@ -1,0 +1,50 @@
+{
+  "id": "sertraline",
+  "genericName": "Sertraline",
+  "drugClass": "SSRI",
+  "malaysianBrandNames": [
+    "Zoloft",
+    "Serlift",
+    "Deprax",
+    "Sertra"
+  ],
+  "halfLife": {
+    "meanHours": 26,
+    "rangeHours": [22, 36],
+    "notes": "Steady state reached in ~7 days. Halving the dose typically takes ~5 half-lives (~5-7 days) to fully wash out. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": "N-desmethylsertraline",
+    "halfLifeHours": 66,
+    "clinicallySignificant": false,
+    "notes": "Approximately 5-10x less potent than parent compound; not considered clinically meaningful for switching decisions. PENDING_CLINICAL_REVIEW."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP2B6", "CYP2C19", "CYP2C9", "CYP3A4"],
+    "inhibitorOf": ["CYP2D6 (weak)", "CYP2B6 (mild)"],
+    "switchingRelevance": "Mild CYP2D6 inhibition is generally not significant for switching to most antidepressants but may slightly raise levels of CYP2D6 substrates such as venlafaxine or paroxetine during overlap. PENDING_CLINICAL_REVIEW."
+  },
+  "maoiWashout": {
+    "daysOffBeforeMAOI": 14,
+    "daysOffAfterMAOI": 14,
+    "notes": "Standard 14-day washout in both directions to avoid serotonin syndrome. PENDING_CLINICAL_REVIEW."
+  },
+  "discontinuationSyndromeRisk": {
+    "score": "moderate",
+    "notes": "Moderate risk of discontinuation symptoms on abrupt cessation. Lower risk than paroxetine or venlafaxine. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 25,
+    "typicalTargetRangeMg": [50, 200],
+    "maxDoseMg": 200,
+    "increments": [25, 50, 100, 150, 200],
+    "formulationsAvailableMy": ["25 mg tab", "50 mg tab", "100 mg tab"]
+  },
+  "formulationNotes": "Available as tablets in Malaysia. No liquid formulation widely stocked at time of writing. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_ch3_p369_sertraline_profile",
+    "bap2015_antidepressants_sertraline"
+  ],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

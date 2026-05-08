@@ -1,0 +1,53 @@
+{
+  "id": "aripiprazole-to-quetiapine",
+  "fromDrugId": "aripiprazole",
+  "toDrugId": "quetiapine",
+  "strategy": "cross-taper",
+  "rationale": "Most commonly driven by akathisia, anxiety or insomnia on aripiprazole — quetiapine provides immediate sedative and anxiolytic relief via H1 and α1 blockade even at 50 mg, before antipsychotic-range doses are reached. Aripiprazole's very long half-life (~75h oral; even longer LAI) means it provides a natural slow taper — it does not need to be abruptly stopped. Cross-taper: introduce quetiapine nocte while aripiprazole is still on board, then reduce aripiprazole once quetiapine has reached near-target. Counsel the patient about the metabolic shift — moving to higher metabolic burden with quetiapine. QTc monitoring recommended — quetiapine has moderate QTc risk. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 15,
+      "toDoseMg": 50,
+      "notes": "Start quetiapine 50 mg nocte. Continue aripiprazole 15 mg. Immediate sedation benefit expected — advise driving caution. Patient should notice sleep improvement within days."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 15,
+      "toDoseMg": 100,
+      "notes": "Increase quetiapine to 100 mg. Plateau aripiprazole — allow quetiapine to build before tapering. Akathisia from aripiprazole should be reducing."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 10,
+      "toDoseMg": 200,
+      "notes": "Increase quetiapine to 200 mg. Begin reducing aripiprazole to 10 mg. Aripiprazole's long half-life provides a gradual washout."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 5,
+      "toDoseMg": 300,
+      "notes": "Quetiapine at 300 mg target. Reduce aripiprazole to 5 mg. Confirm akathisia has resolved."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 300,
+      "notes": "Stop aripiprazole. Continue quetiapine 300 mg. Baseline weight and fasting glucose — metabolic monitoring begins here."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 15,
+    "toTargetDoseMg": 300,
+    "equivalencyNote": "Approximate clinical equivalency: aripiprazole 15 mg ≈ quetiapine 300 mg (Maudsley 15th, AP dose-equivalence table). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["metabolic_monitoring_required"],
+  "citations": [
+    "maudsley15_schizophrenia_p230_ap_swap_table",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

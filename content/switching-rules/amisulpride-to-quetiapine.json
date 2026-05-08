@@ -1,0 +1,54 @@
+{
+  "id": "amisulpride-to-quetiapine",
+  "fromDrugId": "amisulpride",
+  "toDrugId": "quetiapine",
+  "strategy": "cross-taper",
+  "rationale": "Amisulpride (D2/D3) to quetiapine (D2, 5-HT2A, H1, M1, α1/α2). Common reasons: QTc concerns with amisulpride, desire for antidepressant augmentation effect (norquetiapine), prominent insomnia, or reduction in prolactin. Quetiapine's substantial anticholinergic and antihistaminergic burden will increase sedation during overlap — especially relevant if the patient drives or works with machinery. Both drugs carry moderate QTc risk; the overlap period requires ECG monitoring. Quetiapine initiation should begin nocte. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 400,
+      "toDoseMg": 100,
+      "notes": "Start quetiapine 100 mg nocte. Continue amisulpride 400 mg. Warn about additive sedation. ECG at baseline for QTc monitoring. Postural hypotension common on quetiapine initiation — advise patient to rise slowly."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 400,
+      "toDoseMg": 200,
+      "notes": "Increase quetiapine to 200 mg nocte. Plateau amisulpride. Check ECG for combined QTc if electrolyte abnormality suspected."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 200,
+      "toDoseMg": 400,
+      "notes": "Increase quetiapine to 400 mg (or split 200 mg BD if daytime sedation is excessive). Reduce amisulpride to 200 mg."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 100,
+      "toDoseMg": 400,
+      "notes": "Reduce amisulpride to 100 mg. Quetiapine approaching full clinical effect. Prolactin likely normalising as amisulpride tapers."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 400,
+      "notes": "Stop amisulpride. Continue quetiapine 400 mg. Repeat ECG at 4–6 weeks. Metabolic monitoring if weight gain or pre-diabetes risk factors present."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 400,
+    "toTargetDoseMg": 400,
+    "equivalencyNote": "Amisulpride 400 mg ≈ quetiapine 400 mg (Leucht et al. CMD method, Schizophrenia Bulletin 2015). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["qtc_monitoring_required", "cholinergic_rebound"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "leucht2015_cmd_schizophrenia_bulletin",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

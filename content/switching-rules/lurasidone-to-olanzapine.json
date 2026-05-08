@@ -1,0 +1,54 @@
+{
+  "id": "lurasidone-to-olanzapine",
+  "fromDrugId": "lurasidone",
+  "toDrugId": "olanzapine",
+  "strategy": "cross-taper",
+  "rationale": "Lurasidone (low metabolic risk, low QTc risk, food requirement) to olanzapine (high metabolic risk, high sedation, no food requirement). Common reasons: insufficient response to lurasidone, need for more sedation, or patient non-compliance with food requirement. The switch moves the patient toward higher metabolic risk — baseline metabolic parameters must be documented. Lurasidone has no significant anticholinergic activity so withdrawal is gentle; the main clinical change will be the increase in sedation from olanzapine's H1 and M1 blockade. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 80,
+      "toDoseMg": 5,
+      "notes": "Start olanzapine 5 mg nocte. Continue lurasidone 80 mg with main meal. Record baseline weight, fasting glucose, fasting lipids before starting olanzapine."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 80,
+      "toDoseMg": 10,
+      "notes": "Increase olanzapine to 10 mg nocte (target). Plateau lurasidone. Sedation increases significantly — advise patient on driving and daytime drowsiness."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 40,
+      "toDoseMg": 10,
+      "notes": "Reduce lurasidone to 40 mg. Olanzapine at steady state and target dose. No cholinergic rebound from lurasidone reduction."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 20,
+      "toDoseMg": 10,
+      "notes": "Reduce lurasidone to 20 mg. Transition nearing completion."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 10,
+      "notes": "Stop lurasidone. Continue olanzapine 10 mg nocte. Schedule metabolic review at 4 and 12 weeks. Weight gain expected — dietary and exercise counselling."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 80,
+    "toTargetDoseMg": 10,
+    "equivalencyNote": "Lurasidone 80 mg ≈ olanzapine 10 mg (inferred from DDD equivalence: both ≈ olanzapine 10 mg by proxy; limited direct published data for lurasidone equivalence). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["metabolic_monitoring_required"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "leucht2016_ddd_schizophrenia_bulletin",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

@@ -1,0 +1,53 @@
+{
+  "id": "sulpiride-to-quetiapine",
+  "fromDrugId": "sulpiride",
+  "toDrugId": "quetiapine",
+  "strategy": "cross-taper",
+  "rationale": "Sulpiride (selective D2/D3, no sedation, high prolactin, renal excretion) to quetiapine (broad receptor profile: D2, 5-HT2A, H1, M1, α1/α2; moderate metabolic risk; antidepressant augmentation via norquetiapine). Common reasons: bipolar depression requiring mood stabilisation with quetiapine's antidepressant profile, desire for insomnia management, or reducing prolactin. Sulpiride withdrawal is generally well tolerated — no significant anticholinergic rebound. Quetiapine initiation brings sedation, postural hypotension, and metabolic risk. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 800,
+      "toDoseMg": 100,
+      "notes": "Start quetiapine 100 mg nocte. Continue sulpiride 800 mg. Record baseline metabolic parameters. Warn about postural hypotension on quetiapine initiation."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 800,
+      "toDoseMg": 200,
+      "notes": "Increase quetiapine to 200 mg nocte. Plateau sulpiride."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 400,
+      "toDoseMg": 400,
+      "notes": "Increase quetiapine to 400 mg (target). Reduce sulpiride to 400 mg. Prolactin will begin to fall as sulpiride reduces."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 200,
+      "toDoseMg": 400,
+      "notes": "Reduce sulpiride to 200 mg. Quetiapine well established. Monitor metabolic parameters."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 400,
+      "notes": "Stop sulpiride. Continue quetiapine 400 mg. Metabolic monitoring at 4 and 12 weeks."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 800,
+    "toTargetDoseMg": 400,
+    "equivalencyNote": "Sulpiride 800 mg ≈ quetiapine 400 mg (via DDD and CPZ equivalence proxy). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["metabolic_monitoring_required", "prolactin_normalisation"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

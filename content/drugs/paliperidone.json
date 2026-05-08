@@ -1,0 +1,55 @@
+{
+  "id": "paliperidone",
+  "genericName": "Paliperidone",
+  "drugClass": "SGA (atypical antipsychotic) — oral",
+  "category": "antipsychotic",
+  "formulation": "oral",
+  "hidden": true,
+  "malaysianBrandNames": ["Invega"],
+  "halfLife": {
+    "meanHours": 23,
+    "rangeHours": [20, 26],
+    "notes": "Oral paliperidone (Invega) t½ ~23 hours. Paliperidone is 9-OH-risperidone, the active metabolite of risperidone. Primarily renally eliminated with minimal CYP metabolism. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": null,
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "Paliperidone IS itself an active metabolite of risperidone — no further clinically significant metabolites."
+  },
+  "cypInteractions": {
+    "substrateOf": [],
+    "inhibitorOf": [],
+    "switchingRelevance": "Minimal CYP metabolism — renally cleared. Stable across most CYP-mediated DDIs. PENDING_CLINICAL_REVIEW."
+  },
+  "epsRisk": "moderate",
+  "metabolicRisk": {
+    "score": "moderate",
+    "notes": "Similar to risperidone. PENDING_CLINICAL_REVIEW."
+  },
+  "prolactinRisk": "high",
+  "qtcRisk": "low",
+  "sedation": "low",
+  "lai": {
+    "available": true,
+    "notes": "LAI form = Invega Sustenna (PP1M) and Invega Trinza (PP3M)."
+  },
+  "reboundPsychosisRisk": {
+    "score": "moderate",
+    "notes": "Gradual taper recommended when discontinuing. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 6,
+    "typicalTargetRangeMg": [6, 12],
+    "maxDoseMg": 12,
+    "increments": [3, 6, 9, 12],
+    "formulationsAvailableMy": ["Invega 3 mg ER tab", "Invega 6 mg ER tab", "Invega 9 mg ER tab", "Invega 12 mg ER tab"]
+  },
+  "formulationNotes": "Extended-release tablet (OROS technology) — swallow whole, do not crush. The tablet shell is excreted intact in stool. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_schizophrenia_p231_paliperidone",
+    "bap2020_psychosis"
+  ],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

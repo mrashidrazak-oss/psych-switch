@@ -1,0 +1,47 @@
+{
+  "id": "haloperidol-to-haloperidol-lai",
+  "fromDrugId": "haloperidol",
+  "toDrugId": "haloperidol-lai",
+  "strategy": "cross-taper",
+  "rationale": "Standard oral-to-depot haloperidol conversion. The standard initiation dose of haloperidol decanoate is approximately 10–15× the daily oral dose (capped at 100 mg per first injection). A 28-day oral haloperidol overlap is required because the depot absorbs slowly from the oil vehicle for the first 4 weeks. Stopping oral haloperidol before day 28 risks a sub-therapeutic window. Oral dose is tapered to 50% after the first depot injection and stopped at day 28 as the depot releases to therapeutic levels. QTc must be monitored — haloperidol is a high QTc risk agent. If EPS worsens during the transition, anticholinergic agents (benzhexol) should be continued or started. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 5,
+      "toDoseMg": 50,
+      "notes": "Give first Haldol Decanoate injection (50 mg deep gluteal IM). Continue oral haloperidol 5 mg/day. Counsel patient: depot takes 4 weeks to fully release — oral cover is essential during this period."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 5,
+      "toDoseMg": 50,
+      "notes": "Continue oral haloperidol 5 mg. Depot still in absorption phase. Continue anticholinergic cover if prescribed."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 2,
+      "toDoseMg": 50,
+      "notes": "Reduce oral haloperidol to 2 mg (half dose). Depot now releasing meaningfully. EPS assessment — anticholinergic review."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 50,
+      "notes": "Stop oral haloperidol. Depot now at therapeutic release. Second injection due today (50 mg every 4 weeks for maintenance). Recheck QTc post-stabilisation."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 5,
+    "toTargetDoseMg": 50,
+    "equivalencyNote": "Approximate conversion: oral haloperidol 5 mg/day → haloperidol decanoate 50 mg/4 weeks (10× daily dose rule). For higher oral doses: 10 mg/day → 100 mg/4 weeks. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_schizophrenia_p231_haloperidol_lai",
+    "bap2020_psychosis_lai"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

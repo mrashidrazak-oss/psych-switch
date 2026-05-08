@@ -1,0 +1,55 @@
+{
+  "id": "fluphenazine",
+  "genericName": "Fluphenazine",
+  "drugClass": "FGA (typical antipsychotic) — oral",
+  "category": "antipsychotic",
+  "formulation": "oral",
+  "hidden": true,
+  "malaysianBrandNames": ["Modecate (oral)"],
+  "halfLife": {
+    "meanHours": 18,
+    "rangeHours": [15, 30],
+    "notes": "Oral fluphenazine t½ ~15–30 hours. CYP2D6 substrate. High EPS risk — potent D2 antagonist. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": null,
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "Minor metabolites not clinically significant. PENDING_CLINICAL_REVIEW."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP2D6"],
+    "inhibitorOf": [],
+    "switchingRelevance": "CYP2D6 inhibitors may increase levels and EPS risk. PENDING_CLINICAL_REVIEW."
+  },
+  "epsRisk": "high",
+  "metabolicRisk": {
+    "score": "low",
+    "notes": "FGA — lower metabolic risk than SGAs. PENDING_CLINICAL_REVIEW."
+  },
+  "prolactinRisk": "high",
+  "qtcRisk": "moderate",
+  "sedation": "low",
+  "lai": {
+    "available": true,
+    "notes": "LAI form = Modecate (fluphenazine decanoate)."
+  },
+  "reboundPsychosisRisk": {
+    "score": "moderate",
+    "notes": "Gradual taper recommended when switching from depot to oral. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 2.5,
+    "typicalTargetRangeMg": [2.5, 10],
+    "maxDoseMg": 20,
+    "increments": [1, 2.5, 5, 10, 20],
+    "formulationsAvailableMy": ["Fluphenazine 1 mg tab", "Fluphenazine 2.5 mg tab", "Fluphenazine 5 mg tab", "Modecate 1 mg/mL oral solution"]
+  },
+  "formulationNotes": "Oral tablets and solution available. LAI form = fluphenazine decanoate (Modecate). Oral doses are approximately 40× the decanoate depot dose equivalents. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_schizophrenia_fga",
+    "bap2020_psychosis"
+  ],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

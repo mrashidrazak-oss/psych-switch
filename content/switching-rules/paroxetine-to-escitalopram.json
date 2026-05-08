@@ -1,0 +1,48 @@
+{
+  "id": "paroxetine-to-escitalopram",
+  "fromDrugId": "paroxetine",
+  "toDrugId": "escitalopram",
+  "strategy": "cross-taper",
+  "rationale": "Common escape from paroxetine to a gentler SSRI with cleaner pharmacokinetics. Slow paroxetine taper required given high discontinuation-syndrome and anticholinergic-rebound risk. Escitalopram is started at 5 mg and titrated as paroxetine is reduced. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 20,
+      "toDoseMg": 5,
+      "notes": "Start escitalopram 5 mg in the morning. Hold paroxetine 20 mg."
+    },
+    {
+      "day": 5,
+      "fromDoseMg": 10,
+      "toDoseMg": 10,
+      "notes": "Halve paroxetine to 10 mg. Increase escitalopram to 10 mg target. Counsel patient about possible discontinuation symptoms."
+    },
+    {
+      "day": 10,
+      "fromDoseMg": 10,
+      "toDoseMg": 10,
+      "notes": "Hold both. Allow stabilisation."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 10,
+      "notes": "Stop paroxetine. Continue escitalopram 10 mg. If discontinuation symptoms emerge, slow this final step or use compounded liquid paroxetine."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 20,
+    "toTargetDoseMg": 10,
+    "equivalencyNote": "Approximate clinical equivalency: paroxetine 20 mg ≈ escitalopram 10 mg (Maudsley 14th). Hyperbolic-tapering principles favour smaller-than-linear final steps. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_p369_table_3_7",
+    "maudsley15_ch3_p374_withdrawal",
+    "horowitz2020_hyperbolic_tapering"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

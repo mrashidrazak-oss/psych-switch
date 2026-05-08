@@ -1,0 +1,54 @@
+{
+  "id": "amisulpride-to-lurasidone",
+  "fromDrugId": "amisulpride",
+  "toDrugId": "lurasidone",
+  "strategy": "cross-taper",
+  "rationale": "Amisulpride (D2/D3 antagonist, QTc risk, renal excretion) to lurasidone (D2, 5-HT2A, 5-HT7 antagonist, partial 5-HT1A agonist, low QTc risk). Common reason: QTc concerns with amisulpride — lurasidone is one of the antipsychotics with the least QTc effect. Also: desire for antidepressant augmentation profile (5-HT7 and 5-HT1A activity), or metabolic improvement (lurasidone weight-neutral). Critical prescribing note: lurasidone must be taken with food (≥350 kcal) for adequate bioavailability — patient education at initiation is essential. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 400,
+      "toDoseMg": 40,
+      "notes": "Start lurasidone 40 mg with the main meal. Continue amisulpride 400 mg. Counsel explicitly: lurasidone must be taken with at least 350 kcal of food — subtherapeutic levels result from fasted dosing."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 400,
+      "toDoseMg": 80,
+      "notes": "Increase lurasidone to 80 mg with main meal. Plateau amisulpride. QTc: the total QTc burden is reducing as lurasidone does not prolong QTc; amisulpride risk remains until it is stopped."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 200,
+      "toDoseMg": 80,
+      "notes": "Reduce amisulpride to 200 mg. Lurasidone at standard therapeutic dose. Monitor renal function (amisulpride is renally excreted — dose-reduce amisulpride taper further if eGFR <30)."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 100,
+      "toDoseMg": 80,
+      "notes": "Reduce amisulpride to 100 mg. EPS: lurasidone carries moderate EPS risk — monitor for stiffness, akathisia."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 80,
+      "notes": "Stop amisulpride. Continue lurasidone 80 mg with main meal. Repeat ECG at 4 weeks to confirm QTc normalisation after amisulpride cessation."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 400,
+    "toTargetDoseMg": 80,
+    "equivalencyNote": "Amisulpride 400 mg ≈ lurasidone 80 mg (inferred from DDD-method equivalences: both ≈ olanzapine 10 mg by proxy; limited direct data for lurasidone). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["lurasidone_food_requirement", "qtc_monitoring_required", "amisulpride_renal_clearance"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "leucht2016_ddd_schizophrenia_bulletin",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

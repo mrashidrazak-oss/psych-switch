@@ -1,0 +1,66 @@
+{
+  "id": "chlorpromazine-to-olanzapine",
+  "fromDrugId": "chlorpromazine",
+  "toDrugId": "olanzapine",
+  "strategy": "cross-taper",
+  "rationale": "Chlorpromazine (high anticholinergic, antihistaminergic, antiadrenergic, QTc-prolonging FGA) to olanzapine (SGA with similar sedative and anticholinergic profile but better EPS and lower seizure-threshold risk). This FGA→SGA transition is driven by EPS, tardive dyskinesia risk, or seeking a more targeted receptor profile. Chlorpromazine has one of the highest anticholinergic burdens of any antipsychotic — abrupt withdrawal causes severe cholinergic rebound. The cross-taper must be SLOW (4–6 weeks minimum). Olanzapine's receptor profile overlaps chlorpromazine's H1 and muscarinic burden, so the cholinergic rebound from CPZ withdrawal may be partially mitigated by olanzapine. Monitor for unmasking of tardive dyskinesia as CPZ is reduced. Seizure threshold: CPZ lowers it significantly; olanzapine less so — consider EEG if history of seizures. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 42,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 400,
+      "toDoseMg": 5,
+      "notes": "Start olanzapine 5 mg nocte. Continue chlorpromazine 400 mg. Record baseline weight, fasting glucose, fasting lipids. ECG at baseline — chlorpromazine prolongs QTc."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 400,
+      "toDoseMg": 10,
+      "notes": "Increase olanzapine to 10 mg nocte (target). Plateau chlorpromazine. Allow olanzapine to establish clinical effect before tapering the heavily anticholinergic CPZ."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 300,
+      "toDoseMg": 10,
+      "notes": "Reduce chlorpromazine to 300 mg. Cholinergic rebound risk begins — nausea, sweating, GI upset possible. Go slowly; return to 400 mg for one week if symptoms are distressing."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 200,
+      "toDoseMg": 10,
+      "notes": "Reduce chlorpromazine to 200 mg. Monitor for signs of unmasking of tardive dyskinesia as FGA dose falls. Review postural hypotension — CPZ's α1 blockade is subsiding."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 100,
+      "toDoseMg": 10,
+      "notes": "Reduce chlorpromazine to 100 mg. QTc improving as CPZ dose reduces. Continue to monitor for cholinergic rebound."
+    },
+    {
+      "day": 35,
+      "fromDoseMg": 50,
+      "toDoseMg": 10,
+      "notes": "Reduce chlorpromazine to 50 mg. Final taper step."
+    },
+    {
+      "day": 42,
+      "fromDoseMg": 0,
+      "toDoseMg": 10,
+      "notes": "Stop chlorpromazine. Continue olanzapine 10 mg. Repeat ECG at 4–6 weeks. Tardive dyskinesia review — document any dyskinetic movements. Metabolic monitoring at 4 and 12 weeks."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 400,
+    "toTargetDoseMg": 10,
+    "equivalencyNote": "Chlorpromazine 400 mg ≈ olanzapine 10 mg (CPZ-equivalence: 100 mg CPZ ≈ 2.5 mg olanzapine; Maudsley 15th dose equivalence table). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["cholinergic_rebound", "eps_risk_increase", "qtc_monitoring_required", "metabolic_monitoring_required"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "bap2020_psychosis_switching",
+    "spanish_society_psychiatry_switching_antipsychotics_2011"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

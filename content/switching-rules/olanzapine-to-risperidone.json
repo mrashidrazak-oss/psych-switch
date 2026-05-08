@@ -1,0 +1,53 @@
+{
+  "id": "olanzapine-to-risperidone",
+  "fromDrugId": "olanzapine",
+  "toDrugId": "risperidone",
+  "strategy": "plateau-cross-taper",
+  "rationale": "Considered when metabolic burden of olanzapine outweighs prolactin/EPS concerns of risperidone. Plateau cross-taper to manage cholinergic/histaminergic rebound on the olanzapine side. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 10,
+      "toDoseMg": 1,
+      "notes": "Start risperidone 1 mg at night. Hold olanzapine 10 mg."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 10,
+      "toDoseMg": 2,
+      "notes": "Increase risperidone to 2 mg. Hold olanzapine."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 7.5,
+      "toDoseMg": 3,
+      "notes": "Reduce olanzapine to 7.5 mg. Increase risperidone to 3 mg."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 5,
+      "toDoseMg": 4,
+      "notes": "Reduce olanzapine to 5 mg. Increase risperidone to 4 mg target."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 4,
+      "notes": "Stop olanzapine. Continue risperidone 4 mg. Counsel about possible cholinergic rebound and rising prolactin."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 10,
+    "toTargetDoseMg": 4,
+    "equivalencyNote": "Approximate clinical equivalency: olanzapine 10 mg ≈ risperidone 4 mg (Maudsley 14th). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_schizophrenia_p230_ap_swap_table",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

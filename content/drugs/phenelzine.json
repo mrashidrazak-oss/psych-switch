@@ -1,0 +1,50 @@
+{
+  "id": "phenelzine",
+  "genericName": "Phenelzine",
+  "drugClass": "Irreversible MAOI",
+  "category": "antidepressant",
+  "hidden": true,
+  "isMAOI": true,
+  "maoiClearanceDays": 14,
+  "malaysianBrandNames": ["Nardil"],
+  "halfLife": {
+    "meanHours": 11,
+    "rangeHours": [1.5, 4],
+    "notes": "Apparent half-life is short, but the drug is an IRREVERSIBLE inhibitor of MAO-A and MAO-B — biological effect persists until new MAO enzyme is synthesised (10–14 days). 14-day washout is required before any serotonergic agent. Availability in Malaysia is limited — frequently sourced from compounding pharmacies or imported. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": null,
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "No clinically significant active metabolite for mood. Hydrazine metabolites contribute to hepatotoxicity risk."
+  },
+  "cypInteractions": {
+    "substrateOf": ["MAO"],
+    "inhibitorOf": ["MAO-A", "MAO-B"],
+    "switchingRelevance": "Phenelzine is an irreversible MAOI — once given, the only way to lose enzyme inhibition is to wait for new enzyme synthesis (~14 days). Any cross-taper with a serotonergic drug (SSRI, SNRI, TCA, mirtazapine) risks fatal serotonin syndrome. Hypertensive crisis with tyramine-containing foods (aged cheese, cured meats, fermented foods) — strict dietary counselling mandatory. PENDING_CLINICAL_REVIEW."
+  },
+  "maoiWashout": {
+    "daysOffBeforeMAOI": 14,
+    "daysOffAfterMAOI": 14,
+    "notes": "14-day washout in either direction. This is non-negotiable — irreversible enzyme inhibition cannot be 'rushed'."
+  },
+  "discontinuationSyndromeRisk": {
+    "score": "high",
+    "notes": "MAOI withdrawal (especially abrupt) can cause agitation, irritability, sleep and movement disorders (myoclonus, choreoathetosis), cognitive impairment, slurred speech. Occasionally hallucinations and paranoid delusions. Taper slowly. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 15,
+    "typicalTargetRangeMg": [45, 90],
+    "maxDoseMg": 90,
+    "increments": [15, 30, 45, 60, 75, 90],
+    "formulationsAvailableMy": ["Nardil 15 mg tablet (limited availability)"]
+  },
+  "formulationNotes": "Limited availability in Malaysian formulary. Specialist mental-health pharmacies or import via NPRA's special-access route. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_ch3_p369_table_3_7",
+    "maudsley15_ch3_p374_withdrawal",
+    "Nardil (phenelzine) Summary of Product Characteristics. Pfizer."
+  ],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

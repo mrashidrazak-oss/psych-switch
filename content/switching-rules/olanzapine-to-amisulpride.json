@@ -1,0 +1,54 @@
+{
+  "id": "olanzapine-to-amisulpride",
+  "fromDrugId": "olanzapine",
+  "toDrugId": "amisulpride",
+  "strategy": "cross-taper",
+  "rationale": "Olanzapine (high anticholinergic, antihistaminergic, and antiadrenergic burden) to amisulpride (selective D2/D3, no anticholinergic activity). Common reasons: metabolic syndrome on olanzapine, weight gain, sexual dysfunction (amisulpride raises prolactin but does not cause weight gain), or QTc needs — note amisulpride also prolongs QTc. Olanzapine withdrawal must be gradual to avoid cholinergic rebound (nausea, vomiting, diarrhoea, diaphoresis, insomnia). The patient will notice the loss of sedation — insomnia is common in the first 2–4 weeks and should be anticipated. Metabolic improvement (weight loss, lipid/glucose normalisation) typically occurs over weeks to months after olanzapine cessation. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 10,
+      "toDoseMg": 200,
+      "notes": "Start amisulpride 200 mg. Continue olanzapine 10 mg. Obtain baseline ECG (amisulpride can prolong QTc). Check renal function (amisulpride is renally excreted)."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 10,
+      "toDoseMg": 400,
+      "notes": "Increase amisulpride to 400 mg (target). Plateau olanzapine. Allow amisulpride to approach steady state before tapering the highly anticholinergic olanzapine."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 7.5,
+      "toDoseMg": 400,
+      "notes": "Reduce olanzapine to 7.5 mg. Watch for cholinergic rebound — nausea, sweating, insomnia. If rebound is severe, slow the olanzapine taper. Sedation begins to reduce."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 5,
+      "toDoseMg": 400,
+      "notes": "Reduce olanzapine to 5 mg. Insomnia or increased anxiety may emerge as histamine blockade is lost. Short-term use of promethazine or melatonin can bridge sleep difficulties."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 400,
+      "notes": "Stop olanzapine. Continue amisulpride 400 mg. Repeat ECG at 4–6 weeks. Monitor weight and metabolic parameters at 4 and 12 weeks (improvement expected but not immediate)."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 10,
+    "toTargetDoseMg": 400,
+    "equivalencyNote": "Olanzapine 10 mg ≈ amisulpride 400 mg (Leucht et al. CMD method, Schizophrenia Bulletin 2015). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["cholinergic_rebound", "qtc_monitoring_required", "amisulpride_renal_clearance"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "leucht2015_cmd_schizophrenia_bulletin",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

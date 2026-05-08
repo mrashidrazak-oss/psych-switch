@@ -1,0 +1,48 @@
+{
+  "id": "haloperidol-to-lurasidone",
+  "fromDrugId": "haloperidol",
+  "toDrugId": "lurasidone",
+  "strategy": "cross-taper",
+  "rationale": "Haloperidol (high-potency FGA; high EPS; moderate QTc; high prolactin) to lurasidone (SGA; low EPS; very low QTc; moderate prolactin; food-dependent). Common reasons: EPS burden (parkinsonism, tardive dyskinesia risk with long-term haloperidol, akathisia), QTc concerns, or upgrading to an SGA with better tolerability. EPS should improve substantially on lurasidone. Prolactin falls moderately. QTc improves. CRITICAL counselling: lurasidone must be taken with ≥350 kcal of food — fasted dosing produces subtherapeutic levels. Haloperidol has low anticholinergic activity so cross-taper can proceed at a moderate pace without significant cholinergic rebound. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 21,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 5,
+      "toDoseMg": 40,
+      "notes": "Start lurasidone 40 mg with main meal. Continue haloperidol 4 mg. Counsel: lurasidone must be taken with ≥350 kcal every day. EPS improvement expected as lurasidone is introduced."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 2,
+      "toDoseMg": 80,
+      "notes": "Increase lurasidone to 80 mg. Reduce haloperidol to 2 mg. QTc: check ECG — haloperidol QTc risk diminishes as dose falls."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 1,
+      "toDoseMg": 80,
+      "notes": "Reduce haloperidol to 1 mg. EPS burden should be substantially reduced by this point."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 0,
+      "toDoseMg": 80,
+      "notes": "Stop haloperidol. Continue lurasidone 80 mg with main meal. Repeat ECG at 4 weeks. Review EPS status — consider whether anticholinergic agents can now be withdrawn."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 5,
+    "toTargetDoseMg": 80,
+    "equivalencyNote": "Haloperidol 4 mg ≈ lurasidone 80 mg (inferred from DDD equivalence; both ≈ olanzapine 10 mg by proxy). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["lurasidone_food_requirement", "qtc_monitoring_required"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "leucht2016_ddd_schizophrenia_bulletin",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

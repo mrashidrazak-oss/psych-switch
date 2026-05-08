@@ -1,0 +1,65 @@
+{
+  "id": "chlorpromazine-to-quetiapine",
+  "fromDrugId": "chlorpromazine",
+  "toDrugId": "quetiapine",
+  "strategy": "cross-taper",
+  "rationale": "Chlorpromazine to quetiapine — both drugs share H1, M1, and α1 receptor activity, so the transition is pharmacologically smoother than CPZ to a cleaner SGA (e.g. risperidone). Quetiapine's receptor profile partially overlaps CPZ, which mitigates cholinergic rebound during taper. Both drugs also prolong QTc and carry metabolic risk. The main advantages of quetiapine over CPZ are improved EPS profile, reduced seizure-threshold lowering, and the availability of XR formulation for once-daily dosing. Quetiapine initiation nocte recommended for sedation management. Cross-taper over 4–6 weeks due to CPZ's heavy receptor burden. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 42,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 400,
+      "toDoseMg": 100,
+      "notes": "Start quetiapine 100 mg nocte. Continue chlorpromazine 400 mg. Baseline ECG (both drugs prolong QTc). Record baseline metabolic parameters."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 400,
+      "toDoseMg": 200,
+      "notes": "Increase quetiapine to 200 mg nocte. Plateau chlorpromazine. Both drugs additive for sedation — caution with driving."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 300,
+      "toDoseMg": 400,
+      "notes": "Increase quetiapine to 400 mg (target; can split 200 mg BD if daytime sedation excessive). Reduce chlorpromazine to 300 mg."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 200,
+      "toDoseMg": 400,
+      "notes": "Reduce chlorpromazine to 200 mg. Quetiapine's H1 and M1 activity partially attenuates CPZ cholinergic rebound — but still monitor for nausea and insomnia."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 100,
+      "toDoseMg": 400,
+      "notes": "Reduce chlorpromazine to 100 mg. QTc: combined QTc risk reducing as CPZ dose falls."
+    },
+    {
+      "day": 35,
+      "fromDoseMg": 50,
+      "toDoseMg": 400,
+      "notes": "Reduce chlorpromazine to 50 mg."
+    },
+    {
+      "day": 42,
+      "fromDoseMg": 0,
+      "toDoseMg": 400,
+      "notes": "Stop chlorpromazine. Continue quetiapine 400 mg. Repeat ECG at 4–6 weeks. Metabolic monitoring at 4 and 12 weeks."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 400,
+    "toTargetDoseMg": 400,
+    "equivalencyNote": "Chlorpromazine 400 mg ≈ quetiapine 400 mg (CPZ-equivalence: 100 mg CPZ ≈ 75–100 mg quetiapine per Maudsley 15th). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["cholinergic_rebound", "qtc_monitoring_required", "metabolic_monitoring_required"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

@@ -1,0 +1,59 @@
+{
+  "id": "clozapine",
+  "genericName": "Clozapine",
+  "drugClass": "SGA (atypical antipsychotic) — dibenzodiazepine",
+  "category": "antipsychotic",
+  "formulation": "oral",
+  "malaysianBrandNames": [
+    "Clozaril",
+    "Denzapine",
+    "Clopine"
+  ],
+  "halfLife": {
+    "meanHours": 12,
+    "rangeHours": [6, 26],
+    "notes": "Twice-daily dosing typical; some patients can move to once-daily evening dosing once stable. Wide inter-individual variability — plasma-level monitoring recommended. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": "Norclozapine (N-desmethylclozapine)",
+    "halfLifeHours": 12,
+    "clinicallySignificant": true,
+    "notes": "Active metabolite contributes to overall pharmacology; norclozapine:clozapine ratio is sometimes interpreted alongside plasma level. PENDING_CLINICAL_REVIEW."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP1A2", "CYP3A4", "CYP2D6"],
+    "inhibitorOf": [],
+    "switchingRelevance": "Smoking is a potent CYP1A2 inducer — sudden cessation can DOUBLE clozapine levels within 1-2 weeks. Counsel every patient on stable clozapine who plans to stop smoking. Strong CYP1A2 inhibitors (fluvoxamine, ciprofloxacin) are largely contraindicated. PENDING_CLINICAL_REVIEW."
+  },
+  "epsRisk": "low",
+  "metabolicRisk": {
+    "score": "very high",
+    "notes": "Among the worst antipsychotics for weight gain, glucose dysregulation, dyslipidaemia. Mandatory metabolic monitoring at baseline, 3 months, 6 months, then annually. PENDING_CLINICAL_REVIEW."
+  },
+  "prolactinRisk": "low",
+  "qtcRisk": "moderate",
+  "sedation": "high",
+  "lai": {
+    "available": false,
+    "notes": "No long-acting injectable formulation."
+  },
+  "reboundPsychosisRisk": {
+    "score": "very high",
+    "notes": "Clozapine withdrawal carries the highest relapse risk of any antipsychotic, including possible cholinergic rebound (clozapine has potent M1/M3 antagonism). NEVER stop abruptly unless agranulocytosis or myocarditis dictates. Re-challenge protocol applies after >48 hour interruption — restart at 12.5 mg. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 12.5,
+    "typicalTargetRangeMg": [200, 450],
+    "maxDoseMg": 900,
+    "increments": [12.5, 25, 50, 75, 100, 125, 150, 175, 200, 250, 300, 350, 400, 450, 500, 600, 700, 800, 900],
+    "formulationsAvailableMy": ["Clozaril 25 mg tablet", "Clozaril 100 mg tablet", "Clopine 25 mg tablet", "Clopine 100 mg tablet"]
+  },
+  "formulationNotes": "Tablets. Patient registration on the local clozapine monitoring service is mandatory before first prescription. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_schizophrenia_clozapine_profile",
+    "novartis_clozaril_smpc_2024",
+    "bap2020_psychosis_clozapine"
+  ],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

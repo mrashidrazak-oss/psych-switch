@@ -1,0 +1,44 @@
+{
+  "id": "sertraline-to-agomelatine",
+  "fromDrugId": "sertraline",
+  "toDrugId": "agomelatine",
+  "strategy": "cross-taper",
+  "rationale": "Sertraline (SSRI; t½ ~26h; moderate discontinuation syndrome risk) to agomelatine (MT1/MT2 agonist, 5-HT2C antagonist; t½ ~2h). Sertraline has moderate discontinuation syndrome risk — taper over at least 2 weeks. Agomelatine can be started during the sertraline taper without serotonin syndrome risk. Sertraline is a moderate CYP2D6 inhibitor but agomelatine is metabolised by CYP1A2 (not CYP2D6) — no interaction. CRITICAL: Baseline LFTs before starting agomelatine. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 100,
+      "toDoseMg": 25,
+      "notes": "Start agomelatine 25 mg nocte. Continue sertraline 100 mg. CHECK BASELINE LFTs before starting agomelatine. No serotonin syndrome risk: agomelatine does not inhibit serotonin reuptake. Sertraline is a CYP2D6 inhibitor — no interaction with agomelatine (CYP1A2 substrate)."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 50,
+      "toDoseMg": 25,
+      "notes": "Reduce sertraline to 50 mg. Continue agomelatine 25 mg. Monitor for discontinuation symptoms at this reduction."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 25,
+      "notes": "Stop sertraline. Continue agomelatine 25 mg nocte. Sertraline discontinuation is usually mild — dizziness, irritability. Titrate agomelatine to 50 mg at 2 weeks if inadequate response."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 100,
+    "toTargetDoseMg": 25,
+    "equivalencyNote": "Sertraline 100 mg → agomelatine 25 mg (standard dose range for MDD). Not pharmacologically equivalent. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["agomelatine_lft_monitoring"],
+  "citations": [
+    "maudsley15_ch3_agomelatine_profile",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [
+    "Hepatic impairment — agomelatine contraindicated.",
+    "ALT >3× ULN at baseline — do not start agomelatine."
+  ],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

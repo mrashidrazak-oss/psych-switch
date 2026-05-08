@@ -1,0 +1,179 @@
+{
+  "id": "ramadan-dosing-guidance",
+  "rationale": "During Ramadan, Muslims fast from Imsak (pre-dawn) to Maghrib (sunset) — a period of approximately 12–17 hours depending on season and location. Malaysia is in the tropics; the fast is typically 13–14 hours. Psychiatric medications must be re-timed to maintain efficacy and avoid adverse effects associated with fasting (dehydration, disturbed sleep, metabolic changes). The general principle is to move once-daily medications to Suhoor (pre-dawn meal) or Iftar (break-fast meal) depending on the drug's pharmacology. Modified-release formulations are preferred where available. PENDING_CLINICAL_REVIEW — Rashid Razak.",
+  "generalPrinciples": [
+    "Once-daily (OD) medications: take at Suhoor if activating (e.g. fluoxetine, SSRIs) or at Iftar if sedating (e.g. mirtazapine, quetiapine, olanzapine).",
+    "Twice-daily (BD) medications: Suhoor + Iftar is the optimal split. Inform patients to plan both meals.",
+    "Three-times-daily (TDS) or four-times-daily (QDS) medications: consider switching to a modified-release (MR/CR/XR) equivalent if available; otherwise use Suhoor, mid-fast (if permitted — some scholars allow this for medical necessity), and Iftar.",
+    "Modified-release formulations are preferred during Ramadan for smoother drug exposure and less dose-timing sensitivity.",
+    "Lithium: dehydration during fasting raises the risk of lithium toxicity. Patients MUST be counselled to maintain adequate fluid intake at Suhoor and Iftar, and to hold the dose and seek medical advice if vomiting or severe diarrhoea occurs. Check levels during Ramadan.",
+    "Clozapine: initiation/retitration during Ramadan is strongly discouraged — fasting complicates monitoring, hydration, and the risk of postural hypotension. Stable patients should discuss timing adjustments with their treating team.",
+    "Alcohol-based liquid formulations: consult patient and religious scholar. Most agree medical necessity justifies use, but tablet/capsule alternatives should be offered where available.",
+    "Medication review is an opportunity: consider whether dose reduction or stopping is clinically appropriate."
+  ],
+  "drugs": [
+    {
+      "id": "fluoxetine",
+      "name": "Fluoxetine",
+      "dosing": "OD",
+      "recommendation": "suhoor",
+      "rationale": "Activating — take at Suhoor to avoid insomnia if taken at Iftar. Long half-life (fluoxetine + norfluoxetine ~4–6 days) makes timing less critical than shorter-acting SSRIs.",
+      "specialNote": "Long half-life provides substantial buffering — minor timing shifts unlikely to cause problems. One of the safest SSRIs for Ramadan."
+    },
+    {
+      "id": "sertraline",
+      "name": "Sertraline",
+      "dosing": "OD",
+      "recommendation": "suhoor_or_iftar",
+      "rationale": "Neutral on activation/sedation. Can be taken at either meal. Take with food to reduce GI side effects.",
+      "specialNote": "Short to moderate half-life — consistent timing preferred. If GI upset with fasting stomach, Iftar preferred."
+    },
+    {
+      "id": "escitalopram",
+      "name": "Escitalopram",
+      "dosing": "OD",
+      "recommendation": "suhoor_or_iftar",
+      "rationale": "Generally neutral. Some patients find it mildly activating — Suhoor preferred in that case.",
+      "specialNote": "Can be taken at either meal. Check for QTc interaction with Ramadan fasting (hypokalaemia risk with dehydration)."
+    },
+    {
+      "id": "paroxetine",
+      "name": "Paroxetine",
+      "dosing": "OD",
+      "recommendation": "iftar",
+      "rationale": "Sedating due to anticholinergic and antihistaminergic properties. Iftar preferred to use sedative effect for night sleep.",
+      "specialNote": "High discontinuation risk — DO NOT miss doses. If a dose is missed, counsel patient not to double-dose. Controlled-release formulation preferred."
+    },
+    {
+      "id": "fluvoxamine",
+      "name": "Fluvoxamine",
+      "dosing": "BD",
+      "recommendation": "suhoor_and_iftar",
+      "rationale": "Typically dosed BD. Split doses at Suhoor + Iftar.",
+      "specialNote": "Can cause significant nausea — taking with food (Suhoor and Iftar) helps. Strong CYP1A2 inhibitor — avoid with melatonin (common during Ramadan) and olanzapine."
+    },
+    {
+      "id": "venlafaxine",
+      "name": "Venlafaxine",
+      "dosing": "OD_MR",
+      "recommendation": "suhoor_or_iftar",
+      "rationale": "Use XR/MR formulation for OD dosing. Timing flexible.",
+      "specialNote": "Immediate-release venlafaxine is BD — should be switched to XR before Ramadan if possible. High discontinuation risk — do not miss doses."
+    },
+    {
+      "id": "duloxetine",
+      "name": "Duloxetine",
+      "dosing": "OD",
+      "recommendation": "suhoor_or_iftar",
+      "rationale": "Generally neutral. Take with food to reduce nausea.",
+      "specialNote": "GI side effects (nausea) common at initiation — less of an issue for established patients. Take with food."
+    },
+    {
+      "id": "mirtazapine",
+      "name": "Mirtazapine",
+      "dosing": "OD",
+      "recommendation": "iftar",
+      "rationale": "Strongly sedating due to H1 antagonism — take at Iftar to promote night sleep. Morning sedation can be reduced by Iftar timing.",
+      "specialNote": "Weight gain risk may be exacerbated during Ramadan due to carbohydrate-rich Iftar meals. Counsel patients about diet."
+    },
+    {
+      "id": "olanzapine",
+      "name": "Olanzapine",
+      "dosing": "OD",
+      "recommendation": "iftar",
+      "rationale": "Sedating — take at Iftar for night sedation. Reduces daytime drowsiness.",
+      "specialNote": "Metabolic monitoring especially important during Ramadan. Dehydration + olanzapine metabolic risk. Weight may shift with eating pattern change."
+    },
+    {
+      "id": "quetiapine",
+      "name": "Quetiapine",
+      "dosing": "BD_or_OD_XR",
+      "recommendation": "iftar_or_suhoor_and_iftar",
+      "rationale": "IR is typically BD — move to Suhoor + Iftar. If using XR once daily, take at Iftar for sedation benefit.",
+      "specialNote": "Quetiapine XR (Seroquel XR) available in Malaysia — once-daily Iftar dosing simplifies Ramadan management. BD IR: Suhoor + Iftar."
+    },
+    {
+      "id": "risperidone",
+      "name": "Risperidone",
+      "dosing": "BD",
+      "recommendation": "suhoor_and_iftar",
+      "rationale": "Typically BD — Suhoor + Iftar is the natural split. Some patients tolerate OD (once-daily nocte) — if already on OD, take at Iftar.",
+      "specialNote": "Prolactin elevation can cause fatigue — no specific Ramadan interaction but monitor hydration."
+    },
+    {
+      "id": "aripiprazole",
+      "name": "Aripiprazole",
+      "dosing": "OD",
+      "recommendation": "suhoor_or_iftar",
+      "rationale": "Long half-life — timing flexible. Activating in some patients — Suhoor preferred; sedating in others — Iftar preferred.",
+      "specialNote": "One of the safest antipsychotics during Ramadan due to long half-life (75h) and minimal metabolic impact."
+    },
+    {
+      "id": "haloperidol",
+      "name": "Haloperidol",
+      "dosing": "OD_or_BD",
+      "recommendation": "iftar_or_suhoor_and_iftar",
+      "rationale": "If OD, take at Iftar. If BD, split Suhoor + Iftar.",
+      "specialNote": "QTc-prolonging — dehydration risk during fasting may worsen hypokalaemia. Check electrolytes and ECG if concerned."
+    },
+    {
+      "id": "clozapine",
+      "name": "Clozapine",
+      "dosing": "BD",
+      "recommendation": "discuss_with_team",
+      "rationale": "Stable maintenance patients: split BD dose at Suhoor + Iftar. Mandatory FBC monitoring must continue during Ramadan — do not defer FBC appointments.",
+      "specialNote": "CAUTION: fasting increases risk of postural hypotension and constipation (ileus risk). Hydration at Suhoor and Iftar is essential. Initiation and retitration during Ramadan strongly discouraged. Patients must not skip doses — even one missed dose may require retitration (see Rechallenge Wizard)."
+    },
+    {
+      "id": "lithium",
+      "name": "Lithium",
+      "dosing": "BD",
+      "recommendation": "suhoor_and_iftar",
+      "rationale": "BD dosing: Suhoor + Iftar. Controlled-release (Priadel) once-daily can be taken at Suhoor or Iftar.",
+      "specialNote": "DEHYDRATION RISK: fasting reduces fluid intake, leading to increased lithium reabsorption and toxic levels. Counsel patients to drink ≥ 2 L fluids during the non-fasting window. Check lithium levels within the first 2 weeks of Ramadan and again mid-Ramadan. Hold dose and seek review if vomiting/diarrhoea."
+    },
+    {
+      "id": "valproate",
+      "name": "Sodium valproate",
+      "dosing": "BD_or_OD_CR",
+      "recommendation": "suhoor_and_iftar_or_iftar",
+      "rationale": "Standard: Suhoor + Iftar. Chrono CR: once daily at Iftar preferred (smoother levels, less GI upset).",
+      "specialNote": "Enteric-coated tablets must be swallowed whole — ensure patient is not breaking or crushing them. GI effects (nausea) are reduced by taking with food."
+    },
+    {
+      "id": "lamotrigine",
+      "name": "Lamotrigine",
+      "dosing": "BD_or_OD",
+      "recommendation": "suhoor_and_iftar_or_iftar",
+      "rationale": "BD: Suhoor + Iftar. OD: Iftar preferred. Consistent timing important due to medium half-life.",
+      "specialNote": "OCP interaction: if patient is on combined OCP, Ramadan fasting is not expected to change lamotrigine levels. Rash monitoring continues during Ramadan — patients should still check for new rashes."
+    },
+    {
+      "id": "carbamazepine",
+      "name": "Carbamazepine",
+      "dosing": "BD_or_OD_CR",
+      "recommendation": "suhoor_and_iftar_or_iftar",
+      "rationale": "CR once-daily at Iftar or BD at Suhoor + Iftar. Consistent timing important due to autoinduction variability.",
+      "specialNote": "Enzyme autoinduction means levels may vary during Ramadan if dose timing changes significantly. Controlled-release formulation strongly preferred. Check for signs of toxicity (diplopia, dizziness, nausea) or breakthrough symptoms."
+    }
+  ],
+  "timingKey": {
+    "suhoor": "Suhoor (pre-dawn meal, ~5–6 AM in Malaysia)",
+    "iftar": "Iftar (break-fast meal, ~7–8 PM in Malaysia)",
+    "suhoor_or_iftar": "Either meal — clinically flexible",
+    "suhoor_and_iftar": "Split dose: half at Suhoor, half at Iftar (BD dosing)",
+    "iftar_or_suhoor_and_iftar": "Flexible — OD at Iftar or BD split",
+    "suhoor_and_iftar_or_iftar": "BD at Suhoor + Iftar, or OD at Iftar if formulation allows",
+    "od_mr": "Once daily (modified-release formulation) — flexible timing",
+    "bd_or_od_xr": "Twice daily (IR) → Suhoor + Iftar; or OD (XR) at Iftar",
+    "discuss_with_team": "High-risk drug — discuss individually with treating team before Ramadan"
+  },
+  "citations": [
+    "Patel V, Bhiku M. Prescribing medications to Muslim patients. Br J Gen Pract. 2020.",
+    "Diabcare Malaysia — Medication during Ramadan guidance.",
+    "Maudsley Prescribing Guidelines 14th Edition — relevant drug chapters.",
+    "Malaysian Psychiatric Association — no specific Ramadan guideline (as of 2026; local expert consensus relied upon)."
+  ],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

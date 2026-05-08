@@ -1,0 +1,66 @@
+{
+  "id": "zuclopenthixol-lai-to-zuclopenthixol",
+  "fromDrugId": "zuclopenthixol-lai",
+  "toDrugId": "zuclopenthixol",
+  "strategy": "overlap-taper",
+  "rationale": "Switching from zuclopenthixol decanoate (Clopixol Depot) to oral zuclopenthixol (Clopixol tablets). Zuclopenthixol decanoate has a t½ of ~17–21 days and continues releasing for ~4–6 weeks after the last injection. Start oral zuclopenthixol when the next depot injection would have been due. Approximate equivalence: zuclopenthixol decanoate 200 mg/2 weeks ≈ oral zuclopenthixol 40 mg/day (Maudsley rough estimate). PENDING_CLINICAL_REVIEW.",
+  "durationDays": 56,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 200,
+      "toDoseMg": 10,
+      "notes": "Skip next scheduled depot injection. Start oral zuclopenthixol 10 mg/day. Depot continues releasing. Monitor for combined sedation and EPS — zuclopenthixol is notably sedating."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 120,
+      "toDoseMg": 25,
+      "notes": "Depot level falling. Increase oral zuclopenthixol to 25 mg/day. Assess sedation, EPS, and clinical response."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 40,
+      "toDoseMg": 40,
+      "notes": "Depot substantially cleared (~4 weeks). Oral zuclopenthixol 40 mg/day as primary agent."
+    },
+    {
+      "day": 56,
+      "fromDoseMg": 0,
+      "toDoseMg": 40,
+      "notes": "Depot cleared. Oral zuclopenthixol monotherapy. Typical range 20–60 mg/day (max 150 mg); titrate to lowest effective dose."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 200,
+    "toTargetDoseMg": 40,
+    "equivalencyNote": "Zuclopenthixol decanoate 200 mg/2 weeks ≈ oral zuclopenthixol 40 mg/day (approximate; Maudsley 15th). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [
+    {
+      "key": "eps_risk_high",
+      "title": "EPS risk (FGA)",
+      "body": "Zuclopenthixol is an FGA with significant EPS risk. Anticholinergic prophylaxis likely needed.",
+      "severity": "warning"
+    },
+    {
+      "key": "sedation_risk",
+      "title": "Sedation",
+      "body": "Zuclopenthixol is notably sedating among FGAs due to antihistaminic effects. Counsel patients — may affect driving and daily function.",
+      "severity": "info"
+    },
+    {
+      "key": "lai_long_tail",
+      "title": "Decanoate tail",
+      "body": "Zuclopenthixol decanoate t½ ~17–21 days. Combined oral + depot effect may cause over-sedation in the first 4 weeks.",
+      "severity": "warning"
+    }
+  ],
+  "citations": [
+    "maudsley15_schizophrenia_fga_depots",
+    "bap2020_psychosis_lai_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

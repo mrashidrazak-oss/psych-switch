@@ -1,0 +1,60 @@
+{
+  "id": "flupenthixol-lai-to-flupenthixol",
+  "fromDrugId": "flupenthixol-lai",
+  "toDrugId": "flupenthixol",
+  "strategy": "overlap-taper",
+  "rationale": "Switching from flupenthixol decanoate (Fluanxol Depot) to oral flupenthixol (Fluanxol tablets). Flupenthixol decanoate has a t½ of ~17 days and continues releasing for 4–6 weeks after the last injection. Start oral flupenthixol when the next depot injection would have been due. Approximate dose equivalence: flupenthixol decanoate 40 mg/2 weeks ≈ oral flupenthixol 10–15 mg/day (Maudsley). PENDING_CLINICAL_REVIEW.",
+  "durationDays": 56,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 40,
+      "toDoseMg": 6,
+      "notes": "Skip the next scheduled depot injection. Start oral flupenthixol 6 mg/day. Depot continues releasing — monitor combined effect and EPS."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 25,
+      "toDoseMg": 9,
+      "notes": "Depot level falling. Increase oral flupenthixol to 9 mg/day. Monitor EPS, prolactin, and mood."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 10,
+      "toDoseMg": 12,
+      "notes": "Depot substantially cleared (~4 weeks). Oral flupenthixol 12 mg/day becoming sole therapeutic agent."
+    },
+    {
+      "day": 56,
+      "fromDoseMg": 0,
+      "toDoseMg": 12,
+      "notes": "Depot cleared. Oral flupenthixol monotherapy established. Typical range 3–18 mg/day; adjust to lowest effective dose."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 40,
+    "toTargetDoseMg": 12,
+    "equivalencyNote": "Flupenthixol decanoate 40 mg every 2 weeks ≈ oral flupenthixol 12 mg/day (approximate; Maudsley 15th). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [
+    {
+      "key": "eps_risk_high",
+      "title": "EPS risk (FGA)",
+      "body": "Flupenthixol is an FGA with significant EPS risk. Ensure anticholinergic prophylaxis is available if not already prescribed.",
+      "severity": "warning"
+    },
+    {
+      "key": "lai_long_tail",
+      "title": "Decanoate tail",
+      "body": "Flupenthixol decanoate t½ ~17 days. Therapeutic levels persist 4–6 weeks after the last injection. Start oral dose conservatively.",
+      "severity": "warning"
+    }
+  ],
+  "citations": [
+    "maudsley15_schizophrenia_fga_depots",
+    "bap2020_psychosis_lai_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

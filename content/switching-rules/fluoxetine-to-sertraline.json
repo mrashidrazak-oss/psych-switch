@@ -1,0 +1,48 @@
+{
+  "id": "fluoxetine-to-sertraline",
+  "fromDrugId": "fluoxetine",
+  "toDrugId": "sertraline",
+  "strategy": "cross-taper",
+  "rationale": "Switching off fluoxetine because of inefficacy or side effects. The cross-taper is deliberately short because norfluoxetine continues to circulate for 1-2 weeks after fluoxetine is stopped, providing a built-in pharmacological bridge. Sertraline is started low and titrated slowly to avoid additive serotonergic load while norfluoxetine clears. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 20,
+      "toDoseMg": 25,
+      "notes": "Start sertraline 25 mg in the morning. Hold fluoxetine 20 mg."
+    },
+    {
+      "day": 4,
+      "fromDoseMg": 0,
+      "toDoseMg": 25,
+      "notes": "Stop fluoxetine. Norfluoxetine will continue for 1-2 weeks — counsel patient that the ‘bridge’ is invisible but real."
+    },
+    {
+      "day": 8,
+      "fromDoseMg": 0,
+      "toDoseMg": 50,
+      "notes": "Increase sertraline to 50 mg. Watch for serotonergic excess (tremor, hyperreflexia)."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 100,
+      "notes": "Increase sertraline to 100 mg target."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 20,
+    "toTargetDoseMg": 100,
+    "equivalencyNote": "Approximate clinical equivalency: fluoxetine 20 mg ≈ sertraline 100 mg (Maudsley 14th). Norfluoxetine carry-over justifies the slower upward sertraline titration. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_p369_table_3_7",
+    "bap2015_switching_antidepressants",
+    "maudsley15_ch3_p369_norfluoxetine_kinetics"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

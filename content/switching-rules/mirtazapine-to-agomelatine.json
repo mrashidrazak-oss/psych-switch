@@ -1,0 +1,44 @@
+{
+  "id": "mirtazapine-to-agomelatine",
+  "fromDrugId": "mirtazapine",
+  "toDrugId": "agomelatine",
+  "strategy": "cross-taper",
+  "rationale": "Mirtazapine (NaSSA: α2-antagonist, 5-HT2/3 antagonist, H1 blocker; t½ ~20–40h; sedating; significant weight gain) to agomelatine (MT1/MT2 agonist; t½ ~2h; weight neutral; much less sedating). Switch reasons: weight gain, excessive sedation, or metabolic concerns on mirtazapine. As mirtazapine is reduced, H1 blockade and noradrenergic effects reduce — insomnia may re-emerge (agomelatine helps sleep but less potently than mirtazapine's H1 blockade). No pharmacodynamic serotonin syndrome risk. Baseline LFTs before starting agomelatine. Taper mirtazapine to avoid sleep disruption during withdrawal. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 30,
+      "toDoseMg": 25,
+      "notes": "Start agomelatine 25 mg nocte (same time as mirtazapine). Continue mirtazapine 30 mg. CHECK BASELINE LFTs. Warn: sleep quality may temporarily worsen as mirtazapine is reduced (H1 blockade being withdrawn). Agomelatine will help sleep continuity but is less sedating."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 15,
+      "toDoseMg": 25,
+      "notes": "Reduce mirtazapine to 15 mg. Continue agomelatine 25 mg. Monitor sleep and mood. Some rebound insomnia possible."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 25,
+      "notes": "Stop mirtazapine. Continue agomelatine 25 mg nocte. Sleep may be lighter than on mirtazapine — set expectations. Titrate agomelatine to 50 mg at 2 weeks if response inadequate. Appetite and weight should begin to normalise over 4–8 weeks."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 30,
+    "toTargetDoseMg": 25,
+    "equivalencyNote": "Mirtazapine 30 mg → agomelatine 25 mg (start dose). Not pharmacologically equivalent — different mechanisms. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["agomelatine_lft_monitoring"],
+  "citations": [
+    "maudsley15_ch3_agomelatine_profile",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [
+    "Hepatic impairment — agomelatine contraindicated.",
+    "ALT >3× ULN at baseline — do not start agomelatine."
+  ],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

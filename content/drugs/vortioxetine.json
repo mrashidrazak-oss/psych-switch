@@ -1,0 +1,53 @@
+{
+  "id": "vortioxetine",
+  "genericName": "Vortioxetine",
+  "drugClass": "SMS (serotonin modulator and stimulator)",
+  "category": "antidepressant",
+  "malaysianBrandNames": ["Trintellix"],
+  "halfLife": {
+    "meanHours": 66,
+    "rangeHours": [57, 80],
+    "notes": "Very long half-life — natural slow washout on stopping. Steady state in ~2 weeks. Once-daily dosing. Long half-life reduces discontinuation syndrome risk compared with SSRIs/SNRIs. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": null,
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "No clinically significant active metabolites. Parent compound accounts for activity."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP2D6 (primary)", "CYP3A4", "CYP2C9", "CYP2C19"],
+    "inhibitorOf": [],
+    "switchingRelevance": "Strong CYP2D6 inhibitors (paroxetine, fluoxetine, bupropion) roughly double vortioxetine exposure — reduce vortioxetine dose by 50% if co-prescribed. CYP2D6 inducers (rifampicin, carbamazepine) halve exposure. The fluoxetine–vortioxetine interaction is bidirectional: fluoxetine's CYP2D6 inhibition and fluoxetine's own serotonergic activity both complicate the cross-taper. PENDING_CLINICAL_REVIEW."
+  },
+  "maoiWashout": {
+    "daysOffBeforeMAOI": 14,
+    "daysOffAfterMAOI": 14,
+    "notes": "14-day washout from vortioxetine before any MAOI. 14 days off any MAOI before starting vortioxetine. PENDING_CLINICAL_REVIEW."
+  },
+  "discontinuationSyndromeRisk": {
+    "score": "low",
+    "notes": "Very long half-life provides a natural self-taper. Discontinuation syndrome is uncommon and generally mild. Abrupt cessation is less problematic than with SSRIs or SNRIs. PENDING_CLINICAL_REVIEW."
+  },
+  "qtcRisk": "low",
+  "sedation": "low",
+  "dosing": {
+    "startingDoseMg": 10,
+    "typicalTargetRangeMg": [10, 20],
+    "maxDoseMg": 20,
+    "increments": [5, 10, 15, 20],
+    "formulationsAvailableMy": ["Trintellix 5 mg tablet", "Trintellix 10 mg tablet", "Trintellix 15 mg tablet", "Trintellix 20 mg tablet"]
+  },
+  "formulationNotes": "Start at 10 mg in most patients. Titrate to 20 mg if tolerated and response inadequate. Reduce to 5 mg if 10 mg not tolerated. Note: cognitive benefits and antidepressant effect may have a dose-response relationship. PENDING_CLINICAL_REVIEW.",
+  "specialConsiderations": [
+    "Cognitive benefits (verbal memory, processing speed) are a differentiating feature — particularly useful in patients with residual cognitive impairment.",
+    "Nausea is the most common early side effect — counsel to take with food, usually resolves in 1–2 weeks.",
+    "CYP2D6 poor metabolisers achieve 2× higher exposure — start at 5 mg in this population."
+  ],
+  "citations": [
+    "maudsley15_ch3_vortioxetine_profile",
+    "bap2015_evidence_antidepressants"
+  ],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

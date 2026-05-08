@@ -1,0 +1,72 @@
+{
+  "id": "valproate-to-carbamazepine",
+  "fromDrugId": "valproate",
+  "toDrugId": "carbamazepine",
+  "strategy": "cross-taper",
+  "rationale": "Valproate to carbamazepine: Indicated for rapid cycling, treatment failure on valproate, or teratogenicity concerns (carbamazepine is Category D but lower teratogenic burden than valproate for non-neural-tube defects). This switch has two pharmacokinetic hazards: (1) Carbamazepine autoinduction — CBZ induces CYP3A4 over 4–6 weeks, reducing its own levels; dose must be increased incrementally. (2) CBZ-epoxide accumulation — valproate inhibits epoxide hydrolase; when co-prescribed, CBZ-epoxide (active toxic metabolite) accumulates to higher levels even with normal CBZ parent compound levels. As valproate is withdrawn, this inhibition is reversed and CBZ-epoxide may initially drop, reducing clinical toxicity. During overlap: monitor for double vision, dizziness, nausea (signs of CBZ-epoxide toxicity). A 'less is more' strategy during overlap: do not push CBZ higher while VPA is still on board. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 56,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 1500,
+      "toDoseMg": 200,
+      "notes": "Start carbamazepine 200 mg/day. Continue valproate 1500 mg/day. Baseline LFTs, FBC, Na⁺. Screen for HLA-B*1502 in South/South-East Asian patients before starting. Warn about double vision, dizziness (CBZ-epoxide toxicity during overlap with VPA). Do NOT push CBZ dose rapidly while VPA is on board — epoxide toxicity risk."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 1500,
+      "toDoseMg": 400,
+      "notes": "Increase carbamazepine to 400 mg/day. Hold valproate. Check CBZ level if neurological side effects (double vision, ataxia). VPA–CBZ-epoxide interaction still active."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 1500,
+      "toDoseMg": 400,
+      "notes": "Hold carbamazepine at 400 mg during peak VPA-epoxide interaction phase. Begin valproate taper: reduce to 1000 mg/day. As VPA reduces, epoxide hydrolase inhibition reverses and CBZ-epoxide levels will fall — may tolerate CBZ dose increase from next step."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 1000,
+      "toDoseMg": 600,
+      "notes": "Reduce valproate to 1000 mg/day. Increase carbamazepine to 600 mg/day now that VPA levels are lower. Check CBZ level — autoinduction ongoing."
+    },
+    {
+      "day": 35,
+      "fromDoseMg": 500,
+      "toDoseMg": 800,
+      "notes": "Reduce valproate to 500 mg/day. Increase carbamazepine to 800 mg/day (target). CBZ autoinduction largely complete by week 6."
+    },
+    {
+      "day": 49,
+      "fromDoseMg": 200,
+      "toDoseMg": 800,
+      "notes": "Reduce valproate to 200 mg/day. Carbamazepine at full target. Recheck CBZ level to confirm therapeutic (4–10 mg/L for mood disorder)."
+    },
+    {
+      "day": 56,
+      "fromDoseMg": 0,
+      "toDoseMg": 800,
+      "notes": "Stop valproate. Continue carbamazepine 800 mg/day. Recheck CBZ level 2–4 weeks after full valproate withdrawal — enzyme inhibition reversal may increase CBZ clearance, reducing levels. Adjust dose if below therapeutic range."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 1500,
+    "toTargetDoseMg": 800,
+    "equivalencyNote": "Not dose-equivalent. Carbamazepine target for bipolar disorder: 400–1200 mg/day titrated to serum level 4–10 mg/L. Note: dose requirements during VPA co-prescription phase will differ from monotherapy due to epoxide interaction — re-establish level after VPA fully withdrawn. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [
+    "carbamazepine_autoinduction",
+    "bipolar_relapse_monitor"
+  ],
+  "citations": [
+    "maudsley15_bipolar_p331_stopping_mood_stabilisers",
+    "bap2016_bipolar_guidelines",
+    "nice_cg185_bipolar"
+  ],
+  "contraindications": [
+    "HLA-B*1502 positive (South/South-East Asian patients) — carbamazepine contraindicated.",
+    "Current pregnancy or planning pregnancy — discuss teratogenic risk of carbamazepine (neural tube defects ~0.5–1%); valproate remains higher risk. Folic acid 5 mg/day essential if proceeding."
+  ],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

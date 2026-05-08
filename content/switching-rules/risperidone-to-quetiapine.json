@@ -1,0 +1,53 @@
+{
+  "id": "risperidone-to-quetiapine",
+  "fromDrugId": "risperidone",
+  "toDrugId": "quetiapine",
+  "strategy": "cross-taper",
+  "rationale": "EPS-driven switch, or patient preference for a more sedating agent (sleep benefit, anxiety). Quetiapine's lower D2 occupancy and strong H1/α1 blockade profile will introduce sedation and improve sleep quickly once doses exceed 50–100 mg. Prolactin will normalise progressively as risperidone withdraws. Cross-taper is preferred over abrupt switch because quetiapine's antihistaminergic cover fills in as risperidone's antipsychotic effect is withdrawn. Warn patient on metabolic monitoring — quetiapine has significant weight gain liability above 300 mg. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 4,
+      "toDoseMg": 50,
+      "notes": "Start quetiapine 50 mg nocte. Continue risperidone 4 mg. Sedation expected — advise driving caution."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 3,
+      "toDoseMg": 100,
+      "notes": "Increase quetiapine to 100 mg. Begin reducing risperidone to 3 mg."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 2,
+      "toDoseMg": 200,
+      "notes": "Increase quetiapine to 200 mg. Reduce risperidone to 2 mg. EPS should be improving."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 1,
+      "toDoseMg": 300,
+      "notes": "Quetiapine at 300 mg target. Reduce risperidone to 1 mg. Monitor for rebound insomnia — quetiapine's histaminergic cover now dominant."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 300,
+      "notes": "Stop risperidone. Continue quetiapine 300 mg. Check weight and fasting glucose at switch completion."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 4,
+    "toTargetDoseMg": 300,
+    "equivalencyNote": "Approximate clinical equivalency: risperidone 4 mg ≈ quetiapine 300 mg (Maudsley 15th, AP dose-equivalence table). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_schizophrenia_p230_ap_swap_table",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

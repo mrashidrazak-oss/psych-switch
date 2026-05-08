@@ -1,0 +1,59 @@
+{
+  "id": "trifluoperazine",
+  "genericName": "Trifluoperazine",
+  "drugClass": "FGA (typical antipsychotic, piperazine phenothiazine)",
+  "category": "antipsychotic",
+  "malaysianBrandNames": ["Stelazine"],
+  "halfLife": {
+    "meanHours": 18,
+    "rangeHours": [12, 24],
+    "notes": "Once- or twice-daily oral dosing. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": null,
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "No clinically dominant active metabolite."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP1A2", "CYP2D6"],
+    "inhibitorOf": [],
+    "switchingRelevance": "CYP2D6 and CYP1A2 substrate. Inhibitors of either pathway raise trifluoperazine levels and worsen EPS. PENDING_CLINICAL_REVIEW."
+  },
+  "epsRisk": "high",
+  "metabolicRisk": {
+    "score": "low",
+    "notes": "Minimal weight gain and metabolic burden compared with SGAs — piperazine phenothiazines have lower metabolic liability than aliphatic phenothiazines (chlorpromazine). PENDING_CLINICAL_REVIEW."
+  },
+  "prolactinRisk": "high",
+  "qtcRisk": "moderate",
+  "sedation": "low",
+  "lai": {
+    "available": false,
+    "notes": "No widely-used LAI formulation in Malaysian practice."
+  },
+  "reboundPsychosisRisk": {
+    "score": "moderate",
+    "notes": "Lower anticholinergic burden than chlorpromazine; rebound primarily psychotic rather than cholinergic. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 1,
+    "typicalTargetRangeMg": [5, 15],
+    "maxDoseMg": 20,
+    "increments": [1, 2, 5, 10, 15, 20],
+    "formulationsAvailableMy": ["Stelazine 1 mg tablet", "Stelazine 2 mg tablet", "Stelazine 5 mg tablet", "Stelazine 10 mg tablet"]
+  },
+  "formulationNotes": "Low doses (1–2 mg) used for anxiety; antipsychotic doses 5–20 mg/day. Twice-daily dosing preferred for higher doses. PENDING_CLINICAL_REVIEW.",
+  "specialConsiderations": [
+    "High EPS risk — akathisia and dystonia especially notable even at moderate doses.",
+    "Anticholinergic cover (benzhexol) typically required at antipsychotic doses.",
+    "Moderate QTc risk — ECG baseline recommended.",
+    "Lower sedation than chlorpromazine — less useful for acute agitation."
+  ],
+  "citations": [
+    "maudsley15_schizophrenia_fga_profile",
+    "bap2020_psychosis_fga"
+  ],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

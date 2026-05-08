@@ -1,0 +1,47 @@
+{
+  "id": "mirtazapine-to-escitalopram",
+  "fromDrugId": "mirtazapine",
+  "toDrugId": "escitalopram",
+  "strategy": "cross-taper",
+  "rationale": "Deprescribing mirtazapine while moving to a single SSRI. Different mechanisms (NaSSA vs SSRI) so direct serotonin-syndrome risk is low; main concern is rebound insomnia/anxiety as mirtazapine is reduced. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 30,
+      "toDoseMg": 5,
+      "notes": "Start escitalopram 5 mg in the morning. Hold mirtazapine 30 mg at night."
+    },
+    {
+      "day": 5,
+      "fromDoseMg": 30,
+      "toDoseMg": 10,
+      "notes": "Hold mirtazapine. Increase escitalopram to 10 mg target."
+    },
+    {
+      "day": 10,
+      "fromDoseMg": 15,
+      "toDoseMg": 10,
+      "notes": "Halve mirtazapine to 15 mg. Counsel re possible rebound insomnia."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 10,
+      "notes": "Stop mirtazapine. Continue escitalopram 10 mg. If significant insomnia emerges, consider short overlap or alternative sleep strategy."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 30,
+    "toTargetDoseMg": 10,
+    "equivalencyNote": "Mirtazapine and escitalopram are not directly equipotent — the mapping reflects typical effective doses for major depression. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_p369_table_3_7",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

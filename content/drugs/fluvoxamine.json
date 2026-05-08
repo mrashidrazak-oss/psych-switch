@@ -1,0 +1,48 @@
+{
+  "id": "fluvoxamine",
+  "genericName": "Fluvoxamine",
+  "drugClass": "SSRI",
+  "malaysianBrandNames": [
+    "Faverin",
+    "Luvox"
+  ],
+  "halfLife": {
+    "meanHours": 15,
+    "rangeHours": [13, 22],
+    "notes": "Shorter than other SSRIs; usually divided dosing. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": null,
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "No clinically significant active metabolite."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP1A2", "CYP2D6"],
+    "inhibitorOf": ["CYP1A2 (potent)", "CYP2C19 (potent)", "CYP3A4 (moderate)", "CYP2C9 (moderate)"],
+    "switchingRelevance": "Potent CYP1A2 inhibition raises levels of clozapine, olanzapine, theophylline, caffeine. Cross-tapers involving fluvoxamine require attention to other co-prescribed drugs. PENDING_CLINICAL_REVIEW."
+  },
+  "maoiWashout": {
+    "daysOffBeforeMAOI": 14,
+    "daysOffAfterMAOI": 14,
+    "notes": "Standard 14-day washout. PENDING_CLINICAL_REVIEW."
+  },
+  "discontinuationSyndromeRisk": {
+    "score": "moderate",
+    "notes": "Moderate risk of discontinuation symptoms; comparable to sertraline. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 50,
+    "typicalTargetRangeMg": [100, 300],
+    "maxDoseMg": 300,
+    "increments": [50, 100, 150, 200, 250, 300],
+    "formulationsAvailableMy": ["50 mg tab", "100 mg tab"]
+  },
+  "formulationNotes": "Tablets available; ER form less common in Malaysia. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_ch3_p369_fluvoxamine_profile",
+    "bap2015_antidepressants_fluvoxamine"
+  ],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

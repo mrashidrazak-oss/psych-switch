@@ -1,0 +1,53 @@
+{
+  "id": "trifluoperazine-to-aripiprazole",
+  "fromDrugId": "trifluoperazine",
+  "toDrugId": "aripiprazole",
+  "strategy": "cross-taper",
+  "rationale": "Trifluoperazine (high-potency piperazine FGA; full D2 antagonist; high EPS; moderate anticholinergic activity; high prolactin; moderate QTc) to aripiprazole (partial D2/D3 agonist + 5-HT1A partial agonist; EPS rare at therapeutic doses; prolactin-sparing; minimal QTc risk). Switching from full D2 blockade to partial agonism carries significant akathisia risk — patients on stable high-D2 blockade are most vulnerable. EPS and prolactin should improve, but akathisia requires proactive management. Trifluoperazine's moderate anticholinergic activity means some cholinergic rebound is possible — aripiprazole provides no anticholinergic cover. Document baseline involuntary movements (tardive dyskinesia risk on trifluoperazine withdrawal). PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 10,
+      "toDoseMg": 10,
+      "notes": "Start aripiprazole 10 mg. Continue trifluoperazine 10 mg. Baseline AIMS assessment. Counsel patient explicitly about akathisia — restlessness may emerge within days of aripiprazole initiation. Propranolol 10–30 mg PRN can be prescribed proactively."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 10,
+      "toDoseMg": 15,
+      "notes": "Increase aripiprazole to 15 mg (target). Plateau trifluoperazine. Review akathisia at week 1. EPS from trifluoperazine still covered — transition period."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 5,
+      "toDoseMg": 15,
+      "notes": "Reduce trifluoperazine to 5 mg. Aripiprazole at steady state. Monitor for withdrawal dyskinesias — unmasking of latent tardive dyskinesia possible. Insomnia may emerge as sedating FGA effect reduces."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 5,
+      "toDoseMg": 15,
+      "notes": "Reduce trifluoperazine to 5 mg. Prolactin falling — counsel female patients about possible menstrual cycle restoration. Anticholinergic agents for EPS may now be withdrawable."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 15,
+      "notes": "Stop trifluoperazine. Continue aripiprazole 15 mg. Repeat AIMS. Prolactin normalises over 2–4 weeks. No QTc concerns with aripiprazole. Review sleep and akathisia at this visit."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 10,
+    "toTargetDoseMg": 15,
+    "equivalencyNote": "Trifluoperazine 10 mg ≈ aripiprazole 15 mg (CPZ equivalence: trifluoperazine 5 mg ≈ CPZ 100 mg ≈ aripiprazole 7.5 mg; therefore trifluoperazine 10 mg ≈ CPZ 200 mg ≈ aripiprazole 15 mg). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["akathisia_risk_aripiprazole", "prolactin_normalisation", "eps_risk_increase"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

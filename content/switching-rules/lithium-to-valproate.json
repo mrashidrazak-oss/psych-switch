@@ -1,0 +1,74 @@
+{
+  "id": "lithium-to-valproate",
+  "fromDrugId": "lithium",
+  "toDrugId": "valproate",
+  "strategy": "cross-taper",
+  "rationale": "Lithium to valproate: Common switch for intolerance, renal impairment, or bipolar II with mixed features (where valproate may be preferred). Lithium has a narrow therapeutic index and abrupt withdrawal precipitates rebound mania — taper over at least 4–6 weeks. Overlap with valproate is essential to prevent mood relapse. No pharmacokinetic interaction between lithium and valproate. Valproate takes 1–2 weeks to reach steady state at each dose level. Monitor lithium levels during taper and discontinue below therapeutic range only once valproate is established at therapeutic dose. Women of reproductive age: mandatory EURAP/teratogenicity counselling before initiating valproate. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 42,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 1000,
+      "toDoseMg": 500,
+      "notes": "Start valproate 500 mg/day (or sodium valproate 200 mg BD). Continue lithium 1000 mg/day. Baseline LFTs, FBC. EURAP/teratogenicity counselling documented for women of reproductive age. No PK interaction — safe to overlap."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 1000,
+      "toDoseMg": 1000,
+      "notes": "Increase valproate to 1000 mg/day. Continue lithium unchanged. Check valproate tolerability (GI side effects, sedation)."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 1000,
+      "toDoseMg": 1500,
+      "notes": "Increase valproate to 1500 mg/day (target for most patients). Begin lithium taper: reduce to 800 mg/day. Check lithium level."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 600,
+      "toDoseMg": 1500,
+      "notes": "Reduce lithium to 600 mg/day. Valproate at therapeutic dose. Monitor for mood symptoms indicating subtherapeutic lithium cover."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 400,
+      "toDoseMg": 1500,
+      "notes": "Reduce lithium to 400 mg/day. Check lithium level — expected to be sub-therapeutic by now. Patient must be monitored for early relapse signs."
+    },
+    {
+      "day": 35,
+      "fromDoseMg": 200,
+      "toDoseMg": 1500,
+      "notes": "Reduce lithium to 200 mg/day. Final step before discontinuation. Valproate level if clinically indicated."
+    },
+    {
+      "day": 42,
+      "fromDoseMg": 0,
+      "toDoseMg": 1500,
+      "notes": "Stop lithium. Continue valproate 1500 mg/day. Confirm valproate level if available (target 50–100 mg/L for mood). Monitor renal function improvement if switch driven by lithium nephropathy. Relapse risk remains elevated for 3 months post-lithium."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 1000,
+    "toTargetDoseMg": 1500,
+    "equivalencyNote": "Not directly dose-equivalent. Lithium 1000 mg/day → valproate 1000–2000 mg/day titrated to therapeutic serum level (50–100 mg/L) and clinical response. Dose above uses 1500 mg as a typical mid-range target. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [
+    "lithium_rebound_mania_risk",
+    "lithium_narrow_therapeutic_index",
+    "valproate_teratogenicity_warning",
+    "bipolar_relapse_monitor"
+  ],
+  "citations": [
+    "maudsley15_bipolar_p331_stopping_mood_stabilisers",
+    "bap2016_bipolar_guidelines",
+    "nice_cg185_bipolar"
+  ],
+  "contraindications": [
+    "Current pregnancy — valproate is teratogenic; discuss safer alternatives (e.g. quetiapine, lithium dose reduction) with specialist.",
+    "Planning pregnancy — teratogenicity counselling and EURAP risk minimisation programme required before starting valproate in women of reproductive age."
+  ],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

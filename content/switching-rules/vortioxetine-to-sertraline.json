@@ -1,0 +1,35 @@
+{
+  "id": "vortioxetine-to-sertraline",
+  "fromDrugId": "vortioxetine",
+  "toDrugId": "sertraline",
+  "strategy": "cross-taper",
+  "rationale": "Vortioxetine (SMS; t½ ~66h; low discontinuation syndrome risk) to sertraline (SSRI; t½ ~26h; moderate discontinuation syndrome risk). Vortioxetine's long half-life provides a natural self-taper. Direct switch is clinically reasonable. Sertraline is a moderate CYP2D6 inhibitor — but since vortioxetine will be stopped, this interaction is not clinically relevant here (sertraline does not require vortioxetine dose adjustment when used as a replacement). Brief overlap acceptable. Both drugs are serotonergic — standard low serotonin syndrome risk at therapeutic doses. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 7,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 20,
+      "toDoseMg": 50,
+      "notes": "Stop vortioxetine. Start sertraline 50 mg. Vortioxetine residual plasma levels will persist for ~10–14 days but at declining sub-therapeutic concentrations. Sertraline is a moderate CYP2D6 inhibitor — this may theoretically slow vortioxetine clearance slightly during washout but is not clinically significant."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 0,
+      "toDoseMg": 50,
+      "notes": "Vortioxetine cleared. Continue sertraline 50 mg. Titrate to 100 mg at 4 weeks if response inadequate."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 20,
+    "toTargetDoseMg": 50,
+    "equivalencyNote": "Vortioxetine 20 mg → sertraline 50 mg (standard effective doses). Not pharmacologically equivalent. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["vortioxetine_cyp2d6_interaction"],
+  "citations": [
+    "maudsley15_ch3_vortioxetine_profile",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

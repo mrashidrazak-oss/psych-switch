@@ -1,0 +1,54 @@
+{
+  "id": "lurasidone-to-quetiapine",
+  "fromDrugId": "lurasidone",
+  "toDrugId": "quetiapine",
+  "strategy": "cross-taper",
+  "rationale": "Lurasidone (weight-neutral, low sedation, food-dependent) to quetiapine (moderate-high sedation, moderate metabolic risk, antidepressant augmentation effect via norquetiapine). Common reasons: patient cannot reliably eat with medication (food requirement problematic), desire for more sedation or better sleep, or switching to quetiapine for its antidepressant augmentation in bipolar depression. Quetiapine initiation should be nocte — sedation onset is immediate. Postural hypotension is common on quetiapine initiation. Metabolic risk increases on quetiapine — baseline measures before starting. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 80,
+      "toDoseMg": 100,
+      "notes": "Start quetiapine 100 mg nocte. Continue lurasidone 80 mg with main meal. Record baseline weight, fasting glucose, fasting lipids. Warn about postural hypotension on quetiapine initiation."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 80,
+      "toDoseMg": 200,
+      "notes": "Increase quetiapine to 200 mg nocte. Plateau lurasidone. Sedation increases — warn about daytime drowsiness. Orthostasis diminishing as tolerance develops."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 40,
+      "toDoseMg": 400,
+      "notes": "Increase quetiapine to 400 mg (target — or titrate further if needed). Reduce lurasidone to 40 mg."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 20,
+      "toDoseMg": 400,
+      "notes": "Reduce lurasidone to 20 mg. Quetiapine well established. No cholinergic rebound from lurasidone reduction."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 400,
+      "notes": "Stop lurasidone. Continue quetiapine 400 mg. Metabolic monitoring at 4 and 12 weeks. Weight gain expected."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 80,
+    "toTargetDoseMg": 400,
+    "equivalencyNote": "Lurasidone 80 mg ≈ quetiapine 400 mg (inferred from DDD equivalence; limited direct data). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["metabolic_monitoring_required"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "leucht2016_ddd_schizophrenia_bulletin",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

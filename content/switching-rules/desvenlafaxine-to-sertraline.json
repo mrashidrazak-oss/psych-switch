@@ -1,0 +1,41 @@
+{
+  "id": "desvenlafaxine-to-sertraline",
+  "fromDrugId": "desvenlafaxine",
+  "toDrugId": "sertraline",
+  "strategy": "cross-taper",
+  "rationale": "Desvenlafaxine (SNRI; t½ ~11h; high discontinuation syndrome risk) to sertraline (SSRI; t½ ~26h; moderate CYP2D6 inhibition). Sertraline is a moderate CYP2D6 inhibitor — desvenlafaxine is not primarily CYP2D6-metabolised (unlike venlafaxine) so this interaction is less significant. Both serotonergic — standard low risk cross-taper at therapeutic doses. Taper desvenlafaxine carefully; sertraline can be started at full dose from day 1. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 50,
+      "toDoseMg": 50,
+      "notes": "Start sertraline 50 mg. Continue desvenlafaxine 50 mg. Both serotonergic — combined load is clinically acceptable at standard doses. Counsel: GI side effects from sertraline in first 1–2 weeks are common."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 50,
+      "toDoseMg": 50,
+      "notes": "Review sertraline tolerability. Continue desvenlafaxine. Optional: reduce desvenlafaxine to 25 mg (half tablet, off-label) at this step for more graded taper."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 50,
+      "notes": "Stop desvenlafaxine. Continue sertraline 50 mg. Titrate sertraline to 100 mg at 4 weeks if inadequate response."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 50,
+    "toTargetDoseMg": 50,
+    "equivalencyNote": "Desvenlafaxine 50 mg → sertraline 50 mg (standard starting doses). Not pharmacologically equivalent. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_snri_profile",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

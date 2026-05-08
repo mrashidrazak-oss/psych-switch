@@ -1,0 +1,53 @@
+{
+  "id": "aripiprazole-to-haloperidol",
+  "fromDrugId": "aripiprazole",
+  "toDrugId": "haloperidol",
+  "strategy": "cross-taper",
+  "rationale": "SGA-to-FGA switch from aripiprazole. Pharmacologically notable: aripiprazole is a D2 partial agonist, while haloperidol is a full D2 antagonist. As haloperidol builds and displaces aripiprazole at D2 receptors, the activation and energy effects of aripiprazole will diminish — this is usually welcome in patients with aripiprazole-induced agitation or akathisia. The reverse transition (akathisia improving) should be monitored. Aripiprazole's very long half-life (~75h) means it provides a natural slow washout. Baseline ECG mandatory for haloperidol. Metabolic parameters: aripiprazole is metabolically neutral; haloperidol is also low metabolic risk — no significant change expected. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 15,
+      "toDoseMg": 2,
+      "notes": "Start haloperidol 2 mg. Continue aripiprazole 15 mg. Baseline ECG mandatory. Akathisia from aripiprazole should begin to resolve as full D2 antagonism increases."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 15,
+      "toDoseMg": 5,
+      "notes": "Increase haloperidol to 5 mg target. Plateau aripiprazole — its long half-life means taper can be gentle."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 10,
+      "toDoseMg": 5,
+      "notes": "Begin reducing aripiprazole to 10 mg. Haloperidol at steady state. Assess for haloperidol-induced EPS — have benzhexol available."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 5,
+      "toDoseMg": 5,
+      "notes": "Reduce aripiprazole to 5 mg. Haloperidol dominant. Aripiprazole still present due to long half-life — minimal rebound expected."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 5,
+      "notes": "Stop aripiprazole. Continue haloperidol 5 mg. Recheck QTc at haloperidol steady state. Monitor for haloperidol EPS burden."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 15,
+    "toTargetDoseMg": 5,
+    "equivalencyNote": "Approximate clinical equivalency: aripiprazole 15 mg ≈ haloperidol 5 mg (Maudsley 15th, AP dose-equivalence table). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_schizophrenia_p230_ap_swap_table",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

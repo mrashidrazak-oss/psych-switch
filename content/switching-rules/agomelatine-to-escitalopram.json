@@ -1,0 +1,41 @@
+{
+  "id": "agomelatine-to-escitalopram",
+  "fromDrugId": "agomelatine",
+  "toDrugId": "escitalopram",
+  "strategy": "cross-taper",
+  "rationale": "Agomelatine (MT1/MT2 agonist, 5-HT2C antagonist; t½ ~2h; no discontinuation syndrome; no serotonergic reuptake activity) to escitalopram (SSRI). The very short half-life of agomelatine means it clears within hours — no washout period is required from agomelatine's side. Agomelatine produces no serotonin reuptake inhibition, so there is no pharmacodynamic serotonin overlap concern when starting escitalopram. Practically: agomelatine can be stopped the same day escitalopram is started. A brief overlap is used here for clinical safety and to verify tolerability. Mandatory: Check LFTs before stopping agomelatine (hepatotoxicity monitoring exit check). Contraindication note: fluvoxamine is NOT escitalopram, but ensure no CYP1A2 inhibitor is inadvertently co-prescribed during any brief overlap. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 7,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 25,
+      "toDoseMg": 10,
+      "notes": "Start escitalopram 10 mg. Continue agomelatine 25 mg nocte. Check exit LFTs (ALT) — agomelatine hepatotoxicity monitoring final check. No serotonin overlap hazard: agomelatine has no serotonergic reuptake activity."
+    },
+    {
+      "day": 4,
+      "fromDoseMg": 25,
+      "toDoseMg": 10,
+      "notes": "Review escitalopram tolerability (nausea, insomnia). Continue agomelatine — patient still taking nocte dose."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 0,
+      "toDoseMg": 10,
+      "notes": "Stop agomelatine. Continue escitalopram 10 mg. No discontinuation syndrome expected from agomelatine (t½ ~2h). Titrate escitalopram to 20 mg after 4 weeks if inadequate response."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 25,
+    "toTargetDoseMg": 10,
+    "equivalencyNote": "Agomelatine 25 mg ≈ escitalopram 10 mg (both standard effective doses for MDD). Not pharmacologically equivalent — different mechanisms. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["agomelatine_lft_monitoring"],
+  "citations": [
+    "maudsley15_ch3_agomelatine_profile",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

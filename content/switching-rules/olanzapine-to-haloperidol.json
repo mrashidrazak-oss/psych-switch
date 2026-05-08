@@ -1,0 +1,53 @@
+{
+  "id": "olanzapine-to-haloperidol",
+  "fromDrugId": "olanzapine",
+  "toDrugId": "haloperidol",
+  "strategy": "cross-taper",
+  "rationale": "SGA-to-FGA switch — uncommon in modern practice but clinically encountered for cost-driven reasons, or when adequate psychotic control requires high D2 occupancy beyond the SGA ceiling. Moving from olanzapine to haloperidol trades metabolic burden for EPS risk: anticipate EPS emergence (parkinsonism, akathisia) as haloperidol establishes. Anticipate anticholinergic and histaminergic withdrawal as olanzapine tapers — rebound insomnia and cholinergic effects are likely. Consider prophylactic anticholinergic cover (benzhexol) before starting haloperidol in patients with EPS history. QTc will rise — ECG at baseline is mandatory for haloperidol. Start haloperidol at a conservative 2 mg and assess for EPS before stepping to target. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 10,
+      "toDoseMg": 2,
+      "notes": "Start haloperidol 2 mg. Continue olanzapine 10 mg. Baseline ECG mandatory — haloperidol is a high QTc risk drug. Assess EPS at every step."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 10,
+      "toDoseMg": 5,
+      "notes": "Increase haloperidol to 5 mg (target). Plateau olanzapine — allow haloperidol to establish before tapering the anticholinergic SGA cover."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 7.5,
+      "toDoseMg": 5,
+      "notes": "Begin tapering olanzapine to 7.5 mg. Monitor for cholinergic/histaminergic rebound — insomnia, GI symptoms, anxiety. Consider anticholinergic cover if EPS already emerging."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 5,
+      "toDoseMg": 5,
+      "notes": "Reduce olanzapine to 5 mg. Haloperidol's antipsychotic effect now dominant. Review EPS — prescribe benzhexol if needed."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 5,
+      "notes": "Stop olanzapine. Continue haloperidol 5 mg. Metabolic parameters should improve — document weight and glucose as baseline for comparison. Recheck QTc."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 10,
+    "toTargetDoseMg": 5,
+    "equivalencyNote": "Approximate clinical equivalency: olanzapine 10 mg ≈ haloperidol 5 mg (Maudsley 15th, AP dose-equivalence table). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["cholinergic_rebound"],
+  "citations": [
+    "maudsley15_schizophrenia_p230_ap_swap_table",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

@@ -1,0 +1,47 @@
+{
+  "id": "sertraline-to-duloxetine",
+  "fromDrugId": "sertraline",
+  "toDrugId": "duloxetine",
+  "strategy": "cross-taper",
+  "rationale": "SSRI-to-SNRI switch, particularly useful when comorbid neuropathic pain or chronic musculoskeletal pain favours noradrenergic activity. Sertraline disc risk is moderate; duloxetine titrates slowly. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 100,
+      "toDoseMg": 30,
+      "notes": "Start duloxetine 30 mg. Hold sertraline 100 mg."
+    },
+    {
+      "day": 5,
+      "fromDoseMg": 50,
+      "toDoseMg": 60,
+      "notes": "Halve sertraline to 50 mg. Increase duloxetine to 60 mg target."
+    },
+    {
+      "day": 10,
+      "fromDoseMg": 25,
+      "toDoseMg": 60,
+      "notes": "Reduce sertraline to 25 mg. Hold duloxetine."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 60,
+      "notes": "Stop sertraline. Continue duloxetine 60 mg. Counsel re duloxetine's high disc risk if later stopped."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 100,
+    "toTargetDoseMg": 60,
+    "equivalencyNote": "Approximate clinical equivalency: sertraline 100 mg ≈ duloxetine 60 mg (Maudsley 14th). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_p369_table_3_7",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

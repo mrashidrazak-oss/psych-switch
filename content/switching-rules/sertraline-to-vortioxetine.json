@@ -1,0 +1,41 @@
+{
+  "id": "sertraline-to-vortioxetine",
+  "fromDrugId": "sertraline",
+  "toDrugId": "vortioxetine",
+  "strategy": "cross-taper",
+  "rationale": "Sertraline (SSRI; t½ ~26h; moderate CYP2D6 inhibition) to vortioxetine (SMS; t½ ~66h; CYP2D6 substrate). KEY PHARMACOKINETIC INTERACTION: Sertraline is a moderate CYP2D6 inhibitor — it raises vortioxetine plasma levels. During the cross-taper period when both drugs are present, vortioxetine levels may be higher than expected. Recommended approach: start vortioxetine at 10 mg (not higher) during the overlap, as sertraline's CYP2D6 inhibition will produce equivalent exposure to a higher vortioxetine dose. Only titrate vortioxetine upward after sertraline is fully stopped. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 100,
+      "toDoseMg": 10,
+      "notes": "Start vortioxetine 10 mg. Continue sertraline 100 mg. START VORTIOXETINE AT 10 MG — sertraline's moderate CYP2D6 inhibition raises vortioxetine levels during overlap. Do not start at higher vortioxetine dose during cross-taper."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 50,
+      "toDoseMg": 10,
+      "notes": "Reduce sertraline to 50 mg. Hold vortioxetine at 10 mg. As sertraline reduces, CYP2D6 inhibition decreases — vortioxetine levels may adjust."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 10,
+      "notes": "Stop sertraline. Continue vortioxetine 10 mg. Now sertraline CYP2D6 inhibition fully reversed — safe to titrate vortioxetine to 20 mg at 2 weeks if response inadequate."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 100,
+    "toTargetDoseMg": 10,
+    "equivalencyNote": "Sertraline 100 mg → vortioxetine 10 mg (start during cross-taper; titrate to 20 mg after sertraline stopped). CYP2D6 interaction means lower vortioxetine starting dose during overlap. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["vortioxetine_cyp2d6_interaction"],
+  "citations": [
+    "maudsley15_ch3_vortioxetine_profile",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

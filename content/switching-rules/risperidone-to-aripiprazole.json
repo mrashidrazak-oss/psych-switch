@@ -1,0 +1,59 @@
+{
+  "id": "risperidone-to-aripiprazole",
+  "fromDrugId": "risperidone",
+  "toDrugId": "aripiprazole",
+  "strategy": "plateau-cross-taper",
+  "rationale": "Frequent prolactin-driven or sexual-dysfunction-driven switch. Plateau cross-taper because risperidone's full D2 antagonism interacts with aripiprazole's partial agonism — abrupt aripiprazole introduction can produce paradoxical worsening or akathisia. Slow risperidone reduction after aripiprazole stabilisation. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 35,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 4,
+      "toDoseMg": 5,
+      "notes": "Start aripiprazole 5 mg in the morning. Hold risperidone 4 mg."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 4,
+      "toDoseMg": 10,
+      "notes": "Increase aripiprazole to 10 mg. Hold risperidone. Watch for akathisia."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 3,
+      "toDoseMg": 15,
+      "notes": "Increase aripiprazole to 15 mg target. Reduce risperidone to 3 mg."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 2,
+      "toDoseMg": 15,
+      "notes": "Reduce risperidone to 2 mg. Hold aripiprazole."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 1,
+      "toDoseMg": 15,
+      "notes": "Reduce risperidone to 1 mg. Prolactin should already be falling — counsel about possible return of menses."
+    },
+    {
+      "day": 35,
+      "fromDoseMg": 0,
+      "toDoseMg": 15,
+      "notes": "Stop risperidone. Continue aripiprazole 15 mg."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 4,
+    "toTargetDoseMg": 15,
+    "equivalencyNote": "Approximate clinical equivalency: risperidone 4 mg ≈ aripiprazole 15 mg (Maudsley 14th). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_schizophrenia_p230_ap_swap_table",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

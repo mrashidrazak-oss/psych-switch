@@ -1,0 +1,53 @@
+{
+  "id": "haloperidol-to-risperidone",
+  "fromDrugId": "haloperidol",
+  "toDrugId": "risperidone",
+  "strategy": "cross-taper",
+  "rationale": "The most common FGA-to-SGA switch in Malaysian clinical practice — moving away from haloperidol's high EPS and tardive dyskinesia risk. Cross-taper: introduce risperidone first and build to therapeutic dose while tapering haloperidol gradually. Both drugs carry high prolactin liability, so prolactin-related side effects (galactorrhoea, amenorrhoea, sexual dysfunction) may persist. EPS monitoring remains important — risperidone carries moderate EPS risk, particularly above 4 mg/day. If the patient is on anticholinergic cover (benzhexol), review once haloperidol is stopped; haloperidol's higher EPS drive will no longer be present. QTc should normalise as haloperidol (high QTc risk) is withdrawn. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 5,
+      "toDoseMg": 1,
+      "notes": "Start risperidone 1 mg. Continue haloperidol 5 mg. Baseline QTc if not recently done — haloperidol QTc risk exits as risperidone enters."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 5,
+      "toDoseMg": 2,
+      "notes": "Increase risperidone to 2 mg. Plateau haloperidol — allow risperidone to build before tapering."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 2,
+      "toDoseMg": 3,
+      "notes": "Increase risperidone to 3 mg. Reduce haloperidol to 2 mg. EPS should begin to improve as haloperidol burden reduces."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 1,
+      "toDoseMg": 4,
+      "notes": "Risperidone at 4 mg target. Reduce haloperidol to 1 mg. Review anticholinergic agent — may no longer be needed."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 4,
+      "notes": "Stop haloperidol. Continue risperidone 4 mg. Stop anticholinergic if still prescribed. Recheck QTc — haloperidol's QTc contribution has cleared."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 5,
+    "toTargetDoseMg": 4,
+    "equivalencyNote": "Approximate clinical equivalency: haloperidol 5 mg ≈ risperidone 4 mg (Maudsley 15th, AP dose-equivalence table). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_schizophrenia_p230_ap_swap_table",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

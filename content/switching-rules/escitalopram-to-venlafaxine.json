@@ -1,0 +1,47 @@
+{
+  "id": "escitalopram-to-venlafaxine",
+  "fromDrugId": "escitalopram",
+  "toDrugId": "venlafaxine",
+  "strategy": "cross-taper",
+  "rationale": "SSRI-to-SNRI swap when serotonergic-only treatment is insufficient and noradrenergic activity is desired. Brief cross-taper because escitalopram disc risk is moderate and venlafaxine titrates slowly anyway. Check baseline blood pressure before introducing venlafaxine. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 10,
+      "toDoseMg": 37.5,
+      "notes": "Start venlafaxine XR 37.5 mg. Hold escitalopram 10 mg. Check baseline blood pressure."
+    },
+    {
+      "day": 5,
+      "fromDoseMg": 5,
+      "toDoseMg": 75,
+      "notes": "Halve escitalopram to 5 mg. Increase venlafaxine to 75 mg XR."
+    },
+    {
+      "day": 10,
+      "fromDoseMg": 5,
+      "toDoseMg": 150,
+      "notes": "Hold escitalopram. Increase venlafaxine to 150 mg XR target. Re-check blood pressure."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 150,
+      "notes": "Stop escitalopram. Continue venlafaxine XR 150 mg. Counsel re venlafaxine's very-high disc risk if later stopped."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 10,
+    "toTargetDoseMg": 150,
+    "equivalencyNote": "Approximate clinical equivalency: escitalopram 10 mg ≈ venlafaxine 150 mg XR (Maudsley 14th). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_p369_table_3_7",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

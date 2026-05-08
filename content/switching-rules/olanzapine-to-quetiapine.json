@@ -1,0 +1,53 @@
+{
+  "id": "olanzapine-to-quetiapine",
+  "fromDrugId": "olanzapine",
+  "toDrugId": "quetiapine",
+  "strategy": "cross-taper",
+  "rationale": "Olanzapine-to-quetiapine switches are usually laterally metabolic — accepting the same class of metabolic burden while gaining quetiapine-specific benefits (antidepressant effect from N-desalkylquetiapine, improved tolerability in patients distressed by weight gain at olanzapine levels, or reduced prolactin effect). Both drugs are strongly sedating and anticholinergic/antihistaminergic, so rebound on withdrawal is less pronounced than with less sedating APs. Cross-taper: introduce quetiapine nocte alongside olanzapine before tapering, to prevent a sedation and antipsychotic coverage gap. Metabolic monitoring continues — no meaningful metabolic improvement is expected, though individual response varies. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 10,
+      "toDoseMg": 50,
+      "notes": "Start quetiapine 50 mg nocte. Continue olanzapine 10 mg. Sedation is additive initially — advise driving caution."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 10,
+      "toDoseMg": 100,
+      "notes": "Increase quetiapine to 100 mg. Plateau olanzapine — allow quetiapine to establish before tapering."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 7.5,
+      "toDoseMg": 200,
+      "notes": "Increase quetiapine to 200 mg. Begin tapering olanzapine to 7.5 mg. If daytime sedation excessive, consider splitting quetiapine dose."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 5,
+      "toDoseMg": 300,
+      "notes": "Quetiapine at 300 mg target. Reduce olanzapine to 5 mg. Antipsychotic cover well-maintained across both agents at this step."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 300,
+      "notes": "Stop olanzapine. Continue quetiapine 300 mg. Continue metabolic monitoring — QTc is moderate risk with quetiapine."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 10,
+    "toTargetDoseMg": 300,
+    "equivalencyNote": "Approximate clinical equivalency: olanzapine 10 mg ≈ quetiapine 300 mg (Maudsley 15th, AP dose-equivalence table). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_schizophrenia_p230_ap_swap_table",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

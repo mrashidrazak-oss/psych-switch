@@ -1,0 +1,41 @@
+{
+  "id": "agomelatine-to-mirtazapine",
+  "fromDrugId": "agomelatine",
+  "toDrugId": "mirtazapine",
+  "strategy": "cross-taper",
+  "rationale": "Agomelatine (MT1/MT2 agonist; t½ ~2h; no discontinuation syndrome; melatonergic sleep mechanism) to mirtazapine (NaSSA: α2-antagonist, 5-HT2/3 antagonist, H1 antagonist; heavy sedation; significant weight gain). Both drugs help sleep — agomelatine via melatonin agonism, mirtazapine via H1 blockade and 5-HT2C antagonism. Switching may increase sedation significantly. No serotonergic overlap hazard. Exit LFT check before stopping agomelatine. Start mirtazapine at 15 mg nocte and consolidate before stopping agomelatine. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 7,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 25,
+      "toDoseMg": 15,
+      "notes": "Start mirtazapine 15 mg nocte. Continue agomelatine 25 mg nocte. Check exit LFTs. Counsel about increased sedation — mirtazapine sedation is more pronounced than agomelatine's. Take both at night. Warn about significant appetite increase and weight gain on mirtazapine."
+    },
+    {
+      "day": 4,
+      "fromDoseMg": 25,
+      "toDoseMg": 15,
+      "notes": "Review mirtazapine tolerability (sedation, weight, mood). Continue agomelatine."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 0,
+      "toDoseMg": 15,
+      "notes": "Stop agomelatine. Continue mirtazapine 15 mg nocte. No discontinuation syndrome from agomelatine. Titrate mirtazapine to 30 mg at 2 weeks if tolerated and response inadequate (counter-intuitively, 30 mg is less sedating than 15 mg due to additional noradrenergic activation)."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 25,
+    "toTargetDoseMg": 15,
+    "equivalencyNote": "Agomelatine 25 mg → mirtazapine 15 mg (starting dose). Target mirtazapine 30–45 mg for full efficacy. Not pharmacologically equivalent — different mechanisms. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["agomelatine_lft_monitoring"],
+  "citations": [
+    "maudsley15_ch3_agomelatine_profile",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

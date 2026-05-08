@@ -1,0 +1,53 @@
+{
+  "id": "sulpiride-to-risperidone",
+  "fromDrugId": "sulpiride",
+  "toDrugId": "risperidone",
+  "strategy": "cross-taper",
+  "rationale": "Sulpiride (D2/D3 selective, renally excreted, high prolactin, no anticholinergic activity) to risperidone (D2/D3 + 5-HT2A + α1/α2 + H1). Both drugs elevate prolactin significantly (no improvement expected). Both carry moderate QTc risk. The transition is relatively straightforward as both have similar D2 dominance without significant anticholinergic burden. A lateral switch within the high-D2-blockade class. Common reason: cost, formulary, or seeking risperidone LAI (paliperidone LAI). PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 800,
+      "toDoseMg": 2,
+      "notes": "Start risperidone 2 mg. Continue sulpiride 800 mg. ECG at baseline."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 800,
+      "toDoseMg": 4,
+      "notes": "Increase risperidone to 4 mg (target). Plateau sulpiride."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 400,
+      "toDoseMg": 4,
+      "notes": "Reduce sulpiride to 400 mg. Additive prolactin elevation during overlap — monitor for symptoms."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 200,
+      "toDoseMg": 4,
+      "notes": "Reduce sulpiride to 200 mg. Clinical stability maintained by risperidone."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 4,
+      "notes": "Stop sulpiride. Continue risperidone 4 mg. Review for LAI transition if planned."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 800,
+    "toTargetDoseMg": 4,
+    "equivalencyNote": "Sulpiride 800 mg ≈ risperidone 4 mg (via CPZ equivalence proxy: sulpiride 200 mg ≈ CPZ 100 mg ≈ risperidone 1 mg; therefore sulpiride 800 mg ≈ risperidone 4 mg). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["prolactin_elevation", "qtc_monitoring_required"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

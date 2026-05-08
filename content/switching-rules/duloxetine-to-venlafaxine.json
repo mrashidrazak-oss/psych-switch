@@ -1,0 +1,47 @@
+{
+  "id": "duloxetine-to-venlafaxine",
+  "fromDrugId": "duloxetine",
+  "toDrugId": "venlafaxine",
+  "strategy": "cross-taper",
+  "rationale": "SNRI-to-SNRI swap, considered for inefficacy or when venlafaxine's higher-dose noradrenergic activity is desired. Both drugs carry significant discontinuation-syndrome risk; cross-taper minimises withdrawal on the duloxetine side. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 60,
+      "toDoseMg": 37.5,
+      "notes": "Start venlafaxine XR 37.5 mg. Hold duloxetine 60 mg. Check baseline blood pressure."
+    },
+    {
+      "day": 5,
+      "fromDoseMg": 30,
+      "toDoseMg": 75,
+      "notes": "Halve duloxetine to 30 mg. Increase venlafaxine to 75 mg XR."
+    },
+    {
+      "day": 10,
+      "fromDoseMg": 30,
+      "toDoseMg": 150,
+      "notes": "Hold duloxetine. Increase venlafaxine to 150 mg XR target. Re-check blood pressure."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 150,
+      "notes": "Stop duloxetine. Continue venlafaxine 150 mg XR. Slow this final step if disc symptoms emerge."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 60,
+    "toTargetDoseMg": 150,
+    "equivalencyNote": "Approximate clinical equivalency: duloxetine 60 mg ≈ venlafaxine 150 mg XR (Maudsley 14th). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_p369_table_3_7",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

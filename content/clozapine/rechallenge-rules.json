@@ -1,0 +1,75 @@
+{
+  "id": "clozapine-rechallenge",
+  "rationale": "Per Maudsley 15th edition (Schizophrenia chapter, p.234 'Restarting clozapine after a break in treatment'): clozapine tolerance to cardiovascular and sedative effects is lost rapidly on interruption. Restarting at the previously tolerated dose after a gap of more than 48 hours can cause severe hypotension, cardiovascular collapse, and has been associated with deaths. The risk is reduced — but not eliminated — in patients who have been on clozapine in the recent past, especially for an extended period. Hypotension is more frequent if clozapine is reintroduced more rapidly than the original dose was reached. The required restart strategy depends on the duration of interruption. PENDING_CLINICAL_REVIEW — Rashid Razak.",
+  "tiers": [
+    {
+      "id": "tier1_less_than_24h",
+      "label": "< 24 hours",
+      "maxHours": 24,
+      "severity": "info",
+      "heading": "Continue at current dose",
+      "guidance": "A gap of fewer than 24 hours does not require dose reduction. Take the missed dose as soon as remembered, then continue the regular schedule. If the next scheduled dose is within 6 hours, skip the missed dose and resume normally.",
+      "restartInstruction": "Resume at current dose immediately.",
+      "retitrationRequired": false,
+      "monitoringNote": "Standard monitoring. No additional observations required unless symptomatic.",
+      "warningSignsToWatch": []
+    },
+    {
+      "id": "tier2_24h_to_48h",
+      "label": "24 – 48 hours",
+      "maxHours": 48,
+      "severity": "warning",
+      "heading": "Halve the dose for 48 hours, then retitrate",
+      "guidance": "After 24–48 h without clozapine, significant tolerance loss begins. Restart at half the usual dose for 2 days with BP and pulse monitoring at 1 h and 2 h post-dose, then return to the previous maintenance dose if tolerated.",
+      "restartInstruction": "Restart at 50% of the last maintenance dose. Increase back to full dose after 48 h if tolerated.",
+      "retitrationRequired": false,
+      "monitoringNote": "BP and HR at 1 h and 2 h after first restarted dose. Observe for postural hypotension.",
+      "warningSignsToWatch": ["orthostatic hypotension", "tachycardia", "syncope"]
+    },
+    {
+      "id": "tier3_48h_to_5d",
+      "label": "2 – 5 days",
+      "maxHours": 120,
+      "severity": "warning",
+      "heading": "Restart at 25 mg and retitrate over 1–2 weeks",
+      "guidance": "After 2–5 days off clozapine, restart from 25 mg nocte (NOT the previous dose — doing so risks severe cardiovascular collapse). Follow an accelerated inpatient retitration schedule, reaching the target maintenance dose over 7–14 days. Inpatient setting strongly preferred for the first 3–4 days.",
+      "restartInstruction": "Restart at 25 mg nocte. Increase by 25 mg every 1–2 days as tolerated. BP monitoring required.",
+      "retitrationRequired": true,
+      "monitoringNote": "BP and HR at 1 h and 2 h post-dose for the first 3–5 days. Restart FBC monitoring from the start of the retitration schedule.",
+      "warningSignsToWatch": ["orthostatic hypotension", "tachycardia", "syncope", "excessive sedation"]
+    },
+    {
+      "id": "tier4_greater_than_5d",
+      "label": "> 5 days",
+      "maxHours": null,
+      "severity": "danger",
+      "heading": "Full retitration from 12.5 mg — treat as new initiation",
+      "guidance": "After more than 5 days off clozapine, full tolerance to cardiovascular and sedative effects is lost. Restart must follow the full initiation protocol (12.5 mg on day 1, inpatient titration preferred) regardless of the previous stable dose. Restarting at the prior maintenance dose at this stage has caused deaths.",
+      "restartInstruction": "Restart using the standard inpatient titration protocol from 12.5 mg. Target the previous maintenance dose only after the full titration schedule is complete.",
+      "retitrationRequired": true,
+      "monitoringNote": "Full inpatient monitoring for at least the first 14 days. FBC monitoring restarts from week 1 (weekly for first 18 weeks). Reconsider if prior agranulocytosis — rechallenge generally contraindicated.",
+      "warningSignsToWatch": [
+        "orthostatic hypotension",
+        "myocarditis symptoms (chest pain, palpitations, fever, dyspnoea)",
+        "tachycardia",
+        "syncope",
+        "excessive sedation",
+        "hypersalivation"
+      ]
+    }
+  ],
+  "absoluteContraindications": [
+    "Previous clozapine-induced agranulocytosis (ANC < 0.5 ×10⁹/L) — rechallenge contraindicated in most jurisdictions.",
+    "Previous clozapine-induced myocarditis — rechallenge only under specialist cardiology and psychiatry co-management.",
+    "Previous clozapine-induced cardiomyopathy — rechallenge contraindicated.",
+    "Active bone marrow disorder."
+  ],
+  "citations": [
+    "maudsley15_schizophrenia_p234_restart_after_break",
+    "maudsley15_schizophrenia_p235_NABP_ISMP_warning",
+    "Clozaril (clozapine) Summary of Product Characteristics. Novartis.",
+    "Barnes TR et al. Evidence-based guidelines for the pharmacological treatment of schizophrenia. J Psychopharmacol. 2020."
+  ],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

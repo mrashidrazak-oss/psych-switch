@@ -1,27 +1,61 @@
 {
   "expo": {
-    "name": "psych-switch",
+    "name": "PsychSwitch ASEAN",
     "slug": "psych-switch",
-    "version": "1.0.0",
+    "version": "0.4.21",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#0b0f14"
     },
+    "backgroundColor": "#0b0f14",
+    "primaryColor": "#3b82f6",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.psychswitch.asean",
+      "buildNumber": "1",
+      "backgroundColor": "#0b0f14",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIUserInterfaceStyle": "Dark"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#0b0f14"
+      },
+      "package": "com.psychswitch.asean",
+      "versionCode": 1,
+      "backgroundColor": "#0b0f14",
+      "navigationBar": {
+        "backgroundColor": "#0b0f14",
+        "barStyle": "light-content"
+      },
+      "statusBar": {
+        "backgroundColor": "#0b0f14",
+        "barStyle": "light-content",
+        "translucent": false
       }
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "38a9f614-0553-4300-bb43-505dd3cfd3ad"
+      }
+    },
+    "owner": "feistz",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/38a9f614-0553-4300-bb43-505dd3cfd3ad"
     }
   }
 }

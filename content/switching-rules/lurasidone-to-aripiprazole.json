@@ -1,0 +1,48 @@
+{
+  "id": "lurasidone-to-aripiprazole",
+  "fromDrugId": "lurasidone",
+  "toDrugId": "aripiprazole",
+  "strategy": "cross-taper",
+  "rationale": "Lurasidone (D2 full antagonist) to aripiprazole (D2/D3 partial agonist). Both drugs have low metabolic risk and low QTc risk — a good lateral switch for patients prioritising a clean metabolic and cardiac profile. Common reasons: food adherence difficulties with lurasidone, cost, or desire for aripiprazole's mood-stabilising augmentation profile. Aripiprazole's partial D2 agonism may cause akathisia, particularly in the first 2–4 weeks, in patients stabilised on full D2 blockade. Cross-taper preferred over direct switch to allow gradual receptor adaptation. Activation and insomnia are also common on aripiprazole initiation. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 21,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 80,
+      "toDoseMg": 10,
+      "notes": "Start aripiprazole 10 mg. Continue lurasidone 80 mg with main meal. Counsel about akathisia risk in first 2 weeks — restlessness, inability to sit still. Propranolol PRN can be prescribed proactively."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 40,
+      "toDoseMg": 15,
+      "notes": "Increase aripiprazole to 15 mg (target). Reduce lurasidone to 40 mg. Review akathisia at end of week 1."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 20,
+      "toDoseMg": 15,
+      "notes": "Reduce lurasidone to 20 mg. Aripiprazole at steady state. Insomnia may emerge as lurasidone's mild sedation is lost."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 0,
+      "toDoseMg": 15,
+      "notes": "Stop lurasidone. Continue aripiprazole 15 mg. Prolactin normalises rapidly — counsel female patients about menstrual restoration."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 80,
+    "toTargetDoseMg": 15,
+    "equivalencyNote": "Lurasidone 80 mg ≈ aripiprazole 15 mg (inferred from DDD equivalence; limited direct data). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["akathisia_risk_aripiprazole", "prolactin_normalisation"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "leucht2016_ddd_schizophrenia_bulletin",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

@@ -1,0 +1,60 @@
+{
+  "id": "lurasidone",
+  "genericName": "Lurasidone",
+  "drugClass": "SGA (atypical antipsychotic)",
+  "category": "antipsychotic",
+  "malaysianBrandNames": ["Latuda"],
+  "halfLife": {
+    "meanHours": 18,
+    "rangeHours": [14, 24],
+    "notes": "Once-daily dosing. Steady state in 7 days. Must be taken with food (≥350 kcal) — bioavailability increases 2–3× with food. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": "ID-14283 (norsulpiride analogue)",
+    "halfLifeHours": 28,
+    "clinicallySignificant": false,
+    "notes": "Active metabolite ID-14283 contributes marginally to activity; not considered clinically dominant. PENDING_CLINICAL_REVIEW."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP3A4 (primary)"],
+    "inhibitorOf": [],
+    "switchingRelevance": "Strong CYP3A4 inhibitors (ketoconazole, clarithromycin, ritonavir) markedly raise lurasidone levels — halve dose or avoid. Strong CYP3A4 inducers (carbamazepine, rifampicin) reduce levels — may need dose increase. Avoid co-prescription with grapefruit juice. PENDING_CLINICAL_REVIEW."
+  },
+  "epsRisk": "moderate",
+  "metabolicRisk": {
+    "score": "low",
+    "notes": "One of the most metabolically neutral SGAs — minimal weight gain, no significant glucose or lipid dysregulation in clinical trials. Favourable profile for patients with metabolic syndrome. PENDING_CLINICAL_REVIEW."
+  },
+  "prolactinRisk": "moderate",
+  "qtcRisk": "low",
+  "sedation": "low",
+  "lai": {
+    "available": false,
+    "notes": "No long-acting injectable formulation."
+  },
+  "reboundPsychosisRisk": {
+    "score": "low",
+    "notes": "Good tolerability on taper. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 40,
+    "typicalTargetRangeMg": [40, 80],
+    "maxDoseMg": 160,
+    "increments": [20, 40, 80, 120, 160],
+    "formulationsAvailableMy": ["Latuda 20 mg tablet", "Latuda 40 mg tablet", "Latuda 80 mg tablet"]
+  },
+  "formulationNotes": "MUST be taken with food (at least 350 kcal) — absorption doubles with food. Take with the main meal. Tablets should not be crushed. PENDING_CLINICAL_REVIEW.",
+  "specialConsiderations": [
+    "MANDATORY FOOD REQUIREMENT: Take with ≥350 kcal meal. Inadequate food intake results in significantly lower drug exposure and potential treatment failure.",
+    "Also licensed for bipolar depression — a differentiating feature among SGAs.",
+    "CYP3A4 substrate — check for inducers/inhibitors at initiation and when other medications change.",
+    "Akathisia is the main dose-limiting side effect — counsel early.",
+    "Useful for patients where metabolic neutrality is critical (diabetes, obesity, dyslipidaemia)."
+  ],
+  "citations": [
+    "maudsley15_schizophrenia_lurasidone_profile",
+    "bap2020_psychosis_sga"
+  ],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

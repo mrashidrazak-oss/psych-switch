@@ -1,0 +1,47 @@
+{
+  "id": "amisulpride-to-haloperidol",
+  "fromDrugId": "amisulpride",
+  "toDrugId": "haloperidol",
+  "strategy": "cross-taper",
+  "rationale": "Both amisulpride and haloperidol are high-affinity D2 antagonists with similar receptor binding profiles, making this switch relatively smooth pharmacologically. Common reasons: need for IM/IV route (acute psychosis, non-compliance), formulary constraints, or cost. Both drugs elevate prolactin and carry EPS risk — the switch is essentially a lateral move within the high-D2-blockade class. Haloperidol carries a higher EPS risk than amisulpride, especially at higher doses — EPS and akathisia should be anticipated and managed. Both drugs carry QTc-prolongation risk (haloperidol especially at high IV doses or in combination). PENDING_CLINICAL_REVIEW.",
+  "durationDays": 21,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 400,
+      "toDoseMg": 2,
+      "notes": "Start haloperidol 2 mg. Continue amisulpride 400 mg. ECG at baseline. Anticholinergic agent (e.g. procyclidine 5 mg PRN) should be prescribed for dystonia, especially in young males."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 200,
+      "toDoseMg": 5,
+      "notes": "Increase haloperidol to 4 mg. Reduce amisulpride to 200 mg. Monitor for EPS — stiffness, tremor, akathisia. If EPS appears, consider reducing haloperidol rather than adding anticholinergic long-term."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 100,
+      "toDoseMg": 5,
+      "notes": "Reduce amisulpride to 100 mg. Haloperidol at target. Check ECG — QTc with haloperidol."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 0,
+      "toDoseMg": 5,
+      "notes": "Stop amisulpride. Continue haloperidol 4 mg. Repeat ECG at 4 weeks. Review EPS burden at each visit."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 400,
+    "toTargetDoseMg": 5,
+    "equivalencyNote": "Amisulpride 400 mg ≈ haloperidol 4 mg (Maudsley 15th CPZ-equivalence table; note: haloperidol 2 mg ≈ CPZ 100 mg, amisulpride 200 mg ≈ CPZ 100 mg — so amisulpride 400 mg ≈ haloperidol 4 mg by proxy). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["eps_risk_increase", "qtc_monitoring_required", "prolactin_elevation"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

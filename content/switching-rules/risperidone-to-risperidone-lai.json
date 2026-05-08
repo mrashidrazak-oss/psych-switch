@@ -1,0 +1,47 @@
+{
+  "id": "risperidone-to-risperidone-lai",
+  "fromDrugId": "risperidone",
+  "toDrugId": "risperidone-lai",
+  "strategy": "cross-taper",
+  "rationale": "Standard oral-to-LAI initiation: confirm tolerability of oral risperidone first, then start Risperdal Consta with mandatory 21-day oral overlap because the microsphere depot does not reach therapeutic levels until ~3 weeks after the first injection. Stopping oral too early risks relapse during the gap. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 4,
+      "toDoseMg": 25,
+      "notes": "Continue oral risperidone 4 mg. Inject Risperdal Consta 25 mg deltoid (first injection). Counsel patient that depot takes 3 weeks to start working."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 4,
+      "toDoseMg": 25,
+      "notes": "Continue oral risperidone 4 mg. Second Consta 25 mg injection (every 2 weeks)."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 2,
+      "toDoseMg": 25,
+      "notes": "Reduce oral to 2 mg as depot begins to release. Clinical effect of Consta now emerging."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 25,
+      "notes": "Stop oral risperidone. Third Consta 25 mg injection. Maintenance every 2 weeks ongoing."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 4,
+    "toTargetDoseMg": 25,
+    "equivalencyNote": "Approximate clinical equivalency: oral risperidone 4 mg/day ≈ Consta 25 mg every 2 weeks (Maudsley 14th). For higher oral doses (>4 mg), use Consta 37.5 or 50 mg. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_schizophrenia_p230_risperidone_lai",
+    "bap2020_psychosis_lai"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

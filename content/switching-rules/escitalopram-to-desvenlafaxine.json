@@ -1,0 +1,41 @@
+{
+  "id": "escitalopram-to-desvenlafaxine",
+  "fromDrugId": "escitalopram",
+  "toDrugId": "desvenlafaxine",
+  "strategy": "cross-taper",
+  "rationale": "Escitalopram (SSRI; t½ ~27h) to desvenlafaxine (SNRI; t½ ~11h). Switch from SSRI to SNRI — adding noradrenergic component for treatment-resistant depression, fatigue, or pain. Escitalopram is not a CYP2D6 inhibitor — no interaction with desvenlafaxine. Both serotonergic — standard low-risk cross-taper at therapeutic doses. Start desvenlafaxine at 50 mg during the cross-taper then taper escitalopram. Desvenlafaxine has predictable pharmacokinetics due to minimal CYP2D6 metabolism. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 20,
+      "toDoseMg": 50,
+      "notes": "Start desvenlafaxine 50 mg. Continue escitalopram 20 mg. No significant pharmacokinetic interaction. Combined serotonergic load at standard doses is clinically acceptable. Counsel about potential early nausea, sweating from desvenlafaxine."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 10,
+      "toDoseMg": 50,
+      "notes": "Reduce escitalopram to 10 mg. Continue desvenlafaxine 50 mg. Monitor for discontinuation symptoms from escitalopram reduction."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 50,
+      "notes": "Stop escitalopram. Continue desvenlafaxine 50 mg. Titrate to 100 mg at 4 weeks if response inadequate (limited additional efficacy for most patients but some benefit)."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 20,
+    "toTargetDoseMg": 50,
+    "equivalencyNote": "Escitalopram 20 mg → desvenlafaxine 50 mg (standard effective doses). Not pharmacologically equivalent. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_snri_profile",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

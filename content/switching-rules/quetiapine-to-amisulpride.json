@@ -1,0 +1,54 @@
+{
+  "id": "quetiapine-to-amisulpride",
+  "fromDrugId": "quetiapine",
+  "toDrugId": "amisulpride",
+  "strategy": "cross-taper",
+  "rationale": "Quetiapine (high anticholinergic, antihistaminergic, and antiadrenergic burden) to amisulpride (selective D2/D3). Quetiapine's receptor-binding profile is dominated by H1, muscarinic, and α1 blockade — withdrawal produces significant cholinergic rebound (nausea, insomnia, diarrhoea). The taper must be slow. Loss of quetiapine's sedative effect will cause insomnia in most patients — anticipate and manage proactively. Both drugs prolong QTc; the total QTc burden peaks during overlap. Prolactin will rise on amisulpride (quetiapine is relatively prolactin-sparing). Metabolic improvement expected as quetiapine is withdrawn. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 400,
+      "toDoseMg": 200,
+      "notes": "Start amisulpride 200 mg. Continue quetiapine 400 mg. Baseline ECG. Check renal function (amisulpride renally excreted). Warn about likely insomnia as quetiapine is reduced."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 400,
+      "toDoseMg": 400,
+      "notes": "Increase amisulpride to 400 mg (target). Plateau quetiapine. Monitor QTc at peak overlap — check ECG if combined risk factors present."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 200,
+      "toDoseMg": 400,
+      "notes": "Reduce quetiapine to 200 mg. Cholinergic rebound likely now: nausea, sweating, disturbed sleep. Do not rush this taper. Melatonin or antihistamine (e.g. promethazine) may help with sleep."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 100,
+      "toDoseMg": 400,
+      "notes": "Reduce quetiapine to 100 mg. Sedation reducing substantially. Postural hypotension from α1 blockade reducing — orthostasis risk diminishes."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 400,
+      "notes": "Stop quetiapine. Continue amisulpride 400 mg. Repeat ECG at 4–6 weeks. Monitor weight and metabolic parameters — improvement expected over subsequent months."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 400,
+    "toTargetDoseMg": 400,
+    "equivalencyNote": "Quetiapine 400 mg ≈ amisulpride 400 mg (Leucht et al. CMD method, Schizophrenia Bulletin 2015). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["cholinergic_rebound", "qtc_monitoring_required", "amisulpride_renal_clearance"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "leucht2015_cmd_schizophrenia_bulletin",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

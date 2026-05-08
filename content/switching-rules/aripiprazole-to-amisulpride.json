@@ -1,0 +1,54 @@
+{
+  "id": "aripiprazole-to-amisulpride",
+  "fromDrugId": "aripiprazole",
+  "toDrugId": "amisulpride",
+  "strategy": "cross-taper",
+  "rationale": "Aripiprazole (partial D2/D3 agonist, very long half-life ~75 h plus dehydroaripiprazole ~94 h) to amisulpride (full D2 antagonist). Common reasons: insufficient positive symptom control on aripiprazole, need for more sedation, or intolerable akathisia from aripiprazole. Because aripiprazole's half-life is extremely long, effective plasma levels persist for 3–5 weeks after the last dose. This means that amisulpride can be started at full therapeutic dose from day 1 — aripiprazole's residual partial agonism provides a natural buffer against abrupt coverage loss. The cross-taper can be shorter than usual for this reason. ECG required: amisulpride prolongs QTc; baseline before starting. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 15,
+      "toDoseMg": 400,
+      "notes": "Start amisulpride 400 mg at full therapeutic dose. Continue aripiprazole 15 mg. Aripiprazole's very long half-life (active drug persists 3–5 weeks after stopping) means full D2 coverage is maintained throughout. Baseline ECG for amisulpride."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 15,
+      "toDoseMg": 400,
+      "notes": "Plateau both drugs. Amisulpride approaching steady state. QTc: check baseline ECG if not done. Aripiprazole plasma levels are still present despite any dose reduction."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 10,
+      "toDoseMg": 400,
+      "notes": "Reduce aripiprazole to 10 mg. Amisulpride well established. Expect resolution of aripiprazole-associated akathisia or insomnia if these were the reason for switching."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 5,
+      "toDoseMg": 400,
+      "notes": "Reduce aripiprazole to 5 mg. Effective aripiprazole levels remain clinically significant due to the long half-life even at this low dose."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 400,
+      "notes": "Stop aripiprazole. Continue amisulpride 400 mg. Note: residual aripiprazole will continue to wash out for several further weeks — EPS and QTc picture stabilises gradually. Repeat ECG at 6 weeks."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 15,
+    "toTargetDoseMg": 400,
+    "equivalencyNote": "Aripiprazole 15 mg ≈ amisulpride 400 mg (Leucht et al. CMD method, Schizophrenia Bulletin 2015). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["qtc_monitoring_required", "amisulpride_renal_clearance"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "leucht2015_cmd_schizophrenia_bulletin",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

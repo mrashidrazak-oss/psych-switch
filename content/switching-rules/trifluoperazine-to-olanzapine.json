@@ -1,0 +1,53 @@
+{
+  "id": "trifluoperazine-to-olanzapine",
+  "fromDrugId": "trifluoperazine",
+  "toDrugId": "olanzapine",
+  "strategy": "cross-taper",
+  "rationale": "Trifluoperazine (high-potency piperazine FGA; high EPS, dystonia risk, tardive dyskinesia risk; moderate anticholinergic activity; high prolactin) to olanzapine (SGA; low EPS; high metabolic risk; high sedation). The FGA→SGA transition should significantly improve EPS burden. Monitor for unmasking of tardive dyskinesia as trifluoperazine is reduced (withdrawal dyskinesias can unmask pre-existing TD). Trifluoperazine has moderate anticholinergic activity — cholinergic rebound is possible but mitigated by olanzapine's M1 blocking activity. Metabolic risk increases on olanzapine. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 10,
+      "toDoseMg": 5,
+      "notes": "Start olanzapine 5 mg nocte. Continue trifluoperazine 10 mg. Baseline metabolic parameters. Document any existing involuntary movements (tardive dyskinesia assessment)."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 10,
+      "toDoseMg": 10,
+      "notes": "Increase olanzapine to 10 mg (target). Plateau trifluoperazine. EPS burden should begin to improve as olanzapine establishes."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 5,
+      "toDoseMg": 10,
+      "notes": "Reduce trifluoperazine to 5 mg. Monitor for emergence of involuntary movements — withdrawal dyskinesias can unmask latent tardive dyskinesia."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 5,
+      "toDoseMg": 10,
+      "notes": "Reduce trifluoperazine to 5 mg. EPS improvement expected. Anticholinergic agents used for EPS may now be able to be withdrawn gradually."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 10,
+      "notes": "Stop trifluoperazine. Continue olanzapine 10 mg. Review EPS and involuntary movements. Metabolic monitoring at 4 and 12 weeks."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 10,
+    "toTargetDoseMg": 10,
+    "equivalencyNote": "Trifluoperazine 10 mg ≈ olanzapine 10 mg (CPZ equivalence: trifluoperazine 5 mg ≈ CPZ 100 mg ≈ olanzapine 2.5 mg; therefore trifluoperazine 10 mg ≈ CPZ 200 mg ≈ olanzapine 5 mg — however clinical practice often uses higher olanzapine targets; dose to clinical response). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["metabolic_monitoring_required", "eps_risk_increase"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

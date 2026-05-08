@@ -1,0 +1,53 @@
+{
+  "id": "aripiprazole-to-olanzapine",
+  "fromDrugId": "aripiprazole",
+  "toDrugId": "olanzapine",
+  "strategy": "cross-taper",
+  "rationale": "Typically driven by akathisia, significant anxiety or insomnia on aripiprazole where sedation is a therapeutic goal, or by inadequate psychotic symptom control. Olanzapine's sedation, anticholinergic and antihistaminergic properties provide faster symptomatic relief than quetiapine for agitation. Cross-taper: start olanzapine nocte at half-target while aripiprazole is still running (its long half-life buffers any coverage gap), then taper aripiprazole once olanzapine reaches target. Counsel the patient clearly about the metabolic risk escalation — olanzapine has among the highest weight gain and glycaemic risk of all SGAs. Establish baseline weight, fasting glucose and lipids before initiating. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 15,
+      "toDoseMg": 5,
+      "notes": "Start olanzapine 5 mg nocte. Continue aripiprazole 15 mg. Sedation and improved sleep expected from night 1. Warn about metabolic monitoring requirement."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 15,
+      "toDoseMg": 10,
+      "notes": "Increase olanzapine to 10 mg nocte (target dose). Plateau aripiprazole for one more week — allow olanzapine to stabilise."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 10,
+      "toDoseMg": 10,
+      "notes": "Begin tapering aripiprazole to 10 mg. Olanzapine at steady state. Akathisia should have resolved."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 5,
+      "toDoseMg": 10,
+      "notes": "Reduce aripiprazole to 5 mg. Aripiprazole's long half-life means residual D2 partial agonism is still present — gradual washout continues."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 10,
+      "notes": "Stop aripiprazole. Continue olanzapine 10 mg. Confirm metabolic baseline is documented. Schedule weight check at 4 and 12 weeks."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 15,
+    "toTargetDoseMg": 10,
+    "equivalencyNote": "Approximate clinical equivalency: aripiprazole 15 mg ≈ olanzapine 10 mg (Maudsley 15th, AP dose-equivalence table). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["metabolic_monitoring_required"],
+  "citations": [
+    "maudsley15_schizophrenia_p230_ap_swap_table",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

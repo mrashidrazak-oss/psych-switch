@@ -1,0 +1,63 @@
+{
+  "id": "risperidone-lai",
+  "hidden": true,
+  "genericName": "Risperidone LAI",
+  "drugClass": "SGA (atypical antipsychotic) — depot",
+  "category": "antipsychotic",
+  "formulation": "lai",
+  "laiDetails": {
+    "injectionIntervalDays": 14,
+    "initiationProtocol": "Microsphere depot has a 3-week effective release lag after the first injection. Continue oral risperidone for at least 21 days post first injection.",
+    "needsOralOverlap": true,
+    "oralOverlapDurationDays": 21
+  },
+  "malaysianBrandNames": [
+    "Risperdal Consta"
+  ],
+  "halfLife": {
+    "meanHours": 600,
+    "rangeHours": [504, 720],
+    "notes": "Effective elimination half-life of total exposure ≈ 25 days (depot kinetics). Plasma levels peak ~3 weeks post-injection; steady state by ~8 weeks of dosing. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": "9-OH-risperidone (paliperidone)",
+    "halfLifeHours": 24,
+    "clinicallySignificant": true,
+    "notes": "Same active metabolite as oral risperidone. Marketed independently as paliperidone. PENDING_CLINICAL_REVIEW."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP2D6", "CYP3A4"],
+    "inhibitorOf": ["CYP2D6 (mild)"],
+    "switchingRelevance": "Same CYP profile as oral risperidone. Strong CYP2D6 inhibitors (paroxetine, fluoxetine) raise levels meaningfully; depot persistence amplifies the consequence of inhibitor co-prescription. PENDING_CLINICAL_REVIEW."
+  },
+  "epsRisk": "moderate",
+  "metabolicRisk": {
+    "score": "moderate",
+    "notes": "Similar metabolic burden to oral risperidone. Monitor weight, glucose, lipids quarterly. PENDING_CLINICAL_REVIEW."
+  },
+  "prolactinRisk": "high",
+  "qtcRisk": "low",
+  "sedation": "low",
+  "lai": {
+    "available": true,
+    "notes": "This entry IS the LAI. Oral risperidone is a separate drug entry."
+  },
+  "reboundPsychosisRisk": {
+    "score": "moderate",
+    "notes": "Long depot tail provides intrinsic taper after last injection — relapse risk emerges weeks later if no maintenance plan. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 25,
+    "typicalTargetRangeMg": [25, 50],
+    "maxDoseMg": 50,
+    "increments": [25, 37.5, 50],
+    "formulationsAvailableMy": ["Risperdal Consta 25 mg", "Risperdal Consta 37.5 mg", "Risperdal Consta 50 mg"]
+  },
+  "formulationNotes": "Microsphere suspension reconstituted at point of care. Deltoid or gluteal IM. Cold-chain handling required. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_schizophrenia_risperidone_lai",
+    "bap2020_psychosis_lai"
+  ],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

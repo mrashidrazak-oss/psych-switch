@@ -1,0 +1,49 @@
+{
+  "id": "sertraline-to-escitalopram",
+  "fromDrugId": "sertraline",
+  "toDrugId": "escitalopram",
+  "strategy": "cross-taper",
+  "rationale": "Both drugs are SSRIs with overlapping mechanism. A graded cross-taper over ~11 days minimises both serotonin-syndrome risk on overlap and discontinuation symptoms on the sertraline side. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 11,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 100,
+      "toDoseMg": 5,
+      "notes": "Start escitalopram 5 mg. Halve sertraline to 50 mg from day 4."
+    },
+    {
+      "day": 4,
+      "fromDoseMg": 50,
+      "toDoseMg": 5,
+      "notes": "Continue escitalopram 5 mg. Hold sertraline at 50 mg."
+    },
+    {
+      "day": 8,
+      "fromDoseMg": 25,
+      "toDoseMg": 10,
+      "notes": "Reduce sertraline to 25 mg. Increase escitalopram to 10 mg target."
+    },
+    {
+      "day": 11,
+      "fromDoseMg": 0,
+      "toDoseMg": 10,
+      "notes": "Stop sertraline. Continue escitalopram 10 mg."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 100,
+    "toTargetDoseMg": 10,
+    "equivalencyNote": "Approximate clinical equivalency: sertraline 50 mg ≈ escitalopram 10 mg (Maudsley 14th ed.). Equivalency is approximate and should not be used outside this reviewed pair. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [
+    "serotonin_syndrome_overlap_low"
+  ],
+  "citations": [
+    "maudsley15_ch3_p369_table_3_7",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

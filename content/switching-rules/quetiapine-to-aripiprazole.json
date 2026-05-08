@@ -1,0 +1,59 @@
+{
+  "id": "quetiapine-to-aripiprazole",
+  "fromDrugId": "quetiapine",
+  "toDrugId": "aripiprazole",
+  "strategy": "plateau-cross-taper",
+  "rationale": "Common when sedation, weight gain, or insufficient antipsychotic effect at high quetiapine doses drives a switch. Plateau cross-taper because quetiapine's strong antihistaminergic and α1-adrenergic activity creates rebound insomnia, anxiety and orthostasis on rapid reduction. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 35,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 400,
+      "toDoseMg": 5,
+      "notes": "Start aripiprazole 5 mg in the morning. Hold quetiapine 400 mg at night."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 400,
+      "toDoseMg": 10,
+      "notes": "Increase aripiprazole to 10 mg. Hold quetiapine. Counsel re likely improvement in daytime sedation."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 300,
+      "toDoseMg": 15,
+      "notes": "Increase aripiprazole to 15 mg. Reduce quetiapine to 300 mg."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 200,
+      "toDoseMg": 15,
+      "notes": "Reduce quetiapine to 200 mg. Watch for rebound insomnia at the lower-end histaminergic doses."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 100,
+      "toDoseMg": 15,
+      "notes": "Reduce quetiapine to 100 mg. Sleep hygiene advice; consider short-term hypnotic if rebound insomnia."
+    },
+    {
+      "day": 35,
+      "fromDoseMg": 0,
+      "toDoseMg": 15,
+      "notes": "Stop quetiapine. Continue aripiprazole 15 mg."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 400,
+    "toTargetDoseMg": 15,
+    "equivalencyNote": "Approximate clinical equivalency: quetiapine 400 mg ≈ aripiprazole 15 mg (Maudsley 14th). Equivalency for low-dose (≤200 mg) quetiapine used purely for sleep is poorly defined. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_schizophrenia_p230_ap_swap_table",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

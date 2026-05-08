@@ -1,0 +1,59 @@
+{
+  "id": "olanzapine-to-aripiprazole-lai",
+  "fromDrugId": "olanzapine",
+  "toDrugId": "aripiprazole-lai",
+  "strategy": "plateau-cross-taper",
+  "rationale": "A common clinically motivated switch combining two goals: escaping olanzapine's very high metabolic burden (weight gain, glycaemic risk) AND gaining the adherence benefits of a monthly LAI. Aripiprazole LAI (Abilify Maintena) requires a mandatory 14-day oral aripiprazole overlap after the first injection. Plateau cross-taper: start the first Maintena injection (+ oral aripiprazole overlap), then taper olanzapine only after the oral overlap is complete and the depot is therapeutic. This prevents both a coverage gap and a period where high akathisia risk from aripiprazole coincides with inadequate olanzapine cover. Akathisia risk is substantial: aripiprazole's D2 partial agonism acting on a receptor pool previously saturated by olanzapine. Counsel early and watch closely. Metabolic improvement should be tracked prospectively — weight and glucose at 4 and 12 weeks. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 35,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 10,
+      "toDoseMg": 400,
+      "notes": "Administer Abilify Maintena 400 mg IM. Start oral aripiprazole 10 mg/day — 14-day oral overlap MANDATORY. Continue olanzapine 10 mg. Warn patient about akathisia — advise to report restlessness."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 10,
+      "toDoseMg": 400,
+      "notes": "Day 7: Continue oral aripiprazole 10 mg + olanzapine 10 mg. Assess akathisia. Depot reaching therapeutic levels. Sedation additive — advise on driving."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 7.5,
+      "toDoseMg": 400,
+      "notes": "STOP oral aripiprazole (14-day overlap complete). Depot now therapeutic. Begin tapering olanzapine to 7.5 mg. Cholinergic/histaminergic rebound possible as olanzapine reduces."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 5,
+      "toDoseMg": 400,
+      "notes": "Reduce olanzapine to 5 mg. Metabolic improvement beginning. Monitor sleep — olanzapine's H1 antihistaminergic sedation diminishing."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 400,
+      "notes": "Stop olanzapine. Second Maintena 400 mg injection. Confirm akathisia absent or managed. Document baseline metabolics — weight, fasting glucose, lipids."
+    },
+    {
+      "day": 35,
+      "fromDoseMg": 0,
+      "toDoseMg": 400,
+      "notes": "Ongoing: monthly Maintena 400 mg. Weight and glucose at 4 and 12 weeks. Metabolic improvement expected 3–6 months after olanzapine cessation."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 10,
+    "toTargetDoseMg": 400,
+    "equivalencyNote": "Approximate clinical equivalency: olanzapine 10 mg ≈ aripiprazole LAI 400 mg/4 weeks (Maudsley 15th, AP dose-equivalence table + LAI conversion). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["cholinergic_rebound"],
+  "citations": [
+    "maudsley15_schizophrenia_p231_aripiprazole_lai",
+    "bap2020_psychosis_lai"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

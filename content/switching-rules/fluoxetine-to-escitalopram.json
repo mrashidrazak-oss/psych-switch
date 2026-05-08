@@ -1,0 +1,41 @@
+{
+  "id": "fluoxetine-to-escitalopram",
+  "fromDrugId": "fluoxetine",
+  "toDrugId": "escitalopram",
+  "strategy": "cross-taper",
+  "rationale": "Switch from fluoxetine to escitalopram for tolerability or response reasons. Brief overlap is sufficient because norfluoxetine continues to circulate for 1-2 weeks after fluoxetine is discontinued, providing serotonergic bridge while escitalopram titrates up. Start escitalopram low to avoid additive load. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 8,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 20,
+      "toDoseMg": 5,
+      "notes": "Start escitalopram 5 mg. Hold fluoxetine 20 mg."
+    },
+    {
+      "day": 4,
+      "fromDoseMg": 0,
+      "toDoseMg": 5,
+      "notes": "Stop fluoxetine. Norfluoxetine continues for 1-2 weeks — explain the invisible bridge to the patient."
+    },
+    {
+      "day": 8,
+      "fromDoseMg": 0,
+      "toDoseMg": 10,
+      "notes": "Increase escitalopram to 10 mg target."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 20,
+    "toTargetDoseMg": 10,
+    "equivalencyNote": "Approximate clinical equivalency: fluoxetine 20 mg ≈ escitalopram 10 mg (Maudsley 14th). Slow escitalopram titration is intentional given norfluoxetine carry-over. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_p369_table_3_7",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

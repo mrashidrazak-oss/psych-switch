@@ -1,0 +1,47 @@
+{
+  "id": "aripiprazole-to-aripiprazole-lai",
+  "fromDrugId": "aripiprazole",
+  "toDrugId": "aripiprazole-lai",
+  "strategy": "cross-taper",
+  "rationale": "Standard oral-to-LAI conversion for patients established on oral aripiprazole who would benefit from the adherence and relapse-prevention advantages of a monthly depot. The Abilify Maintena protocol requires a mandatory 14-day oral aripiprazole overlap after the first injection because the depot microspheres take approximately 2 weeks to reach therapeutic serum levels from the injection site. Stopping oral aripiprazole before day 14 risks a sub-therapeutic window. Tolerability should have been confirmed on oral aripiprazole first. The first injection is given at the patient's usual oral dose equivalent. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 15,
+      "toDoseMg": 400,
+      "notes": "Administer Abilify Maintena 400 mg IM (gluteal or deltoid). Continue oral aripiprazole 15 mg daily — 14-day oral overlap is MANDATORY. Counsel patient that the injection takes 2 weeks to become active."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 15,
+      "toDoseMg": 400,
+      "notes": "Continue oral aripiprazole 15 mg. Depot releasing but not yet at therapeutic concentration. No dose changes."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 400,
+      "notes": "STOP oral aripiprazole today (14-day overlap complete). Depot now therapeutic. Second injection not due until day 28-29."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 400,
+      "notes": "Second monthly Maintena 400 mg injection. Oral aripiprazole is stopped. Ongoing: one injection every 28 days. If strong CYP2D6 or CYP3A4 inhibitors are co-prescribed, reduce dose to 300 mg."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 15,
+    "toTargetDoseMg": 400,
+    "equivalencyNote": "Oral aripiprazole 15 mg/day → Abilify Maintena 400 mg monthly. For oral doses of 10–20 mg, 400 mg monthly is standard. For 30 mg oral, consider 400 mg with close monitoring. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_schizophrenia_p231_aripiprazole_lai",
+    "bap2020_psychosis_lai"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

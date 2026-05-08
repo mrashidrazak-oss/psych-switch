@@ -1,0 +1,157 @@
+{
+  "id": "clozapine-community-initiation",
+  "rationale": "Per Maudsley 15th edition (Schizophrenia chapter, p.236). Although clozapine initiation is most commonly performed in inpatient settings, community initiation is feasible for selected patients with appropriate adherence, support, and monitoring infrastructure. The titration schedule itself is no different — it is the SUITABILITY criteria, monitoring intensity, and contingency planning that differ. PENDING_CLINICAL_REVIEW.",
+  "relativeContraindications": [
+    {
+      "id": "uncontrolled_seizures",
+      "title": "Uncontrolled seizure disorder",
+      "detail": "Clozapine lowers the seizure threshold dose-dependently. Active or poorly-controlled epilepsy is a strong contraindication to community initiation."
+    },
+    {
+      "id": "significant_cardiac",
+      "title": "Significant cardiac disease",
+      "detail": "Includes ischaemic heart disease, prior myocarditis, cardiomyopathy, severe hypertension, or unstable arrhythmia. Cardiac complications during titration may not be safely managed in the community."
+    },
+    {
+      "id": "unstable_diabetes",
+      "title": "Unstable diabetes",
+      "detail": "Clozapine causes metabolic dysregulation and can precipitate diabetic ketoacidosis. Glucose stability needs to be confirmed before community initiation."
+    },
+    {
+      "id": "paralytic_ileus",
+      "title": "History of paralytic ileus or severe constipation",
+      "detail": "Clozapine-induced gastrointestinal hypomotility can be life-threatening. Pre-existing motility disorders disqualify community initiation."
+    },
+    {
+      "id": "blood_dyscrasia",
+      "title": "Significant blood dyscrasia",
+      "detail": "Pre-existing neutropenia, agranulocytosis history, or other haematological disorder. Discuss with haematology before any clozapine."
+    },
+    {
+      "id": "previous_severe_titration",
+      "title": "Previous severe adverse effect on AP titration",
+      "detail": "Severe orthostasis, sedation, NMS, or other significant adverse event on a previous antipsychotic introduction predicts higher risk on clozapine."
+    },
+    {
+      "id": "unreliable_adherence",
+      "title": "Unreliable or chaotic lifestyle",
+      "detail": "Patient must be able to attend monitoring appointments and follow the titration schedule reliably. Homelessness, severe substance use disorder, or poor medication adherence pattern disqualifies community initiation."
+    },
+    {
+      "id": "substance_misuse",
+      "title": "Significant alcohol or stimulant misuse",
+      "detail": "Cocaine, methamphetamine, or heavy alcohol use markedly increases the risk of cardiotoxicity, seizures, and adherence failure. Address substance use before community initiation."
+    }
+  ],
+  "essentialCriteria": [
+    {
+      "id": "adherence_likely",
+      "title": "Patient likely to be adherent",
+      "detail": "Both with the medication itself AND with the monitoring requirements. Honest discussion with patient and family — clozapine is a lifelong commitment with rigid blood-test rhythms."
+    },
+    {
+      "id": "support_network",
+      "title": "Adequate support network",
+      "detail": "Family member, carer, or supported-living staff who can recognise warning signs (orthostatic dizziness, fever, chest pain, severe sedation) and seek help if the patient cannot."
+    },
+    {
+      "id": "understands_monitoring",
+      "title": "Patient understands monitoring requirements",
+      "detail": "Has been counselled about the regular blood tests, ECGs, and physical-health checks. Understands clozapine cannot continue without them."
+    },
+    {
+      "id": "understands_adverse_effects",
+      "title": "Patient understands possible adverse effects",
+      "detail": "Particularly the rare but serious ones: agranulocytosis (any unexplained infection or fever → urgent FBC), myocarditis (chest pain, palpitations, dyspnoea, fever in first 8 weeks), constipation/ileus."
+    },
+    {
+      "id": "contactable",
+      "title": "Patient readily contactable",
+      "detail": "Phone number, address, or other reliable contact method. Critical for following up abnormal results and communicating dose changes."
+    },
+    {
+      "id": "weekly_review_possible",
+      "title": "Can be reviewed weekly during titration",
+      "detail": "Either by physical attendance at clinic, home visit, or telehealth. The first 18 weeks of clozapine require weekly FBC AND clinical review."
+    },
+    {
+      "id": "medication_access",
+      "title": "Reliable medication supply",
+      "detail": "Patient can collect weekly clozapine OR medication can be delivered. Pharmacy-coordinated supply is often the most reliable approach."
+    },
+    {
+      "id": "out_of_hours_access",
+      "title": "Can access help out-of-hours",
+      "detail": "Patient knows what to do if they develop fever, chest pain, severe sedation, or any red-flag symptom. Has an out-of-hours number and understands when to use the emergency department."
+    },
+    {
+      "id": "understands_red_results",
+      "title": "Understands action on abnormal blood results",
+      "detail": "If a RED result occurs, daily monitoring of FBC until normalisation. Patient must understand the urgency and not miss any of these intensive follow-up tests."
+    }
+  ],
+  "initialWorkup": [
+    {
+      "id": "physical_exam",
+      "title": "Physical examination",
+      "detail": "Including baseline weight, BP, pulse, temperature, and abdominal exam (bowel sounds, organomegaly)."
+    },
+    {
+      "id": "fbc",
+      "title": "Full blood count with differential",
+      "detail": "Mandatory baseline. Any patient with low-baseline neutrophils — investigate for benign ethnic neutropenia (BEN) before disqualifying."
+    },
+    {
+      "id": "lfts",
+      "title": "Liver function tests",
+      "detail": "Including ALT. Required at baseline; clozapine can cause hepatic dysfunction."
+    },
+    {
+      "id": "ues",
+      "title": "Urea & electrolytes, creatinine",
+      "detail": "Renal function affects metabolite clearance and is required before initiation."
+    },
+    {
+      "id": "lipids_glucose",
+      "title": "Lipid profile, fasting glucose / HbA1c",
+      "detail": "Baseline metabolic profile. Clozapine causes substantial metabolic disturbance — establish a starting point before the inevitable shifts."
+    },
+    {
+      "id": "crp_troponin",
+      "title": "CRP and troponin",
+      "detail": "Baseline cardiac biomarkers. Will be repeated weekly for the first 4 weeks to screen for clozapine-induced myocarditis (peak risk weeks 1–4)."
+    },
+    {
+      "id": "ecg",
+      "title": "ECG",
+      "detail": "Baseline 12-lead ECG. Specifically screen for evidence of past myocardial infarction, ventricular hypertrophy, or QTc prolongation."
+    },
+    {
+      "id": "echo_if_indicated",
+      "title": "Echocardiogram (if clinically indicated)",
+      "detail": "For patients with ECG abnormality, prior cardiac history, or risk factors for cardiomyopathy."
+    },
+    {
+      "id": "ben_workup",
+      "title": "BEN workup if low baseline ANC",
+      "detail": "If baseline neutrophils are low, consider benign ethnic neutropenia (common in patients of African, Middle Eastern, or some Asian backgrounds). Genetic testing for the DARC variant available; serial counts also helpful."
+    },
+    {
+      "id": "gp_inform",
+      "title": "Inform the patient's GP",
+      "detail": "Critical — the GP needs to be aware of the clozapine treatment and monitoring schedule, especially for inter-current illness management (any febrile illness should trigger an urgent FBC)."
+    }
+  ],
+  "monitoringIntensity": {
+    "first_4_weeks": "Weekly FBC + weekly CRP + weekly troponin + clinical review (BP, pulse, temperature, side-effect screen, bowel function).",
+    "weeks_5_to_18": "Weekly FBC + clinical review. CRP/troponin only if symptomatic.",
+    "weeks_19_to_52": "Fortnightly FBC + monthly clinical review.",
+    "year_2_onwards": "Monthly FBC + 6-monthly metabolic monitoring + annual cardiometabolic review."
+  },
+  "citations": [
+    "maudsley15_schizophrenia_p236_community_initiation",
+    "maudsley15_schizophrenia_p237_mandatory_monitoring"
+  ],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

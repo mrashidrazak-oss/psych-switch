@@ -1,0 +1,41 @@
+{
+  "id": "haloperidol-lai-to-aripiprazole-lai",
+  "fromDrugId": "haloperidol-lai",
+  "toDrugId": "aripiprazole-lai",
+  "strategy": "cross-taper",
+  "rationale": "FGA-to-SGA depot conversion targeting metabolic neutrality and QTc improvement. Aripiprazole LAI (Abilify Maintena) requires a mandatory 14-day oral aripiprazole overlap after the first injection because depot microspheres take ~2 weeks to reach therapeutic levels. The haloperidol decanoate depot tail (effective half-life ~21 days) provides D2 cover during both the oral overlap phase and beyond — there is no coverage gap. Risk of akathisia: aripiprazole's D2 partial agonism can precipitate akathisia when acting on a D2 receptor pool fully saturated by haloperidol. Counsel the patient early; if akathisia emerges consider propranolol 40 mg twice daily or a temporary low-dose benzodiazepine. QTc will improve as haloperidol clears. EPS, tardive movements and prolactin should normalise progressively over 3 months. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 29,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 100,
+      "toDoseMg": 400,
+      "notes": "Skip next Haldol decanoate injection. Administer Abilify Maintena 400 mg IM (gluteal or deltoid). START oral aripiprazole 10 mg daily — 14-day overlap is MANDATORY. Haloperidol depot tail still providing D2 cover. Counsel patient about akathisia risk and to report inner restlessness early."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 100,
+      "toDoseMg": 400,
+      "notes": "STOP oral aripiprazole today (14-day overlap complete). Abilify Maintena now therapeutic. Haloperidol depot clearing. Monitor akathisia — risk peaks in this phase as haloperidol full-antagonism recedes and aripiprazole partial agonism takes hold."
+    },
+    {
+      "day": 29,
+      "fromDoseMg": 0,
+      "toDoseMg": 400,
+      "notes": "Second Maintena 400 mg injection. Haloperidol substantially cleared. Review akathisia, EPS, QTc and prolactin. Monthly Maintena thereafter."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 100,
+    "toTargetDoseMg": 400,
+    "equivalencyNote": "Approximate clinical equivalency: haloperidol decanoate 100 mg/4 weeks ≈ aripiprazole LAI 400 mg/4 weeks (Maudsley 15th, LAI equivalence). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_schizophrenia_p231_aripiprazole_lai",
+    "bap2020_psychosis_lai_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

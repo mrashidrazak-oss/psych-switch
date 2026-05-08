@@ -1,0 +1,37 @@
+{
+  "id": "clozapine-titration-male-smoker",
+  "variant": { "sex": "male", "smoker": true },
+  "targetDoseMg": 375,
+  "rationale": "Per Maudsley 15th edition (Schizophrenia chapter, p.218). Male smokers have the highest CYP1A2 activity, requiring the highest maintenance target (375 mg/day) to achieve therapeutic plasma levels. Smoking induction must be considered: if the patient stops smoking during clozapine treatment, plasma levels can DOUBLE within 4 weeks — recheck level and reduce dose accordingly. PENDING_CLINICAL_REVIEW.",
+  "totalDays": 20,
+  "steps": [
+    { "day": 1, "morningMg": 0, "eveningMg": 6.25, "totalMg": 6.25, "notes": "First test dose 6.25 mg evening. Lying and standing BP at 1, 2 and 4 hours post-dose." },
+    { "day": 2, "morningMg": 6.25, "eveningMg": 6.25, "totalMg": 12.5, "notes": "Begin BD. BP monitoring continues." },
+    { "day": 3, "morningMg": 12.5, "eveningMg": 12.5, "totalMg": 25, "notes": "Watch for postural drop." },
+    { "day": 4, "morningMg": 12.5, "eveningMg": 25, "totalMg": 37.5, "notes": "Counsel about hypersalivation, constipation. Start prophylactic laxative." },
+    { "day": 5, "morningMg": 25, "eveningMg": 25, "totalMg": 50, "notes": "Daily BP." },
+    { "day": 6, "morningMg": 25, "eveningMg": 25, "totalMg": 50, "notes": "Hypersalivation typically emerges." },
+    { "day": 7, "morningMg": 25, "eveningMg": 50, "totalMg": 75, "notes": "Document bowel function." },
+    { "day": 8, "morningMg": 25, "eveningMg": 50, "totalMg": 75, "notes": "Continue." },
+    { "day": 9, "morningMg": 50, "eveningMg": 50, "totalMg": 100, "notes": "Tachycardia commonly persists." },
+    { "day": 10, "morningMg": 50, "eveningMg": 75, "totalMg": 125, "notes": "Continue." },
+    { "day": 11, "morningMg": 75, "eveningMg": 75, "totalMg": 150, "notes": "Reassess myocarditis warning signs." },
+    { "day": 12, "morningMg": 75, "eveningMg": 100, "totalMg": 175, "notes": "Continue." },
+    { "day": 13, "morningMg": 100, "eveningMg": 100, "totalMg": 200, "notes": "FBC due (week 2)." },
+    { "day": 14, "morningMg": 100, "eveningMg": 125, "totalMg": 225, "notes": "Continue." },
+    { "day": 15, "morningMg": 125, "eveningMg": 125, "totalMg": 250, "notes": "Halfway through dose escalation." },
+    { "day": 16, "morningMg": 125, "eveningMg": 150, "totalMg": 275, "notes": "Continue." },
+    { "day": 17, "morningMg": 150, "eveningMg": 150, "totalMg": 300, "notes": "Hold a day if tolerability concerns." },
+    { "day": 18, "morningMg": 150, "eveningMg": 175, "totalMg": 325, "notes": "Approaching target." },
+    { "day": 19, "morningMg": 175, "eveningMg": 175, "totalMg": 350, "notes": "One step from target." },
+    { "day": 20, "morningMg": 175, "eveningMg": 200, "totalMg": 375, "notes": "Maintenance target reached. Critical: if patient stops smoking, plasma levels can rise sharply (up to 2× within 4 weeks). Check plasma level and reduce dose if needed." }
+  ],
+  "postTitrationGuidance": "Maintain at 375 mg/day. CRITICAL — smoking cessation post-titration: clozapine plasma levels can rise by up to 2× within 4 weeks. Recheck plasma level on smoking cessation and reduce dose accordingly. Plasma level optimisation target 350–600 ng/mL.",
+  "missedDoseRule": "Doses missed for more than 48 hours mandate retitration. Use the Interruption Restart Wizard.",
+  "citations": [
+    "maudsley15_schizophrenia_p218_clozapine_titration",
+    "maudsley15_schizophrenia_p214_clozapine_dosing"
+  ],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

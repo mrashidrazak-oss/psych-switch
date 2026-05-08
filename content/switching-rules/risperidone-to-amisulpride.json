@@ -1,0 +1,54 @@
+{
+  "id": "risperidone-to-amisulpride",
+  "fromDrugId": "risperidone",
+  "toDrugId": "amisulpride",
+  "strategy": "cross-taper",
+  "rationale": "Risperidone (D2/D3 + 5-HT2A + α1/α2 + H1; moderate anticholinergic activity) to amisulpride (selective D2/D3). Both drugs are high-potency D2 antagonists that elevate prolactin significantly. Common reasons: cost or formulary (amisulpride may be cheaper), desire for a drug without H1 antihistamine sedation, or negative symptom targeting at low doses (amisulpride 50–300 mg). Risperidone has less anticholinergic activity than olanzapine/quetiapine, so cross-taper can proceed at a moderate pace. Both drugs prolong QTc — ECG monitoring during the overlap period is important. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 4,
+      "toDoseMg": 200,
+      "notes": "Start amisulpride 200 mg. Continue risperidone 4 mg. Baseline ECG (both drugs prolong QTc). Check renal function."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 4,
+      "toDoseMg": 400,
+      "notes": "Increase amisulpride to 400 mg (target). Plateau risperidone. Monitor for additive QTc prolongation — check serum potassium if patient on diuretics or has risk factors."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 2,
+      "toDoseMg": 400,
+      "notes": "Reduce risperidone to 2 mg. Amisulpride at target. Prolactin: additive elevation during overlap — if symptomatic (amenorrhoea, galactorrhoea), expedite risperidone withdrawal."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 1,
+      "toDoseMg": 400,
+      "notes": "Reduce risperidone to 1 mg. Clinical stability maintained by amisulpride at therapeutic dose."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 400,
+      "notes": "Stop risperidone. Continue amisulpride 400 mg. Repeat ECG at 4–6 weeks. Prolactin remains elevated on amisulpride — check if this was the reason for the switch."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 4,
+    "toTargetDoseMg": 400,
+    "equivalencyNote": "Risperidone 4 mg ≈ amisulpride 400 mg (Leucht et al. CMD method, Schizophrenia Bulletin 2015). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["qtc_monitoring_required", "prolactin_elevation", "amisulpride_renal_clearance"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "leucht2015_cmd_schizophrenia_bulletin",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

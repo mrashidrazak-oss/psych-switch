@@ -1,0 +1,41 @@
+{
+  "id": "desvenlafaxine-to-mirtazapine",
+  "fromDrugId": "desvenlafaxine",
+  "toDrugId": "mirtazapine",
+  "strategy": "cross-taper",
+  "rationale": "Desvenlafaxine (SNRI; t½ ~11h; high discontinuation syndrome risk) to mirtazapine (NaSSA; t½ ~20–40h; H1 sedation; weight gain). Switch reasons: inadequate response, sexual dysfunction, desire for sedation/sleep improvement. Mirtazapine's α2-antagonism blocks presynaptic noradrenaline autoreceptors — combined with desvenlafaxine's noradrenaline reuptake inhibition during cross-taper, additive noradrenergic stimulation is possible (agitation, tachycardia — monitor). H1 blockade from mirtazapine provides sedation but may be excessive initially. Taper desvenlafaxine carefully. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 50,
+      "toDoseMg": 15,
+      "notes": "Start mirtazapine 15 mg nocte. Continue desvenlafaxine 50 mg. Combined noradrenergic effect during cross-taper: monitor for agitation, tremor, sweating. Counsel about sedation from mirtazapine and expected weight gain."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 50,
+      "toDoseMg": 15,
+      "notes": "Continue both at current doses. Assess tolerability. Consider desvenlafaxine dose reduction if noradrenergic side effects excessive."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 15,
+      "notes": "Stop desvenlafaxine. Continue mirtazapine 15 mg nocte. Monitor for desvenlafaxine discontinuation syndrome at stop. Titrate mirtazapine to 30 mg at 2 weeks if response inadequate."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 50,
+    "toTargetDoseMg": 15,
+    "equivalencyNote": "Desvenlafaxine 50 mg → mirtazapine 15 mg (start dose; titrate to 30–45 mg). Not pharmacologically equivalent. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_snri_profile",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

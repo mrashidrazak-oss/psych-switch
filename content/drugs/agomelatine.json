@@ -1,0 +1,56 @@
+{
+  "id": "agomelatine",
+  "genericName": "Agomelatine",
+  "drugClass": "Melatonergic antidepressant (MT1/MT2 agonist, 5-HT2C antagonist)",
+  "category": "antidepressant",
+  "malaysianBrandNames": ["Valdoxan"],
+  "halfLife": {
+    "meanHours": 2,
+    "rangeHours": [1, 3],
+    "notes": "Very short half-life — rapid clearance. This means switching FROM agomelatine requires no washout from agomelatine's side; the drug clears within hours. Marked first-pass effect — bioavailability ~3% (range 1–80%); highly variable inter-individual exposure. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": null,
+    "halfLifeHours": null,
+    "clinicallySignificant": false,
+    "notes": "No clinically significant active metabolites."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP1A2 (primary)", "CYP2C9 (minor)"],
+    "inhibitorOf": [],
+    "switchingRelevance": "CRITICAL: Agomelatine is predominantly metabolised by CYP1A2. Strong CYP1A2 inhibitors (fluvoxamine, ciprofloxacin) increase agomelatine exposure up to 60-fold — fluvoxamine is CONTRAINDICATED with agomelatine. Moderate CYP1A2 inhibitors (estrogens, mexiletine) should also be avoided. Smoking (CYP1A2 inducer) markedly reduces exposure — smokers may need dose review. PENDING_CLINICAL_REVIEW."
+  },
+  "maoiWashout": {
+    "daysOffBeforeMAOI": 14,
+    "daysOffAfterMAOI": 14,
+    "notes": "Agomelatine is not serotonergic but standard 14-day caution applies per Maudsley guidelines. FROM agomelatine to any antidepressant: no washout needed (t½ ~2h). PENDING_CLINICAL_REVIEW."
+  },
+  "discontinuationSyndromeRisk": {
+    "score": "low",
+    "notes": "Very short half-life means no discontinuation syndrome on stopping. No dose taper required before stopping. PENDING_CLINICAL_REVIEW."
+  },
+  "qtcRisk": "low",
+  "sedation": "low",
+  "dosing": {
+    "startingDoseMg": 25,
+    "typicalTargetRangeMg": [25, 50],
+    "maxDoseMg": 50,
+    "increments": [25, 50],
+    "formulationsAvailableMy": ["Valdoxan 25 mg tablet"]
+  },
+  "formulationNotes": "Start at 25 mg nocte. If no response after 2 weeks, increase to 50 mg nocte. Always take at night due to melatonergic mechanism. PENDING_CLINICAL_REVIEW.",
+  "specialConsiderations": [
+    "MANDATORY LFT MONITORING: Hepatotoxicity risk (rare but serious). Check ALTs at baseline, 3, 6, 12 weeks, then periodically. Stop immediately if ALT >3× ULN.",
+    "CONTRAINDICATED with fluvoxamine (CYP1A2 inhibitor — 60× exposure increase).",
+    "Avoid in hepatic impairment (Child-Pugh A or above).",
+    "Smokers: CYP1A2 induction reduces levels — may need dose optimisation or drug may be less effective.",
+    "No serotonin syndrome risk — mechanism does not involve serotonin reuptake inhibition.",
+    "Night-time dosing only — activates MT1/MT2 melatonin receptors; daytime dosing defeats the mechanism."
+  ],
+  "citations": [
+    "maudsley15_ch3_agomelatine_profile",
+    "bap2015_evidence_antidepressants"
+  ],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

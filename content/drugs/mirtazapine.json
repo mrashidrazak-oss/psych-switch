@@ -1,0 +1,49 @@
+{
+  "id": "mirtazapine",
+  "genericName": "Mirtazapine",
+  "drugClass": "NaSSA",
+  "malaysianBrandNames": [
+    "Remeron",
+    "Mirtaz",
+    "Noxibel"
+  ],
+  "halfLife": {
+    "meanHours": 30,
+    "rangeHours": [20, 40],
+    "notes": "Once-nightly dosing typical due to sedating effect at lower doses. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": "Desmethylmirtazapine",
+    "halfLifeHours": 30,
+    "clinicallySignificant": false,
+    "notes": "Approximately 10% of parent activity. Not clinically significant for switching. PENDING_CLINICAL_REVIEW."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP3A4", "CYP2D6", "CYP1A2"],
+    "inhibitorOf": [],
+    "switchingRelevance": "No meaningful CYP inhibition. Mirtazapine is sometimes added to SSRIs/SNRIs for augmentation; cross-titration is comparatively safe but watch for sedation, weight gain, and rare neutropenia. PENDING_CLINICAL_REVIEW."
+  },
+  "maoiWashout": {
+    "daysOffBeforeMAOI": 14,
+    "daysOffAfterMAOI": 14,
+    "notes": "Standard 14-day washout in both directions. PENDING_CLINICAL_REVIEW."
+  },
+  "discontinuationSyndromeRisk": {
+    "score": "low",
+    "notes": "Low discontinuation risk; rebound insomnia and anxiety can occur after abrupt cessation. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 15,
+    "typicalTargetRangeMg": [15, 45],
+    "maxDoseMg": 45,
+    "increments": [15, 30, 45],
+    "formulationsAvailableMy": ["15 mg tab", "30 mg tab", "30 mg orodispersible tab"]
+  },
+  "formulationNotes": "Tablets and orodispersible tablets available. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_ch3_p369_mirtazapine_profile",
+    "bap2015_antidepressants_mirtazapine"
+  ],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

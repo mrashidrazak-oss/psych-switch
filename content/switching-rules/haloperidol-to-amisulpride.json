@@ -1,0 +1,48 @@
+{
+  "id": "haloperidol-to-amisulpride",
+  "fromDrugId": "haloperidol",
+  "toDrugId": "amisulpride",
+  "strategy": "cross-taper",
+  "rationale": "Haloperidol (potent D2 antagonist, high EPS, low sedation) to amisulpride (D2/D3 selective, moderate EPS, low sedation, QTc risk). Both are high-D2-blockade drugs with similar clinical receptor profiles. Common reasons: high EPS burden on haloperidol (amisulpride generally has lower EPS at standard doses), desire to avoid depot initiation, cost, or need to switch to a drug without the known QTc risk of haloperidol at higher IV doses. EPS should improve on amisulpride. Both prolong QTc — ECG during overlap is important. Both elevate prolactin. Cross-taper can proceed at a standard pace as there is no significant anticholinergic component to manage. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 21,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 5,
+      "toDoseMg": 200,
+      "notes": "Start amisulpride 200 mg. Continue haloperidol 4 mg. Baseline ECG. Check renal function for amisulpride. EPS should begin to improve as amisulpride is introduced."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 2,
+      "toDoseMg": 400,
+      "notes": "Increase amisulpride to 400 mg (target). Reduce haloperidol to 2 mg. QTc monitor — check ECG at week 2 if combined risk factors."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 1,
+      "toDoseMg": 400,
+      "notes": "Reduce haloperidol to 1 mg. Amisulpride well established. Review EPS — if significantly improved, continue taper at this pace."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 0,
+      "toDoseMg": 400,
+      "notes": "Stop haloperidol. Continue amisulpride 400 mg. Repeat ECG at 4–6 weeks. Review prolactin if patient previously symptomatic — amisulpride also elevates prolactin but may be less symptomatic than haloperidol."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 5,
+    "toTargetDoseMg": 400,
+    "equivalencyNote": "Haloperidol 4 mg ≈ amisulpride 400 mg (Maudsley 15th CPZ-equivalence table: haloperidol 2 mg ≈ CPZ 100 mg, amisulpride 200 mg ≈ CPZ 100 mg). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["qtc_monitoring_required", "prolactin_elevation", "amisulpride_renal_clearance"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "leucht2015_cmd_schizophrenia_bulletin",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

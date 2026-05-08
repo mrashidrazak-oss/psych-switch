@@ -1,0 +1,35 @@
+{
+  "id": "escitalopram-to-vortioxetine",
+  "fromDrugId": "escitalopram",
+  "toDrugId": "vortioxetine",
+  "strategy": "cross-taper",
+  "rationale": "Escitalopram (SSRI; t½ ~27h; moderate discontinuation syndrome risk) to vortioxetine (SMS; multimodal serotonergic; t½ ~66h). Reasons: cognitive impairment on escitalopram, sexual dysfunction, or partial response with desire for multimodal augmentation. Both are serotonergic — low but non-zero serotonin syndrome risk during brief overlap at standard doses. Escitalopram is not a CYP2D6 inhibitor — no dose adjustment needed for vortioxetine. Direct switch strategy: stop escitalopram and start vortioxetine on the same day. A very brief taper of escitalopram is included to reduce discontinuation syndrome risk. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 7,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 20,
+      "toDoseMg": 10,
+      "notes": "Start vortioxetine 10 mg. Reduce escitalopram to 10 mg (halving before stopping reduces discontinuation syndrome). Both at reduced dose for 7 days. Escitalopram is not a CYP2D6 inhibitor — no vortioxetine dose adjustment needed."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 0,
+      "toDoseMg": 10,
+      "notes": "Stop escitalopram. Continue vortioxetine 10 mg. Monitor for escitalopram discontinuation symptoms (usually mild at this point). Titrate vortioxetine to 20 mg at 2–4 weeks if response inadequate."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 20,
+    "toTargetDoseMg": 10,
+    "equivalencyNote": "Escitalopram 20 mg → vortioxetine 10 mg (standard effective starting doses). Not pharmacologically equivalent. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["vortioxetine_cyp2d6_interaction"],
+  "citations": [
+    "maudsley15_ch3_vortioxetine_profile",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

@@ -1,0 +1,41 @@
+{
+  "id": "aripiprazole-lai-to-paliperidone-lai",
+  "fromDrugId": "aripiprazole-lai",
+  "toDrugId": "paliperidone-lai",
+  "strategy": "cross-taper",
+  "rationale": "SGA-to-SGA depot switch, typically driven by inadequate psychotic symptom control on aripiprazole (partial agonism insufficient in some patients) or persistent akathisia. Paliperidone palmitate's two-dose deltoid loading protocol (150 mg day 1, 100 mg day 8) achieves therapeutic levels rapidly. Aripiprazole LAI's very long effective half-life (~30-46 days) means that after the last injection, meaningful aripiprazole levels persist for 2-3 months, providing ongoing D2 cover throughout the PP-LAI loading and early maintenance period. No additional oral overlap is needed. The partial agonism of aripiprazole will diminish as paliperidone (full antagonist) competes for D2 receptors — akathisia and activation symptoms should resolve during this phase. Prolactin will rise as aripiprazole (low prolactin) is replaced by paliperidone (high prolactin) — counsel accordingly. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 36,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 400,
+      "toDoseMg": 150,
+      "notes": "Give Invega Sustenna 150 mg deltoid (loading dose 1) in place of next scheduled Maintena injection. Do NOT give Maintena today. Aripiprazole depot tail provides sustained D2 cover. Counsel patient that akathisia should resolve over coming weeks."
+    },
+    {
+      "day": 8,
+      "fromDoseMg": 400,
+      "toDoseMg": 100,
+      "notes": "Invega Sustenna 100 mg deltoid (loading dose 2, day 8 ± 2 days). Aripiprazole depot still present. PP-LAI reaching therapeutic range."
+    },
+    {
+      "day": 36,
+      "fromDoseMg": 0,
+      "toDoseMg": 100,
+      "notes": "First maintenance Sustenna 100 mg (deltoid or gluteal). Aripiprazole substantially cleared. Assess prolactin (will have risen), EPS (should be low with PP), and symptom control. Monthly Sustenna thereafter."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 400,
+    "toTargetDoseMg": 100,
+    "equivalencyNote": "Approximate clinical equivalency: aripiprazole LAI 400 mg/4 weeks ≈ paliperidone palmitate 100 mg/4 weeks (Maudsley 15th, LAI equivalence). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_schizophrenia_p231_paliperidone_lai",
+    "bap2020_psychosis_lai_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

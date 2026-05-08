@@ -1,0 +1,53 @@
+{
+  "id": "risperidone-to-aripiprazole-lai",
+  "fromDrugId": "risperidone",
+  "toDrugId": "aripiprazole-lai",
+  "strategy": "cross-taper",
+  "rationale": "Switching from oral risperidone to aripiprazole LAI (Abilify Maintena) — typically motivated by adherence concerns and the desire to escape risperidone's high prolactin burden. Aripiprazole LAI requires a mandatory 14-day oral aripiprazole overlap after the first injection. Cross-taper: the oral aripiprazole overlap runs concurrently with risperidone continuation; once the overlap is complete and the depot is therapeutic, risperidone is tapered to zero over 2 weeks. Prolactin will normalise over weeks to months after risperidone is stopped — counsel patients with established hyperprolactinaemia symptoms (amenorrhoea, galactorrhoea, sexual dysfunction) to expect resolution. Akathisia risk from aripiprazole is moderate when coming from risperidone — the D2 receptor density is moderately elevated but not as saturated as with olanzapine or quetiapine. Monitor closely in the first 2–4 weeks post-switch. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 4,
+      "toDoseMg": 400,
+      "notes": "Administer Abilify Maintena 400 mg IM (deltoid or gluteal). Start oral aripiprazole 10 mg/day — 14-day oral overlap MANDATORY. Continue risperidone 4 mg. Warn patient about akathisia. Check baseline prolactin if not already documented."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 4,
+      "toDoseMg": 400,
+      "notes": "Day 7: Continue oral aripiprazole 10 mg + risperidone 4 mg. Depot reaching therapeutic levels. Assess akathisia. EPS risk: aripiprazole adds moderate EPS on top of risperidone — anticholinergic cover if needed."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 2,
+      "toDoseMg": 400,
+      "notes": "STOP oral aripiprazole (14-day overlap complete). Depot now therapeutic. Taper risperidone to 2 mg. Prolactin begins normalising — patients may notice symptom improvement within weeks."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 1,
+      "toDoseMg": 400,
+      "notes": "Reduce risperidone to 1 mg. Depot providing full antipsychotic cover. Continue EPS/akathisia monitoring."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 400,
+      "notes": "Stop risperidone. Second Maintena injection due today (400 mg). Monthly thereafter. Prolactin recheck at 3 months if baseline was elevated."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 4,
+    "toTargetDoseMg": 400,
+    "equivalencyNote": "Approximate clinical equivalency: risperidone 4 mg/day ≈ aripiprazole LAI 400 mg/4 weeks (Maudsley 15th, AP dose-equivalence table + LAI conversion). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_schizophrenia_p231_aripiprazole_lai",
+    "bap2020_psychosis_lai"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

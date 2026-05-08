@@ -1,0 +1,44 @@
+{
+  "id": "escitalopram-to-agomelatine",
+  "fromDrugId": "escitalopram",
+  "toDrugId": "agomelatine",
+  "strategy": "cross-taper",
+  "rationale": "Escitalopram (SSRI; t½ ~27h; moderate discontinuation syndrome risk) to agomelatine (MT1/MT2 agonist, 5-HT2C antagonist; t½ ~2h; no serotonergic reuptake activity). Switch reasons: sexual dysfunction, weight gain, inadequate response on SSRI, desire for sleep-targeting antidepressant. Escitalopram has moderate discontinuation syndrome risk — taper gradually over at least 2 weeks. Agomelatine can be started during the escitalopram taper without serotonin syndrome risk (agomelatine does not inhibit serotonin reuptake). CRITICAL: LFTs must be checked BEFORE starting agomelatine (hepatotoxicity monitoring baseline). Agomelatine is contraindicated in hepatic impairment. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 20,
+      "toDoseMg": 25,
+      "notes": "Start agomelatine 25 mg nocte. Continue escitalopram 20 mg. CHECK BASELINE LFTs (ALT) BEFORE starting agomelatine — mandatory hepatotoxicity monitoring. If ALT >3× ULN do not start agomelatine. No serotonin overlap concern — agomelatine has no serotonergic reuptake activity."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 10,
+      "toDoseMg": 25,
+      "notes": "Reduce escitalopram to 10 mg. Continue agomelatine 25 mg. Monitor for discontinuation symptoms (dizziness, 'brain zaps', mood change) — mild at this step."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 25,
+      "notes": "Stop escitalopram. Continue agomelatine 25 mg nocte. Some patients may experience brief discontinuation symptoms on final escitalopram stop — usually mild and self-limiting with escitalopram. Titrate agomelatine to 50 mg at 2 weeks if response inadequate."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 20,
+    "toTargetDoseMg": 25,
+    "equivalencyNote": "Escitalopram 20 mg → agomelatine 25 mg (standard doses for MDD). Not pharmacologically equivalent — different mechanisms. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["agomelatine_lft_monitoring"],
+  "citations": [
+    "maudsley15_ch3_agomelatine_profile",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [
+    "Hepatic impairment (Child-Pugh A or above) — agomelatine contraindicated.",
+    "ALT >3× ULN at baseline — do not start agomelatine."
+  ],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

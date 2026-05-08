@@ -1,0 +1,196 @@
+{
+  "id": "qtc-risk-registry",
+  "rationale": "QTc prolongation causes Torsades de Pointes (TdP), a potentially fatal ventricular arrhythmia. Multiple QTc-prolonging drugs used together have additive (and sometimes synergistic) effects. This registry uses CredibleMeds / AzCERT risk categories adapted for the Malaysian formulary. Individual QTc risk increases with: older age, female sex, hypokalaemia, hypomagnesaemia, bradycardia, heart failure, hepatic impairment, and genetic predisposition. PENDING_CLINICAL_REVIEW — Rashid Razak.",
+  "riskCategories": {
+    "known": "Known Risk of TdP — substantial evidence for QTc prolongation and TdP. Avoid with other QTc-prolonging drugs unless closely monitored.",
+    "conditional": "Conditional Risk of TdP — evidence for QTc prolongation; TdP risk increases under certain conditions (e.g. high dose, hypokalaemia, rapid IV infusion, drug interaction).",
+    "possible": "Possible Risk of TdP — evidence for QTc prolongation but insufficient data to determine TdP risk.",
+    "low": "Low / Negligible Risk — limited or no evidence for clinically significant QTc effect."
+  },
+  "drugs": [
+    {
+      "id": "haloperidol",
+      "name": "Haloperidol",
+      "category": "antipsychotic",
+      "qtcCategory": "known",
+      "notes": "Risk substantially higher with IV route and doses > 35 mg/day. Oral haloperidol at standard doses is conditional risk in most classifications but well-established QTc prolonger."
+    },
+    {
+      "id": "clozapine",
+      "name": "Clozapine",
+      "category": "antipsychotic",
+      "qtcCategory": "conditional",
+      "notes": "QTc prolongation documented at higher doses. Risk increased by rapid titration, metabolic syndrome, or combined with other QTc drugs."
+    },
+    {
+      "id": "quetiapine",
+      "name": "Quetiapine",
+      "category": "antipsychotic",
+      "qtcCategory": "conditional",
+      "notes": "Dose-dependent QTc effect. Most risk at higher doses (> 600 mg/day) or in overdose. Particularly risky in combination with other QTc-prolonging drugs."
+    },
+    {
+      "id": "risperidone",
+      "name": "Risperidone",
+      "category": "antipsychotic",
+      "qtcCategory": "conditional",
+      "notes": "Moderate QTc prolongation. Risk increased at higher doses and in elderly patients."
+    },
+    {
+      "id": "olanzapine",
+      "name": "Olanzapine",
+      "category": "antipsychotic",
+      "qtcCategory": "possible",
+      "notes": "Modest QTc effect. Less concerning than haloperidol or quetiapine at standard doses."
+    },
+    {
+      "id": "aripiprazole",
+      "name": "Aripiprazole",
+      "category": "antipsychotic",
+      "qtcCategory": "possible",
+      "notes": "Minimal QTc effect — one of the lowest-risk antipsychotics. Some case reports of QTc prolongation at very high doses."
+    },
+    {
+      "id": "escitalopram",
+      "name": "Escitalopram",
+      "category": "antidepressant",
+      "qtcCategory": "known",
+      "notes": "Dose-dependent QTc prolongation. Maximum dose in cardiac patients is 10 mg/day (elderly) or 20 mg/day (adults). MHRA restriction in 2011. Avoid with other QTc-prolonging drugs."
+    },
+    {
+      "id": "citalopram",
+      "name": "Citalopram",
+      "category": "antidepressant",
+      "qtcCategory": "known",
+      "notes": "Similar QTc effect to escitalopram. Maximum dose in cardiac patients or elderly is reduced. Not currently in the PsychSwitch switching registry."
+    },
+    {
+      "id": "sertraline",
+      "name": "Sertraline",
+      "category": "antidepressant",
+      "qtcCategory": "conditional",
+      "notes": "Mild QTc prolongation at therapeutic doses. Generally considered safer than escitalopram for cardiac patients."
+    },
+    {
+      "id": "fluoxetine",
+      "name": "Fluoxetine",
+      "category": "antidepressant",
+      "qtcCategory": "conditional",
+      "notes": "CYP2D6 and CYP3A4 inhibition can raise levels of co-prescribed QTc-prolonging drugs — the drug interaction risk may exceed the direct QTc risk."
+    },
+    {
+      "id": "venlafaxine",
+      "name": "Venlafaxine",
+      "category": "antidepressant",
+      "qtcCategory": "conditional",
+      "notes": "QTc prolongation at higher doses (> 225 mg/day). Lower risk at standard doses."
+    },
+    {
+      "id": "paroxetine",
+      "name": "Paroxetine",
+      "category": "antidepressant",
+      "qtcCategory": "possible",
+      "notes": "Weak QTc effect. CYP2D6 inhibition raises levels of co-prescribed drugs."
+    },
+    {
+      "id": "mirtazapine",
+      "name": "Mirtazapine",
+      "category": "antidepressant",
+      "qtcCategory": "possible",
+      "notes": "Mild QTc prolongation reported in overdose and at high doses. Generally considered low risk at therapeutic doses."
+    },
+    {
+      "id": "lithium",
+      "name": "Lithium",
+      "category": "mood-stabilizer",
+      "qtcCategory": "possible",
+      "notes": "QTc prolongation documented at toxic levels. At therapeutic levels the effect is minimal, but caution in patients with cardiac disease."
+    },
+    {
+      "id": "lamotrigine",
+      "name": "Lamotrigine",
+      "category": "mood-stabilizer",
+      "qtcCategory": "low",
+      "notes": "No clinically significant QTc effect at therapeutic doses."
+    },
+    {
+      "id": "valproate",
+      "name": "Sodium valproate",
+      "category": "mood-stabilizer",
+      "qtcCategory": "low",
+      "notes": "No clinically significant QTc effect."
+    },
+    {
+      "id": "carbamazepine",
+      "name": "Carbamazepine",
+      "category": "mood-stabilizer",
+      "qtcCategory": "low",
+      "notes": "Sodium channel blocker — can cause PR and QRS prolongation but minimal effect on QTc."
+    },
+    {
+      "id": "methadone",
+      "name": "Methadone",
+      "category": "other",
+      "qtcCategory": "known",
+      "notes": "High risk — one of the most potent QTc-prolonging drugs in clinical use. Requires baseline and periodic ECG. Avoid combining with other QTc-prolonging drugs."
+    },
+    {
+      "id": "azithromycin",
+      "name": "Azithromycin",
+      "category": "antibiotic",
+      "qtcCategory": "known",
+      "notes": "Common antibiotic with well-documented QTc-prolonging effect. Commonly co-prescribed — always check for QTc-prolonging psychiatric medications."
+    },
+    {
+      "id": "erythromycin",
+      "name": "Erythromycin",
+      "category": "antibiotic",
+      "qtcCategory": "known",
+      "notes": "Higher risk than azithromycin. Also a CYP3A4 inhibitor — may raise levels of co-prescribed antipsychotics."
+    },
+    {
+      "id": "domperidone",
+      "name": "Domperidone",
+      "category": "other",
+      "qtcCategory": "known",
+      "notes": "Common antiemetic — frequently prescribed without recognition of QTc risk. Avoid with antipsychotics."
+    },
+    {
+      "id": "ondansetron",
+      "name": "Ondansetron",
+      "category": "other",
+      "qtcCategory": "conditional",
+      "notes": "Particularly relevant in inpatient psychiatry where antiemetics are commonly used. IV route has higher QTc risk than oral."
+    },
+    {
+      "id": "amitriptyline",
+      "name": "Amitriptyline",
+      "category": "antidepressant",
+      "qtcCategory": "known",
+      "notes": "TCA with sodium channel blockade and QTc prolongation. Not in the switching registry (TCA) but commonly co-prescribed for pain or sleep."
+    },
+    {
+      "id": "ciprofloxacin",
+      "name": "Ciprofloxacin",
+      "category": "antibiotic",
+      "qtcCategory": "conditional",
+      "notes": "Fluoroquinolone with QTc prolongation. CYP1A2 inhibitor — significantly raises clozapine and olanzapine levels. Double interaction risk."
+    }
+  ],
+  "riskThresholds": {
+    "knownCount_lowRisk": 0,
+    "knownCount_moderate": 1,
+    "knownCount_high": 2,
+    "conditionalCount_moderate": 2,
+    "conditionalCount_high": 3,
+    "overallAssessmentNote": "Risk is additive. Any combination of 'known' + 'conditional' risk drugs warrants baseline ECG and monitoring. Two or more 'known' risk drugs together is a high-risk combination — seek cardiology input if QTc > 480 ms (men) or > 500 ms (women)."
+  },
+  "citations": [
+    "CredibleMeds / AzCERT QTDrugs List (crediblemeds.org)",
+    "Haverkamp W et al. The potential for QT prolongation and proarrhythmia. Eur Heart J. 2000.",
+    "Woosley RL, Romero KA. AZCERT risk ratings. crediblemeds.org.",
+    "Maudsley Prescribing Guidelines 14th Edition — QTc prolongation and antipsychotics"
+  ],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

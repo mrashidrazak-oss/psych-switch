@@ -1,0 +1,66 @@
+{
+  "id": "aripiprazole-lai-to-aripiprazole",
+  "fromDrugId": "aripiprazole-lai",
+  "toDrugId": "aripiprazole",
+  "strategy": "overlap-taper",
+  "rationale": "Switching from Abilify Maintena (400 mg IM monthly) to oral aripiprazole. The depot has a long t½ (~30–46 days at steady state) and continues releasing for weeks after the last injection. Start oral aripiprazole at the target maintenance dose; the depot provides a natural taper. No bridging with oral during the depot tail is pharmacologically necessary but monitored exposure may be elevated early on. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 84,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 400,
+      "toDoseMg": 10,
+      "notes": "Skip the next scheduled Maintena injection. Start oral aripiprazole 10 mg. Depot continues releasing — combined levels will be above single-drug target initially. Counsel patient."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 300,
+      "toDoseMg": 15,
+      "notes": "Increase oral aripiprazole to 15 mg. Depot level falling but still substantial. Monitor for akathisia (most common aripiprazole ADR)."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 150,
+      "toDoseMg": 15,
+      "notes": "Depot level approximately halved from peak. Oral 15 mg now primary dose. Assess tolerability and response."
+    },
+    {
+      "day": 56,
+      "fromDoseMg": 30,
+      "toDoseMg": 15,
+      "notes": "Depot substantially cleared (~2 months). Oral aripiprazole 15 mg as effective monotherapy."
+    },
+    {
+      "day": 84,
+      "fromDoseMg": 0,
+      "toDoseMg": 15,
+      "notes": "Depot cleared (~3 months post-last-injection). Oral aripiprazole monotherapy confirmed. Adjust to 10–30 mg based on response."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 400,
+    "toTargetDoseMg": 15,
+    "equivalencyNote": "Abilify Maintena 400 mg/month ≈ oral aripiprazole 15 mg/day (Maudsley 15th approximate equivalency). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [
+    {
+      "key": "akathisia_risk",
+      "title": "Akathisia",
+      "body": "Akathisia is the most common neurological adverse reaction with aripiprazole. Titrate oral dose gradually and counsel patient before initiation.",
+      "severity": "warning"
+    },
+    {
+      "key": "lai_long_tail",
+      "title": "Extended depot tail",
+      "body": "Abilify Maintena t½ is ~30–46 days at steady state. Plasma levels persist for ~3 months after the final injection. Start oral at conservative dose to avoid excessive combined exposure.",
+      "severity": "warning"
+    }
+  ],
+  "citations": [
+    "maudsley15_schizophrenia_p230_aripiprazole_lai",
+    "bap2020_psychosis_lai_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

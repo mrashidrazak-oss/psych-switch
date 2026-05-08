@@ -1,0 +1,68 @@
+{
+  "id": "lamotrigine-to-valproate",
+  "fromDrugId": "lamotrigine",
+  "toDrugId": "valproate",
+  "strategy": "cross-taper",
+  "rationale": "Lamotrigine to valproate: CRITICAL pharmacokinetic interaction — valproate is a potent UGT inhibitor that DOUBLES lamotrigine plasma levels. When valproate is added to lamotrigine, the lamotrigine dose MUST BE HALVED immediately (or before VPA is initiated) to prevent lamotrigine toxicity (diplopia, ataxia, dizziness, rash). Failure to halve the lamotrigine dose when starting valproate is a well-documented prescribing error. Protocol: (1) Halve lamotrigine dose BEFORE or AT THE TIME valproate is started. (2) Titrate valproate to therapeutic dose. (3) Reduce lamotrigine further or stop as valproate reaches maintenance dose. Women of reproductive age: mandatory EURAP/teratogenicity counselling before starting valproate. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 42,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 200,
+      "toDoseMg": 500,
+      "notes": "CRITICAL: Halve lamotrigine from 200 mg to 100 mg immediately. Start valproate 500 mg/day simultaneously. Failure to halve LTG causes toxicity (VPA doubles LTG levels). Document EURAP/teratogenicity counselling for women of reproductive age. Baseline LFTs, FBC."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 100,
+      "toDoseMg": 1000,
+      "notes": "Increase valproate to 1000 mg/day. Hold lamotrigine at 100 mg. This 100 mg dose in the presence of VPA inhibition is equivalent to ~200 mg monotherapy in terms of plasma levels."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 100,
+      "toDoseMg": 1500,
+      "notes": "Increase valproate to 1500 mg/day (target). Assess lamotrigine tolerability — monitor for diplopia, dizziness, rash."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 75,
+      "toDoseMg": 1500,
+      "notes": "Reduce lamotrigine to 75 mg/day (clinical context dependent — some patients may be maintained on lamotrigine adjunct with valproate; if full switch planned, continue reducing). Mood stability check."
+    },
+    {
+      "day": 35,
+      "fromDoseMg": 50,
+      "toDoseMg": 1500,
+      "notes": "Reduce lamotrigine to 50 mg/day. Valproate providing primary mood cover."
+    },
+    {
+      "day": 42,
+      "fromDoseMg": 0,
+      "toDoseMg": 1500,
+      "notes": "Stop lamotrigine. Continue valproate 1500 mg/day. Check valproate level if available (target 50–100 mg/L). Metabolic monitoring at 4 and 12 weeks (weight, LFTs, FBC). Bipolar relapse monitoring."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 200,
+    "toTargetDoseMg": 1500,
+    "equivalencyNote": "Not dose-equivalent. Lamotrigine 100 mg + valproate 1500 mg is pharmacologically similar to lamotrigine 200 mg monotherapy (VPA doubles LTG levels). Target valproate for mood disorder: 1000–2000 mg/day (level 50–100 mg/L). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [
+    "lamotrigine_vpa_level_rise_on_add",
+    "valproate_teratogenicity_warning",
+    "bipolar_relapse_monitor"
+  ],
+  "citations": [
+    "maudsley15_bipolar_p331_stopping_mood_stabilisers",
+    "bap2016_bipolar_guidelines",
+    "nice_cg185_bipolar",
+    "Posner K et al. Lamotrigine plasma levels during coadministration with valproate. Epilepsia. 1991."
+  ],
+  "contraindications": [
+    "Current pregnancy or planning pregnancy — valproate is highly teratogenic. Do not switch to valproate in women of reproductive age without EURAP risk minimisation programme and confirmed need.",
+    "Allergy or previous serious rash to lamotrigine — monitor at each step; rash risk increases when valproate is combined with lamotrigine."
+  ],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

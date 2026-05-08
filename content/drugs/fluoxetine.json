@@ -1,0 +1,49 @@
+{
+  "id": "fluoxetine",
+  "genericName": "Fluoxetine",
+  "drugClass": "SSRI",
+  "malaysianBrandNames": [
+    "Prozac",
+    "Fludac",
+    "Flutin"
+  ],
+  "halfLife": {
+    "meanHours": 72,
+    "rangeHours": [24, 96],
+    "notes": "Long parent half-life. Combined with norfluoxetine metabolite, effective washout takes weeks. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": "Norfluoxetine",
+    "halfLifeHours": 240,
+    "clinicallySignificant": true,
+    "notes": "Norfluoxetine has a 7-15 day half-life and meaningful SRI activity. This is the reason fluoxetine requires a 5-week (35-day) washout before any MAOI. PENDING_CLINICAL_REVIEW."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP2D6", "CYP2C9"],
+    "inhibitorOf": ["CYP2D6 (potent)", "CYP3A4 (moderate)", "CYP2C19 (moderate)"],
+    "switchingRelevance": "Potent CYP2D6 inhibition can substantially raise levels of drugs metabolised by CYP2D6 (e.g. venlafaxine, paroxetine, atomoxetine, codeine). Effects persist for weeks after fluoxetine cessation due to the long metabolite. PENDING_CLINICAL_REVIEW."
+  },
+  "maoiWashout": {
+    "daysOffBeforeMAOI": 35,
+    "daysOffAfterMAOI": 14,
+    "notes": "FIVE WEEKS off fluoxetine before starting any MAOI. This is non-negotiable due to norfluoxetine's long half-life. Standard 14 days off MAOI before starting fluoxetine. PENDING_CLINICAL_REVIEW."
+  },
+  "discontinuationSyndromeRisk": {
+    "score": "low",
+    "notes": "Discontinuation symptoms uncommon due to the long auto-tapering effect of norfluoxetine. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 20,
+    "typicalTargetRangeMg": [20, 60],
+    "maxDoseMg": 80,
+    "increments": [10, 20, 40, 60, 80],
+    "formulationsAvailableMy": ["20 mg cap", "20 mg tab"]
+  },
+  "formulationNotes": "Capsules and tablets available in Malaysia. Liquid formulation availability is limited. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_ch3_p369_fluoxetine_profile",
+    "bap2015_antidepressants_fluoxetine"
+  ],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

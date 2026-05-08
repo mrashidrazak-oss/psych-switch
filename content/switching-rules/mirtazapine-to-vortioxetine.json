@@ -1,0 +1,41 @@
+{
+  "id": "mirtazapine-to-vortioxetine",
+  "fromDrugId": "mirtazapine",
+  "toDrugId": "vortioxetine",
+  "strategy": "cross-taper",
+  "rationale": "Mirtazapine (NaSSA; t½ ~20–40h; H1 blockade causing heavy sedation and weight gain) to vortioxetine (SMS; t½ ~66h; cognitive benefits; weight neutral; minimal sedation). Switch reasons: excessive weight gain, sedation, or cognitive blunting on mirtazapine. As mirtazapine is tapered, sedation and appetite stimulation will reduce — insomnia and weight normalisation expected. Vortioxetine provides serotonergic cover during the transition. No clinically significant pharmacokinetic interaction. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 30,
+      "toDoseMg": 10,
+      "notes": "Start vortioxetine 10 mg. Continue mirtazapine 30 mg. Patients may notice cognitive improvement from vortioxetine during the overlap phase. Counsel: sleep may worsen as mirtazapine is reduced (H1 sedation being withdrawn)."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 15,
+      "toDoseMg": 10,
+      "notes": "Reduce mirtazapine to 15 mg. Hold vortioxetine. Some rebound insomnia possible — advise short-term sleep hygiene measures."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 10,
+      "notes": "Stop mirtazapine. Continue vortioxetine 10 mg. Sleep likely improved over 2–4 weeks as pharmacology normalises. Weight will reduce over months. Titrate vortioxetine to 20 mg if response inadequate."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 30,
+    "toTargetDoseMg": 10,
+    "equivalencyNote": "Mirtazapine 30 mg → vortioxetine 10 mg (start dose; titrate to 20 mg). Not pharmacologically equivalent — different mechanisms. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_vortioxetine_profile",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

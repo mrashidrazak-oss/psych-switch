@@ -1,0 +1,48 @@
+{
+  "id": "paroxetine-to-fluoxetine",
+  "fromDrugId": "paroxetine",
+  "toDrugId": "fluoxetine",
+  "strategy": "cross-taper",
+  "rationale": "‘Fluoxetine bridge’ technique: starting fluoxetine while reducing paroxetine, leveraging fluoxetine's long half-life and norfluoxetine metabolite to smooth paroxetine discontinuation symptoms. Particularly useful for patients with prior failed paroxetine tapers or marked discontinuation sensitivity. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 12,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 20,
+      "toDoseMg": 20,
+      "notes": "Start fluoxetine 20 mg in the morning. Hold paroxetine 20 mg."
+    },
+    {
+      "day": 4,
+      "fromDoseMg": 10,
+      "toDoseMg": 20,
+      "notes": "Halve paroxetine to 10 mg. Hold fluoxetine 20 mg. Fluoxetine has not yet reached steady state but is starting to substitute receptor occupancy."
+    },
+    {
+      "day": 8,
+      "fromDoseMg": 10,
+      "toDoseMg": 20,
+      "notes": "Hold both. Allow stabilisation."
+    },
+    {
+      "day": 12,
+      "fromDoseMg": 0,
+      "toDoseMg": 20,
+      "notes": "Stop paroxetine. Fluoxetine + norfluoxetine cover any residual paroxetine-withdrawal effect over the following weeks. Counsel patient about a future 5-week MAOI washout if relevant."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 20,
+    "toTargetDoseMg": 20,
+    "equivalencyNote": "Approximate clinical equivalency: paroxetine 20 mg ≈ fluoxetine 20 mg (Maudsley 14th). The fluoxetine bridge commits the patient to a 5-week washout before any future MAOI — flag this in the discharge plan. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_p374_withdrawal",
+    "bap2015_switching_antidepressants",
+    "horowitz2020_hyperbolic_tapering"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

@@ -1,0 +1,66 @@
+{
+  "id": "chlorpromazine-to-aripiprazole",
+  "fromDrugId": "chlorpromazine",
+  "toDrugId": "aripiprazole",
+  "strategy": "cross-taper",
+  "rationale": "Chlorpromazine (heavily anticholinergic, antihistaminergic, sedating FGA) to aripiprazole (partial D2/D3 agonist, no anticholinergic/antihistamine activity). This is one of the most challenging antipsychotic transitions due to the extreme receptor profile contrast. Aripiprazole has NONE of the H1, M1, or α1 blockade of CPZ, so there is NO mitigation of cholinergic rebound on CPZ withdrawal. Insomnia, akathisia, and GI rebound are expected to be significant. Additionally, aripiprazole's partial D2 agonism causes akathisia particularly in patients previously on full D2 blockade. Proceed very slowly — 6 weeks minimum. Strong patient counselling required. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 42,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 400,
+      "toDoseMg": 5,
+      "notes": "Start aripiprazole 5 mg. Continue chlorpromazine 400 mg. Counsel patient explicitly about two major side effects to anticipate: (1) akathisia from aripiprazole — report restlessness early; (2) insomnia and nausea as CPZ is reduced — monitor and manage proactively. Propranolol PRN for akathisia."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 400,
+      "toDoseMg": 10,
+      "notes": "Increase aripiprazole to 10 mg. Plateau chlorpromazine. Review akathisia — if severe, do not increase aripiprazole further this week."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 300,
+      "toDoseMg": 15,
+      "notes": "Increase aripiprazole to 15 mg (target). Reduce chlorpromazine to 300 mg. Cholinergic rebound begins — aripiprazole provides no anticholinergic buffer."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 200,
+      "toDoseMg": 15,
+      "notes": "Reduce chlorpromazine to 200 mg. Insomnia will worsen as H1 blockade falls — melatonin or promethazine PRN. Manage akathisia if present."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 100,
+      "toDoseMg": 15,
+      "notes": "Reduce chlorpromazine to 100 mg. Sedation substantially reduced. Monitor activation, anxiety, and sleep."
+    },
+    {
+      "day": 35,
+      "fromDoseMg": 50,
+      "toDoseMg": 15,
+      "notes": "Reduce chlorpromazine to 50 mg. Most of the clinical transition is now complete."
+    },
+    {
+      "day": 42,
+      "fromDoseMg": 0,
+      "toDoseMg": 15,
+      "notes": "Stop chlorpromazine. Continue aripiprazole 15 mg. Prolactin normalises — counsel female patients about menstrual restoration. QTc will improve. Review metabolic parameters."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 400,
+    "toTargetDoseMg": 15,
+    "equivalencyNote": "Chlorpromazine 400 mg ≈ aripiprazole 15 mg (CPZ-equivalence: 100 mg CPZ ≈ 3.75 mg aripiprazole per Maudsley 15th dose equivalence). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["cholinergic_rebound", "akathisia_risk_aripiprazole", "prolactin_normalisation", "qtc_monitoring_required"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "bap2020_psychosis_switching",
+    "spanish_society_psychiatry_switching_antipsychotics_2011"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

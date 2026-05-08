@@ -1,0 +1,59 @@
+{
+  "id": "quetiapine-to-haloperidol",
+  "fromDrugId": "quetiapine",
+  "toDrugId": "haloperidol",
+  "strategy": "plateau-cross-taper",
+  "rationale": "SGA-to-FGA switch with significant rebound risk from quetiapine. Plateau cross-taper: introduce haloperidol first and stabilise before tapering quetiapine, because quetiapine's potent H1 and α1-adrenergic antagonism produces marked rebound insomnia, anxiety and orthostatic hypotension on rapid reduction. Allow haloperidol to reach target (5 mg) before quetiapine taper begins. Baseline ECG is mandatory — haloperidol is high QTc risk, while quetiapine has moderate QTc risk; dual risk overlap during the cross-taper phase. Anticholinergic cover should be prepared: quetiapine provides no EPS protection, and as it withdraws, haloperidol's EPS risk becomes evident. Consider prophylactic benzhexol once haloperidol is the dominant agent. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 35,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 400,
+      "toDoseMg": 2,
+      "notes": "Start haloperidol 2 mg. Continue quetiapine 400 mg. Baseline ECG before haloperidol. Dual QTc risk during overlap — repeat ECG at day 7–14."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 400,
+      "toDoseMg": 5,
+      "notes": "Increase haloperidol to 5 mg (target). Plateau quetiapine — do NOT reduce yet. Assess EPS."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 300,
+      "toDoseMg": 5,
+      "notes": "Begin tapering quetiapine to 300 mg. Haloperidol at steady state. Counsel on sleep — H1 withdrawal effect starting."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 200,
+      "toDoseMg": 5,
+      "notes": "Reduce quetiapine to 200 mg. EPS from haloperidol should now be apparent — prescribe benzhexol if parkinsonism or akathisia emerging. Quetiapine QTc contribution reducing."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 100,
+      "toDoseMg": 5,
+      "notes": "Reduce quetiapine to 100 mg. Sleep hygiene reinforcement. Rebound insomnia may be significant at this antihistaminergic nadir."
+    },
+    {
+      "day": 35,
+      "fromDoseMg": 0,
+      "toDoseMg": 5,
+      "notes": "Stop quetiapine. Continue haloperidol 5 mg. Recheck QTc. Metabolic improvement expected — document baseline for tracking."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 400,
+    "toTargetDoseMg": 5,
+    "equivalencyNote": "Approximate clinical equivalency: quetiapine 400 mg ≈ haloperidol 5 mg (Maudsley 15th, AP dose-equivalence table). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["cholinergic_rebound"],
+  "citations": [
+    "maudsley15_schizophrenia_p230_ap_swap_table",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

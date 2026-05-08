@@ -1,0 +1,54 @@
+{
+  "id": "amisulpride-to-risperidone",
+  "fromDrugId": "amisulpride",
+  "toDrugId": "risperidone",
+  "strategy": "cross-taper",
+  "rationale": "Both amisulpride and risperidone are high D2 affinity antagonists with significant prolactin elevation. Common reasons for switching: cost or formulary, tolerability of QTc with amisulpride, or seeking risperidone LAI continuation. Receptor profiles are broadly similar — D2/D3 plus 5-HT2A (risperidone) — so clinical discontinuity during taper is low. Both elevate prolactin; the overlap period carries additive hyperprolactinaemia risk. ECG required: both prolong QTc. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 400,
+      "toDoseMg": 2,
+      "notes": "Start risperidone 2 mg. Continue amisulpride 400 mg. ECG at baseline — both drugs prolong QTc; check combined QTc at week 2."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 400,
+      "toDoseMg": 4,
+      "notes": "Increase risperidone to 4 mg. Plateau amisulpride. Check serum electrolytes (K+, Mg2+) — hypokalaemia amplifies QTc risk of both drugs."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 200,
+      "toDoseMg": 4,
+      "notes": "Reduce amisulpride to 200 mg. Risperidone at target. Note: prolactin elevation is additive during overlap — if symptomatic, expedite amisulpride withdrawal."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 100,
+      "toDoseMg": 4,
+      "notes": "Reduce amisulpride to 100 mg. QTc risk falling as amisulpride dose decreases."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 4,
+      "notes": "Stop amisulpride. Continue risperidone 4 mg. Repeat ECG at 4–6 weeks post-switch. If LAI transition planned, initiate risperidone LAI protocol."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 400,
+    "toTargetDoseMg": 4,
+    "equivalencyNote": "Amisulpride 400 mg ≈ risperidone 4 mg (Leucht et al. CMD method, Schizophrenia Bulletin 2015). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["qtc_monitoring_required", "prolactin_elevation", "amisulpride_renal_clearance"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "leucht2015_cmd_schizophrenia_bulletin",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

@@ -1,0 +1,85 @@
+{
+  "_comment": "Public errata feed — auto-generated mirror of engine/errata.ts ENTRIES. Hosting target: psychswitch.health/errata.json. Refreshed when ever the in-app feed changes. Format is stable; consumers should sort by dateISO desc.",
+  "version": "0.4.4",
+  "generatedISO": "2026-05-08",
+  "feedUrl": "https://psychswitch.health/errata.json",
+  "entries": [
+    {
+      "id": "2026-05-08-pp3m-bridge-dose",
+      "dateISO": "2026-05-08",
+      "scope": "engine.depotLai",
+      "scopeLabel": "Invega Trinza (PP3M)",
+      "changeKind": "dose",
+      "severity": "significant",
+      "summary": "PP3M 525 mg eq → PP1M bridge corrected to 100 mg eq (was 150)",
+      "appVersion": "0.1.0",
+      "reviewer": "Rashid Razak (clinical author)"
+    },
+    {
+      "id": "2026-05-08-paroxetine-pregnancy-trimester",
+      "dateISO": "2026-05-08",
+      "scope": "paroxetine",
+      "scopeLabel": "Paroxetine — pregnancy",
+      "changeKind": "safety_flag",
+      "severity": "significant",
+      "summary": "Paroxetine pregnancy tier now trimester-specific (1st = avoid, 2nd-3rd = caution)",
+      "appVersion": "0.4.3",
+      "reviewer": "Rashid Razak"
+    },
+    {
+      "id": "2026-05-08-aripiprazole-akathisia-prediction",
+      "dateISO": "2026-05-08",
+      "scope": "engine.predictedAeProfile",
+      "scopeLabel": "Aripiprazole — akathisia",
+      "changeKind": "other",
+      "severity": "moderate",
+      "summary": "Predicted AE engine now takes higher of drug-field vs reverse-lookup tiers",
+      "appVersion": "0.3.4",
+      "reviewer": "Rashid Razak"
+    },
+    {
+      "id": "2026-05-07-step-notes-adapt",
+      "dateISO": "2026-05-07",
+      "scope": "engine.scaleSchedule",
+      "scopeLabel": "Adaptive scaler — step notes",
+      "changeKind": "other",
+      "severity": "moderate",
+      "summary": "Adapted schedules now substitute reference dose mentions in notes",
+      "appVersion": "0.3.1",
+      "reviewer": "Rashid Razak"
+    },
+    {
+      "id": "2026-05-07-evidence-grade-demote-on-adapt",
+      "dateISO": "2026-05-07",
+      "scope": "engine.scaleSchedule",
+      "scopeLabel": "Evidence grade demotion on adaptation",
+      "changeKind": "other",
+      "severity": "minor",
+      "summary": "Adapted schedules drop one evidence grade (A → B etc)",
+      "appVersion": "0.3.1",
+      "reviewer": "Rashid Razak"
+    },
+    {
+      "id": "2026-05-06-clozapine-fbc-cadence",
+      "dateISO": "2026-05-06",
+      "scope": "engine.monitoring",
+      "scopeLabel": "Clozapine — FBC cadence",
+      "changeKind": "monitoring",
+      "severity": "moderate",
+      "summary": "Clozapine FBC cadence corrected to weekly ×18, fortnightly ×34, then monthly",
+      "appVersion": "0.2.0",
+      "reviewer": "Rashid Razak"
+    },
+    {
+      "id": "2026-05-04-initial-rule-set",
+      "dateISO": "2026-05-04",
+      "scope": "content",
+      "scopeLabel": "Initial 133 rules + 40 drugs",
+      "changeKind": "new_rule",
+      "severity": "critical",
+      "summary": "First public release of the reviewed rule set",
+      "appVersion": "0.1.0",
+      "reviewer": "Rashid Razak"
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "id": "risperidone",
+  "genericName": "Risperidone",
+  "drugClass": "SGA (atypical antipsychotic)",
+  "category": "antipsychotic",
+  "malaysianBrandNames": [
+    "Risperdal",
+    "Rispolux",
+    "Sizodon"
+  ],
+  "halfLife": {
+    "meanHours": 20,
+    "rangeHours": [3, 24],
+    "notes": "Parent half-life is short (~3h) but the clinically active metabolite 9-OH-risperidone (paliperidone) has a 24h half-life and dominates exposure. PENDING_CLINICAL_REVIEW."
+  },
+  "activeMetabolite": {
+    "name": "9-OH-risperidone (paliperidone)",
+    "halfLifeHours": 24,
+    "clinicallySignificant": true,
+    "notes": "Active metabolite is itself marketed as paliperidone. Combined effective half-life ~20h, supports once-daily dosing. PENDING_CLINICAL_REVIEW."
+  },
+  "cypInteractions": {
+    "substrateOf": ["CYP2D6", "CYP3A4"],
+    "inhibitorOf": ["CYP2D6 (mild)"],
+    "switchingRelevance": "Strong CYP2D6 inhibitors (paroxetine, fluoxetine, bupropion) raise risperidone levels meaningfully. Relevant on cross-taper with these antidepressants. PENDING_CLINICAL_REVIEW."
+  },
+  "epsRisk": "moderate",
+  "metabolicRisk": {
+    "score": "moderate",
+    "notes": "Less weight gain than olanzapine but more than aripiprazole. Monitor weight, glucose, lipids quarterly. PENDING_CLINICAL_REVIEW."
+  },
+  "prolactinRisk": "high",
+  "qtcRisk": "low",
+  "sedation": "low",
+  "lai": {
+    "available": true,
+    "notes": "Risperdal Consta (every 2 weeks). Paliperidone palmitate (Invega Sustenna monthly, Invega Trinza 3-monthly) is a closely related option. PENDING_CLINICAL_REVIEW."
+  },
+  "reboundPsychosisRisk": {
+    "score": "moderate",
+    "notes": "Less anticholinergic rebound than olanzapine but relapse risk on abrupt stop. Gradual taper preferred. PENDING_CLINICAL_REVIEW."
+  },
+  "dosing": {
+    "startingDoseMg": 1,
+    "typicalTargetRangeMg": [2, 6],
+    "maxDoseMg": 8,
+    "increments": [0.5, 1, 2, 3, 4, 6],
+    "formulationsAvailableMy": ["0.5 mg tab", "1 mg tab", "2 mg tab", "3 mg tab", "4 mg tab", "1 mg/mL liquid"]
+  },
+  "formulationNotes": "Tablets and oral solution available. EPS risk rises sharply above 6 mg/day in most patients. PENDING_CLINICAL_REVIEW.",
+  "citations": [
+    "maudsley15_schizophrenia_risperidone_profile",
+    "bap2020_psychosis_risperidone"
+  ],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

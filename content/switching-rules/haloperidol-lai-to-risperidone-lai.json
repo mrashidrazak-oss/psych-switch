@@ -1,0 +1,53 @@
+{
+  "id": "haloperidol-lai-to-risperidone-lai",
+  "fromDrugId": "haloperidol-lai",
+  "toDrugId": "risperidone-lai",
+  "strategy": "cross-taper",
+  "rationale": "Common FGA-to-atypical depot conversion to escape EPS, hyperprolactinaemia or QTc concern. Skip the next scheduled Haldol decanoate; start Consta with oral risperidone overlap because Consta does not release for ~3 weeks. Haldol decanoate continues releasing for several weeks, providing concurrent D2 cover during the Consta loading gap. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 42,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 100,
+      "toDoseMg": 25,
+      "notes": "Skip next Haldol decanoate. Inject Consta 25 mg deltoid. Start oral risperidone 2 mg/day for 21 days (cover during Consta release lag)."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 100,
+      "toDoseMg": 25,
+      "notes": "Second Consta 25 mg injection. Continue oral risperidone 2 mg. Haldol depot tail still significant."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 75,
+      "toDoseMg": 25,
+      "notes": "Stop oral risperidone — Consta now clinically effective. Haldol depot fading."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 50,
+      "toDoseMg": 25,
+      "notes": "Third Consta 25 mg injection. Haldol depot continues to clear."
+    },
+    {
+      "day": 42,
+      "fromDoseMg": 0,
+      "toDoseMg": 25,
+      "notes": "Haldol substantially cleared. Maintenance Consta every 2 weeks."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 100,
+    "toTargetDoseMg": 25,
+    "equivalencyNote": "Approximate clinical equivalency: Haldol decanoate 100 mg/4 weeks ≈ Consta 25 mg/2 weeks (Maudsley 14th, conservative). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_schizophrenia_p231_haloperidol_lai",
+    "bap2020_psychosis_lai_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

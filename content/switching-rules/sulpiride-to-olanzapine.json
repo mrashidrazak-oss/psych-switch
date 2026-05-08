@@ -1,0 +1,54 @@
+{
+  "id": "sulpiride-to-olanzapine",
+  "fromDrugId": "sulpiride",
+  "toDrugId": "olanzapine",
+  "strategy": "cross-taper",
+  "rationale": "Sulpiride (selective D2/D3 + some D4; minimal anticholinergic activity; renally excreted; high prolactin) to olanzapine (multi-receptor SGA; high metabolic risk; strong H1/M1 activity). Sulpiride is sometimes used in ASEAN region for negative symptoms (low doses 200–400 mg) or as cost-effective antipsychotic. Common reason for switch: insufficient efficacy, metabolic acceptance of olanzapine for better tolerability of EPS, or formulary. Sulpiride has minimal anticholinergic activity, so cross-taper can proceed at a standard pace without significant cholinergic rebound. Metabolic monitoring is essential as metabolic risk increases significantly on olanzapine. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 800,
+      "toDoseMg": 5,
+      "notes": "Start olanzapine 5 mg nocte. Continue sulpiride 800 mg. Record baseline weight, fasting glucose, fasting lipids before starting olanzapine."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 800,
+      "toDoseMg": 10,
+      "notes": "Increase olanzapine to 10 mg nocte (target). Plateau sulpiride. Allow olanzapine to approach steady state."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 400,
+      "toDoseMg": 10,
+      "notes": "Reduce sulpiride to 400 mg. Prolactin levels fall as sulpiride is reduced — warn female patients about possible menstrual changes."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 200,
+      "toDoseMg": 10,
+      "notes": "Reduce sulpiride to 200 mg. Olanzapine at steady state. Sedation and weight increase likely."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 10,
+      "notes": "Stop sulpiride. Continue olanzapine 10 mg nocte. Metabolic monitoring at 4 and 12 weeks. Dietary counselling for weight management."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 800,
+    "toTargetDoseMg": 10,
+    "equivalencyNote": "Sulpiride 800 mg ≈ olanzapine 10 mg (DDD-equivalence: sulpiride 800 mg/day ≈ olanzapine 10 mg/day; Maudsley 15th CPZ-equivalence: sulpiride 200 mg ≈ CPZ 100 mg ≈ olanzapine 2.5 mg). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["metabolic_monitoring_required", "prolactin_normalisation"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "leucht2016_ddd_schizophrenia_bulletin",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

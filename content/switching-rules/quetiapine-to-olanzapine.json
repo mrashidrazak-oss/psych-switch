@@ -1,0 +1,59 @@
+{
+  "id": "quetiapine-to-olanzapine",
+  "fromDrugId": "quetiapine",
+  "toDrugId": "olanzapine",
+  "strategy": "plateau-cross-taper",
+  "rationale": "Quetiapine-to-olanzapine switches are uncommon but may occur when quetiapine proves inadequate at maximum tolerated doses or when the antidepressant effect of N-desalkylquetiapine is no longer a differentiator. Olanzapine offers modestly higher D2 occupancy at comparable sedative doses. Plateau cross-taper: introduce olanzapine nocte first, let it reach target, then taper quetiapine; this prevents rebound insomnia and anxiety from quetiapine's pronounced H1/α1 withdrawal. Counsel the patient clearly that metabolic burden increases significantly with olanzapine — this switch does not reduce metabolic risk. Baseline weight and fasting glucose are mandatory before initiating. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 35,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 400,
+      "toDoseMg": 5,
+      "notes": "Start olanzapine 5 mg nocte. Hold quetiapine 400 mg. Both drugs are sedating — advise patient that sedation increases initially."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 400,
+      "toDoseMg": 10,
+      "notes": "Increase olanzapine to 10 mg (target dose). Maintain quetiapine 400 mg plateau — do not taper yet."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 300,
+      "toDoseMg": 10,
+      "notes": "Begin tapering quetiapine to 300 mg. Olanzapine at steady state, providing full antipsychotic cover."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 200,
+      "toDoseMg": 10,
+      "notes": "Reduce quetiapine to 200 mg. Monitor for rebound insomnia as quetiapine antihistaminergic load falls below sedating threshold."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 100,
+      "toDoseMg": 10,
+      "notes": "Reduce quetiapine to 100 mg. Sleep hygiene reinforcement. Short-term hypnotic if absolutely necessary."
+    },
+    {
+      "day": 35,
+      "fromDoseMg": 0,
+      "toDoseMg": 10,
+      "notes": "Stop quetiapine. Continue olanzapine 10 mg. Establish metabolic baseline — weight, fasting glucose, lipids. Schedule 4-week and 12-week metabolic review."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 400,
+    "toTargetDoseMg": 10,
+    "equivalencyNote": "Approximate clinical equivalency: quetiapine 400 mg ≈ olanzapine 10 mg (Maudsley 15th, AP dose-equivalence table). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["metabolic_monitoring_required"],
+  "citations": [
+    "maudsley15_schizophrenia_p230_ap_swap_table",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

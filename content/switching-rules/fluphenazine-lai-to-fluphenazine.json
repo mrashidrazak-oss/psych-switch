@@ -1,0 +1,66 @@
+{
+  "id": "fluphenazine-lai-to-fluphenazine",
+  "fromDrugId": "fluphenazine-lai",
+  "toDrugId": "fluphenazine",
+  "strategy": "overlap-taper",
+  "rationale": "Switching from fluphenazine decanoate (Modecate depot) to oral fluphenazine. Fluphenazine decanoate has a t½ of ~14 days and continues releasing for ~4–6 weeks after the last injection. Start oral fluphenazine when the next depot injection would have been due. Approximate equivalence: fluphenazine decanoate 25 mg/2 weeks ≈ oral fluphenazine 10 mg/day (rough estimate — consult Maudsley for specific dose pairs). PENDING_CLINICAL_REVIEW.",
+  "durationDays": 56,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 25,
+      "toDoseMg": 5,
+      "notes": "Skip next depot injection. Start oral fluphenazine 5 mg/day. Depot continues releasing. Monitor EPS carefully — fluphenazine is a high-potency FGA."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 15,
+      "toDoseMg": 5,
+      "notes": "Depot level falling. Oral fluphenazine 5 mg/day. Monitor for akathisia, parkinsonism. Anticholinergic cover likely needed."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 5,
+      "toDoseMg": 10,
+      "notes": "Depot substantially cleared (~4 weeks). Increase oral fluphenazine to 10 mg/day as primary agent."
+    },
+    {
+      "day": 56,
+      "fromDoseMg": 0,
+      "toDoseMg": 10,
+      "notes": "Depot cleared. Oral fluphenazine monotherapy. Typical range 2.5–20 mg/day; titrate to lowest effective dose."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 25,
+    "toTargetDoseMg": 10,
+    "equivalencyNote": "Fluphenazine decanoate 25 mg/2 weeks ≈ oral fluphenazine 10 mg/day (approximate; Maudsley 15th). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [
+    {
+      "key": "eps_risk_high",
+      "title": "EPS risk (high-potency FGA)",
+      "body": "Fluphenazine is a high-potency FGA. EPS (akathisia, acute dystonia, parkinsonism) are common. Anticholinergic prophylaxis strongly recommended.",
+      "severity": "danger"
+    },
+    {
+      "key": "tardive_dyskinesia_risk",
+      "title": "Tardive dyskinesia risk",
+      "body": "Long-term FGA use (and depot specifically) carries TD risk. Assess AIMS at baseline when switching to oral.",
+      "severity": "warning"
+    },
+    {
+      "key": "lai_long_tail",
+      "title": "Decanoate tail",
+      "body": "Fluphenazine decanoate t½ ~14 days. Therapeutic levels persist ~4–6 weeks after the last injection.",
+      "severity": "warning"
+    }
+  ],
+  "citations": [
+    "maudsley15_schizophrenia_fga_depots",
+    "bap2020_psychosis_lai_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

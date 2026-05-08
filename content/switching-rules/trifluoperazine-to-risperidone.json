@@ -1,0 +1,53 @@
+{
+  "id": "trifluoperazine-to-risperidone",
+  "fromDrugId": "trifluoperazine",
+  "toDrugId": "risperidone",
+  "strategy": "cross-taper",
+  "rationale": "Trifluoperazine (high-potency FGA; D2 dominant; moderate anticholinergic) to risperidone (D2/D3 + 5-HT2A SGA; lower EPS than FGAs; moderate prolactin). EPS should improve but risperidone is not EPS-free. Both drugs elevate prolactin. Both have moderate QTc risk. Trifluoperazine withdrawal can unmask tardive dyskinesia — document baseline movements. Risperidone has minimal anticholinergic activity so it does not buffer cholinergic rebound from trifluoperazine. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 10,
+      "toDoseMg": 1,
+      "notes": "Start risperidone 1 mg. Continue trifluoperazine 10 mg. Baseline AIMS assessment (document existing involuntary movements). ECG at baseline."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 10,
+      "toDoseMg": 2,
+      "notes": "Increase risperidone to 2 mg. Plateau trifluoperazine."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 5,
+      "toDoseMg": 4,
+      "notes": "Increase risperidone to 4 mg (target). Reduce trifluoperazine to 5 mg. Watch for withdrawal dyskinesias."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 5,
+      "toDoseMg": 4,
+      "notes": "Reduce trifluoperazine to 5 mg. EPS burden reducing."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 4,
+      "notes": "Stop trifluoperazine. Continue risperidone 4 mg. Repeat AIMS at 4 weeks. Anticholinergic agents can be reviewed for withdrawal."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 10,
+    "toTargetDoseMg": 4,
+    "equivalencyNote": "Trifluoperazine 10 mg ≈ risperidone 4 mg (via CPZ equivalence: TFP 5 mg ≈ CPZ 100 mg ≈ risperidone 1 mg; TFP 10 mg ≈ CPZ 200 mg ≈ risperidone 2 mg — however clinical doses often titrated higher; use as starting point). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["prolactin_elevation", "qtc_monitoring_required", "eps_risk_increase"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

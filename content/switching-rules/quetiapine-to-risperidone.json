@@ -1,0 +1,59 @@
+{
+  "id": "quetiapine-to-risperidone",
+  "fromDrugId": "quetiapine",
+  "toDrugId": "risperidone",
+  "strategy": "plateau-cross-taper",
+  "rationale": "Most commonly driven by metabolic concerns (weight gain, diabetes, dyslipidaemia) or insufficient antipsychotic efficacy at tolerated quetiapine doses. Plateau cross-taper: introduce risperidone first and build to therapeutic dose before tapering quetiapine, because quetiapine's abrupt reduction causes rebound insomnia and anxiety via histaminergic/α1-adrenergic withdrawal. The plateau phase gives risperidone time to establish antipsychotic cover. Warning: prolactin will rise as risperidone replaces quetiapine — counsel accordingly. EPS risk increases; monitor for akathisia and rigidity above 4 mg risperidone. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 35,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 400,
+      "toDoseMg": 1,
+      "notes": "Start risperidone 1 mg. Hold quetiapine 400 mg. Counsel patient about the reason for switch and expected timeline."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 400,
+      "toDoseMg": 2,
+      "notes": "Increase risperidone to 2 mg. Continue quetiapine 400 mg (plateau phase — do NOT reduce yet)."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 300,
+      "toDoseMg": 3,
+      "notes": "Increase risperidone to 3 mg. Begin tapering quetiapine to 300 mg. Cover is now shared."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 200,
+      "toDoseMg": 4,
+      "notes": "Risperidone at 4 mg target. Reduce quetiapine to 200 mg. Monitor for EPS as risperidone becomes dominant."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 100,
+      "toDoseMg": 4,
+      "notes": "Reduce quetiapine to 100 mg. Rebound insomnia possible at this low antihistaminergic dose — advise sleep hygiene. Short-term hypnotic only if necessary."
+    },
+    {
+      "day": 35,
+      "fromDoseMg": 0,
+      "toDoseMg": 4,
+      "notes": "Stop quetiapine. Continue risperidone 4 mg. Monitor weight and fasting glucose — metabolic improvement should be tracked."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 400,
+    "toTargetDoseMg": 4,
+    "equivalencyNote": "Approximate clinical equivalency: quetiapine 400 mg ≈ risperidone 4 mg (Maudsley 15th, AP dose-equivalence table). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["cholinergic_rebound"],
+  "citations": [
+    "maudsley15_schizophrenia_p230_ap_swap_table",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

@@ -1,0 +1,68 @@
+{
+  "id": "valproate-to-lamotrigine",
+  "fromDrugId": "valproate",
+  "toDrugId": "lamotrigine",
+  "strategy": "cross-taper",
+  "rationale": "This switch has a critical pharmacokinetic hazard: valproate is a potent UGT inhibitor, so the patient will be on a lower-than-normal lamotrigine dose (VPA roughly DOUBLES lamotrigine levels). As valproate is tapered and withdrawn, UGT inhibition is relieved and lamotrigine levels will FALL — potentially losing therapeutic effect (mood relapse risk). Lamotrigine dose MUST be increased in step with the valproate taper. The target monotherapy lamotrigine dose will be roughly DOUBLE the co-prescribed dose. Start lamotrigine at the VPA-adjusted low dose and escalate as VPA is withdrawn. Requires careful timing to avoid a period of subtherapeutic lamotrigine. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 63,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 1000,
+      "toDoseMg": 25,
+      "notes": "Start lamotrigine at 25 mg every OTHER day for 2 weeks (valproate inhibition is in force — use the VPA co-prescription titration schedule). Hold valproate 1000 mg/day unchanged."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 1000,
+      "toDoseMg": 25,
+      "notes": "Increase lamotrigine to 25 mg OD. Hold valproate. Monitor for rash — SJS risk is higher when LTG is introduced while VPA is on board."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 1000,
+      "toDoseMg": 50,
+      "notes": "Increase lamotrigine to 50 mg OD. Begin valproate taper in the next step."
+    },
+    {
+      "day": 35,
+      "fromDoseMg": 500,
+      "toDoseMg": 100,
+      "notes": "Reduce valproate to 500 mg/day. Increase lamotrigine to 100 mg to compensate for rising LTG clearance as VPA inhibition is partially reversed. Check lamotrigine level if available."
+    },
+    {
+      "day": 49,
+      "fromDoseMg": 200,
+      "toDoseMg": 150,
+      "notes": "Reduce valproate to 200 mg/day. Increase lamotrigine to 150 mg."
+    },
+    {
+      "day": 63,
+      "fromDoseMg": 0,
+      "toDoseMg": 200,
+      "notes": "Stop valproate. Lamotrigine monotherapy at 200 mg/day. Assess mood stability and lamotrigine tolerability. Further titration to 400 mg maximum if required."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 1000,
+    "toTargetDoseMg": 200,
+    "equivalencyNote": "Not a dose-equivalency switch. Lamotrigine ~50 mg while on valproate ≈ lamotrigine 100 mg monotherapy in terms of plasma levels (VPA roughly doubles LTG levels). The dose is systematically increased as valproate is withdrawn. Target maintenance lamotrigine monotherapy: 100–200 mg/day. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [
+    "lamotrigine_vpa_inhibition_withdrawal_risk",
+    "lamotrigine_dose_must_increase_as_vpa_tapers",
+    "sjs_risk_lamotrigine",
+    "valproate_teratogenicity_warning"
+  ],
+  "citations": [
+    "Maudsley Prescribing Guidelines 14th Edition — Lamotrigine drug interactions",
+    "BAP 2016 Guidelines for Bipolar Disorder",
+    "Posner K et al. Lamotrigine plasma levels during coadministration with valproate. Epilepsia. 1991."
+  ],
+  "contraindications": [
+    "Current pregnancy or planning pregnancy — ensure contraceptive discussion before stopping valproate; see valproate teratogenicity warnings.",
+    "Patient on any other UGT inhibitor (e.g. atazanavir) — seek pharmacist review before titrating LTG."
+  ],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

@@ -1,0 +1,66 @@
+{
+  "id": "paliperidone-lai-to-paliperidone",
+  "fromDrugId": "paliperidone-lai",
+  "toDrugId": "paliperidone",
+  "strategy": "overlap-taper",
+  "rationale": "Switching from Invega Sustenna (PP1M) to oral paliperidone (Invega). The depot continues releasing paliperidone for up to 4–5 months after the last injection; oral paliperidone supplements then eventually replaces this release. Start oral at a dose equivalent to the monthly depot dose and allow the depot tail to naturally taper. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 126,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 75,
+      "toDoseMg": 6,
+      "notes": "Skip the next scheduled PP1M injection. Start oral paliperidone at approximately equivalent dose (75 mg eq/month ≈ 6 mg/day oral). Depot continues releasing — monitor for dual-drug effects initially."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 50,
+      "toDoseMg": 6,
+      "notes": "Depot level falling. Continue oral paliperidone 6 mg/day. No second injection given."
+    },
+    {
+      "day": 56,
+      "fromDoseMg": 25,
+      "toDoseMg": 6,
+      "notes": "Depot level substantially reduced. Oral paliperidone now primary contributor. Assess clinical response — consider dose adjustment if needed."
+    },
+    {
+      "day": 84,
+      "fromDoseMg": 10,
+      "toDoseMg": 6,
+      "notes": "Depot largely cleared (~3 months post-last-injection). Oral paliperidone as near-monotherapy."
+    },
+    {
+      "day": 126,
+      "fromDoseMg": 0,
+      "toDoseMg": 6,
+      "notes": "Depot cleared (~4–5 months post-last-injection). Oral paliperidone monotherapy established. Review and adjust oral dose based on clinical response."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 75,
+    "toTargetDoseMg": 6,
+    "equivalencyNote": "Invega Sustenna 75 mg eq/month ≈ oral paliperidone 6 mg/day (Maudsley 15th). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [
+    {
+      "key": "lai_long_tail",
+      "title": "Extended depot tail",
+      "body": "Paliperidone palmitate has an effective t½ of ~25–49 days. Plasma levels persist for up to 4–5 months after the final injection. Dose the oral supplement conservatively to avoid combined toxicity early in the switch.",
+      "severity": "warning"
+    },
+    {
+      "key": "renal_monitoring",
+      "title": "Renal function",
+      "body": "Paliperidone is primarily renally cleared. Monitor renal function — adjust oral dose if CrCl declines.",
+      "severity": "info"
+    }
+  ],
+  "citations": [
+    "maudsley15_schizophrenia_p231_paliperidone_lai",
+    "bap2020_psychosis_lai_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

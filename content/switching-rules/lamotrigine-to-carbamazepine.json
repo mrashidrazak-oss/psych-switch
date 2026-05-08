@@ -1,0 +1,73 @@
+{
+  "id": "lamotrigine-to-carbamazepine",
+  "fromDrugId": "lamotrigine",
+  "toDrugId": "carbamazepine",
+  "strategy": "cross-taper",
+  "rationale": "Lamotrigine to carbamazepine: Indicated for rapid cycling bipolar disorder or treatment failure on lamotrigine. KEY PHARMACOKINETIC HAZARDS: (1) Carbamazepine INDUCES lamotrigine metabolism (UGT induction) — as CBZ is titrated up, lamotrigine levels will FALL progressively. This means the apparent efficacy of lamotrigine will reduce as CBZ is added; do not interpret mood symptoms as carbamazepine failure — the lamotrigine dose may need increasing to compensate, or the lamotrigine taper can be accelerated. (2) CBZ autoinduction — carbamazepine induces its own metabolism over 4–6 weeks; initial CBZ levels will be higher than steady-state. (3) HLA-B*1502 screen before starting carbamazepine in South/South-East Asian patients (Malaysian population — SJS risk substantially higher). Lamotrigine also carries SJS risk — patients double-exposed to SJS-risk drugs require extra vigilance. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 56,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 200,
+      "toDoseMg": 200,
+      "notes": "Start carbamazepine 200 mg/day. Continue lamotrigine 200 mg/day. HLA-B*1502 screen BEFORE starting CBZ in Malaysian/Asian patients. Baseline LFTs, FBC, Na⁺. As CBZ is added and uptitrated, LTG levels will fall due to CYP/UGT induction — monitor for mood symptoms indicating subtherapeutic LTG."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 200,
+      "toDoseMg": 400,
+      "notes": "Increase carbamazepine to 400 mg/day. Hold lamotrigine. CBZ autoinduction begins. Lamotrigine levels falling — watch for mood breakthrough."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 200,
+      "toDoseMg": 600,
+      "notes": "Increase carbamazepine to 600 mg/day. Hold lamotrigine at 200 mg — levels significantly reduced by CBZ induction. CBZ level check if available (autoinduction ongoing)."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 150,
+      "toDoseMg": 800,
+      "notes": "Increase carbamazepine to 800 mg/day (target). Begin lamotrigine taper: reduce to 150 mg/day. CBZ autoinduction largely complete by week 4 — check CBZ level (target 4–10 mg/L for mood disorder)."
+    },
+    {
+      "day": 35,
+      "fromDoseMg": 100,
+      "toDoseMg": 800,
+      "notes": "Reduce lamotrigine to 100 mg/day. Carbamazepine providing primary cover."
+    },
+    {
+      "day": 49,
+      "fromDoseMg": 50,
+      "toDoseMg": 800,
+      "notes": "Reduce lamotrigine to 50 mg/day. Almost complete switch."
+    },
+    {
+      "day": 56,
+      "fromDoseMg": 0,
+      "toDoseMg": 800,
+      "notes": "Stop lamotrigine. Continue carbamazepine 800 mg/day. Recheck CBZ level after lamotrigine is stopped (LTG has minor UGT-inducing effects — minimal change expected but confirm level). Monitor mood stability and bipolar relapse for 3 months."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 200,
+    "toTargetDoseMg": 800,
+    "equivalencyNote": "Not dose-equivalent. Carbamazepine monotherapy target for bipolar: 400–1200 mg/day (serum level 4–10 mg/L). Lamotrigine levels fall during CBZ co-prescription — interpret dose changes in context of the changing PK environment. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [
+    "carbamazepine_autoinduction",
+    "sjs_risk_lamotrigine",
+    "bipolar_relapse_monitor"
+  ],
+  "citations": [
+    "maudsley15_bipolar_p331_stopping_mood_stabilisers",
+    "bap2016_bipolar_guidelines",
+    "nice_cg185_bipolar",
+    "Anderson GD. Pharmacokinetic drug interactions with carbamazepine. Clin Pharmacokinet. 1998."
+  ],
+  "contraindications": [
+    "HLA-B*1502 positive (South/South-East Asian patients) — carbamazepine is contraindicated. Prescreening MANDATORY in Malaysian clinical practice."
+  ],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

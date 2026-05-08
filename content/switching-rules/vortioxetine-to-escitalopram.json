@@ -1,0 +1,35 @@
+{
+  "id": "vortioxetine-to-escitalopram",
+  "fromDrugId": "vortioxetine",
+  "toDrugId": "escitalopram",
+  "strategy": "cross-taper",
+  "rationale": "Vortioxetine (SMS; t½ ~66h; multimodal serotonergic; low discontinuation syndrome risk due to long half-life) to escitalopram (SSRI). Vortioxetine's very long half-life provides a natural pharmacokinetic self-taper — plasma levels fall gradually over ~2 weeks after stopping. This substantially reduces discontinuation syndrome risk. A direct switch or minimal overlap approach is clinically reasonable. Both agents are serotonergic — brief overlap may cause mild additive serotonergic effects but serotonin syndrome risk is low at standard doses. Start escitalopram at full therapeutic dose from day 1 of the switch. No CYP2D6 interaction: escitalopram is not a CYP2D6 inhibitor (unlike fluoxetine/paroxetine which would require vortioxetine dose adjustment). PENDING_CLINICAL_REVIEW.",
+  "durationDays": 7,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 20,
+      "toDoseMg": 10,
+      "notes": "Stop vortioxetine. Start escitalopram 10 mg. Vortioxetine's long half-life (66h) means levels fall gradually — no discontinuation syndrome expected. Brief overlap for clinical safety. Escitalopram has no CYP2D6 inhibition — no dose adjustment needed for vortioxetine residual levels during washout."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 0,
+      "toDoseMg": 10,
+      "notes": "Vortioxetine now fully cleared. Continue escitalopram 10 mg. Titrate to 20 mg at 4 weeks if response inadequate."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 20,
+    "toTargetDoseMg": 10,
+    "equivalencyNote": "Vortioxetine 20 mg → escitalopram 10 mg (standard effective doses). Not pharmacologically equivalent. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["vortioxetine_cyp2d6_interaction"],
+  "citations": [
+    "maudsley15_ch3_vortioxetine_profile",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

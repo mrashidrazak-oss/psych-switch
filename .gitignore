@@ -30,6 +30,12 @@ yarn-error.*
 
 # local env files
 .env*.local
+.env
+
+# build secrets — service-account keys, signed credentials, anything
+# `eas submit` needs but should NEVER ship to the repo
+secrets/
+!secrets/.gitkeep
 
 # typescript
 *.tsbuildinfo

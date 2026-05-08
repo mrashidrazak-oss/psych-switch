@@ -1,0 +1,67 @@
+{
+  "id": "carbamazepine-to-lamotrigine",
+  "fromDrugId": "carbamazepine",
+  "toDrugId": "lamotrigine",
+  "strategy": "cross-taper",
+  "rationale": "This switch has a critical pharmacokinetic hazard: carbamazepine is a potent UGT inducer, so the patient will already be on a higher-than-normal lamotrigine dose to achieve therapeutic levels (CBZ roughly halves lamotrigine levels). As CBZ is tapered and withdrawn, the UGT induction is lost and lamotrigine levels will RISE — potentially into the toxic range (SJS risk). Lamotrigine dose MUST be reduced in step with the CBZ taper. The target lamotrigine maintenance dose on monotherapy will be roughly HALF the co-prescribed dose. This is a high-stakes pharmacokinetic interaction requiring close monitoring and lamotrigine level checking. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 56,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 400,
+      "toDoseMg": 100,
+      "notes": "Start lamotrigine at 100 mg/day (given CBZ induction, this is an appropriate starting dose — NOT the usual 25 mg slow-titration start). Continue carbamazepine 400 mg/day unchanged. Monitor for rash."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 400,
+      "toDoseMg": 150,
+      "notes": "Increase lamotrigine to 150 mg/day. Hold CBZ. Check for rash and lamotrigine tolerability."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 400,
+      "toDoseMg": 200,
+      "notes": "Increase lamotrigine to 200 mg/day (target monotherapy maintenance dose). Begin CBZ taper at next step."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 200,
+      "toDoseMg": 175,
+      "notes": "Reduce CBZ to 200 mg/day. Reduce lamotrigine to 175 mg — compensating for rising LTG levels as CBZ induction falls. Check LTG level if available."
+    },
+    {
+      "day": 42,
+      "fromDoseMg": 100,
+      "toDoseMg": 125,
+      "notes": "Reduce CBZ to 100 mg/day. Reduce lamotrigine to 125 mg."
+    },
+    {
+      "day": 56,
+      "fromDoseMg": 0,
+      "toDoseMg": 100,
+      "notes": "Stop carbamazepine. Lamotrigine monotherapy target 100 mg/day. Titrate up or down based on response and tolerability. Check lamotrigine level 2 weeks after CBZ is stopped."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 400,
+    "toTargetDoseMg": 200,
+    "equivalencyNote": "Not a dose-equivalency switch. Lamotrigine target dose for mood disorder is 100–200 mg/day as monotherapy. The 200 mg initial target compensates for CBZ induction; the dose is reduced to ~100 mg as CBZ is withdrawn. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [
+    "lamotrigine_cbz_induction_withdrawal_risk",
+    "lamotrigine_dose_must_reduce_as_cbz_tapers",
+    "sjs_risk_lamotrigine"
+  ],
+  "citations": [
+    "Maudsley Prescribing Guidelines 14th Edition — Lamotrigine drug interactions",
+    "BAP 2016 Guidelines for Bipolar Disorder",
+    "Anderson GD. Pharmacokinetic drug interactions with carbamazepine. Clin Pharmacokinet. 1998."
+  ],
+  "contraindications": [
+    "HLA-B*1502-positive patients (SJS risk with both carbamazepine and lamotrigine — screen before initiating either drug in Asian patients)",
+    "Any unexplained rash on current carbamazepine"
+  ],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

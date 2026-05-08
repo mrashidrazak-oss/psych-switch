@@ -1,0 +1,54 @@
+{
+  "id": "sulpiride-to-aripiprazole",
+  "fromDrugId": "sulpiride",
+  "toDrugId": "aripiprazole",
+  "strategy": "cross-taper",
+  "rationale": "Sulpiride (full D2 antagonist) to aripiprazole (partial D2/D3 agonist). Common reasons: prolactin reduction, weight neutrality, or improved tolerability. Akathisia risk on aripiprazole is significant — patients stabilised on full D2 blockade are at highest risk. Prolactin will normalise after the switch. No cholinergic rebound from sulpiride (no anticholinergic activity). PENDING_CLINICAL_REVIEW.",
+  "durationDays": 28,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 800,
+      "toDoseMg": 10,
+      "notes": "Start aripiprazole 10 mg. Continue sulpiride 800 mg. Counsel patient about akathisia risk — restlessness typically peaks in first 2 weeks. Propranolol PRN can be prescribed proactively."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 800,
+      "toDoseMg": 15,
+      "notes": "Increase aripiprazole to 15 mg (target). Plateau sulpiride. Review akathisia at week 1 check-in."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 400,
+      "toDoseMg": 15,
+      "notes": "Reduce sulpiride to 400 mg. Aripiprazole at steady state. Insomnia may emerge as sulpiride's mild sedation is withdrawn."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 200,
+      "toDoseMg": 15,
+      "notes": "Reduce sulpiride to 200 mg. Prolactin falling — counsel female patients about possible menstrual cycle restoration."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 0,
+      "toDoseMg": 15,
+      "notes": "Stop sulpiride. Continue aripiprazole 15 mg. Prolactin should normalise over 2–4 weeks. No QTc concerns with aripiprazole."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 800,
+    "toTargetDoseMg": 15,
+    "equivalencyNote": "Sulpiride 800 mg ≈ aripiprazole 15 mg (via DDD equivalence; both ≈ olanzapine 10 mg by proxy). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": ["akathisia_risk_aripiprazole", "prolactin_normalisation"],
+  "citations": [
+    "maudsley15_schizophrenia_ch1_ap_equivalence",
+    "leucht2016_ddd_schizophrenia_bulletin",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-06",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

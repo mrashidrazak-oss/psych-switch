@@ -1,0 +1,59 @@
+{
+  "id": "risperidone-to-haloperidol",
+  "fromDrugId": "risperidone",
+  "toDrugId": "haloperidol",
+  "strategy": "cross-taper",
+  "rationale": "SGA-to-FGA switch — cost-driven or for high D2 occupancy requirements beyond the SGA range. Both risperidone and haloperidol are potent D2 antagonists with significant EPS risk; the pharmacological step is smaller than from olanzapine or quetiapine. Prolactin remains high throughout (both agents are prolactin-raising). Key concern is the shift in QTc risk: risperidone has low QTc risk while haloperidol is high — baseline ECG before starting haloperidol. EPS burden may worsen at equivalent doses as haloperidol is the more EPS-prone agent. Anticholinergic co-prescription review: if the patient is already on benzhexol for risperidone-related EPS, continue it; if not, have a low threshold to start once haloperidol is dominant. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 35,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 4,
+      "toDoseMg": 2,
+      "notes": "Start haloperidol 2 mg. Continue risperidone 4 mg. Baseline ECG mandatory. Assess EPS carefully at each visit."
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 4,
+      "toDoseMg": 5,
+      "notes": "Increase haloperidol to 5 mg target. Plateau risperidone — allow haloperidol to stabilise before tapering."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 3,
+      "toDoseMg": 5,
+      "notes": "Begin tapering risperidone to 3 mg. Monitor for EPS worsening as haloperidol becomes the dominant AP."
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 2,
+      "toDoseMg": 5,
+      "notes": "Reduce risperidone to 2 mg. Prescribe benzhexol if EPS emerging. Recheck QTc — haloperidol's QTc contribution now significant."
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 1,
+      "toDoseMg": 5,
+      "notes": "Reduce risperidone to 1 mg. Haloperidol providing primary antipsychotic cover."
+    },
+    {
+      "day": 35,
+      "fromDoseMg": 0,
+      "toDoseMg": 5,
+      "notes": "Stop risperidone. Continue haloperidol 5 mg. Document metabolic baseline — expect improvement. Consider depot (haloperidol decanoate) if adherence is a concern."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 4,
+    "toTargetDoseMg": 5,
+    "equivalencyNote": "Approximate clinical equivalency: risperidone 4 mg ≈ haloperidol 5 mg (Maudsley 15th, AP dose-equivalence table). PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_schizophrenia_p230_ap_swap_table",
+    "bap2020_psychosis_switching"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-05",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}

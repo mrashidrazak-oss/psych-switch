@@ -1,0 +1,47 @@
+{
+  "id": "mirtazapine-to-sertraline",
+  "fromDrugId": "mirtazapine",
+  "toDrugId": "sertraline",
+  "strategy": "cross-taper",
+  "rationale": "Common scenario: mirtazapine was used for short-term sleep/appetite effect or as augmentation, and the patient is moving to a single SSRI. Mechanisms are different (NaSSA vs SSRI) so direct serotonin-syndrome risk is low, but rebound insomnia and anxiety can occur on mirtazapine cessation. PENDING_CLINICAL_REVIEW.",
+  "durationDays": 14,
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 30,
+      "toDoseMg": 25,
+      "notes": "Start sertraline 25 mg in the morning. Hold mirtazapine 30 mg at night."
+    },
+    {
+      "day": 5,
+      "fromDoseMg": 30,
+      "toDoseMg": 50,
+      "notes": "Hold mirtazapine. Increase sertraline to 50 mg."
+    },
+    {
+      "day": 10,
+      "fromDoseMg": 15,
+      "toDoseMg": 100,
+      "notes": "Halve mirtazapine to 15 mg. Increase sertraline to 100 mg target. Counsel patient about possible rebound insomnia."
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 0,
+      "toDoseMg": 100,
+      "notes": "Stop mirtazapine. Continue sertraline 100 mg. If significant insomnia emerges, consider a short overlap of mirtazapine 7.5 mg or alternative sleep strategy."
+    }
+  ],
+  "doseRatios": {
+    "fromCurrentDoseMg": 30,
+    "toTargetDoseMg": 100,
+    "equivalencyNote": "Mirtazapine and sertraline are not directly equipotent — the mapping reflects typical effective doses for major depression. PENDING_CLINICAL_REVIEW."
+  },
+  "safetyFlags": [],
+  "citations": [
+    "maudsley15_ch3_p369_table_3_7",
+    "bap2015_switching_antidepressants"
+  ],
+  "contraindications": [],
+  "lastReviewedISO": "2026-05-04",
+  "reviewedBy": "PENDING - Rashid Razak (clinical author)"
+}
