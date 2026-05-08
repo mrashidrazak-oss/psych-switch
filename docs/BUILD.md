@@ -120,15 +120,26 @@ anything off-spec) and the background should match `#0b0f14`.
 
 ## Pre-flight
 
-`pnpm preflight` (alias for `pnpm verify`) runs:
+`pnpm preflight` runs four checks. All must pass before a production
+build:
 
 1. `tsc --noEmit` — strict mode, whole repo
 2. `jest` — engine + util tests (currently 302)
 3. MCP smoke — 24 handler tests
+4. `expo-doctor` — 17 checks against the Expo project (SDK version
+   alignment, app.json schema, Android adaptive icon dims, etc.)
 
 `build:production` runs preflight automatically. The other build
 profiles don't, so you can ship a preview with known minor issues
 during exploratory testing.
+
+**Hard lesson from v0.4.21 → v0.4.22**: a previous version had pinned
+`expo-constants` to a stream that doesn't exist for SDK 54. Local
+`pnpm verify` (typecheck + jest + MCP smoke) was happy because none
+of those touch native code. The mismatch only blew up in the EAS
+build's Kotlin compile phase, after ~10 minutes of waiting + a wasted
+build credit. `expo-doctor` catches this kind of native dep drift in
+~5 seconds, locally. Always run it before triggering a build.
 
 ## Versioning
 
