@@ -2,7 +2,7 @@
   "expo": {
     "name": "PsychSwitch ASEAN",
     "slug": "psych-switch",
-    "version": "0.4.21",
+    "version": "0.4.22",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -30,17 +30,7 @@
         "backgroundColor": "#0b0f14"
       },
       "package": "com.psychswitch.asean",
-      "versionCode": 1,
-      "backgroundColor": "#0b0f14",
-      "navigationBar": {
-        "backgroundColor": "#0b0f14",
-        "barStyle": "light-content"
-      },
-      "statusBar": {
-        "backgroundColor": "#0b0f14",
-        "barStyle": "light-content",
-        "translucent": false
-      }
+      "backgroundColor": "#0b0f14"
     },
     "web": {
       "favicon": "./assets/favicon.png"

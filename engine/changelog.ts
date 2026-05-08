@@ -17,6 +17,18 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.4.22',
+    dateISO: '2026-05-08',
+    kind: 'fix',
+    title: 'Production-build blockers — expo-constants version + invalid app.json fields',
+    items: [
+      'expo-constants pinned to ~18.0.13 (the SDK 54 bundled version). v0.4.16 had wrongly bumped it to ^55.0.16 — that release stream doesn\'t exist for SDK 54, so node_modules ended up with mixed versions (18.0.13 hoisted under expo, expo-asset, expo-notifications + 55.0.16 at the root). The Kotlin compiler fell over trying to resolve the right symbol set. Build #1 (d15cf356) errored at `:expo-constants:compileReleaseKotlin`.',
+      'Removed android.navigationBar and android.statusBar from app.json — Expo SDK 54 schema rejects these as additional properties. They were added in v0.4.7 navigation-flicker fix but were never actually being applied (the schema validator silently dropped them). The dark navigation/status bar is already handled via the StatusBar component in App.tsx + the app-level userInterfaceStyle: "dark" + the screen contentStyle. Visual behaviour unchanged.',
+      'expo-doctor now reports 17/17 checks passing (was 14/17 in build #1).',
+      'Reproducer: `npx expo-doctor` runs in EAS\'s setup phase before gradle. Always run it locally before triggering a production build — it catches both class of issues above.',
+    ],
+  },
+  {
     version: '0.4.21',
     dateISO: '2026-05-08',
     kind: 'fix',
