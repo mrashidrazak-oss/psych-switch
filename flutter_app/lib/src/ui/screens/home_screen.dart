@@ -89,6 +89,11 @@ class _HomeBody extends StatelessWidget {
             icon: Icons.history,
             onPressed: () => context.goNamed(Routes.history),
           ),
+          const SizedBox(height: 24),
+
+          // Tools row — Glossary · Settings · About.
+          const _ToolsRow(),
+
           const Spacer(),
           const _PhaseFooter(),
         ],
@@ -210,6 +215,87 @@ class _SecondaryButton extends StatelessWidget {
           side: const BorderSide(color: AppColors.border),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ToolsRow extends StatelessWidget {
+  const _ToolsRow();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: _ToolChip(
+            label: 'Glossary',
+            icon: Icons.menu_book_outlined,
+            onPressed: () => context.goNamed(Routes.glossary),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: _ToolChip(
+            label: 'Settings',
+            icon: Icons.settings_outlined,
+            onPressed: () => context.goNamed(Routes.settings),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: _ToolChip(
+            label: 'About',
+            icon: Icons.info_outline,
+            onPressed: () => context.goNamed(Routes.about),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ToolChip extends StatelessWidget {
+  const _ToolChip({
+    required this.label,
+    required this.icon,
+    required this.onPressed,
+  });
+
+  final String label;
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.surface,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(12),
+        child: Ink(
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.border),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Icon(icon, size: 20, color: AppColors.text),
+              const SizedBox(height: 6),
+              Text(
+                label,
+                style: const TextStyle(
+                  color: AppColors.text,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
         ),
       ),
