@@ -54,6 +54,11 @@ jobs:
       - name: Run codegen (freezed + json_serializable)
         run: dart run build_runner build --delete-conflicting-outputs
 
+      - name: Bundle clinical content
+        # Regenerates assets/content_bundle.json from /content/ —
+        # keeps the bundle re-derivable from source on every CI run.
+        run: dart run tool/bundle_content.dart
+
       - name: Analyze
         run: flutter analyze
 
