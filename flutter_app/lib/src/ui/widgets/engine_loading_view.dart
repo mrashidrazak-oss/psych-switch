@@ -8,21 +8,84 @@ import 'package:flutter/material.dart';
 
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 
-/// Spinner shown while `assets/content_bundle.json` is decoding into a
-/// `SwitchingEngine`. Cold-start typically resolves in <100 ms on a
-/// modern device, so users almost never see this.
+/// Splash shown while `assets/content_bundle.json` is decoding into a
+/// `SwitchingEngine`. Cold-start typically resolves in <100 ms, but
+/// when it does flash we want users to see a deliberate brand surface
+/// rather than a bare spinner.
 class EngineLoadingView extends StatelessWidget {
   const EngineLoadingView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: SizedBox(
-        width: 28,
-        height: 28,
-        child: CircularProgressIndicator(
-          strokeWidth: 2,
-          color: AppColors.muted,
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          // Brand mark — faint, monogram-style. Animated entrance so it
+          // never appears jarring on quick loads.
+          TweenAnimationBuilder<double>(
+            tween: Tween<double>(begin: 0, end: 1),
+            duration: const Duration(milliseconds: 360),
+            curve: Curves.easeOutCubic,
+            builder: (_, t, __) => Opacity(
+              opacity: t,
+              child: Transform.translate(
+                offset: Offset(0, (1 - t) * 8),
+                child: const _BrandMark(),
+              ),
+            ),
+          ),
+          const Gap.v(AppSpace.lg),
+          const Text('PsychSwitch', style: AppTextSizes.subtitle),
+          const Gap.v(AppSpace.xs),
+          const Text(
+            'Loading clinical registry…',
+            style: AppTextSizes.caption,
+          ),
+          const Gap.v(AppSpace.xl),
+          const SizedBox(
+            width: 22,
+            height: 22,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BrandMark extends StatelessWidget {
+  const _BrandMark();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 56,
+      height: 56,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: <Color>[AppColors.from, AppColors.to],
+        ),
+        borderRadius: BorderRadius.circular(AppRadii.lg),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: AppColors.accent.withValues(alpha: 0.25),
+            blurRadius: 16,
+            spreadRadius: -2,
+          ),
+        ],
+      ),
+      child: const Center(
+        child: Text(
+          'PS',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 22,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.5,
+          ),
         ),
       ),
     );
@@ -40,34 +103,34 @@ class EngineErrorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(AppSpace.xl),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Icon(
-              Icons.error_outline,
-              color: AppColors.danger,
-              size: 40,
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: AppColors.danger.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.error_outline,
+                color: AppColors.danger,
+                size: 28,
+              ),
             ),
-            const SizedBox(height: 16),
+            const Gap.v(AppSpace.lg),
             const Text(
               'Could not load clinical content',
-              style: TextStyle(
-                color: AppColors.text,
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-              ),
+              style: AppTextSizes.subtitle,
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 8),
+            const Gap.v(AppSpace.sm),
             Text(
               '$error',
-              style: const TextStyle(
-                color: AppColors.muted,
-                fontSize: 13,
-                height: 1.5,
-              ),
+              style: AppTextSizes.caption.copyWith(height: 1.5),
               textAlign: TextAlign.center,
             ),
           ],

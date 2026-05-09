@@ -58,47 +58,42 @@ class _EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.all(AppSpace.xxl),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Icon(
-              Icons.bookmark_border,
-              color: AppColors.muted,
-              size: 40,
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                border: Border.all(color: AppColors.border),
+                borderRadius: BorderRadius.circular(AppRadii.xl),
+              ),
+              child: const Icon(
+                Icons.bookmark_outline_rounded,
+                color: AppColors.muted,
+                size: 28,
+              ),
             ),
-            const SizedBox(height: 16),
+            const Gap.v(AppSpace.lg),
             const Text(
               'No saved cases yet',
-              style: TextStyle(
-                color: AppColors.text,
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-              ),
+              style: AppTextSizes.subtitle,
             ),
-            const SizedBox(height: 8),
-            const Text(
-              'Save a case from the Result screen to see it here.',
-              style: TextStyle(
-                color: AppColors.muted,
-                fontSize: 13,
-                height: 1.5,
-              ),
+            const Gap.v(AppSpace.sm),
+            Text(
+              'Save a case from the Result screen to see it here.\n'
+              "It's the easiest way to keep monitoring on track.",
+              style: AppTextSizes.caption.copyWith(height: 1.5),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
-            FilledButton(
+            const Gap.v(AppSpace.lg),
+            FilledButton.icon(
               onPressed: () => context.goNamed(Routes.switch_),
-              style: FilledButton.styleFrom(
-                backgroundColor: AppColors.accent,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-              ),
-              child: const Text('Start a switch'),
+              icon: const Icon(Icons.arrow_forward_rounded, size: 18),
+              label: const Text('Start a switch'),
             ),
           ],
         ),
