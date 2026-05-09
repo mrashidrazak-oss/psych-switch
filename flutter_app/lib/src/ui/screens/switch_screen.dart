@@ -17,10 +17,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:psychswitch/src/providers/engine_provider.dart';
+import 'package:psychswitch/src/providers/patient_context_provider.dart';
 import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/screens/result_screen.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
+import 'package:psychswitch/src/ui/widgets/patient_context_sheet.dart';
 import 'package:psychswitch_engine/smart_picker.dart';
 import 'package:psychswitch_engine/switching_engine.dart';
 import 'package:psychswitch_engine/types/drug.dart';
@@ -51,16 +53,16 @@ class SwitchScreen extends ConsumerWidget {
   }
 }
 
-class _SwitchForm extends StatefulWidget {
+class _SwitchForm extends ConsumerStatefulWidget {
   const _SwitchForm({required this.engine});
 
   final SwitchingEngine engine;
 
   @override
-  State<_SwitchForm> createState() => _SwitchFormState();
+  ConsumerState<_SwitchForm> createState() => _SwitchFormState();
 }
 
-class _SwitchFormState extends State<_SwitchForm> {
+class _SwitchFormState extends ConsumerState<_SwitchForm> {
   Drug? _from;
   Drug? _to;
   final _fromDoseCtl = TextEditingController();
@@ -97,12 +99,30 @@ class _SwitchFormState extends State<_SwitchForm> {
     );
   }
 
+  Future<void> _openPatientContextSheet() async {
+    final current = ref.read(patientContextProvider);
+    final next = await showPatientContextSheet(context, initial: current);
+    if (next == null) return;
+    ref.read(patientContextProvider.notifier).state = next;
+    setState(() {}); // force header summary rebuild
+  }
+
   @override
   Widget build(BuildContext context) {
     final visibleDrugs = widget.engine.listDrugs();
+    final ctx = ref.watch(patientContextProvider);
+    final ctxSummary = summarisePatientContext(ctx);
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       children: <Widget>[
+        const _StepLabel(text: 'PATIENT CONTEXT'),
+        const SizedBox(height: 8),
+        _PatientContextTile(
+          summary: ctxSummary,
+          onTap: _openPatientContextSheet,
+        ),
+        const SizedBox(height: 32),
+
         const _StepLabel(text: 'FROM DRUG'),
         const SizedBox(height: 8),
         _DrugPickerField(
@@ -448,6 +468,59 @@ class _TierTag extends StatelessWidget {
           fontSize: 10,
           fontWeight: FontWeight.w600,
           letterSpacing: 0.3,
+        ),
+      ),
+    );
+  }
+}
+
+class _PatientContextTile extends StatelessWidget {
+  const _PatientContextTile({required this.summary, required this.onTap});
+
+  final String summary;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasContext = summary.isNotEmpty;
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          border: Border.all(color: AppColors.border),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: <Widget>[
+            Icon(
+              hasContext ? Icons.person : Icons.person_outline,
+              size: 18,
+              color: hasContext ? AppColors.accent : AppColors.muted,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                hasContext
+                    ? summary
+                    : 'Tap to add age, sex, organ function, comorbidities…',
+                style: TextStyle(
+                  color: hasContext ? AppColors.text : AppColors.muted,
+                  fontSize: 13,
+                  fontWeight:
+                      hasContext ? FontWeight.w500 : FontWeight.w400,
+                  height: 1.4,
+                ),
+              ),
+            ),
+            const Icon(
+              Icons.tune,
+              color: AppColors.muted,
+              size: 18,
+            ),
+          ],
         ),
       ),
     );

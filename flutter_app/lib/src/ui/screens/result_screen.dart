@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:psychswitch/src/providers/engine_provider.dart';
+import 'package:psychswitch/src/providers/patient_context_provider.dart';
 import 'package:psychswitch/src/providers/saved_cases_provider.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
@@ -198,7 +199,7 @@ class _MissingArgs extends StatelessWidget {
   }
 }
 
-class _ResultBody extends StatelessWidget {
+class _ResultBody extends ConsumerWidget {
   const _ResultBody({
     required this.plan,
     required this.engine,
@@ -213,7 +214,15 @@ class _ResultBody extends StatelessWidget {
       engine.getDrug(id)?.genericName ?? id;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ctx = ref.watch(patientContextProvider);
+    // Pull warnings for both ends of the switch — the from-drug warning
+    // matters because the patient is still on it during cross-titration,
+    // and the to-drug warning matters because they're starting it.
+    final ctxWarnings = <ContextWarning>[
+      ...warningsForDrug(ctx, input.fromDrugId),
+      ...warningsForDrug(ctx, input.toDrugId),
+    ];
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       children: <Widget>[
@@ -226,26 +235,35 @@ class _ResultBody extends StatelessWidget {
         const SizedBox(height: 16),
         _StatusPill(plan: plan),
         const SizedBox(height: 24),
-        ..._planContent(plan),
+        ..._planContent(plan, ctx, ctxWarnings),
       ],
     );
   }
 
-  List<Widget> _planContent(SwitchPlan plan) {
+  List<Widget> _planContent(
+    SwitchPlan plan,
+    PatientContext ctx,
+    List<ContextWarning> ctxWarnings,
+  ) {
     return switch (plan) {
       final SwitchPlanOk ok =>
         <Widget>[
           // PsychSwitch Score ring — composite 0-100 over evidence,
           // AE alignment, context safety, DDI safety, dose fidelity.
-          // Phase 5A wires evidence + dose-fidelity inputs; patient
-          // context lands in 5B (no warnings yet so contextSafety = 0).
+          // Patient-context warnings feed in via 7B; DDI hits + AE
+          // filter still TODO from earlier phases.
           if (engine.getDrug(input.toDrugId) case final toDrug?)
             _ScoreRingCard(
               plan: ok,
               toDrug: toDrug,
               dosesMatchReference: ok.dosesMatchReference,
+              contextWarnings: ctxWarnings,
             ),
           const SizedBox(height: 16),
+          if (ctxWarnings.isNotEmpty) ...<Widget>[
+            _ContextWarningsCard(warnings: ctxWarnings),
+            const SizedBox(height: 16),
+          ],
           if (!ok.dosesMatchReference) ...<Widget>[
             const _ReferenceDosesBanner(),
             const SizedBox(height: 16),
@@ -259,6 +277,7 @@ class _ResultBody extends StatelessWidget {
           _MonitoringPlanCard(
             fromDrugId: input.fromDrugId,
             toDrugId: input.toDrugId,
+            patientContext: ctx,
           ),
           const SizedBox(height: 16),
           _CitationsCard(citations: ok.citations),
@@ -563,6 +582,72 @@ class _ScheduleRow extends StatelessWidget {
   }
 }
 
+class _ContextWarningsCard extends StatelessWidget {
+  const _ContextWarningsCard({required this.warnings});
+
+  final List<ContextWarning> warnings;
+
+  Color _toneFor(WarningSeverity s) => switch (s) {
+        WarningSeverity.info => AppColors.accent,
+        WarningSeverity.warning => AppColors.warning,
+        WarningSeverity.danger => AppColors.danger,
+      };
+
+  IconData _iconFor(WarningSeverity s) => switch (s) {
+        WarningSeverity.info => Icons.info_outline,
+        WarningSeverity.warning => Icons.warning_amber_outlined,
+        WarningSeverity.danger => Icons.error_outline,
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    return _Card(
+      title: 'Patient-context warnings',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: warnings.map((w) {
+          final tone = _toneFor(w.severity);
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Icon(_iconFor(w.severity), size: 16, color: tone),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      if (w.drugId != null)
+                        Text(
+                          w.drugId!.toUpperCase(),
+                          style: TextStyle(
+                            color: tone,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.3,
+                          ),
+                        ),
+                      Text(
+                        w.message,
+                        style: const TextStyle(
+                          color: AppColors.text,
+                          fontSize: 12,
+                          height: 1.45,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
 class _SafetyFlagsCard extends StatelessWidget {
   const _SafetyFlagsCard({required this.flags});
 
@@ -830,20 +915,21 @@ class _ScoreRingCard extends StatelessWidget {
     required this.plan,
     required this.toDrug,
     required this.dosesMatchReference,
+    required this.contextWarnings,
   });
 
   final SwitchPlanOk plan;
   final Drug toDrug;
   final bool dosesMatchReference;
+  final List<ContextWarning> contextWarnings;
 
   @override
   Widget build(BuildContext context) {
     final grade = gradeCitations(plan.citations);
-    // Phase 5A: scaffold the score with the inputs we have. Patient
-    // context (5B), DDI hits (5C), and AE filter (5D) get plugged in
-    // as those features land. Dose fidelity is approximate — true
-    // when input doses match the rule's reference, otherwise treated
-    // as mild adaptation.
+    // Phase 7B feeds patient-context warnings; DDI hits + AE filter are
+    // still scaffolded empty until those features land. Dose fidelity is
+    // approximate — true when input doses match the rule's reference,
+    // otherwise treated as mild adaptation.
     final scaleResult = ScaleResult(
       schedule: plan.schedule,
       applied: const ScaleApplied(
@@ -860,7 +946,7 @@ class _ScoreRingCard extends StatelessWidget {
         toDrug: toDrug,
         scaleResult: scaleResult,
         ddiHits: const <DdiHit>[],
-        contextWarnings: const <ContextWarning>[],
+        contextWarnings: contextWarnings,
         evidenceGrade: grade,
       ),
     );
@@ -905,10 +991,12 @@ class _MonitoringPlanCard extends StatelessWidget {
   const _MonitoringPlanCard({
     required this.fromDrugId,
     required this.toDrugId,
+    required this.patientContext,
   });
 
   final String fromDrugId;
   final String toDrugId;
+  final PatientContext patientContext;
 
   Color _categoryColor(MonitoringCategory c) {
     switch (c) {
@@ -930,6 +1018,7 @@ class _MonitoringPlanCard extends StatelessWidget {
     final plan = generateMonitoringPlan(
       toDrugId: toDrugId,
       fromDrugId: fromDrugId,
+      context: patientContext,
     );
     if (plan.entries.isEmpty) {
       return const SizedBox.shrink();
