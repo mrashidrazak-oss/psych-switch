@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!--
+    PsychSwitch brand mark — v0.4.20.
+
+    Concept: two crossing taper curves. The blue curve descends from full
+    dose at upper-left to zero at lower-right (the from-drug coming off);
+    the green curve ascends from zero at lower-left to full dose at upper-
+    right (the to-drug coming on). They cross in the centre — the literal
+    visual signature of every cross-titration the app produces.
+
+    The four endpoint dots are dose-markers (terminal beads on the lines),
+    matching how the schedule cards render dose changes.
+
+    Colours pulled directly from tailwind.config.js — `from` (#60a5fa) and
+    `to` (#34d399) are already the app-wide identity colours for the two
+    drugs in any switch. The brand mark IS the product semantic.
+
+    Design constraints:
+      • Reads at 24px (favicon size) — the X-cross silhouette holds.
+      • Survives Android adaptive masking — all critical content is within
+        the 66% safe zone (the four dose-dots sit at ~22% inset from the
+        edges; the crossover is dead-centre).
+      • No gradients, no decorative ornament. Same minimalism as the rest
+        of the app's surface.
+
+    Rasterise (see docs/ASSET_PIPELINE.md):
+      rsvg-convert -w 1024 brand-mark.svg > icon.png
+      rsvg-convert -w 1024 brand-mark.svg > adaptive-icon.png
+      rsvg-convert -w  192 brand-mark.svg > favicon.png
+  -->
+
+  <!-- Tile background — same #0b0f14 as the app -->
+  <rect width="1024" height="1024" rx="224" fill="#0b0f14"/>
+
+  <!-- From-drug taper: blue curve, top-left → bottom-right.
+       Two cubic beziers meeting at the exact centre (512, 512). -->
+  <path d="M 232 296
+           C 392 296, 392 512, 512 512
+           C 632 512, 632 728, 792 728"
+        fill="none"
+        stroke="#60a5fa"
+        stroke-width="48"
+        stroke-linecap="round"/>
+
+  <!-- To-drug taper: green curve, bottom-left → top-right.
+       Drawn after blue so green wins the centre overlap (the destination
+       is the future state — visual precedence matches semantic intent). -->
+  <path d="M 232 728
+           C 392 728, 392 512, 512 512
+           C 632 512, 632 296, 792 296"
+        fill="none"
+        stroke="#34d399"
+        stroke-width="48"
+        stroke-linecap="round"/>
+
+  <!-- Endpoint dose-markers — circular terminal beads in matching colours. -->
+  <circle cx="232" cy="296" r="38" fill="#60a5fa"/>
+  <circle cx="792" cy="728" r="38" fill="#60a5fa"/>
+  <circle cx="232" cy="728" r="38" fill="#34d399"/>
+  <circle cx="792" cy="296" r="38" fill="#34d399"/>
+</svg>

@@ -1,0 +1,30 @@
+# PsychSwitch Flutter — strict analysis config.
+#
+# Uses very_good_analysis as the base. Enforces strict null safety,
+# bans dynamic, requires explicit casts. Closer in spirit to the
+# strict TS config in the React Native repo.
+
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "lib/l10n/generated/**"
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+
+linter:
+  rules:
+    # Enforce trailing commas — keeps diffs clean.
+    require_trailing_commas: true
+
+    # Allow public_member_api_docs to be off — this is an app, not a
+    # library. Internal docs go in /doc/ and code comments.
+    public_member_api_docs: false
+
+    # pubspec.yaml is grouped by category (state, routing, storage,
+    # etc.) which the lint disagrees with. Grouping is intentional.
+    sort_pub_dependencies: false

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!--
+    PsychSwitch adaptive-icon foreground — Android-specific.
+
+    Why this exists separately from brand-mark.svg:
+      Android adaptive icons composite a transparent FOREGROUND PNG over
+      a backgroundColor declared in app.json. The system applies its own
+      mask (circle, squircle, teardrop, …) at runtime, so the foreground
+      must:
+        1. Have a transparent background (no rounded tile rectangle).
+        2. Keep all critical content within the 66% safe zone (the
+           system can crop up to 17% off each edge depending on the
+           launcher).
+
+    This file matches brand-mark.svg's geometry but drops the tile and
+    pulls the curve endpoints in further so the dose-dots stay inside
+    the safe zone after launcher masking.
+
+    Rasterise:
+      rsvg-convert -w 1024 brand-mark-adaptive.svg > adaptive-icon.png
+  -->
+
+  <!-- Critical content sits within the 66% safe zone (170-854 px). -->
+
+  <!-- From-drug taper: blue, top-left → bottom-right -->
+  <path d="M 296 360
+           C 416 360, 416 512, 512 512
+           C 608 512, 608 664, 728 664"
+        fill="none"
+        stroke="#60a5fa"
+        stroke-width="56"
+        stroke-linecap="round"/>
+
+  <!-- To-drug taper: green, bottom-left → top-right (drawn after blue) -->
+  <path d="M 296 664
+           C 416 664, 416 512, 512 512
+           C 608 512, 608 360, 728 360"
+        fill="none"
+        stroke="#34d399"
+        stroke-width="56"
+        stroke-linecap="round"/>
+
+  <!-- Dose markers — slightly larger to compensate for thicker strokes -->
+  <circle cx="296" cy="360" r="44" fill="#60a5fa"/>
+  <circle cx="728" cy="664" r="44" fill="#60a5fa"/>
+  <circle cx="296" cy="664" r="44" fill="#34d399"/>
+  <circle cx="728" cy="360" r="44" fill="#34d399"/>
+</svg>
