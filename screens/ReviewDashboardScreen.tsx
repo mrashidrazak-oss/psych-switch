@@ -111,7 +111,7 @@ export function ReviewDashboardScreen() {
   // Export sign-offs as formatted text
   const exportSignoffs = async () => {
     const lines: string[] = [
-      'PsychSwitch ASEAN — Sign-off export',
+      'PsychSwitch — Sign-off export',
       `Generated: ${new Date().toISOString()}`,
       '═══════════════════════════════════════',
       '',

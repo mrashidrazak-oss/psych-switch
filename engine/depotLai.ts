@@ -4,7 +4,7 @@
 //   - Abilify Maintena: Otsuka America Pharmaceutical, Inc.
 //
 // Doses for Invega Sustenna are expressed in mg equivalents (mg eq) of
-// paliperidone — the convention used in Malaysian / ASEAN labelling.
+// paliperidone — the convention used in Malaysian labelling.
 // The FDA PI uses mg of paliperidone palmitate (the prodrug ester);
 // conversion: multiply mg eq × 1.56 to get mg PP.
 //   25 mg eq = 39 mg PP

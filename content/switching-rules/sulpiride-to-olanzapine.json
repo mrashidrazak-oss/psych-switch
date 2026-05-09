@@ -3,7 +3,7 @@
   "fromDrugId": "sulpiride",
   "toDrugId": "olanzapine",
   "strategy": "cross-taper",
-  "rationale": "Sulpiride (selective D2/D3 + some D4; minimal anticholinergic activity; renally excreted; high prolactin) to olanzapine (multi-receptor SGA; high metabolic risk; strong H1/M1 activity). Sulpiride is sometimes used in ASEAN region for negative symptoms (low doses 200–400 mg) or as cost-effective antipsychotic. Common reason for switch: insufficient efficacy, metabolic acceptance of olanzapine for better tolerability of EPS, or formulary. Sulpiride has minimal anticholinergic activity, so cross-taper can proceed at a standard pace without significant cholinergic rebound. Metabolic monitoring is essential as metabolic risk increases significantly on olanzapine. PENDING_CLINICAL_REVIEW.",
+  "rationale": "Sulpiride (selective D2/D3 + some D4; minimal anticholinergic activity; renally excreted; high prolactin) to olanzapine (multi-receptor SGA; high metabolic risk; strong H1/M1 activity). Sulpiride is sometimes used in Malaysia for negative symptoms (low doses 200–400 mg) or as cost-effective antipsychotic. Common reason for switch: insufficient efficacy, metabolic acceptance of olanzapine for better tolerability of EPS, or formulary. Sulpiride has minimal anticholinergic activity, so cross-taper can proceed at a standard pace without significant cholinergic rebound. Metabolic monitoring is essential as metabolic risk increases significantly on olanzapine. PENDING_CLINICAL_REVIEW.",
   "durationDays": 28,
   "schedule": [
     {

@@ -99,7 +99,7 @@ DNS is pointed.
 
 1. Play Console → **All apps** → **Create app**.
 2. Settings:
-   - App name: `PsychSwitch ASEAN`
+   - App name: `PsychSwitch`
    - Default language: English (US)
    - App or game: **App**
    - Free or paid: **Free**

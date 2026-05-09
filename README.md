@@ -1,4 +1,4 @@
-# PsychSwitch ASEAN
+# PsychSwitch
 
 > Reviewed cross-titration schedules, depot protocols, and clozapine
 > monitoring — built for the bedside.

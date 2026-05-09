@@ -1,6 +1,6 @@
 // Invega Sustenna (paliperidone palmitate PP1M) initiation and dosing guide.
 // Source: FDA Prescribing Information, Janssen Pharmaceuticals, DailyMed Feb 2025.
-// Doses in mg equivalents (mg eq) of paliperidone — standard ASEAN/Malaysian convention.
+// Doses in mg equivalents (mg eq) of paliperidone — standard Malaysian convention.
 import { useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';

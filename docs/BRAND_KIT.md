@@ -160,7 +160,7 @@ NativeWind / Tailwind defaults. Common tokens:
 ## 8. Naming
 
 - **PsychSwitch** — one word, capital P + S. Never "Psych Switch" or "psychswitch" except in URLs and identifiers.
-- **PsychSwitch ASEAN edition** — only in the app name and store listing. In conversation just "PsychSwitch".
+- **PsychSwitch edition** — only in the app name and store listing. In conversation just "PsychSwitch".
 - **Rules** are referenced by id (`olanzapine-to-aripiprazole`) in technical content and as `From → To` (`Olanzapine → Aripiprazole`) in display.
 - **Drug ids** are kebab-case lowercase, matching the JSON file names.
 - **Citation keys** are snake_case lowercase with version markers (e.g. `maudsley15_ch3_p369_table_3_7`).

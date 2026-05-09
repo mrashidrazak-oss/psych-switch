@@ -1,7 +1,7 @@
 # Clinical content workflow
 
 This document explains how to add or update the clinical knowledge in
-PsychSwitch ASEAN. The maintainer (Rashid Razak) is also the clinical
+PsychSwitch. The maintainer (Rashid Razak) is also the clinical
 author for v0.1. No coding background is assumed in this document.
 
 ## What "clinical content" means here

@@ -77,7 +77,7 @@ Rashid
 ## Distribution
 
 ### iOS — TestFlight
-1. App Store Connect → My Apps → PsychSwitch ASEAN → TestFlight tab
+1. App Store Connect → My Apps → PsychSwitch → TestFlight tab
 2. Add testers individually (no public link — keep this closed)
 3. Upload a build via `eas build --profile preview --platform ios`
 4. Submit for TestFlight beta review (Apple takes 24–48h first time)

@@ -54,7 +54,7 @@ export function DisclaimerModal({
                 PsychSwitch
               </Text>
               <Text className="text-muted text-eyebrow uppercase tracking-widest">
-                ASEAN edition
+                Reviewed cross-titration
               </Text>
             </View>
           </View>

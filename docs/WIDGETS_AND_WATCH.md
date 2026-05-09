@@ -37,9 +37,9 @@ project. Expo SDK 54 supports this via the `expo-build-properties` +
 2. Add the target via [@bacons/apple-targets](https://github.com/EvanBacon/expo-apple-targets) or manual Xcode setup. Create `targets/PsychSwitchWidget/`:
    - `Widget.swift` — WidgetKit timeline provider
    - `Bundle.swift` — `@main` entry
-   - `Info.plist` — bundle identifier `com.psychswitch.asean.widget`
+   - `Info.plist` — bundle identifier `com.psychswitch.app.widget`
 3. Share data with the main app via App Groups:
-   - Create `group.com.psychswitch.asean` in Apple developer portal
+   - Create `group.com.psychswitch.app` in Apple developer portal
    - Main app writes `today-pulse.json` to the shared container
      whenever cases change
    - Widget reads from the same container

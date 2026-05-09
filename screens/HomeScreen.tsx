@@ -92,7 +92,7 @@ export function HomeScreen({ navigation }: Props) {
               PsychSwitch
             </Text>
             <Text className="text-muted text-xs uppercase tracking-widest">
-              ASEAN edition
+              Reviewed cross-titration
             </Text>
           </View>
         </View>

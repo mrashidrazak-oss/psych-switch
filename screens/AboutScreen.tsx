@@ -83,8 +83,8 @@ export function AboutScreen() {
       </Text>
       <Text className="text-muted text-base mb-6 leading-6">
         Clinical decision-support for cross-titration of psychotropic
-        medications. Built for medical officers and psychiatrists in Malaysia
-        and the ASEAN region.
+        medications. Built for medical officers and psychiatrists in
+        Malaysia.
       </Text>
 
       {/* ── Clinical author ─────────────────────────────────────────── */}

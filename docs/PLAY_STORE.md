@@ -24,7 +24,7 @@ on the Play Store internal track". Pair with `docs/STORE_LISTING.md`
 ### 1. Create the app in Play Console
 
 - Open Play Console → **All apps** → **Create app**.
-- App name: `PsychSwitch ASEAN`.
+- App name: `PsychSwitch`.
 - Default language: English (US).
 - App or game: App.
 - Free or paid: Free.
@@ -32,7 +32,7 @@ on the Play Store internal track". Pair with `docs/STORE_LISTING.md`
 - Click **Create app**.
 
 The package name is set when you upload your first build — make sure
-it matches `app.json`'s `android.package` (`com.psychswitch.asean`).
+it matches `app.json`'s `android.package` (`com.psychswitch.app`).
 
 ### 2. Generate a Play Console service account
 

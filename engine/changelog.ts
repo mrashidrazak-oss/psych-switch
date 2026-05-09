@@ -17,6 +17,22 @@ export interface ChangelogEntry {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    version: '0.4.23',
+    dateISO: '2026-05-09',
+    kind: 'breaking',
+    title: 'Renamed: PsychSwitch ASEAN → PsychSwitch (Malaysia-only scope)',
+    items: [
+      'App display name: "PsychSwitch ASEAN" → "PsychSwitch". The clinical scope is now explicitly Malaysian — Malaysian formulary cost data, MoH CPG citations, halal/Ramadan context, MY brand names. Regional descriptor removed from the name; Malaysia descriptor moves to taglines, store listing, and About copy.',
+      'Bundle ID + Android package: com.psychswitch.asean → com.psychswitch.app. THIS IS BREAKING — the v0.4.22 AAB at https://expo.dev/artifacts/eas/7FkWzoNMQimEVqTbhheZX1.aab has the OLD package ID and must NOT be uploaded to Play Console. A v0.4.23 build with the new package ID supersedes it.',
+      'Wordmark + feature-graphic SVGs updated: "ASEAN EDITION" replaced with "FOR MALAYSIA" in the feature graphic; the "ASEAN" subtitle removed entirely from the splash wordmark.',
+      'PNGs regenerated: splash.png (1284×2778), feature-graphic.png (1024×500), docs/landing/og-image.png (1200×630).',
+      'In-app strings: HomeScreen subtitle "ASEAN edition" → "Reviewed cross-titration"; DisclaimerModal same. AboutScreen body: "Malaysia and the ASEAN region" → "Malaysia". ReviewDashboard sign-off export header → "PsychSwitch — Sign-off export".',
+      'Docs: STORE_LISTING.md, BRAND_KIT.md, BETA_PROGRAM.md, WIDGETS_AND_WATCH.md, PLAY_STORE.md, PLAY_STORE_TODAY.md, README.md, LICENSE — all "PsychSwitch ASEAN" / "ASEAN edition" references swept to "PsychSwitch" / "Malaysia".',
+      'Landing page: docs/landing/index.html title strip dropped the small "ASEAN" tag.',
+      'Why now: bundle IDs are immutable once an app is submitted to Play Console. We have NOT submitted yet — this is the last clean window to rename. Past this point, "ASEAN" would be locked in as the package suffix forever.',
+    ],
+  },
+  {
     version: '0.4.22',
     dateISO: '2026-05-08',
     kind: 'fix',

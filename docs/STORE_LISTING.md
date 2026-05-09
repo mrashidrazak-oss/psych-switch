@@ -8,7 +8,7 @@ written for the medical-professional audience the app targets.
 
 ## App name (30 chars iOS / 50 chars Android)
 
-**`PsychSwitch ASEAN`**  *(17 chars)*
+**`PsychSwitch`**  *(17 chars)*
 
 ---
 

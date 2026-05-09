@@ -50,18 +50,10 @@
   </text>
 
   <!-- Subtitle / regional descriptor -->
+  <!-- Tagline (replaces the v0.4.x ASEAN regional descriptor — see
+       v0.4.23 changelog. Audience scoped to Malaysia; the regional
+       descriptor moved to the Play Store metadata, not the wordmark.) -->
   <text x="512" y="930"
-        text-anchor="middle"
-        font-family="Helvetica Neue, Arial, sans-serif"
-        font-size="36"
-        font-weight="600"
-        fill="#8b949e"
-        letter-spacing="14">
-    ASEAN
-  </text>
-
-  <!-- Tagline (optional in some lockups — comment out if not wanted) -->
-  <text x="512" y="1040"
         text-anchor="middle"
         font-family="Helvetica Neue, Arial, sans-serif"
         font-size="32"

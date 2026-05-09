@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "PsychSwitch ASEAN",
+    "name": "PsychSwitch",
     "slug": "psych-switch",
-    "version": "0.4.22",
+    "version": "0.4.23",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -16,7 +16,7 @@
     "primaryColor": "#3b82f6",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.psychswitch.asean",
+      "bundleIdentifier": "com.psychswitch.app",
       "buildNumber": "1",
       "backgroundColor": "#0b0f14",
       "infoPlist": {
@@ -29,7 +29,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0b0f14"
       },
-      "package": "com.psychswitch.asean",
+      "package": "com.psychswitch.app",
       "backgroundColor": "#0b0f14"
     },
     "web": {
