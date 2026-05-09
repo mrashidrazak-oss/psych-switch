@@ -25,3 +25,8 @@ linter:
     # Freezed's union-style required-after-optional ordering is fine
     # when annotations differ.
     always_put_required_named_parameters_first: false
+    # Engine data files contain long bibliographic references and
+    # paraphrased clinical text that don't naturally wrap at 80 cols.
+    # Wrapping them programmatically would split words mid-sentence
+    # and obscure diffs.
+    lines_longer_than_80_chars: false
