@@ -1,21 +1,27 @@
 // PsychSwitch — Flutter migration entry point.
 //
 // Phase 1 placeholder. The real app structure (theme, routing,
-// Riverpod scope, error boundary, Sentry init) lands in subsequent
-// phases. For now this is just enough to verify the build works
-// and the brand mark renders.
+// Riverpod scope, error boundary) lands in subsequent phases. For
+// now this is just enough to:
+//   • verify the build works
+//   • initialise Sentry when SENTRY_DSN is provided at build time
+//   • render a placeholder screen using the locked design tokens
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:psychswitch/src/observability/sentry_init.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 
-void main() {
-  runApp(
-    const ProviderScope(
-      child: PsychSwitchApp(),
-    ),
-  );
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initSentry(() async {
+    runApp(
+      const ProviderScope(
+        child: PsychSwitchApp(),
+      ),
+    );
+  });
 }
 
 class PsychSwitchApp extends StatelessWidget {
@@ -99,6 +105,16 @@ class _ComingSoonScreen extends StatelessWidget {
                   ),
                 ),
               ),
+              if (isSentryConfigured) ...[
+                const SizedBox(height: 12),
+                const Text(
+                  'Sentry: configured',
+                  style: TextStyle(
+                    color: AppColors.muted,
+                    fontSize: 10,
+                  ),
+                ),
+              ],
             ],
           ),
         ),

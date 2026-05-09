@@ -1,0 +1,10 @@
+{
+  "name": "fluoxetine 40mg → sertraline 100mg, exercises long-half-life path",
+  "engine": "generateSwitchPlan",
+  "input": {
+    "fromDrugId": "fluoxetine",
+    "fromDoseMg": 40,
+    "toDrugId": "sertraline",
+    "toDoseMg": 100
+  }
+}

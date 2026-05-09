@@ -1,0 +1,10 @@
+{
+  "name": "risperidone 4mg → quetiapine 200mg, off-reference dose ratio",
+  "engine": "generateSwitchPlan",
+  "input": {
+    "fromDrugId": "risperidone",
+    "fromDoseMg": 4,
+    "toDrugId": "quetiapine",
+    "toDoseMg": 200
+  }
+}

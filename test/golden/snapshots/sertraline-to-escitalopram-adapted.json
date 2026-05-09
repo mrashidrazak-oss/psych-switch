@@ -1,0 +1,90 @@
+{
+  "citations": [
+    "maudsley15_ch3_p369_table_3_7",
+    "bap2015_switching_antidepressants"
+  ],
+  "dosesMatchReference": true,
+  "inputDoses": {
+    "fromMg": 100,
+    "toMg": 10
+  },
+  "rule": {
+    "citations": [
+      "maudsley15_ch3_p369_table_3_7",
+      "bap2015_switching_antidepressants"
+    ],
+    "contraindications": [],
+    "doseRatios": {
+      "equivalencyNote": "Approximate clinical equivalency: sertraline 50 mg ≈ escitalopram 10 mg (Maudsley 14th ed.). Equivalency is approximate and should not be used outside this reviewed pair. PENDING_CLINICAL_REVIEW.",
+      "fromCurrentDoseMg": 100,
+      "toTargetDoseMg": 10
+    },
+    "durationDays": 11,
+    "fromDrugId": "sertraline",
+    "id": "sertraline-to-escitalopram",
+    "lastReviewedISO": "2026-05-04",
+    "rationale": "Both drugs are SSRIs with overlapping mechanism. A graded cross-taper over ~11 days minimises both serotonin-syndrome risk on overlap and discontinuation symptoms on the sertraline side. PENDING_CLINICAL_REVIEW.",
+    "reviewedBy": "PENDING - Rashid Razak (clinical author)",
+    "safetyFlags": [
+      "serotonin_syndrome_overlap_low"
+    ],
+    "schedule": [
+      {
+        "day": 1,
+        "fromDoseMg": 100,
+        "notes": "Start escitalopram 5 mg. Halve sertraline to 50 mg from day 4.",
+        "toDoseMg": 5
+      },
+      {
+        "day": 4,
+        "fromDoseMg": 50,
+        "notes": "Continue escitalopram 5 mg. Hold sertraline at 50 mg.",
+        "toDoseMg": 5
+      },
+      {
+        "day": 8,
+        "fromDoseMg": 25,
+        "notes": "Reduce sertraline to 25 mg. Increase escitalopram to 10 mg target.",
+        "toDoseMg": 10
+      },
+      {
+        "day": 11,
+        "fromDoseMg": 0,
+        "notes": "Stop sertraline. Continue escitalopram 10 mg.",
+        "toDoseMg": 10
+      }
+    ],
+    "strategy": "cross-taper",
+    "toDrugId": "escitalopram"
+  },
+  "safetyFlags": [
+    "serotonin_syndrome_overlap_low"
+  ],
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 100,
+      "notes": "Start escitalopram 5 mg. Halve sertraline to 50 mg from day 4.",
+      "toDoseMg": 5
+    },
+    {
+      "day": 4,
+      "fromDoseMg": 50,
+      "notes": "Continue escitalopram 5 mg. Hold sertraline at 50 mg.",
+      "toDoseMg": 5
+    },
+    {
+      "day": 8,
+      "fromDoseMg": 25,
+      "notes": "Reduce sertraline to 25 mg. Increase escitalopram to 10 mg target.",
+      "toDoseMg": 10
+    },
+    {
+      "day": 11,
+      "fromDoseMg": 0,
+      "notes": "Stop sertraline. Continue escitalopram 10 mg.",
+      "toDoseMg": 10
+    }
+  ],
+  "status": "ok"
+}

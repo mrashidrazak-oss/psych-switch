@@ -1,0 +1,10 @@
+{
+  "name": "olanzapine 20mg → aripiprazole 15mg, reference doses",
+  "engine": "generateSwitchPlan",
+  "input": {
+    "fromDrugId": "olanzapine",
+    "fromDoseMg": 20,
+    "toDrugId": "aripiprazole",
+    "toDoseMg": 15
+  }
+}

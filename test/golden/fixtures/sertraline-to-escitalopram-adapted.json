@@ -1,0 +1,10 @@
+{
+  "name": "sertraline 100mg → escitalopram 10mg, mid-range doses",
+  "engine": "generateSwitchPlan",
+  "input": {
+    "fromDrugId": "sertraline",
+    "fromDoseMg": 100,
+    "toDrugId": "escitalopram",
+    "toDoseMg": 10
+  }
+}

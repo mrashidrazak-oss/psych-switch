@@ -1,0 +1,57 @@
+# Flutter verify — runs on every push + PR alongside the existing
+# verify.yml (RN side). Both must be green for any PR.
+#
+# Three checks:
+#   1. flutter analyze            (very_good_analysis lints, strict casts)
+#   2. dart run build_runner build (codegen — freezed + json_serializable)
+#   3. flutter test               (engine type round-trips + future widget/golden tests)
+#
+# When Phase 6 lands the Dart MCP server we'll add a 4th step that
+# runs its smoke tests too.
+
+name: Flutter Verify
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'flutter_app/**'
+      - 'content/**'
+      - '.github/workflows/flutter-verify.yml'
+  pull_request:
+    paths:
+      - 'flutter_app/**'
+      - 'content/**'
+      - '.github/workflows/flutter-verify.yml'
+
+jobs:
+  verify:
+    name: analyze + codegen + tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: flutter_app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.27.x'
+          cache: true
+
+      - name: Install deps
+        run: flutter pub get
+
+      - name: Run codegen (freezed + json_serializable)
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Tests
+        # Use `flutter test` for the whole package — covers engine
+        # round-trips today; widget + integration tests land in
+        # later phases.
+        run: flutter test

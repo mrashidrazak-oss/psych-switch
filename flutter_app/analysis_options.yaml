@@ -1,8 +1,4 @@
 # PsychSwitch Flutter — strict analysis config.
-#
-# Uses very_good_analysis as the base. Enforces strict null safety,
-# bans dynamic, requires explicit casts. Closer in spirit to the
-# strict TS config in the React Native repo.
 
 include: package:very_good_analysis/analysis_options.yaml
 
@@ -15,16 +11,17 @@ analyzer:
     strict-casts: true
     strict-inference: true
     strict-raw-types: true
+  errors:
+    # Freezed's @JsonKey(fromJson:, toJson:) on factory parameters is the
+    # standard pattern; the analyzer flags it as invalid_annotation_target
+    # but the codegen handles it correctly. Suppress the false positive.
+    invalid_annotation_target: ignore
 
 linter:
   rules:
-    # Enforce trailing commas — keeps diffs clean.
     require_trailing_commas: true
-
-    # Allow public_member_api_docs to be off — this is an app, not a
-    # library. Internal docs go in /doc/ and code comments.
     public_member_api_docs: false
-
-    # pubspec.yaml is grouped by category (state, routing, storage,
-    # etc.) which the lint disagrees with. Grouping is intentional.
     sort_pub_dependencies: false
+    # Freezed's union-style required-after-optional ordering is fine
+    # when annotations differ.
+    always_put_required_named_parameters_first: false

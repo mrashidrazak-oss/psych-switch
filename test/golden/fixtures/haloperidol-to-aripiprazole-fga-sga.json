@@ -1,0 +1,10 @@
+{
+  "name": "haloperidol 10mg → aripiprazole 15mg, FGA→SGA",
+  "engine": "generateSwitchPlan",
+  "input": {
+    "fromDrugId": "haloperidol",
+    "fromDoseMg": 10,
+    "toDrugId": "aripiprazole",
+    "toDoseMg": 15
+  }
+}

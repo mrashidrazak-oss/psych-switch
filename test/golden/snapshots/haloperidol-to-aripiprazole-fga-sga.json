@@ -1,0 +1,113 @@
+{
+  "citations": [
+    "maudsley15_schizophrenia_p230_ap_swap_table",
+    "bap2020_psychosis_switching"
+  ],
+  "dosesMatchReference": false,
+  "inputDoses": {
+    "fromMg": 10,
+    "toMg": 15
+  },
+  "rule": {
+    "citations": [
+      "maudsley15_schizophrenia_p230_ap_swap_table",
+      "bap2020_psychosis_switching"
+    ],
+    "contraindications": [],
+    "doseRatios": {
+      "equivalencyNote": "Approximate clinical equivalency: haloperidol 5 mg ≈ aripiprazole 15 mg (Maudsley 15th, AP dose-equivalence table). PENDING_CLINICAL_REVIEW.",
+      "fromCurrentDoseMg": 5,
+      "toTargetDoseMg": 15
+    },
+    "durationDays": 35,
+    "fromDrugId": "haloperidol",
+    "id": "haloperidol-to-aripiprazole",
+    "lastReviewedISO": "2026-05-05",
+    "rationale": "FGA-to-SGA switch with metabolic neutrality as the primary goal. Plateau cross-taper is essential here: aripiprazole is a D2 partial agonist and its activation of a fully antagonised (haloperidol-saturated) D2 receptor pool can precipitate akathisia early in the switch. The plateau phase allows aripiprazole to reach target dose and the D2 receptor pool to begin adapting before haloperidol is withdrawn. Do NOT rush the haloperidol taper. Akathisia is the main risk — counsel the patient to report inner restlessness, and differentiate from psychotic agitation. QTc will improve as high-risk haloperidol is replaced by low-risk aripiprazole. Prolactin will normalise progressively. PENDING_CLINICAL_REVIEW.",
+    "reviewedBy": "PENDING - Rashid Razak (clinical author)",
+    "safetyFlags": [],
+    "schedule": [
+      {
+        "day": 1,
+        "fromDoseMg": 5,
+        "notes": "Start aripiprazole 5 mg in the morning. Continue haloperidol 5 mg. Counsel patient about potential akathisia — advise to report restlessness early.",
+        "toDoseMg": 5
+      },
+      {
+        "day": 7,
+        "fromDoseMg": 5,
+        "notes": "Increase aripiprazole to 10 mg. Hold haloperidol at 5 mg (plateau). Watch for akathisia — more likely in this early co-administration phase.",
+        "toDoseMg": 10
+      },
+      {
+        "day": 14,
+        "fromDoseMg": 5,
+        "notes": "Increase aripiprazole to 15 mg target. Maintain haloperidol plateau for one more week — D2 receptor stabilisation in progress.",
+        "toDoseMg": 15
+      },
+      {
+        "day": 21,
+        "fromDoseMg": 2,
+        "notes": "Begin tapering haloperidol to 2 mg. Aripiprazole at full target. QTc improving. Review anticholinergic agents — EPS driver reducing.",
+        "toDoseMg": 15
+      },
+      {
+        "day": 28,
+        "fromDoseMg": 1,
+        "notes": "Reduce haloperidol to 1 mg. Prolactin normalisation underway. Stop anticholinergic if still prescribed.",
+        "toDoseMg": 15
+      },
+      {
+        "day": 35,
+        "fromDoseMg": 0,
+        "notes": "Stop haloperidol. Continue aripiprazole 15 mg. Recheck QTc post-haloperidol clearance. Confirm akathisia has resolved.",
+        "toDoseMg": 15
+      }
+    ],
+    "strategy": "plateau-cross-taper",
+    "toDrugId": "aripiprazole"
+  },
+  "safetyFlags": [
+    "akathisia_risk_aripiprazole",
+    "prolactin_normalisation"
+  ],
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 5,
+      "notes": "Start aripiprazole 5 mg in the morning. Continue haloperidol 5 mg. Counsel patient about potential akathisia — advise to report restlessness early.",
+      "toDoseMg": 5
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 5,
+      "notes": "Increase aripiprazole to 10 mg. Hold haloperidol at 5 mg (plateau). Watch for akathisia — more likely in this early co-administration phase.",
+      "toDoseMg": 10
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 5,
+      "notes": "Increase aripiprazole to 15 mg target. Maintain haloperidol plateau for one more week — D2 receptor stabilisation in progress.",
+      "toDoseMg": 15
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 2,
+      "notes": "Begin tapering haloperidol to 2 mg. Aripiprazole at full target. QTc improving. Review anticholinergic agents — EPS driver reducing.",
+      "toDoseMg": 15
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 1,
+      "notes": "Reduce haloperidol to 1 mg. Prolactin normalisation underway. Stop anticholinergic if still prescribed.",
+      "toDoseMg": 15
+    },
+    {
+      "day": 35,
+      "fromDoseMg": 0,
+      "notes": "Stop haloperidol. Continue aripiprazole 15 mg. Recheck QTc post-haloperidol clearance. Confirm akathisia has resolved.",
+      "toDoseMg": 15
+    }
+  ],
+  "status": "ok"
+}

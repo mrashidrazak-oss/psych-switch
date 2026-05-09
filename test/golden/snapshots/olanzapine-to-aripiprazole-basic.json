@@ -1,0 +1,113 @@
+{
+  "citations": [
+    "maudsley15_schizophrenia_p230_ap_swap_table",
+    "bap2020_psychosis_switching"
+  ],
+  "dosesMatchReference": false,
+  "inputDoses": {
+    "fromMg": 20,
+    "toMg": 15
+  },
+  "rule": {
+    "citations": [
+      "maudsley15_schizophrenia_p230_ap_swap_table",
+      "bap2020_psychosis_switching"
+    ],
+    "contraindications": [],
+    "doseRatios": {
+      "equivalencyNote": "Approximate clinical equivalency: olanzapine 10 mg ≈ aripiprazole 15 mg (Maudsley 14th). PENDING_CLINICAL_REVIEW.",
+      "fromCurrentDoseMg": 10,
+      "toTargetDoseMg": 15
+    },
+    "durationDays": 35,
+    "fromDrugId": "olanzapine",
+    "id": "olanzapine-to-aripiprazole",
+    "lastReviewedISO": "2026-05-04",
+    "rationale": "Common metabolically-driven switch (escape weight gain, dyslipidaemia, glycaemic concern). Plateau cross-taper is preferred over straight cross-taper because olanzapine's strong anticholinergic and antihistaminergic activity creates cholinergic and histaminergic rebound on rapid reduction; aripiprazole's partial agonism can provoke akathisia, especially when superimposed on a fully antagonised D2 receptor pool. Slow taper of olanzapine after aripiprazole stabilisation gives the cleanest transition. PENDING_CLINICAL_REVIEW.",
+    "reviewedBy": "PENDING - Rashid Razak (clinical author)",
+    "safetyFlags": [],
+    "schedule": [
+      {
+        "day": 1,
+        "fromDoseMg": 10,
+        "notes": "Start aripiprazole 5 mg in the morning. Hold olanzapine 10 mg at night.",
+        "toDoseMg": 5
+      },
+      {
+        "day": 7,
+        "fromDoseMg": 10,
+        "notes": "Increase aripiprazole to 10 mg. Hold olanzapine. Watch for akathisia.",
+        "toDoseMg": 10
+      },
+      {
+        "day": 14,
+        "fromDoseMg": 7.5,
+        "notes": "Increase aripiprazole to 15 mg target. Begin reducing olanzapine to 7.5 mg.",
+        "toDoseMg": 15
+      },
+      {
+        "day": 21,
+        "fromDoseMg": 5,
+        "notes": "Reduce olanzapine to 5 mg. Hold aripiprazole 15 mg.",
+        "toDoseMg": 15
+      },
+      {
+        "day": 28,
+        "fromDoseMg": 2.5,
+        "notes": "Reduce olanzapine to 2.5 mg. Counsel about cholinergic rebound symptoms.",
+        "toDoseMg": 15
+      },
+      {
+        "day": 35,
+        "fromDoseMg": 0,
+        "notes": "Stop olanzapine. Continue aripiprazole 15 mg. Slow this final step if rebound emerges.",
+        "toDoseMg": 15
+      }
+    ],
+    "strategy": "plateau-cross-taper",
+    "toDrugId": "aripiprazole"
+  },
+  "safetyFlags": [
+    "cholinergic_rebound",
+    "akathisia_risk_aripiprazole"
+  ],
+  "schedule": [
+    {
+      "day": 1,
+      "fromDoseMg": 10,
+      "notes": "Start aripiprazole 5 mg in the morning. Hold olanzapine 10 mg at night.",
+      "toDoseMg": 5
+    },
+    {
+      "day": 7,
+      "fromDoseMg": 10,
+      "notes": "Increase aripiprazole to 10 mg. Hold olanzapine. Watch for akathisia.",
+      "toDoseMg": 10
+    },
+    {
+      "day": 14,
+      "fromDoseMg": 7.5,
+      "notes": "Increase aripiprazole to 15 mg target. Begin reducing olanzapine to 7.5 mg.",
+      "toDoseMg": 15
+    },
+    {
+      "day": 21,
+      "fromDoseMg": 5,
+      "notes": "Reduce olanzapine to 5 mg. Hold aripiprazole 15 mg.",
+      "toDoseMg": 15
+    },
+    {
+      "day": 28,
+      "fromDoseMg": 2.5,
+      "notes": "Reduce olanzapine to 2.5 mg. Counsel about cholinergic rebound symptoms.",
+      "toDoseMg": 15
+    },
+    {
+      "day": 35,
+      "fromDoseMg": 0,
+      "notes": "Stop olanzapine. Continue aripiprazole 15 mg. Slow this final step if rebound emerges.",
+      "toDoseMg": 15
+    }
+  ],
+  "status": "ok"
+}
