@@ -1,16 +1,16 @@
 // PsychSwitch — Flutter migration entry point.
 //
-// Phase 1 placeholder. The real app structure (theme, routing,
-// Riverpod scope, error boundary) lands in subsequent phases. For
-// now this is just enough to:
-//   • verify the build works
-//   • initialise Sentry when SENTRY_DSN is provided at build time
-//   • render a placeholder screen using the locked design tokens
+// Starts Sentry (no-op when SENTRY_DSN is unset), creates the Riverpod
+// scope that hosts the engine providers, and launches the go_router
+// app shell. The Home screen does the engine load via
+// `engineProvider.watch`, which keeps cold-start work off this entry
+// point and gives every screen explicit loading/error states.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:psychswitch/src/observability/sentry_init.dart';
+import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 
 void main() async {
@@ -24,12 +24,21 @@ void main() async {
   });
 }
 
-class PsychSwitchApp extends StatelessWidget {
+class PsychSwitchApp extends StatefulWidget {
   const PsychSwitchApp({super.key});
 
   @override
+  State<PsychSwitchApp> createState() => _PsychSwitchAppState();
+}
+
+class _PsychSwitchAppState extends State<PsychSwitchApp> {
+  // Build the router once and re-use across rebuilds — recreating it
+  // on every rebuild would lose navigation state.
+  late final _router = buildRouter();
+
+  @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'PsychSwitch',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -48,77 +57,7 @@ class PsychSwitchApp extends StatelessWidget {
           elevation: 0,
         ),
       ),
-      home: const _ComingSoonScreen(),
-    );
-  }
-}
-
-class _ComingSoonScreen extends StatelessWidget {
-  const _ComingSoonScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'PsychSwitch',
-                style: TextStyle(
-                  color: AppColors.text,
-                  fontSize: 32,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: -1,
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Flutter migration · v0.5.0-alpha.0',
-                style: TextStyle(
-                  color: AppColors.muted,
-                  fontSize: 11,
-                  letterSpacing: 2,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.accent.withValues(alpha: 0.1),
-                  border: Border.all(
-                    color: AppColors.accent.withValues(alpha: 0.3),
-                  ),
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: const Text(
-                  'PHASE 1 — FOUNDATION',
-                  style: TextStyle(
-                    color: AppColors.accent,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.5,
-                  ),
-                ),
-              ),
-              if (isSentryConfigured) ...[
-                const SizedBox(height: 12),
-                const Text(
-                  'Sentry: configured',
-                  style: TextStyle(
-                    color: AppColors.muted,
-                    fontSize: 10,
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ),
+      routerConfig: _router,
     );
   }
 }
