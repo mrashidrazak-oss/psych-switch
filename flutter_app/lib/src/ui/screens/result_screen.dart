@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:psychswitch/src/engine/case_pulse.dart' show SavedCase;
 import 'package:psychswitch/src/engine/citations.dart';
 import 'package:psychswitch/src/engine/ddi.dart';
 import 'package:psychswitch/src/engine/monitoring.dart';
@@ -25,9 +26,11 @@ import 'package:psychswitch/src/engine/switching_engine.dart';
 import 'package:psychswitch/src/engine/types/drug.dart';
 import 'package:psychswitch/src/engine/types/schedule_step.dart';
 import 'package:psychswitch/src/providers/engine_provider.dart';
+import 'package:psychswitch/src/providers/saved_cases_provider.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch/src/ui/widgets/score_ring.dart';
+import 'package:psychswitch/src/util/case_id.dart';
 
 /// Payload passed via `GoRouterState.extra` when navigating to /result.
 class ResultScreenArgs {
@@ -51,6 +54,14 @@ class ResultScreen extends ConsumerWidget {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
         ),
+        actions: <Widget>[
+          if (args != null)
+            IconButton(
+              icon: const Icon(Icons.bookmark_add_outlined),
+              tooltip: 'Save case',
+              onPressed: () => _onSavePressed(context, ref, args!.input),
+            ),
+        ],
       ),
       body: SafeArea(
         child: asyncEngine.when(
@@ -67,6 +78,105 @@ class ResultScreen extends ConsumerWidget {
           },
         ),
       ),
+    );
+  }
+
+  Future<void> _onSavePressed(
+    BuildContext context,
+    WidgetRef ref,
+    SwitchInput input,
+  ) async {
+    final label = await showDialog<String>(
+      context: context,
+      builder: (_) => const _SaveCaseDialog(),
+    );
+    if (label == null) return; // user cancelled
+    final now = DateTime.now().toUtc().toIso8601String();
+    final saved = SavedCase(
+      id: mintCaseId(),
+      label: label,
+      fromDrugId: input.fromDrugId,
+      fromDoseMg: input.fromDoseMg,
+      toDrugId: input.toDrugId,
+      toDoseMg: input.toDoseMg,
+      startedISO: now,
+      updatedISO: now,
+    );
+    await ref.read(savedCaseRepositoryProvider).save(saved);
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: AppColors.surface,
+        content: Text(
+          'Saved as "$label"',
+          style: const TextStyle(color: AppColors.text),
+        ),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+}
+
+class _SaveCaseDialog extends StatefulWidget {
+  const _SaveCaseDialog();
+
+  @override
+  State<_SaveCaseDialog> createState() => _SaveCaseDialogState();
+}
+
+class _SaveCaseDialogState extends State<_SaveCaseDialog> {
+  final _ctl = TextEditingController();
+
+  @override
+  void dispose() {
+    _ctl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: AppColors.surface,
+      title: const Text(
+        'Save case',
+        style: TextStyle(color: AppColors.text),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Text(
+            'Free-form label — initials, room number, ward code. '
+            'No patient identifiers.',
+            style: TextStyle(color: AppColors.muted, fontSize: 12),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _ctl,
+            autofocus: true,
+            style: const TextStyle(color: AppColors.text),
+            decoration: const InputDecoration(
+              hintText: 'e.g. JD · Bed 7 · 4F-12',
+              hintStyle: TextStyle(color: AppColors.muted),
+            ),
+            onSubmitted: (v) => Navigator.of(context).pop(v.trim()),
+          ),
+        ],
+      ),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('Cancel'),
+        ),
+        FilledButton(
+          onPressed: () {
+            final v = _ctl.text.trim();
+            if (v.isEmpty) return;
+            Navigator.of(context).pop(v);
+          },
+          child: const Text('Save'),
+        ),
+      ],
     );
   }
 }

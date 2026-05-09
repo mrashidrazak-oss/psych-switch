@@ -1,17 +1,19 @@
 // App router — go_router config.
 //
-// Three top-level routes for Phase 4:
+// Top-level routes:
 //   /         → Home
 //   /switch   → Switch wizard (drug pickers + dose inputs)
 //   /result   → Result screen (schedule, safety flags, citations)
+//   /history  → Saved cases list
 //
-// Phase 5+ adds /history, /clozapine, /depot, /settings, /about.
+// Phase 5+ adds /clozapine, /depot, /settings, /about.
 //
 // Routes are typed via `name` constants so screens can navigate via
 // `context.goNamed(Routes.switch_)` rather than hard-coded strings.
 
 import 'package:go_router/go_router.dart';
 
+import 'package:psychswitch/src/ui/screens/history_screen.dart';
 import 'package:psychswitch/src/ui/screens/home_screen.dart';
 import 'package:psychswitch/src/ui/screens/result_screen.dart';
 import 'package:psychswitch/src/ui/screens/switch_screen.dart';
@@ -22,6 +24,7 @@ abstract final class Routes {
   static const home = 'home';
   static const switch_ = 'switch';
   static const result = 'result';
+  static const history = 'history';
 }
 
 GoRouter buildRouter() => GoRouter(
@@ -44,6 +47,11 @@ GoRouter buildRouter() => GoRouter(
             final args = state.extra as ResultScreenArgs?;
             return ResultScreen(args: args);
           },
+        ),
+        GoRoute(
+          name: Routes.history,
+          path: '/history',
+          builder: (context, state) => const HistoryScreen(),
         ),
       ],
     );

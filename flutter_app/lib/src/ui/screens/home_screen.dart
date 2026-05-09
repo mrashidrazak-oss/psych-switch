@@ -1,8 +1,8 @@
-// Home screen — Phase 4B minimum-viable landing.
+// Home screen — Phase 4B + 5C/D.
 //
-// One primary CTA ("Start a switch") is enough to validate routing +
-// engine provider integration. The full home dashboard (saved cases,
-// today's pulse card, modules grid, tools row) lands in Phase 5+.
+// Wordmark + tagline → engine-ready badge → today's pulse card (when
+// any saved cases have due monitoring) → primary CTA + secondary
+// History button. Modules grid + tools row land in Phase 6+.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +12,7 @@ import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
+import 'package:psychswitch/src/ui/widgets/today_pulse_card.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -71,11 +72,22 @@ class _HomeBody extends StatelessWidget {
           // Engine ready badge — surfaces drug + rule counts so the
           // user can see the registry loaded successfully.
           _ReadyBadge(drugs: drugCount, rules: ruleCount),
-          const SizedBox(height: 32),
+          const SizedBox(height: 16),
+          // Today's pulse — saved cases with monitoring due now.
+          // Renders nothing when no cases or no pulses are due.
+          const TodayPulseCard(),
+          const SizedBox(height: 24),
 
           // Primary CTA.
           _StartSwitchButton(
             onPressed: () => context.goNamed(Routes.switch_),
+          ),
+          const SizedBox(height: 12),
+          // Secondary CTA — saved cases.
+          _SecondaryButton(
+            label: 'History',
+            icon: Icons.history,
+            onPressed: () => context.goNamed(Routes.history),
           ),
           const Spacer(),
           const _PhaseFooter(),
@@ -160,6 +172,44 @@ class _StartSwitchButton extends StatelessWidget {
             fontSize: 16,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.2,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SecondaryButton extends StatelessWidget {
+  const _SecondaryButton({
+    required this.label,
+    required this.icon,
+    required this.onPressed,
+  });
+
+  final String label;
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: onPressed,
+        icon: Icon(icon, size: 18, color: AppColors.text),
+        label: Text(
+          label,
+          style: const TextStyle(
+            color: AppColors.text,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          side: const BorderSide(color: AppColors.border),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
       ),
