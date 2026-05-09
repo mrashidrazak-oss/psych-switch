@@ -162,14 +162,50 @@ Replaces the rsvg-convert + magick chain.
 
 ## Architecture decision (locked at Phase 0.2)
 
-**TBD — pending Phase 0.2 spike result.** Once decided, append the
-result here:
+```
+ARCHITECTURE: C — full Dart, MCP server reimplemented in Dart
+DECIDED: 2026-05-09
+SPIKE BINARY SIZE: 5.8 MB (single executable, no runtime needed)
+PROTOCOL ROUNDTRIP: verified end-to-end (initialize → tools/list → tools/call)
+```
+
+### Rationale
+
+The community Dart `mcp_server` package (v2.0.0) supports the latest
+MCP protocol revisions (2024-11-05 / 2025-03-26 / 2025-06-18 /
+2025-11-25) with stdio + SSE + Streamable HTTP transports and OAuth
+2.1. Active maintenance (last push ~1 week ago). Has its own protocol
+compliance test suite and per-version capability gating.
+
+A 1-tool prototype exposing `psychswitch_list_drugs` was built,
+compiled to a 5.8 MB single binary, and exercised end-to-end via a
+Dart-driven JSON-RPC test:
 
 ```
-ARCHITECTURE: __ (C = full Dart MCP / D = Node MCP, codegen-shared)
-DECIDED: [date]
-RATIONALE: [one paragraph]
+✅ MCP protocol roundtrip OK:
+   initialize → 2025-06-18
+   tools/list → 1 tool
+   tools/call → 3 drugs returned
 ```
+
+**Caveats acknowledged:**
+- 9 GitHub stars, niche package. If a critical bug appears, we may
+  have to fork/maintain. Acceptable risk for a small Dart package
+  with ~80% test coverage in its own repo.
+- Claude Desktop UI integration not directly tested in this spike
+  (requires user's hands). Protocol compliance is the substance; if
+  Claude Desktop can't talk to a server that correctly speaks
+  MCP 2025-06-18, the issue would be on Claude's side, not ours.
+
+### Implication for Phase 6
+
+When Phase 6 rolls around (MCP execution), the existing 18-tool
+TypeScript MCP server in `mcp-server/` will be ported to Dart
+following the spike's pattern. Each tool becomes a `server.addTool`
+call. The 24 smoke tests get equivalent Dart `package:test`
+implementations. Distribution via `dart compile exe` gives users a
+single binary they install via `dart pub global activate` or a
+direct download from GitHub releases.
 
 ---
 
