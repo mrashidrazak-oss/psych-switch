@@ -1,24 +1,33 @@
-// Result screen — Phase 4D MVP.
+// Result screen — Phase 4D + 5A.
 //
 // Renders the engine's SwitchPlan output. Five status branches:
 //   • ok                  → schedule table + safety flags + citations
+//                           + PsychSwitch Score ring (5A)
+//                           + monitoring plan card (5A)
 //   • maudsley_guidance   → strategy headline + detail + safety flags
 //   • maoi_washout        → washout instructions + duration
 //   • clozapine_redirect  → "Use the Clozapine module" call-out
 //   • no_rule             → reason text
 //
-// PsychSwitch Score ring, monitoring plan, predicted-AE card, cost
-// hint, smart alternatives — all deferred to Phase 5+.
+// Predicted-AE card, cost hint, smart alternatives — deferred to 5B+.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:psychswitch/src/engine/citations.dart';
+import 'package:psychswitch/src/engine/ddi.dart';
+import 'package:psychswitch/src/engine/monitoring.dart';
+import 'package:psychswitch/src/engine/patient_context_pure.dart';
+import 'package:psychswitch/src/engine/psych_switch_score.dart';
+import 'package:psychswitch/src/engine/scale_schedule.dart';
 import 'package:psychswitch/src/engine/switching_engine.dart';
+import 'package:psychswitch/src/engine/types/drug.dart';
 import 'package:psychswitch/src/engine/types/schedule_step.dart';
 import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
+import 'package:psychswitch/src/ui/widgets/score_ring.dart';
 
 /// Payload passed via `GoRouterState.extra` when navigating to /result.
 class ResultScreenArgs {
@@ -115,24 +124,35 @@ class _ResultBody extends StatelessWidget {
 
   List<Widget> _planContent(SwitchPlan plan) {
     return switch (plan) {
-      SwitchPlanOk(
-        :final schedule,
-        :final safetyFlags,
-        :final citations,
-        :final dosesMatchReference,
-      ) =>
+      final SwitchPlanOk ok =>
         <Widget>[
-          if (!dosesMatchReference) ...<Widget>[
+          // PsychSwitch Score ring — composite 0-100 over evidence,
+          // AE alignment, context safety, DDI safety, dose fidelity.
+          // Phase 5A wires evidence + dose-fidelity inputs; patient
+          // context lands in 5B (no warnings yet so contextSafety = 0).
+          if (engine.getDrug(input.toDrugId) case final toDrug?)
+            _ScoreRingCard(
+              plan: ok,
+              toDrug: toDrug,
+              dosesMatchReference: ok.dosesMatchReference,
+            ),
+          const SizedBox(height: 16),
+          if (!ok.dosesMatchReference) ...<Widget>[
             const _ReferenceDosesBanner(),
             const SizedBox(height: 16),
           ],
-          _ScheduleCard(schedule: schedule),
+          _ScheduleCard(schedule: ok.schedule),
           const SizedBox(height: 16),
-          if (safetyFlags.isNotEmpty) ...<Widget>[
-            _SafetyFlagsCard(flags: safetyFlags),
+          if (ok.safetyFlags.isNotEmpty) ...<Widget>[
+            _SafetyFlagsCard(flags: ok.safetyFlags),
             const SizedBox(height: 16),
           ],
-          _CitationsCard(citations: citations),
+          _MonitoringPlanCard(
+            fromDrugId: input.fromDrugId,
+            toDrugId: input.toDrugId,
+          ),
+          const SizedBox(height: 16),
+          _CitationsCard(citations: ok.citations),
         ],
       SwitchPlanMaudsleyGuidance(
         :final guidance,
@@ -690,6 +710,197 @@ class _Card extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           child,
+        ],
+      ),
+    );
+  }
+}
+
+class _ScoreRingCard extends StatelessWidget {
+  const _ScoreRingCard({
+    required this.plan,
+    required this.toDrug,
+    required this.dosesMatchReference,
+  });
+
+  final SwitchPlanOk plan;
+  final Drug toDrug;
+  final bool dosesMatchReference;
+
+  @override
+  Widget build(BuildContext context) {
+    final grade = gradeCitations(plan.citations);
+    // Phase 5A: scaffold the score with the inputs we have. Patient
+    // context (5B), DDI hits (5C), and AE filter (5D) get plugged in
+    // as those features land. Dose fidelity is approximate — true
+    // when input doses match the rule's reference, otherwise treated
+    // as mild adaptation.
+    final scaleResult = ScaleResult(
+      schedule: plan.schedule,
+      applied: const ScaleApplied(
+        mode: ScalingMode.proportional,
+        fromFactor: 1,
+        toFactor: 1,
+      ),
+      adapted: !dosesMatchReference,
+      warnings: const <ScaleWarning>[],
+      evidencePenalty: dosesMatchReference ? 0 : 1,
+    );
+    final score = computePsychSwitchScore(
+      ScoreInputs(
+        toDrug: toDrug,
+        scaleResult: scaleResult,
+        ddiHits: const <DdiHit>[],
+        contextWarnings: const <ContextWarning>[],
+        evidenceGrade: grade,
+      ),
+    );
+    return _Card(
+      title: 'PsychSwitch Score',
+      child: Row(
+        children: <Widget>[
+          ScoreRing(score: score),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  score.headline,
+                  style: const TextStyle(
+                    color: AppColors.text,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  score.components.evidence.note,
+                  style: const TextStyle(
+                    color: AppColors.muted,
+                    fontSize: 11,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MonitoringPlanCard extends StatelessWidget {
+  const _MonitoringPlanCard({
+    required this.fromDrugId,
+    required this.toDrugId,
+  });
+
+  final String fromDrugId;
+  final String toDrugId;
+
+  Color _categoryColor(MonitoringCategory c) {
+    switch (c) {
+      case MonitoringCategory.lab:
+        return AppColors.accent;
+      case MonitoringCategory.ecg:
+        return AppColors.danger;
+      case MonitoringCategory.physical:
+        return AppColors.to;
+      case MonitoringCategory.rating:
+        return AppColors.warning;
+      case MonitoringCategory.review:
+        return AppColors.muted;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final plan = generateMonitoringPlan(
+      toDrugId: toDrugId,
+      fromDrugId: fromDrugId,
+    );
+    if (plan.entries.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    // Show the first 8 entries; rest get a "+N more" footnote so the
+    // card stays scannable on small screens.
+    const previewLimit = 8;
+    final entries = plan.entries.take(previewLimit).toList();
+    final hidden = plan.entries.length - entries.length;
+    return _Card(
+      title: 'Monitoring plan',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          ...entries.map(
+            (e) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    width: 6,
+                    height: 6,
+                    margin: const EdgeInsets.only(top: 7),
+                    decoration: BoxDecoration(
+                      color: _categoryColor(e.category),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  SizedBox(
+                    width: 56,
+                    child: Text(
+                      'Day ${e.dayOffset}',
+                      style: const TextStyle(
+                        color: AppColors.muted,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          e.label,
+                          style: const TextStyle(
+                            color: AppColors.text,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 1),
+                        Text(
+                          e.detail,
+                          style: const TextStyle(
+                            color: AppColors.muted,
+                            fontSize: 11,
+                            height: 1.4,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (hidden > 0) ...<Widget>[
+            const SizedBox(height: 8),
+            Text(
+              '+$hidden more entr${hidden == 1 ? 'y' : 'ies'}',
+              style: const TextStyle(
+                color: AppColors.muted,
+                fontSize: 11,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
         ],
       ),
     );
