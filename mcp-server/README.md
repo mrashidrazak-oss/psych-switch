@@ -1,7 +1,14 @@
-# PsychSwitch MCP Server
+# PsychSwitch MCP Server (Node — Retiring)
 
-> **Status: Live.** 18 tools wired to the real engine. 24/24 smoke
-> tests passing. Ready to plug into Claude Desktop today.
+> **Status: Retiring after Phase 8.** The Dart reimplementation lives
+> at `../psychswitch_mcp/` and ships the same 18 tools with the same
+> shapes against the same `/content/` tree. New work goes there.
+>
+> This Node server stays online during the Flutter migration so
+> existing MCP wirings (Claude Desktop, Cursor, EMR plugins) keep
+> working without disruption. After RN/Expo retires in Phase 8, this
+> directory deletes — by then any wiring still pointing here should
+> have moved to `dart compile exe`'d psychswitch-mcp.
 
 A [Model Context Protocol](https://modelcontextprotocol.io) server
 that exposes the PsychSwitch clinical engine as queryable tools for
