@@ -43,10 +43,14 @@ jobs:
         # ~30s, well within the 10-min timeout, so we skip the cache.
 
       - name: Install root deps
-        run: pnpm install --frozen-lockfile
+        # --ignore-scripts: pnpm 11 errors on ignored postinstall
+        # scripts from non-allowlisted deps (e.g. esbuild). We don't
+        # need any postinstall artifacts to run our typecheck or
+        # jest tests, so opt out wholesale.
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Install MCP server deps
-        run: pnpm install --frozen-lockfile --ignore-workspace
+        run: pnpm install --frozen-lockfile --ignore-workspace --ignore-scripts
         working-directory: mcp-server
 
       - name: Typecheck
