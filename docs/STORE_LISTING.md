@@ -35,8 +35,8 @@ a citation. Every rule has an evidence grade. Every schedule adapts
 to your patient's actual doses.
 
 WHAT'S INSIDE
-• 130+ reviewed switching rules across antidepressants, antipsychotics
-  (oral + LAI) and mood stabilizers
+• ~95 reviewed switching rules across antidepressants and oral
+  antipsychotics
 • Adaptive schedule scaler with formulation-aware rounding
 • Citation chips with paraphrased Maudsley / BAP / NICE quotes
 • Evidence grading (A → D) on every rule
@@ -51,9 +51,14 @@ WHAT'S INSIDE
 • Receptor-occupancy curves for hyperbolic-taper reasoning
 • Discontinuation-syndrome flagger
 • Clozapine module — titration, FBC monitoring, ANC checker
-• LAI depot module — Sustenna, Maintena, Trinza
 • QTc stacker for cumulative cardiac risk
 • Ramadan mode for fasting-aware dosing
+• Adverse-effect lookup with management notes
+
+Mood stabilizers and LAI / depot antipsychotics are registered in the
+engine but currently gated from the cross-titration picker pending
+more clinical research. Their dedicated screens will return as the
+content is reviewed.
 
 WORKFLOW LOOP
 • Discharge summary block ready to paste into the EMR
@@ -113,7 +118,11 @@ Adaptive schedules cited to the Maudsley page. Patient-aware. Privacy-first. Bui
 ## Age rating
 
 - **iOS**: 17+ (Frequent/Intense Medical/Treatment Information)
-- **Android**: Mature 17+ (Medical content — references psychiatric medications + dosing)
+- **Android**: Per IARC questionnaire — typically **Everyone** with a
+  medical/educational descriptor, or **Teen** in some regions due to
+  mention of drug interactions. Both are appropriate for the
+  professional audience. See `docs/PLAY_STORE.md` § Content rating
+  for the questionnaire mapping.
 
 ---
 
@@ -137,25 +146,33 @@ Adaptive schedules cited to the Maudsley page. Patient-aware. Privacy-first. Bui
 **The app collects nothing. Verify by inspecting the source —
 github.com/mrashidrazak-oss/psych-switch.**
 
-If the user opts in to crash reports (off by default), Sentry collects
-anonymized stack traces. No patient input or clinical context is ever
-included; this is configured via the app's `beforeSend` hook in
-`utils/sentry.ts`.
+If the user opts in to crash reports (off by default), an anonymized
+stack-trace reporter would collect minimal diagnostics. **As of
+v0.4.23, the Sentry reporter is a no-op stub** (`utils/sentry.ts`) —
+nothing leaves the device until a real DSN is wired. When the
+reporter is reactivated, `beforeSend` will scrub any patient input
+or clinical context.
 
 ---
 
 ## Required URLs
 
-| Field | URL | Status |
-|-------|-----|--------|
-| Support URL | https://psychswitch.health/support | TODO — host |
-| Marketing URL | https://psychswitch.health | TODO — host |
-| Privacy Policy URL | https://psychswitch.health/privacy | TODO — host |
-| Errata email | errata@psychswitch.health | TODO — set up domain |
+| Field | Use today | Future custom domain |
+|-------|-----------|----------------------|
+| Marketing URL | https://mrashidrazak-oss.github.io/psych-switch/ | https://psychswitch.health |
+| Privacy Policy URL | https://mrashidrazak-oss.github.io/psych-switch/privacy.html | https://psychswitch.health/privacy |
+| Terms of Use URL | https://mrashidrazak-oss.github.io/psych-switch/terms.html | https://psychswitch.health/terms |
+| Errata email | errata@psychswitch.health | (already at psychswitch.health, gmail/forwarder) |
 
-The Privacy and Terms screens are built into the app (see
-`PrivacyScreen.tsx` / `TermsScreen.tsx`). Host the same content
-publicly at the URLs above for store submission.
+The GitHub Pages URLs are LIVE and store-reviewer ready (HTTP 200,
+HTTPS, deployed via `.github/workflows/publish-landing.yml`). The
+custom domain `psychswitch.health` is staged in `docs/landing/CNAME`
+and will activate when DNS is pointed at GitHub Pages.
+
+The Privacy and Terms screens are also built into the app (see
+`PrivacyScreen.tsx` / `TermsScreen.tsx`) — same content, offline
+access. The hosted versions exist for store reviewers who need a
+public URL.
 
 ---
 
@@ -212,8 +229,8 @@ Generate via Expo Simulator or device → System Screenshot.
 ## Localizations to add later
 
 - `ms-MY` (Bahasa Malaysia)
-- `id-ID` (Bahasa Indonesia)
-- `tl-PH` (Tagalog)
 
-For v1 launch, ship `en` only and add translations once the i18n
-clinical content is reviewed by native-speaker clinicians.
+The app is currently scoped to Malaysia only (see v0.4.23 changelog).
+For v1 launch, ship English (US) only — Malaysian psychiatry is
+practised in clinical English. Bahasa Malaysia translation can land
+once a native-speaker clinician reviews the i18n strings.

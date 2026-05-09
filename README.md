@@ -13,8 +13,9 @@ Built with React Native + Expo. Targets iOS and Android from one
 codebase. **Local-first, no PHI ever leaves the device unless the
 clinician explicitly taps Share.**
 
-[![tests](https://img.shields.io/badge/tests-217%20passing-brightgreen)]()
-[![typecheck](https://img.shields.io/badge/typecheck-clean-brightgreen)]()
+[![verify](https://github.com/mrashidrazak-oss/psych-switch/actions/workflows/verify.yml/badge.svg)](https://github.com/mrashidrazak-oss/psych-switch/actions/workflows/verify.yml)
+[![tests](https://img.shields.io/badge/tests-302%20passing-brightgreen)]()
+[![mcp-smoke](https://img.shields.io/badge/MCP%20smoke-24%2F24-brightgreen)]()
 [![evidence](https://img.shields.io/badge/evidence-A%20%E2%87%A2%20D-blue)]()
 
 ---
@@ -22,8 +23,10 @@ clinician explicitly taps Share.**
 ## What's inside
 
 ### Clinical engines
-- **133+ reviewed switching rules** across antidepressants, antipsychotics
-  (oral + LAI), and mood stabilizers
+- **~95 reviewed switching rules** across antidepressants and oral
+  antipsychotics (mood stabilizers + LAI rules are registered in the
+  engine but currently gated from the patient picker pending more
+  clinical research — see v0.4.15 changelog)
 - **Adaptive schedule scaler** — proportional / fixed-step / no-scale,
   with formulation-aware rounding
 - **Citation registry** with paraphrased Maudsley / BAP / NICE quotes
@@ -31,7 +34,10 @@ clinician explicitly taps Share.**
   citation
 - **PsychSwitch Score** — single 0–100 number summarising fit for the
   patient
-- **Predicted side-effect profile** with likelihood tiers
+- **Overlap intensity tier** — low / moderate / high / severe with
+  mechanism-stacking flags + Conservative-mode transform
+- **Predicted side-effect profile** with likelihood tiers, plus
+  quantitative effect sizes from Leucht 2013 + Cipriani 2018 NMAs
 - **Smart drug picker** — re-ranks targets by reviewed-rule existence,
   AE alignment, context safety, DDI severity
 - **Dose equivalents** — chlorpromazine, fluoxetine, diazepam
@@ -39,14 +45,18 @@ clinician explicitly taps Share.**
   pharmacodynamic
 - **Patient context engine** — age band, eGFR, hepatic, pregnancy,
   comorbidities → context-driven warnings
+- **Specialty depth** — pregnancy / breastfeeding / pediatric /
+  geriatric tier-ranked recommendations with dose modifiers
 - **Monitoring schedule generator** with 90-day review cadence
 - **Pharmacokinetic overlay** with predicted effective levels
 - **Receptor-occupancy curves** for hyperbolic-taper reasoning
 - **Discontinuation flagger** with bridge-to-fluoxetine for high-risk
   drugs
+- **Cost data** — Malaysian formulary monthly cost in MYR with
+  affordability tier
 - **Clozapine module** — titration, FBC monitoring, ANC checker, rechallenge
-- **LAI depot module** — Sustenna, Maintena, Trinza
-- **QTc stacker**, **Ramadan mode**, **case manager**, **glossary**
+- **QTc stacker**, **Ramadan mode**, **case manager**, **glossary**,
+  **adverse-effect lookup**, **errata feed**
 
 ### Workflow loop
 - Discharge summary block (EMR-paste-ready)
@@ -63,8 +73,11 @@ clinician explicitly taps Share.**
 - Haptic feedback wired to key CTAs
 - 4-card onboarding tour
 - Clinical-term glossary (23 entries) inline + standalone
-- Empty-state primitives, skeleton loaders
-- Error boundary with optional Sentry hook
+- Unified design primitives — Chip, Banner, SegmentedControl, SwitchRow
+- Codified typography scale (eyebrow / micro / caption / body /
+  subtitle / title / heading / display)
+- Error boundary with crash-reporter hook (Sentry stub for now —
+  reactivates with custom dev build)
 
 ---
 
@@ -79,10 +92,10 @@ pnpm start            # opens Expo Go QR
 Scan from Expo Go on your device. The app's home screen has a
 "Start a switch" CTA that walks you through the 4-step picker.
 
-### Tests + type-check
+### Verify
 ```bash
-pnpm test          # 217 tests across 20 suites
-pnpm typecheck     # zero errors
+pnpm verify        # typecheck + 302 jest + 24 MCP smoke (~30s)
+pnpm preflight     # verify + expo-doctor (run before any production build)
 ```
 
 ### Run on simulator / device
@@ -193,11 +206,19 @@ automatically.
 
 ## Roadmap
 
-- **v0.4** — Multi-language clinical content (BM / ID / Tagalog)
-- **v0.4** — MCP server (queryable engine for EMR + AI assistants)
-- **v0.4** — TestFlight beta program
-- **v0.5** — App Store + Play Store launch
-- **v0.5** — CME accreditation partnership
+- ✅ **v0.4.5** — MCP server (queryable engine for EMR + AI
+  assistants) — 18 tools live, 24/24 smoke
+- ✅ **v0.4.20** — New brand mark (two crossing taper curves)
+- ✅ **v0.4.22** — Production-ready EAS build pipeline
+- ✅ **v0.4.23** — Renamed PsychSwitch ASEAN → PsychSwitch (scope
+  narrowed to Malaysia)
+- 🟡 **v0.5.0** — Play Store internal track launch (account
+  registered, awaiting verification)
+- 🔵 **v0.5.x** — Mood-stabilizer + LAI un-gating once content review
+  completes
+- 🔵 **v0.5.x** — Bahasa Malaysia translation
+- 🔵 **v0.6** — TestFlight (iOS) launch
+- 🔵 **v0.7** — CME accreditation partnership
 
 ---
 

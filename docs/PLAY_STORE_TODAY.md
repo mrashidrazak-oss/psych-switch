@@ -136,22 +136,13 @@ Play Console → your app → **Main store listing**:
 | App name | `STORE_LISTING.md` § App name |
 | Short description (80 char) | `STORE_LISTING.md` § Subtitle / short description |
 | Full description (4000 char) | `STORE_LISTING.md` § Long description |
-| App icon (512×512) | `assets/icon.png` (resize to 512 — Play needs exactly this size). One liner: `magick assets/icon.png -resize 512x512 /tmp/playstore-icon.png` |
+| App icon (512×512) | `assets/playstore-icon-512.png` ✅ already correct size |
 | Feature graphic (1024×500) | `assets/feature-graphic.png` ✅ already correct size |
-| Phone screenshots (≥2) | TODO — capture from Pixel emulator running the build |
+| Phone screenshots (≥2) | Follow `docs/QA_CHECKLIST.md` § Capturing screenshots — install AAB on phone, use `adb exec-out screencap -p > N.png` for each frame |
 
-For phone screenshots: open the build on a Pixel emulator (or
-USB-connected Android device), navigate to:
-1. Home screen
-2. Switch wizard step 2 (drug picker)
-3. Result → Schedule tab
-4. Result → Provenance tab
-5. Clozapine module
-6. Adverse-effect lookup with one expanded
-
-Use Android Studio's emulator screenshot button (or `adb exec-out
-screencap -p > screenshot.png`) — must be at least 320 px on the
-shortest side, no upscaling allowed.
+The full **device-test + screenshot capture** workflow is in
+`docs/QA_CHECKLIST.md`. It walks you from "I have an AAB URL" to
+"6 PNGs ready to upload" in ~30 min including a sanity-test pass.
 
 ### 7. Data Safety questionnaire
 
