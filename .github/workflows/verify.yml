@@ -34,7 +34,8 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # pnpm 11 requires Node 22.13+. Local dev uses both.
+          node-version: 22
         # `cache: pnpm` would normally go here, but it calls
         # `pnpm store path --silent` which trips over our
         # pnpm-workspace.yaml (no `packages:` field — the file is
