@@ -1,15 +1,24 @@
-// Result screen placeholder — Phase 4D fills in the schedule table,
-// safety flags, citations, monitoring plan and PsychSwitch Score ring.
+// Result screen — Phase 4D MVP.
 //
-// The args type is exported so the router can carry the wizard's
-// SwitchInput across the navigation transition without resorting to a
-// global state holder.
+// Renders the engine's SwitchPlan output. Five status branches:
+//   • ok                  → schedule table + safety flags + citations
+//   • maudsley_guidance   → strategy headline + detail + safety flags
+//   • maoi_washout        → washout instructions + duration
+//   • clozapine_redirect  → "Use the Clozapine module" call-out
+//   • no_rule             → reason text
+//
+// PsychSwitch Score ring, monitoring plan, predicted-AE card, cost
+// hint, smart alternatives — all deferred to Phase 5+.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:psychswitch/src/engine/switching_engine.dart';
+import 'package:psychswitch/src/engine/types/schedule_step.dart';
+import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
+import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 
 /// Payload passed via `GoRouterState.extra` when navigating to /result.
 class ResultScreenArgs {
@@ -18,13 +27,14 @@ class ResultScreenArgs {
   final SwitchInput input;
 }
 
-class ResultScreen extends StatelessWidget {
+class ResultScreen extends ConsumerWidget {
   const ResultScreen({super.key, this.args});
 
   final ResultScreenArgs? args;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncEngine = ref.watch(engineProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Result'),
@@ -33,33 +43,654 @@ class ResultScreen extends StatelessWidget {
           onPressed: () => context.pop(),
         ),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Text(
-                'Result screen arrives in Phase 4D — schedule table, '
-                'safety flags, citations, monitoring plan.',
-                style: TextStyle(color: AppColors.muted, height: 1.5),
-                textAlign: TextAlign.center,
-              ),
-              if (args != null) ...<Widget>[
-                const SizedBox(height: 24),
-                Text(
-                  '${args!.input.fromDrugId} ${args!.input.fromDoseMg} mg → '
-                  '${args!.input.toDrugId} ${args!.input.toDoseMg} mg',
-                  style: const TextStyle(
-                    color: AppColors.text,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ],
+      body: SafeArea(
+        child: asyncEngine.when(
+          loading: () => const EngineLoadingView(),
+          error: (e, st) => EngineErrorView(error: e),
+          data: (engine) {
+            if (args == null) return const _MissingArgs();
+            final plan = engine.generateSwitchPlan(args!.input);
+            return _ResultBody(
+              plan: plan,
+              engine: engine,
+              input: args!.input,
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _MissingArgs extends StatelessWidget {
+  const _MissingArgs();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.all(24),
+      child: Center(
+        child: Text(
+          'No switch input was provided. Go back and start a switch.',
+          style: TextStyle(color: AppColors.muted, height: 1.5),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+}
+
+class _ResultBody extends StatelessWidget {
+  const _ResultBody({
+    required this.plan,
+    required this.engine,
+    required this.input,
+  });
+
+  final SwitchPlan plan;
+  final SwitchingEngine engine;
+  final SwitchInput input;
+
+  String _drugName(String id) =>
+      engine.getDrug(id)?.genericName ?? id;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      children: <Widget>[
+        _DrugPairHeader(
+          fromName: _drugName(input.fromDrugId),
+          fromDose: input.fromDoseMg,
+          toName: _drugName(input.toDrugId),
+          toDose: input.toDoseMg,
+        ),
+        const SizedBox(height: 16),
+        _StatusPill(plan: plan),
+        const SizedBox(height: 24),
+        ..._planContent(plan),
+      ],
+    );
+  }
+
+  List<Widget> _planContent(SwitchPlan plan) {
+    return switch (plan) {
+      SwitchPlanOk(
+        :final schedule,
+        :final safetyFlags,
+        :final citations,
+        :final dosesMatchReference,
+      ) =>
+        <Widget>[
+          if (!dosesMatchReference) ...<Widget>[
+            const _ReferenceDosesBanner(),
+            const SizedBox(height: 16),
+          ],
+          _ScheduleCard(schedule: schedule),
+          const SizedBox(height: 16),
+          if (safetyFlags.isNotEmpty) ...<Widget>[
+            _SafetyFlagsCard(flags: safetyFlags),
+            const SizedBox(height: 16),
+          ],
+          _CitationsCard(citations: citations),
+        ],
+      SwitchPlanMaudsleyGuidance(
+        :final guidance,
+        :final safetyFlags,
+      ) =>
+        <Widget>[
+          _GuidanceCard(
+            headline: guidance.headline,
+            detail: guidance.detail,
+            waitDays: guidance.waitDays,
+          ),
+          const SizedBox(height: 16),
+          if (safetyFlags.isNotEmpty) ...<Widget>[
+            _SafetyFlagsCard(flags: safetyFlags),
+            const SizedBox(height: 16),
+          ],
+          _CitationsCard(citations: guidance.citations),
+        ],
+      SwitchPlanMaoiWashout(
+        :final washoutDays,
+        :final reason,
+        :final safetyFlags,
+      ) =>
+        <Widget>[
+          _MaoiWashoutCard(washoutDays: washoutDays, reason: reason),
+          const SizedBox(height: 16),
+          if (safetyFlags.isNotEmpty)
+            _SafetyFlagsCard(flags: safetyFlags),
+        ],
+      SwitchPlanClozapineRedirect(:final guidance) =>
+        <Widget>[
+          _ClozapineRedirectCard(guidance: guidance),
+        ],
+      SwitchPlanNoRule(:final reason) => <Widget>[
+          _NoRuleCard(reason: reason),
+        ],
+    };
+  }
+}
+
+class _DrugPairHeader extends StatelessWidget {
+  const _DrugPairHeader({
+    required this.fromName,
+    required this.fromDose,
+    required this.toName,
+    required this.toDose,
+  });
+
+  final String fromName;
+  final num fromDose;
+  final String toName;
+  final num toDose;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Expanded(
+          child: _DrugTag(
+            label: 'FROM',
+            name: fromName,
+            dose: fromDose,
+            color: AppColors.from,
           ),
         ),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 18),
+          child: Icon(
+            Icons.arrow_forward,
+            color: AppColors.muted,
+            size: 20,
+          ),
+        ),
+        Expanded(
+          child: _DrugTag(
+            label: 'TO',
+            name: toName,
+            dose: toDose,
+            color: AppColors.to,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _DrugTag extends StatelessWidget {
+  const _DrugTag({
+    required this.label,
+    required this.name,
+    required this.dose,
+    required this.color,
+  });
+
+  final String label;
+  final String name;
+  final num dose;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1.5,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            name,
+            style: const TextStyle(
+              color: AppColors.text,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+          Text(
+            '${_formatDose(dose)} mg',
+            style: const TextStyle(
+              color: AppColors.muted,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+String _formatDose(num n) {
+  if (n is int || n == n.toInt()) return n.toInt().toString();
+  return n.toString();
+}
+
+class _StatusPill extends StatelessWidget {
+  const _StatusPill({required this.plan});
+
+  final SwitchPlan plan;
+
+  ({String label, Color color}) _styleFor() => switch (plan) {
+        SwitchPlanOk() => (label: 'Reviewed schedule', color: AppColors.to),
+        SwitchPlanMaudsleyGuidance() =>
+          (label: 'Maudsley class-level guidance', color: AppColors.accent),
+        SwitchPlanMaoiWashout() =>
+          (label: 'MAOI washout required', color: AppColors.danger),
+        SwitchPlanClozapineRedirect() =>
+          (label: 'Use Clozapine module', color: AppColors.warning),
+        SwitchPlanNoRule() =>
+          (label: 'No reviewed rule', color: AppColors.muted),
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    final style = _styleFor();
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: style.color.withValues(alpha: 0.12),
+          border: Border.all(color: style.color.withValues(alpha: 0.4)),
+          borderRadius: BorderRadius.circular(999),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Container(
+              width: 6,
+              height: 6,
+              decoration: BoxDecoration(
+                color: style.color,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              style.label,
+              style: TextStyle(
+                color: style.color,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.3,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ReferenceDosesBanner extends StatelessWidget {
+  const _ReferenceDosesBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    return const _Banner(
+      tone: AppColors.accent,
+      eyebrow: 'REFERENCE DOSES',
+      title: 'Schedule shown at reviewed reference doses',
+      body:
+          "The doses you entered differ from the rule's reviewed reference. "
+          'Treat this schedule as an example — adapt proportionally to your '
+          "patient's doses, rounding to formulation increments.",
+    );
+  }
+}
+
+class _ScheduleCard extends StatelessWidget {
+  const _ScheduleCard({required this.schedule});
+
+  final List<ScheduleStep> schedule;
+
+  @override
+  Widget build(BuildContext context) {
+    return _Card(
+      title: 'Schedule',
+      child: Column(
+        children: <Widget>[
+          const _ScheduleRow(
+            isHeader: true,
+            day: 'Day',
+            from: 'From',
+            to: 'To',
+            notes: 'Notes',
+          ),
+          const Divider(color: AppColors.border, height: 1),
+          ...schedule.map(
+            (s) => Column(
+              children: <Widget>[
+                _ScheduleRow(
+                  day: s.day.toString(),
+                  from: _formatDose(s.fromDoseMg),
+                  to: _formatDose(s.toDoseMg),
+                  notes: s.notes ?? '',
+                ),
+                const Divider(color: AppColors.border, height: 1),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ScheduleRow extends StatelessWidget {
+  const _ScheduleRow({
+    required this.day,
+    required this.from,
+    required this.to,
+    required this.notes,
+    this.isHeader = false,
+  });
+
+  final String day;
+  final String from;
+  final String to;
+  final String notes;
+  final bool isHeader;
+
+  @override
+  Widget build(BuildContext context) {
+    final style = TextStyle(
+      color: isHeader ? AppColors.muted : AppColors.text,
+      fontSize: 12,
+      fontWeight: isHeader ? FontWeight.w600 : FontWeight.w400,
+      letterSpacing: isHeader ? 1 : 0,
+    );
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          SizedBox(width: 36, child: Text(day, style: style)),
+          SizedBox(width: 56, child: Text(from, style: style)),
+          SizedBox(width: 56, child: Text(to, style: style)),
+          Expanded(
+            child: Text(notes, style: style.copyWith(letterSpacing: 0)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SafetyFlagsCard extends StatelessWidget {
+  const _SafetyFlagsCard({required this.flags});
+
+  final List<String> flags;
+
+  @override
+  Widget build(BuildContext context) {
+    return _Card(
+      title: 'Safety flags',
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: flags.map((f) => _FlagChip(flag: f)).toList(),
+      ),
+    );
+  }
+}
+
+class _FlagChip extends StatelessWidget {
+  const _FlagChip({required this.flag});
+
+  final String flag;
+
+  Color _color() {
+    if (flag.contains('avoid') ||
+        flag.contains('contraindicat') ||
+        flag.startsWith('maoi_washout') ||
+        flag == 'discontinuation_syndrome_high' ||
+        flag == 'qtc_additive_overlap') {
+      return AppColors.warning;
+    }
+    return AppColors.accent;
+  }
+
+  String _label() => flag.replaceAll('_', ' ');
+
+  @override
+  Widget build(BuildContext context) {
+    final c = _color();
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: c.withValues(alpha: 0.1),
+        border: Border.all(color: c.withValues(alpha: 0.35)),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        _label(),
+        style: TextStyle(
+          color: c,
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+}
+
+class _CitationsCard extends StatelessWidget {
+  const _CitationsCard({required this.citations});
+
+  final List<String> citations;
+
+  @override
+  Widget build(BuildContext context) {
+    return _Card(
+      title: 'Citations',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: citations
+            .map(
+              (c) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Text(
+                  '• $c',
+                  style: const TextStyle(
+                    color: AppColors.muted,
+                    fontSize: 12,
+                    height: 1.4,
+                  ),
+                ),
+              ),
+            )
+            .toList(),
+      ),
+    );
+  }
+}
+
+class _GuidanceCard extends StatelessWidget {
+  const _GuidanceCard({
+    required this.headline,
+    required this.detail,
+    this.waitDays,
+  });
+
+  final String headline;
+  final String detail;
+  final int? waitDays;
+
+  @override
+  Widget build(BuildContext context) {
+    return _Banner(
+      tone: AppColors.accent,
+      eyebrow: 'GUIDANCE',
+      title: headline,
+      body: waitDays != null
+          ? '$detail\n\nWait period: $waitDays day${waitDays == 1 ? '' : 's'}.'
+          : detail,
+    );
+  }
+}
+
+class _MaoiWashoutCard extends StatelessWidget {
+  const _MaoiWashoutCard({
+    required this.washoutDays,
+    required this.reason,
+  });
+
+  final int washoutDays;
+  final String reason;
+
+  @override
+  Widget build(BuildContext context) {
+    return _Banner(
+      tone: AppColors.danger,
+      eyebrow: 'MAOI WASHOUT',
+      title: '$washoutDays-day washout required',
+      body: reason,
+    );
+  }
+}
+
+class _ClozapineRedirectCard extends StatelessWidget {
+  const _ClozapineRedirectCard({required this.guidance});
+
+  final String guidance;
+
+  @override
+  Widget build(BuildContext context) {
+    return _Banner(
+      tone: AppColors.warning,
+      eyebrow: 'CLOZAPINE INITIATION',
+      title: 'Use the Clozapine module',
+      body: guidance,
+    );
+  }
+}
+
+class _NoRuleCard extends StatelessWidget {
+  const _NoRuleCard({required this.reason});
+
+  final String reason;
+
+  @override
+  Widget build(BuildContext context) {
+    return _Banner(
+      tone: AppColors.muted,
+      eyebrow: 'NO REVIEWED RULE',
+      title: 'No specific reviewed rule for this pair',
+      body: reason,
+    );
+  }
+}
+
+class _Banner extends StatelessWidget {
+  const _Banner({
+    required this.tone,
+    required this.eyebrow,
+    required this.title,
+    required this.body,
+  });
+
+  final Color tone;
+  final String eyebrow;
+  final String title;
+  final String body;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: tone.withValues(alpha: 0.08),
+        border: Border(left: BorderSide(color: tone, width: 3)),
+        borderRadius: const BorderRadius.only(
+          topRight: Radius.circular(8),
+          bottomRight: Radius.circular(8),
+        ),
+      ),
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            eyebrow,
+            style: TextStyle(
+              color: tone,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1.5,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            title,
+            style: const TextStyle(
+              color: AppColors.text,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            body,
+            style: const TextStyle(
+              color: AppColors.muted,
+              fontSize: 12,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Card extends StatelessWidget {
+  const _Card({required this.title, required this.child});
+
+  final String title;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            title.toUpperCase(),
+            style: const TextStyle(
+              color: AppColors.muted,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1.5,
+            ),
+          ),
+          const SizedBox(height: 10),
+          child,
+        ],
       ),
     );
   }
