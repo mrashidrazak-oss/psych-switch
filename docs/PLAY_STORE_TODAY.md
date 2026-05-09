@@ -1,17 +1,24 @@
 # Play Store launch — TODAY checklist
 
-Status as of v0.4.22 commit `debd0f4`:
+Status as of v0.4.23 commit `d172cf3`:
 
-✅ **Build #2 finished successfully** (build #1 errored at Kotlin
-   compile due to expo-constants version mismatch — fixed in v0.4.22).
+✅ **Build #3 finished successfully** — this is the AAB to upload.
+   Renamed from "PsychSwitch ASEAN" → "PsychSwitch" with new package
+   `com.psychswitch.app`. Bundle IDs are immutable post-submit, so we
+   landed the rename before any store upload.
 
-   - Build ID: `361520c7-7b79-41c0-a651-c978661f7082`
-   - Version: 0.4.22 / version code 3
-   - Duration: 24m 34s
+   - Build ID: `ddebfa2c-ffe8-46a8-840f-bbc690028b8b`
+   - Version: **0.4.23** / version code 2
+   - Package: **com.psychswitch.app**
+   - Duration: ~15 min
    - Status: ✅ finished
-   - Dashboard: https://expo.dev/accounts/feistz/projects/psych-switch/builds/361520c7-7b79-41c0-a651-c978661f7082
-   - **`.aab` download:** https://expo.dev/artifacts/eas/7FkWzoNMQimEVqTbhheZX1.aab
-     (signed, store-ready, ~30 MB)
+   - Dashboard: https://expo.dev/accounts/feistz/projects/psych-switch/builds/ddebfa2c-ffe8-46a8-840f-bbc690028b8b
+   - **`.aab` download (USE THIS ONE):** https://expo.dev/artifacts/eas/tpqxDaaJjhDFcamBHc6Jdk.aab
+
+⛔ **Old AAB is DEFUNCT — do NOT upload:**
+   `https://expo.dev/artifacts/eas/7FkWzoNMQimEVqTbhheZX1.aab` —
+   this is the v0.4.22 build with the old `com.psychswitch.asean`
+   package ID. Uploading it would lock the wrong package name forever.
 
 ✅ **All assets generated** — icon, adaptive icon, splash, feature graphic, OG card.
 
@@ -110,7 +117,7 @@ DNS is pointed.
 
 The build is done. Download:
 
-**https://expo.dev/artifacts/eas/7FkWzoNMQimEVqTbhheZX1.aab**
+**https://expo.dev/artifacts/eas/tpqxDaaJjhDFcamBHc6Jdk.aab**
 
 Then:
 1. Play Console → your app → **Production** (or **Internal testing**
