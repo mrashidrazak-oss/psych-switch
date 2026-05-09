@@ -32,7 +32,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: pnpm
+        # `cache: pnpm` would normally go here, but it calls
+        # `pnpm store path --silent` which trips over our
+        # pnpm-workspace.yaml (no `packages:` field — the file is
+        # only there for `allowBuilds`). Cold installs are still
+        # ~30s, well within the 10-min timeout, so we skip the cache.
 
       - name: Install root deps
         run: pnpm install --frozen-lockfile
