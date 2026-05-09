@@ -1,0 +1,255 @@
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+_$HalfLifeImpl _$$HalfLifeImplFromJson(Map<String, dynamic> json) =>
+    _$HalfLifeImpl(
+      meanHours: (json['meanHours'] as num).toDouble(),
+      rangeHours:
+          (json['rangeHours'] as List<dynamic>)
+              .map((e) => (e as num).toDouble())
+              .toList(),
+      notes: json['notes'] as String?,
+    );
+
+Map<String, dynamic> _$$HalfLifeImplToJson(_$HalfLifeImpl instance) =>
+    <String, dynamic>{
+      'meanHours': instance.meanHours,
+      'rangeHours': instance.rangeHours,
+      'notes': instance.notes,
+    };
+
+_$ActiveMetaboliteImpl _$$ActiveMetaboliteImplFromJson(
+  Map<String, dynamic> json,
+) => _$ActiveMetaboliteImpl(
+  name: json['name'] as String?,
+  halfLifeHours: (json['halfLifeHours'] as num?)?.toDouble(),
+  clinicallySignificant: json['clinicallySignificant'] as bool,
+  notes: json['notes'] as String?,
+);
+
+Map<String, dynamic> _$$ActiveMetaboliteImplToJson(
+  _$ActiveMetaboliteImpl instance,
+) => <String, dynamic>{
+  'name': instance.name,
+  'halfLifeHours': instance.halfLifeHours,
+  'clinicallySignificant': instance.clinicallySignificant,
+  'notes': instance.notes,
+};
+
+_$CypInteractionsImpl _$$CypInteractionsImplFromJson(
+  Map<String, dynamic> json,
+) => _$CypInteractionsImpl(
+  substrateOf:
+      (json['substrateOf'] as List<dynamic>).map((e) => e as String).toList(),
+  inhibitorOf:
+      (json['inhibitorOf'] as List<dynamic>).map((e) => e as String).toList(),
+  switchingRelevance: json['switchingRelevance'] as String,
+);
+
+Map<String, dynamic> _$$CypInteractionsImplToJson(
+  _$CypInteractionsImpl instance,
+) => <String, dynamic>{
+  'substrateOf': instance.substrateOf,
+  'inhibitorOf': instance.inhibitorOf,
+  'switchingRelevance': instance.switchingRelevance,
+};
+
+_$MaoiWashoutImpl _$$MaoiWashoutImplFromJson(Map<String, dynamic> json) =>
+    _$MaoiWashoutImpl(
+      daysOffBeforeMAOI: (json['daysOffBeforeMAOI'] as num).toInt(),
+      daysOffAfterMAOI: (json['daysOffAfterMAOI'] as num).toInt(),
+      notes: json['notes'] as String,
+    );
+
+Map<String, dynamic> _$$MaoiWashoutImplToJson(_$MaoiWashoutImpl instance) =>
+    <String, dynamic>{
+      'daysOffBeforeMAOI': instance.daysOffBeforeMAOI,
+      'daysOffAfterMAOI': instance.daysOffAfterMAOI,
+      'notes': instance.notes,
+    };
+
+_$DiscontinuationSyndromeRiskImpl _$$DiscontinuationSyndromeRiskImplFromJson(
+  Map<String, dynamic> json,
+) => _$DiscontinuationSyndromeRiskImpl(
+  score: _riskFromJson(json['score'] as String),
+  notes: json['notes'] as String,
+);
+
+Map<String, dynamic> _$$DiscontinuationSyndromeRiskImplToJson(
+  _$DiscontinuationSyndromeRiskImpl instance,
+) => <String, dynamic>{
+  'score': _riskToJson(instance.score),
+  'notes': instance.notes,
+};
+
+_$MetabolicRiskImpl _$$MetabolicRiskImplFromJson(Map<String, dynamic> json) =>
+    _$MetabolicRiskImpl(
+      score: _riskFromJson(json['score'] as String),
+      notes: json['notes'] as String,
+    );
+
+Map<String, dynamic> _$$MetabolicRiskImplToJson(_$MetabolicRiskImpl instance) =>
+    <String, dynamic>{
+      'score': _riskToJson(instance.score),
+      'notes': instance.notes,
+    };
+
+_$ReboundPsychosisRiskImpl _$$ReboundPsychosisRiskImplFromJson(
+  Map<String, dynamic> json,
+) => _$ReboundPsychosisRiskImpl(
+  score: _riskFromJson(json['score'] as String),
+  notes: json['notes'] as String,
+);
+
+Map<String, dynamic> _$$ReboundPsychosisRiskImplToJson(
+  _$ReboundPsychosisRiskImpl instance,
+) => <String, dynamic>{
+  'score': _riskToJson(instance.score),
+  'notes': instance.notes,
+};
+
+_$LaiInfoImpl _$$LaiInfoImplFromJson(Map<String, dynamic> json) =>
+    _$LaiInfoImpl(
+      available: json['available'] as bool,
+      notes: json['notes'] as String,
+    );
+
+Map<String, dynamic> _$$LaiInfoImplToJson(_$LaiInfoImpl instance) =>
+    <String, dynamic>{'available': instance.available, 'notes': instance.notes};
+
+_$LaiDetailsImpl _$$LaiDetailsImplFromJson(Map<String, dynamic> json) =>
+    _$LaiDetailsImpl(
+      injectionIntervalDays: (json['injectionIntervalDays'] as num).toInt(),
+      initiationProtocol: json['initiationProtocol'] as String,
+      needsOralOverlap: json['needsOralOverlap'] as bool,
+      oralOverlapDurationDays:
+          (json['oralOverlapDurationDays'] as num?)?.toInt(),
+    );
+
+Map<String, dynamic> _$$LaiDetailsImplToJson(_$LaiDetailsImpl instance) =>
+    <String, dynamic>{
+      'injectionIntervalDays': instance.injectionIntervalDays,
+      'initiationProtocol': instance.initiationProtocol,
+      'needsOralOverlap': instance.needsOralOverlap,
+      'oralOverlapDurationDays': instance.oralOverlapDurationDays,
+    };
+
+_$DosingImpl _$$DosingImplFromJson(Map<String, dynamic> json) => _$DosingImpl(
+  startingDoseMg: (json['startingDoseMg'] as num).toDouble(),
+  typicalTargetRangeMg:
+      (json['typicalTargetRangeMg'] as List<dynamic>)
+          .map((e) => (e as num).toDouble())
+          .toList(),
+  maxDoseMg: (json['maxDoseMg'] as num).toDouble(),
+  increments:
+      (json['increments'] as List<dynamic>)
+          .map((e) => (e as num).toDouble())
+          .toList(),
+  formulationsAvailableMy:
+      (json['formulationsAvailableMy'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+);
+
+Map<String, dynamic> _$$DosingImplToJson(_$DosingImpl instance) =>
+    <String, dynamic>{
+      'startingDoseMg': instance.startingDoseMg,
+      'typicalTargetRangeMg': instance.typicalTargetRangeMg,
+      'maxDoseMg': instance.maxDoseMg,
+      'increments': instance.increments,
+      'formulationsAvailableMy': instance.formulationsAvailableMy,
+    };
+
+_$DrugImpl _$$DrugImplFromJson(Map<String, dynamic> json) => _$DrugImpl(
+  id: json['id'] as String,
+  genericName: json['genericName'] as String,
+  drugClass: json['drugClass'] as String,
+  category: _drugCategoryFromJson(json['category'] as String?),
+  hidden: json['hidden'] as bool?,
+  isMAOI: json['isMAOI'] as bool?,
+  maoiClearanceDays: (json['maoiClearanceDays'] as num?)?.toInt(),
+  malaysianBrandNames:
+      (json['malaysianBrandNames'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+  halfLife: HalfLife.fromJson(json['halfLife'] as Map<String, dynamic>),
+  activeMetabolite: ActiveMetabolite.fromJson(
+    json['activeMetabolite'] as Map<String, dynamic>,
+  ),
+  cypInteractions: CypInteractions.fromJson(
+    json['cypInteractions'] as Map<String, dynamic>,
+  ),
+  maoiWashout:
+      json['maoiWashout'] == null
+          ? null
+          : MaoiWashout.fromJson(json['maoiWashout'] as Map<String, dynamic>),
+  discontinuationSyndromeRisk:
+      json['discontinuationSyndromeRisk'] == null
+          ? null
+          : DiscontinuationSyndromeRisk.fromJson(
+            json['discontinuationSyndromeRisk'] as Map<String, dynamic>,
+          ),
+  epsRisk: _riskFromJsonNullable(json['epsRisk'] as String?),
+  metabolicRisk:
+      json['metabolicRisk'] == null
+          ? null
+          : MetabolicRisk.fromJson(
+            json['metabolicRisk'] as Map<String, dynamic>,
+          ),
+  prolactinRisk: _riskFromJsonNullable(json['prolactinRisk'] as String?),
+  qtcRisk: _riskFromJsonNullable(json['qtcRisk'] as String?),
+  sedation: _riskFromJsonNullable(json['sedation'] as String?),
+  lai:
+      json['lai'] == null
+          ? null
+          : LaiInfo.fromJson(json['lai'] as Map<String, dynamic>),
+  formulation: _formulationFromJson(json['formulation'] as String?),
+  laiDetails:
+      json['laiDetails'] == null
+          ? null
+          : LaiDetails.fromJson(json['laiDetails'] as Map<String, dynamic>),
+  reboundPsychosisRisk:
+      json['reboundPsychosisRisk'] == null
+          ? null
+          : ReboundPsychosisRisk.fromJson(
+            json['reboundPsychosisRisk'] as Map<String, dynamic>,
+          ),
+  dosing: Dosing.fromJson(json['dosing'] as Map<String, dynamic>),
+  formulationNotes: json['formulationNotes'] as String,
+  citations:
+      (json['citations'] as List<dynamic>).map((e) => e as String).toList(),
+  lastReviewedISO: json['lastReviewedISO'] as String,
+  reviewedBy: json['reviewedBy'] as String,
+);
+
+Map<String, dynamic> _$$DrugImplToJson(_$DrugImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'genericName': instance.genericName,
+      'drugClass': instance.drugClass,
+      'category': _drugCategoryToJson(instance.category),
+      'hidden': instance.hidden,
+      'isMAOI': instance.isMAOI,
+      'maoiClearanceDays': instance.maoiClearanceDays,
+      'malaysianBrandNames': instance.malaysianBrandNames,
+      'halfLife': instance.halfLife,
+      'activeMetabolite': instance.activeMetabolite,
+      'cypInteractions': instance.cypInteractions,
+      'maoiWashout': instance.maoiWashout,
+      'discontinuationSyndromeRisk': instance.discontinuationSyndromeRisk,
+      'epsRisk': _riskToJsonNullable(instance.epsRisk),
+      'metabolicRisk': instance.metabolicRisk,
+      'prolactinRisk': _riskToJsonNullable(instance.prolactinRisk),
+      'qtcRisk': _riskToJsonNullable(instance.qtcRisk),
+      'sedation': _riskToJsonNullable(instance.sedation),
+      'lai': instance.lai,
+      'formulation': _formulationToJson(instance.formulation),
+      'laiDetails': instance.laiDetails,
+      'reboundPsychosisRisk': instance.reboundPsychosisRisk,
+      'dosing': instance.dosing,
+      'formulationNotes': instance.formulationNotes,
+      'citations': instance.citations,
+      'lastReviewedISO': instance.lastReviewedISO,
+      'reviewedBy': instance.reviewedBy,
+    };

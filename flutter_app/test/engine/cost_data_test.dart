@@ -2,7 +2,7 @@
 // is a fresh suite that pins behaviour we rely on elsewhere.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:psychswitch/src/engine/cost_data.dart';
+import 'package:psychswitch_engine/cost_data.dart';
 
 void main() {
   group('costFor', () {

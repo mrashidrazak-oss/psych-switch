@@ -2,7 +2,7 @@
 // Mirrors engine/__tests__/ddi.test.ts.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:psychswitch/src/engine/ddi.dart';
+import 'package:psychswitch_engine/ddi.dart';
 
 void main() {
   group('DDI checker', () {

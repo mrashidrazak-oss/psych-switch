@@ -7,9 +7,8 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-
-import 'package:psychswitch/src/engine/psych_switch_score.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
+import 'package:psychswitch_engine/psych_switch_score.dart';
 
 class ScoreRing extends StatelessWidget {
   const ScoreRing({

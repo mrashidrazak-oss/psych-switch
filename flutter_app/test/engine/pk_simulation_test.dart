@@ -4,9 +4,9 @@
 // the relevant fields in the canonical JSON files.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:psychswitch/src/engine/pk_simulation.dart';
-import 'package:psychswitch/src/engine/types/drug.dart';
-import 'package:psychswitch/src/engine/types/schedule_step.dart';
+import 'package:psychswitch_engine/pk_simulation.dart';
+import 'package:psychswitch_engine/types/drug.dart';
+import 'package:psychswitch_engine/types/schedule_step.dart';
 
 Drug _drug({
   required String id,

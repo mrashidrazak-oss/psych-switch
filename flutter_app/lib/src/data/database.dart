@@ -20,7 +20,7 @@ import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
-import 'package:psychswitch/src/engine/case_pulse.dart' show SavedCase;
+import 'package:psychswitch_engine/case_pulse.dart' show SavedCase;
 
 part 'database.g.dart';
 

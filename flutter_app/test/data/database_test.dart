@@ -4,7 +4,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:psychswitch/src/data/database.dart';
-import 'package:psychswitch/src/engine/case_pulse.dart' show SavedCase;
+import 'package:psychswitch_engine/case_pulse.dart' show SavedCase;
 
 SavedCase _case({
   String id = 'c1',

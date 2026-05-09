@@ -9,14 +9,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import 'package:psychswitch/src/engine/case_pulse.dart';
-import 'package:psychswitch/src/engine/switching_engine.dart' as engine;
 import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/providers/saved_cases_provider.dart';
 import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/screens/result_screen.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
+import 'package:psychswitch_engine/case_pulse.dart';
+import 'package:psychswitch_engine/switching_engine.dart' as engine;
 
 class TodayPulseCard extends ConsumerWidget {
   const TodayPulseCard({super.key});

@@ -1,7 +1,7 @@
 // Tests for the Dart errata port. Mirrors engine/__tests__/errata.test.ts.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:psychswitch/src/engine/errata.dart';
+import 'package:psychswitch_engine/errata.dart';
 
 void main() {
   group('errata feed', () {

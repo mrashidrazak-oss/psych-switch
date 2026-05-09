@@ -2,7 +2,7 @@
 // tests focus on JSON parsing of the canonical lithium-tapering shape.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:psychswitch/src/engine/mood_stabilizer_tapering.dart';
+import 'package:psychswitch_engine/mood_stabilizer_tapering.dart';
 
 Map<String, dynamic> _canonicalLithiumJson() => <String, dynamic>{
       'id': 'lithium-tapering',

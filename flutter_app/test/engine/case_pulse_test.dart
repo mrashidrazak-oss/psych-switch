@@ -2,11 +2,11 @@
 // Uses inline drug fixtures + a stub SwitchingEngine.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:psychswitch/src/engine/case_pulse.dart';
-import 'package:psychswitch/src/engine/maudsley15.dart';
-import 'package:psychswitch/src/engine/switching_engine.dart';
-import 'package:psychswitch/src/engine/types/drug.dart';
-import 'package:psychswitch/src/engine/types/switching_rule.dart';
+import 'package:psychswitch_engine/case_pulse.dart';
+import 'package:psychswitch_engine/maudsley15.dart';
+import 'package:psychswitch_engine/switching_engine.dart';
+import 'package:psychswitch_engine/types/drug.dart';
+import 'package:psychswitch_engine/types/switching_rule.dart';
 
 const _emptyMetabolite = ActiveMetabolite(
   name: null,

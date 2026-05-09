@@ -6,7 +6,7 @@
 // the full registry from disk.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:psychswitch/src/engine/qtc_stacker.dart';
+import 'package:psychswitch_engine/qtc_stacker.dart';
 
 QtcRiskData _fixture() => const QtcRiskData(
       id: 'qtc-test',

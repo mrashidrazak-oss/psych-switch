@@ -2,8 +2,8 @@
 // Mirrors engine/__tests__/monitoring.test.ts.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:psychswitch/src/engine/monitoring.dart';
-import 'package:psychswitch/src/engine/patient_context_pure.dart';
+import 'package:psychswitch_engine/monitoring.dart';
+import 'package:psychswitch_engine/patient_context_pure.dart';
 
 void main() {
   group('monitoring schedule generator', () {

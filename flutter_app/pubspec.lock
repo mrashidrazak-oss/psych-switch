@@ -836,6 +836,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.5"
+  psychswitch_engine:
+    dependency: "direct main"
+    description:
+      path: "../psychswitch_engine"
+      relative: true
+    source: path
+    version: "0.5.0-alpha.0+1"
   pub_semver:
     dependency: transitive
     description:

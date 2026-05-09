@@ -2,8 +2,8 @@
 // Mirrors engine/__tests__/specialty.test.ts.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:psychswitch/src/engine/patient_context_pure.dart';
-import 'package:psychswitch/src/engine/specialty.dart';
+import 'package:psychswitch_engine/patient_context_pure.dart';
+import 'package:psychswitch_engine/specialty.dart';
 
 void main() {
   group('activeSpecialties', () {

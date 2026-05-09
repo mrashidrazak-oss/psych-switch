@@ -2,8 +2,8 @@
 // Mirrors engine/__tests__/taperSpeed.test.ts.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:psychswitch/src/engine/taper_speed.dart';
-import 'package:psychswitch/src/engine/types/schedule_step.dart';
+import 'package:psychswitch_engine/taper_speed.dart';
+import 'package:psychswitch_engine/types/schedule_step.dart';
 
 const _standardCrossTaper = <ScheduleStep>[
   ScheduleStep(

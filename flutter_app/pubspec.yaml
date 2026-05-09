@@ -17,6 +17,12 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
+  # ── Engine (extracted to a pure-Dart package in Phase 6) ──────────
+  # Lets the upcoming Dart MCP server consume the same engine without
+  # having to drag in Flutter SDK.
+  psychswitch_engine:
+    path: ../psychswitch_engine
+
   # ── State ──────────────────────────────────────────────────────────
   flutter_riverpod: ^2.6.1
   # riverpod_annotation deferred — its codegen helper

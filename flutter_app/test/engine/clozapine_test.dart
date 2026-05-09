@@ -4,8 +4,8 @@
 // loader in Phase 4.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:psychswitch/src/engine/clozapine.dart';
-import 'package:psychswitch/src/engine/patient_context_pure.dart' show Sex;
+import 'package:psychswitch_engine/clozapine.dart';
+import 'package:psychswitch_engine/patient_context_pure.dart' show Sex;
 
 TitrationProtocol _titration({
   required Sex sex,

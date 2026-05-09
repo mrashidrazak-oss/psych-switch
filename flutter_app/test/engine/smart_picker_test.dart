@@ -3,12 +3,12 @@
 // + SwitchingRule fixtures rather than depending on switchingEngine.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:psychswitch/src/engine/patient_context_pure.dart';
-import 'package:psychswitch/src/engine/smart_picker.dart';
-import 'package:psychswitch/src/engine/types/drug.dart';
-import 'package:psychswitch/src/engine/types/enums.dart';
-import 'package:psychswitch/src/engine/types/schedule_step.dart';
-import 'package:psychswitch/src/engine/types/switching_rule.dart';
+import 'package:psychswitch_engine/patient_context_pure.dart';
+import 'package:psychswitch_engine/smart_picker.dart';
+import 'package:psychswitch_engine/types/drug.dart';
+import 'package:psychswitch_engine/types/enums.dart';
+import 'package:psychswitch_engine/types/schedule_step.dart';
+import 'package:psychswitch_engine/types/switching_rule.dart';
 
 const _emptyMetabolite = ActiveMetabolite(
   name: null,

@@ -14,23 +14,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import 'package:psychswitch/src/engine/case_pulse.dart' show SavedCase;
-import 'package:psychswitch/src/engine/citations.dart';
-import 'package:psychswitch/src/engine/ddi.dart';
-import 'package:psychswitch/src/engine/monitoring.dart';
-import 'package:psychswitch/src/engine/patient_context_pure.dart';
-import 'package:psychswitch/src/engine/psych_switch_score.dart';
-import 'package:psychswitch/src/engine/scale_schedule.dart';
-import 'package:psychswitch/src/engine/switching_engine.dart';
-import 'package:psychswitch/src/engine/types/drug.dart';
-import 'package:psychswitch/src/engine/types/schedule_step.dart';
 import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/providers/saved_cases_provider.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch/src/ui/widgets/score_ring.dart';
-import 'package:psychswitch/src/util/case_id.dart';
+import 'package:psychswitch_engine/case_pulse.dart' show SavedCase;
+import 'package:psychswitch_engine/citations.dart';
+import 'package:psychswitch_engine/ddi.dart';
+import 'package:psychswitch_engine/monitoring.dart';
+import 'package:psychswitch_engine/patient_context_pure.dart';
+import 'package:psychswitch_engine/psych_switch_score.dart';
+import 'package:psychswitch_engine/scale_schedule.dart';
+import 'package:psychswitch_engine/switching_engine.dart';
+import 'package:psychswitch_engine/types/drug.dart';
+import 'package:psychswitch_engine/types/schedule_step.dart';
+import 'package:psychswitch_engine/util/case_id.dart';
 
 /// Payload passed via `GoRouterState.extra` when navigating to /result.
 class ResultScreenArgs {

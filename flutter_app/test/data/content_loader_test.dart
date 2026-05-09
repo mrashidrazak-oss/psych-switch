@@ -9,7 +9,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:psychswitch/src/data/content_loader.dart';
-import 'package:psychswitch/src/engine/switching_engine.dart';
+import 'package:psychswitch_engine/switching_engine.dart';
 
 void main() {
   // Required for rootBundle access in unit tests.

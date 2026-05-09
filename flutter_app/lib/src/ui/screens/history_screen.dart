@@ -11,15 +11,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-
-import 'package:psychswitch/src/engine/case_pulse.dart' show SavedCase;
-import 'package:psychswitch/src/engine/switching_engine.dart';
 import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/providers/saved_cases_provider.dart';
 import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/screens/result_screen.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
+import 'package:psychswitch_engine/case_pulse.dart' show SavedCase;
+import 'package:psychswitch_engine/switching_engine.dart';
 
 class HistoryScreen extends ConsumerWidget {
   const HistoryScreen({super.key});

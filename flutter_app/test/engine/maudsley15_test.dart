@@ -3,9 +3,9 @@
 // switchingEngine on the TS side.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:psychswitch/src/engine/maudsley15.dart';
-import 'package:psychswitch/src/engine/types/drug.dart';
-import 'package:psychswitch/src/engine/types/enums.dart';
+import 'package:psychswitch_engine/maudsley15.dart';
+import 'package:psychswitch_engine/types/drug.dart';
+import 'package:psychswitch_engine/types/enums.dart';
 
 Drug _drug(String id) => Drug(
       id: id,

@@ -2,7 +2,7 @@
 // reference data is exercised by hand here.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:psychswitch/src/engine/depot_lai.dart';
+import 'package:psychswitch_engine/depot_lai.dart';
 
 void main() {
   group('Invega Sustenna', () {

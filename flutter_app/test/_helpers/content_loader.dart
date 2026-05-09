@@ -15,10 +15,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:psychswitch/src/engine/maudsley15.dart';
-import 'package:psychswitch/src/engine/switching_engine.dart';
-import 'package:psychswitch/src/engine/types/drug.dart';
-import 'package:psychswitch/src/engine/types/switching_rule.dart';
+import 'package:psychswitch_engine/maudsley15.dart';
+import 'package:psychswitch_engine/switching_engine.dart';
+import 'package:psychswitch_engine/types/drug.dart';
+import 'package:psychswitch_engine/types/switching_rule.dart';
 
 /// Path to the repo root's `content/` directory, resolved relative to
 /// the flutter_app cwd (the standard `flutter test` working directory).

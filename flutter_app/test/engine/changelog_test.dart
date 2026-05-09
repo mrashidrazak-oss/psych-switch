@@ -1,7 +1,7 @@
 // Tests for the Dart changelog port. No TS counterpart exists.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:psychswitch/src/engine/changelog.dart';
+import 'package:psychswitch_engine/changelog.dart';
 
 void main() {
   group('changelog registry', () {

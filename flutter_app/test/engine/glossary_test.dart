@@ -1,7 +1,7 @@
 // Tests for the Dart glossary port. Mirrors engine/__tests__/glossary.test.ts.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:psychswitch/src/engine/glossary.dart';
+import 'package:psychswitch_engine/glossary.dart';
 
 void main() {
   group('glossary lookups', () {

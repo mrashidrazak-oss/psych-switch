@@ -18,13 +18,13 @@ import 'dart:convert';
 
 import 'package:flutter/services.dart' show AssetBundle, rootBundle;
 
-import 'package:psychswitch/src/engine/clozapine.dart';
-import 'package:psychswitch/src/engine/maudsley15.dart';
-import 'package:psychswitch/src/engine/mood_stabilizer_tapering.dart';
-import 'package:psychswitch/src/engine/qtc_stacker.dart';
-import 'package:psychswitch/src/engine/switching_engine.dart';
-import 'package:psychswitch/src/engine/types/drug.dart';
-import 'package:psychswitch/src/engine/types/switching_rule.dart';
+import 'package:psychswitch_engine/clozapine.dart';
+import 'package:psychswitch_engine/maudsley15.dart';
+import 'package:psychswitch_engine/mood_stabilizer_tapering.dart';
+import 'package:psychswitch_engine/qtc_stacker.dart';
+import 'package:psychswitch_engine/switching_engine.dart';
+import 'package:psychswitch_engine/types/drug.dart';
+import 'package:psychswitch_engine/types/switching_rule.dart';
 
 /// Path to the asset bundle inside the Flutter package.
 const String contentBundleAsset = 'assets/content_bundle.json';

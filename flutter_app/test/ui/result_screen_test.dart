@@ -9,10 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-
-import 'package:psychswitch/src/engine/switching_engine.dart';
 import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/screens/result_screen.dart';
+import 'package:psychswitch_engine/switching_engine.dart';
 
 GoRouter _routerFor(SwitchInput input) => GoRouter(
       routes: <RouteBase>[

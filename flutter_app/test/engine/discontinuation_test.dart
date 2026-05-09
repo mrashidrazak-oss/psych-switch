@@ -2,7 +2,7 @@
 // Mirrors engine/__tests__/discontinuation.test.ts.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:psychswitch/src/engine/discontinuation.dart';
+import 'package:psychswitch_engine/discontinuation.dart';
 
 void main() {
   group('discontinuation flagger', () {

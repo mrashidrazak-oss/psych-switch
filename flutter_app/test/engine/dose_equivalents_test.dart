@@ -2,7 +2,7 @@
 // Mirrors engine/__tests__/doseEquivalents.test.ts.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:psychswitch/src/engine/dose_equivalents.dart';
+import 'package:psychswitch_engine/dose_equivalents.dart';
 
 void main() {
   group('dose equivalents', () {

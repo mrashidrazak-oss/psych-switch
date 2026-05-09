@@ -14,7 +14,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:psychswitch/src/data/database.dart';
-import 'package:psychswitch/src/engine/case_pulse.dart' show SavedCase;
+import 'package:psychswitch_engine/case_pulse.dart' show SavedCase;
 
 /// Application database — overridable in tests via:
 ///

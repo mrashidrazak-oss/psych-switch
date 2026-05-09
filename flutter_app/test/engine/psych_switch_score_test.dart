@@ -2,14 +2,14 @@
 // Score composition is exercised end-to-end with synthetic inputs.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:psychswitch/src/engine/adverse_effects.dart';
-import 'package:psychswitch/src/engine/citations.dart';
-import 'package:psychswitch/src/engine/ddi.dart';
-import 'package:psychswitch/src/engine/patient_context_pure.dart';
-import 'package:psychswitch/src/engine/psych_switch_score.dart';
-import 'package:psychswitch/src/engine/scale_schedule.dart';
-import 'package:psychswitch/src/engine/types/drug.dart';
-import 'package:psychswitch/src/engine/types/schedule_step.dart';
+import 'package:psychswitch_engine/adverse_effects.dart';
+import 'package:psychswitch_engine/citations.dart';
+import 'package:psychswitch_engine/ddi.dart';
+import 'package:psychswitch_engine/patient_context_pure.dart';
+import 'package:psychswitch_engine/psych_switch_score.dart';
+import 'package:psychswitch_engine/scale_schedule.dart';
+import 'package:psychswitch_engine/types/drug.dart';
+import 'package:psychswitch_engine/types/schedule_step.dart';
 
 const _emptyMetabolite = ActiveMetabolite(
   name: null,

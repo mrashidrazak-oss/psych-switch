@@ -1,7 +1,7 @@
 // Tests for the Dart adverse_effects port. No TS counterpart exists.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:psychswitch/src/engine/adverse_effects.dart';
+import 'package:psychswitch_engine/adverse_effects.dart';
 
 void main() {
   group('adverseEffects registry', () {

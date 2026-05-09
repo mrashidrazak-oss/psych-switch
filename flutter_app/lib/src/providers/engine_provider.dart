@@ -12,7 +12,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:psychswitch/src/data/content_loader.dart';
-import 'package:psychswitch/src/engine/switching_engine.dart';
+import 'package:psychswitch_engine/switching_engine.dart';
 
 /// Loads the entire clinical content bundle exactly once, asynchronously.
 ///

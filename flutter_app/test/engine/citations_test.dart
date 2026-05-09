@@ -3,7 +3,7 @@
 // existing rule JSONs.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:psychswitch/src/engine/citations.dart';
+import 'package:psychswitch_engine/citations.dart';
 
 void main() {
   group('getCitation', () {

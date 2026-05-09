@@ -1,7 +1,7 @@
 // Tests for the Dart quantitative_ae port. No TS counterpart exists.
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:psychswitch/src/engine/quantitative_ae.dart';
+import 'package:psychswitch_engine/quantitative_ae.dart';
 
 void main() {
   group('quantitativeFor', () {
