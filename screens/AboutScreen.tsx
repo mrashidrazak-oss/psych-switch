@@ -188,11 +188,11 @@ export function AboutScreen() {
           <Text className="text-accent text-xs">privacy@psychswitch.health</Text>
         </Pressable>
         <Pressable
-          onPress={() => Linking.openURL('https://github.com/feistz/psych-switch')}
+          onPress={() => Linking.openURL('https://github.com/mrashidrazak-oss/psych-switch')}
           className="active:opacity-70"
         >
           <Text className="text-text text-sm font-medium">Source + issues</Text>
-          <Text className="text-accent text-xs">github.com/feistz/psych-switch</Text>
+          <Text className="text-accent text-xs">github.com/mrashidrazak-oss/psych-switch</Text>
         </Pressable>
       </View>
 

@@ -37,5 +37,9 @@ yarn-error.*
 secrets/
 !secrets/.gitkeep
 
+# Claude Code project-local settings (per-developer permission rules,
+# NOT meant to be shared)
+.claude/settings.local.json
+
 # typescript
 *.tsbuildinfo

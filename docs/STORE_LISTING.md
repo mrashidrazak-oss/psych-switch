@@ -76,7 +76,7 @@ source before acting on any plan.
 REVIEWED CLINICAL CONTENT
 Every rule carries reviewer attribution + last-reviewed date + a
 90-day re-review cadence. The clinical content is open under
-CC BY-NC-SA 4.0 — see github.com/feistz/psych-switch for the full
+CC BY-NC-SA 4.0 — see github.com/mrashidrazak-oss/psych-switch for the full
 content repo and a contribution guide.
 
 REPORT AN ISSUE
@@ -135,7 +135,7 @@ Adaptive schedules cited to the Maudsley page. Patient-aware. Privacy-first. Bui
 - Diagnostics
 
 **The app collects nothing. Verify by inspecting the source —
-github.com/feistz/psych-switch.**
+github.com/mrashidrazak-oss/psych-switch.**
 
 If the user opts in to crash reports (off by default), Sentry collects
 anonymized stack traces. No patient input or clinical context is ever

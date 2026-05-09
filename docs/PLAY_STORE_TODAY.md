@@ -66,15 +66,15 @@ URL. You have two paths:
 **Path A — quickest, GitHub Pages on the *.github.io subdomain.**
 1. Push the local repo to a GitHub remote (any name; private OK):
    ```bash
-   gh repo create feistz/psych-switch --private --source=. --remote=origin --push
+   gh repo create mrashidrazak-oss/psych-switch --private --source=. --remote=origin --push
    # or your preferred git remote setup
    ```
 2. Repo Settings → **Pages** → Source: **GitHub Actions**.
 3. The `.github/workflows/publish-landing.yml` workflow will fire on
    the push and deploy `docs/landing/` to
-   `https://feistz.github.io/psych-switch/`. Verify:
+   `https://mrashidrazak-oss.github.io/psych-switch/`. Verify:
    ```bash
-   curl -sI https://feistz.github.io/psych-switch/privacy.html | head -1
+   curl -sI https://mrashidrazak-oss.github.io/psych-switch/privacy.html | head -1
    ```
 4. Use that URL in Play Console for now. Custom domain can wait.
 
@@ -84,7 +84,7 @@ Same as Path A, then:
 6. Configure DNS (whichever registrar you use):
    - 4 × A records to GitHub Pages IPs:
      185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153
-   - OR a CNAME `psychswitch.health → feistz.github.io`
+   - OR a CNAME `psychswitch.health → mrashidrazak-oss.github.io`
 7. Wait for DNS to propagate (10 min – a few hours).
 8. Pages will auto-issue an HTTPS cert. Verify:
    ```bash

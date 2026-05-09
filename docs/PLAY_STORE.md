@@ -58,13 +58,13 @@ publish — not "promised soon", actually live. Two-step:
    `publish-landing.yml` workflow auto-deploys to GitHub Pages.
    Confirm the URL works:
    ```bash
-   curl -sI https://feistz.github.io/psych-switch/privacy.html | head -1
+   curl -sI https://mrashidrazak-oss.github.io/psych-switch/privacy.html | head -1
    # HTTP/2 200
    ```
 2. Set the custom domain in repo Settings → Pages → Custom domain:
    `psychswitch.health`. Configure DNS:
    - A records to GitHub Pages IPs (`185.199.108.153` etc.) or
-   - CNAME `psychswitch.health → feistz.github.io`
+   - CNAME `psychswitch.health → mrashidrazak-oss.github.io`
 3. After DNS propagates (minutes to a few hours), confirm:
    ```bash
    curl -sI https://psychswitch.health/privacy | head -1
@@ -73,7 +73,7 @@ publish — not "promised soon", actually live. Two-step:
 4. In Play Console → **App content** → **Privacy policy** → paste
    `https://psychswitch.health/privacy`.
 
-Until DNS is configured, paste the GitHub Pages URL — `https://feistz.github.io/psych-switch/privacy.html`. Update later when the custom domain works.
+Until DNS is configured, paste the GitHub Pages URL — `https://mrashidrazak-oss.github.io/psych-switch/privacy.html`. Update later when the custom domain works.
 
 ## Per-release flow
 
