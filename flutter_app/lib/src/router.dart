@@ -18,6 +18,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:psychswitch/src/ui/screens/about_screen.dart';
 import 'package:psychswitch/src/ui/screens/clozapine_screen.dart';
+import 'package:psychswitch/src/ui/screens/depot_screen.dart';
 import 'package:psychswitch/src/ui/screens/glossary_screen.dart';
 import 'package:psychswitch/src/ui/screens/history_screen.dart';
 import 'package:psychswitch/src/ui/screens/home_screen.dart';
@@ -36,6 +37,8 @@ abstract final class Routes {
   static const settings = 'settings';
   static const about = 'about';
   static const clozapine = 'clozapine';
+  static const depotIndex = 'depot_index';
+  static const depot = 'depot';
 }
 
 GoRouter buildRouter() => GoRouter(
@@ -83,6 +86,25 @@ GoRouter buildRouter() => GoRouter(
           name: Routes.clozapine,
           path: '/clozapine',
           builder: (context, state) => const ClozapineScreen(),
+        ),
+        GoRoute(
+          name: Routes.depotIndex,
+          path: '/depot',
+          builder: (context, state) => const DepotIndexScreen(),
+          routes: <RouteBase>[
+            GoRoute(
+              name: Routes.depot,
+              path: ':id',
+              builder: (context, state) {
+                final kind = DepotKind.parse(state.pathParameters['id']);
+                if (kind == null) {
+                  // Unknown id → fall back to the index.
+                  return const DepotIndexScreen();
+                }
+                return DepotProtocolScreen(kind: kind);
+              },
+            ),
+          ],
         ),
       ],
     );

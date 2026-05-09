@@ -242,7 +242,16 @@ class _ModulesRow extends StatelessWidget {
             onPressed: () => context.goNamed(Routes.clozapine),
           ),
         ),
-        // Depot module lands in 7D — keep the row balanced once it does.
+        const SizedBox(width: 8),
+        Expanded(
+          child: _ModuleCard(
+            title: 'Depot LAI',
+            subtitle: 'Sustenna · Trinza · Maintena',
+            icon: Icons.colorize_outlined,
+            tone: AppColors.accent,
+            onPressed: () => context.goNamed(Routes.depotIndex),
+          ),
+        ),
       ],
     );
   }
