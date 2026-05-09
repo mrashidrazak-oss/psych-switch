@@ -1,11 +1,17 @@
 # Play Store launch — TODAY checklist
 
-Status as of v0.4.21 commit `142b919`:
+Status as of v0.4.22 commit `debd0f4`:
 
-✅ **Build queued on EAS** — production Android build is in the queue.
-   Track at: https://expo.dev/accounts/feistz/projects/psych-switch/builds/d15cf356-1595-4765-8c35-6e57718c1d05
-   Expected completion: ~15-25 min from queue start (10:19 PM, 5/8).
-   Output: signed `.aab` file ready to upload to Play Console.
+✅ **Build #2 finished successfully** (build #1 errored at Kotlin
+   compile due to expo-constants version mismatch — fixed in v0.4.22).
+
+   - Build ID: `361520c7-7b79-41c0-a651-c978661f7082`
+   - Version: 0.4.22 / version code 3
+   - Duration: 24m 34s
+   - Status: ✅ finished
+   - Dashboard: https://expo.dev/accounts/feistz/projects/psych-switch/builds/361520c7-7b79-41c0-a651-c978661f7082
+   - **`.aab` download:** https://expo.dev/artifacts/eas/7FkWzoNMQimEVqTbhheZX1.aab
+     (signed, store-ready, ~30 MB)
 
 ✅ **All assets generated** — icon, adaptive icon, splash, feature graphic, OG card.
 
@@ -102,8 +108,9 @@ DNS is pointed.
 
 ### 5. Upload the AAB
 
-When the EAS build finishes (check the URL above), download the
-`.aab` file from the build artefact URL.
+The build is done. Download:
+
+**https://expo.dev/artifacts/eas/7FkWzoNMQimEVqTbhheZX1.aab**
 
 Then:
 1. Play Console → your app → **Production** (or **Internal testing**
