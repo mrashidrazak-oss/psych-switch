@@ -4,7 +4,12 @@
 # Three checks:
 #   1. flutter analyze            (very_good_analysis lints, strict casts)
 #   2. dart run build_runner build (codegen — freezed + json_serializable)
-#   3. flutter test               (engine type round-trips + future widget/golden tests)
+#   3. flutter test               (engine type round-trips + golden harness +
+#                                  every per-module suite)
+#
+# The golden harness in test/golden/golden_test.dart reads the SAME
+# /content/ tree + /test/golden/ snapshots that the TS harness uses, so
+# we trigger on changes to either.
 #
 # When Phase 6 lands the Dart MCP server we'll add a 4th step that
 # runs its smoke tests too.
@@ -17,11 +22,13 @@ on:
     paths:
       - 'flutter_app/**'
       - 'content/**'
+      - 'test/golden/**'
       - '.github/workflows/flutter-verify.yml'
   pull_request:
     paths:
       - 'flutter_app/**'
       - 'content/**'
+      - 'test/golden/**'
       - '.github/workflows/flutter-verify.yml'
 
 jobs:
