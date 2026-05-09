@@ -27,7 +27,10 @@ jobs:
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 9
+          # Match the local dev pnpm version. Pnpm 9 chokes on our
+          # pnpm-workspace.yaml (which sets allowBuilds without a
+          # packages: field — valid in pnpm 10+, rejected in 9).
+          version: 11
 
       - uses: actions/setup-node@v4
         with:
