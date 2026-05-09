@@ -91,6 +91,10 @@ class _HomeBody extends StatelessWidget {
           ),
           const SizedBox(height: 24),
 
+          // Modules row — specialty tools (Clozapine, Depot in 7D).
+          const _ModulesRow(),
+          const SizedBox(height: 16),
+
           // Tools row — Glossary · Settings · About.
           const _ToolsRow(),
 
@@ -215,6 +219,91 @@ class _SecondaryButton extends StatelessWidget {
           side: const BorderSide(color: AppColors.border),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ModulesRow extends StatelessWidget {
+  const _ModulesRow();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: _ModuleCard(
+            title: 'Clozapine',
+            subtitle: 'Titration · FBC · rechallenge',
+            icon: Icons.medical_services_outlined,
+            tone: AppColors.warning,
+            onPressed: () => context.goNamed(Routes.clozapine),
+          ),
+        ),
+        // Depot module lands in 7D — keep the row balanced once it does.
+      ],
+    );
+  }
+}
+
+class _ModuleCard extends StatelessWidget {
+  const _ModuleCard({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.tone,
+    required this.onPressed,
+  });
+
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final Color tone;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: tone.withValues(alpha: 0.08),
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(12),
+        child: Ink(
+          decoration: BoxDecoration(
+            border: Border.all(color: tone.withValues(alpha: 0.3)),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Icon(icon, size: 18, color: tone),
+                  const SizedBox(width: 8),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: tone,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                style: const TextStyle(
+                  color: AppColors.muted,
+                  fontSize: 11,
+                  height: 1.4,
+                ),
+              ),
+            ],
           ),
         ),
       ),

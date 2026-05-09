@@ -12,6 +12,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:psychswitch/src/data/content_loader.dart';
+import 'package:psychswitch_engine/clozapine.dart';
 import 'package:psychswitch_engine/switching_engine.dart';
 
 /// Loads the entire clinical content bundle exactly once, asynchronously.
@@ -35,4 +36,11 @@ final loadedContentProvider = FutureProvider<LoadedContent>(
 final engineProvider = FutureProvider<SwitchingEngine>((ref) async {
   final content = await ref.watch(loadedContentProvider.future);
   return content.engine;
+});
+
+/// Convenience: the [ClozapineModule] subset of the loaded content. Used
+/// by the Phase 7C clozapine screens.
+final clozapineModuleProvider = FutureProvider<ClozapineModule>((ref) async {
+  final content = await ref.watch(loadedContentProvider.future);
+  return content.clozapine;
 });

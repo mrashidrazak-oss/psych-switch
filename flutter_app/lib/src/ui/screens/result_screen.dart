@@ -17,6 +17,7 @@ import 'package:go_router/go_router.dart';
 import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/providers/patient_context_provider.dart';
 import 'package:psychswitch/src/providers/saved_cases_provider.dart';
+import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch/src/ui/widgets/score_ring.dart';
@@ -788,11 +789,68 @@ class _ClozapineRedirectCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _Banner(
-      tone: AppColors.warning,
-      eyebrow: 'CLOZAPINE INITIATION',
-      title: 'Use the Clozapine module',
-      body: guidance,
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.warning.withValues(alpha: 0.08),
+        border: const Border(
+          left: BorderSide(color: AppColors.warning, width: 3),
+        ),
+        borderRadius: const BorderRadius.only(
+          topRight: Radius.circular(8),
+          bottomRight: Radius.circular(8),
+        ),
+      ),
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Text(
+            'CLOZAPINE INITIATION',
+            style: TextStyle(
+              color: AppColors.warning,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1.5,
+            ),
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            'Use the Clozapine module',
+            style: TextStyle(
+              color: AppColors.text,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            guidance,
+            style: const TextStyle(
+              color: AppColors.muted,
+              fontSize: 12,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: FilledButton.icon(
+              onPressed: () => context.goNamed(Routes.clozapine),
+              icon: const Icon(Icons.medical_services_outlined, size: 16),
+              label: const Text('Open Clozapine module'),
+              style: FilledButton.styleFrom(
+                backgroundColor: AppColors.warning,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

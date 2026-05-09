@@ -17,6 +17,7 @@
 import 'package:go_router/go_router.dart';
 
 import 'package:psychswitch/src/ui/screens/about_screen.dart';
+import 'package:psychswitch/src/ui/screens/clozapine_screen.dart';
 import 'package:psychswitch/src/ui/screens/glossary_screen.dart';
 import 'package:psychswitch/src/ui/screens/history_screen.dart';
 import 'package:psychswitch/src/ui/screens/home_screen.dart';
@@ -34,6 +35,7 @@ abstract final class Routes {
   static const glossary = 'glossary';
   static const settings = 'settings';
   static const about = 'about';
+  static const clozapine = 'clozapine';
 }
 
 GoRouter buildRouter() => GoRouter(
@@ -76,6 +78,11 @@ GoRouter buildRouter() => GoRouter(
           name: Routes.about,
           path: '/about',
           builder: (context, state) => const AboutScreen(),
+        ),
+        GoRoute(
+          name: Routes.clozapine,
+          path: '/clozapine',
+          builder: (context, state) => const ClozapineScreen(),
         ),
       ],
     );
