@@ -22,12 +22,14 @@ import 'package:psychswitch/src/providers/saved_cases_provider.dart';
 import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
+import 'package:psychswitch/src/ui/widgets/cost_comparison_card.dart';
 import 'package:psychswitch/src/ui/widgets/crossover_chart.dart';
 import 'package:psychswitch/src/ui/widgets/ddi_warnings_card.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
 import 'package:psychswitch/src/ui/widgets/predicted_ae_card.dart';
 import 'package:psychswitch/src/ui/widgets/score_ring.dart';
+import 'package:psychswitch/src/ui/widgets/specialty_depth_card.dart';
 import 'package:psychswitch/src/ui/widgets/status_pill.dart' as ui;
 import 'package:psychswitch/src/util/export_pdf.dart';
 import 'package:psychswitch/src/util/share_plan.dart';
@@ -39,6 +41,7 @@ import 'package:psychswitch_engine/patient_context_pure.dart';
 import 'package:psychswitch_engine/predicted_ae_profile.dart';
 import 'package:psychswitch_engine/psych_switch_score.dart';
 import 'package:psychswitch_engine/scale_schedule.dart';
+import 'package:psychswitch_engine/specialty.dart';
 import 'package:psychswitch_engine/switching_engine.dart';
 import 'package:psychswitch_engine/types/drug.dart';
 import 'package:psychswitch_engine/types/schedule_step.dart';
@@ -368,6 +371,39 @@ class _ResultBody extends ConsumerWidget {
     ];
   }
 
+  /// Cost comparison card section.
+  List<Widget> _costSection() {
+    final from = engine.getDrug(input.fromDrugId);
+    final to = engine.getDrug(input.toDrugId);
+    if (from == null || to == null) return const <Widget>[];
+    return <Widget>[
+      CostComparisonCard(fromDrug: from, toDrug: to),
+      const SizedBox(height: 16),
+    ];
+  }
+
+  /// Specialty depth (pregnancy / breastfeeding / pediatric / geriatric).
+  List<Widget> _specialtySection(PatientContext ctx) {
+    final from = engine.getDrug(input.fromDrugId);
+    final to = engine.getDrug(input.toDrugId);
+    if (from == null || to == null) return const <Widget>[];
+    final assessment = assessSpecialty(
+      fromDrugId: from.id,
+      toDrugId: to.id,
+      context: ctx,
+      fromDrugName: from.genericName,
+      toDrugName: to.genericName,
+    );
+    if (assessment.applicable.isEmpty ||
+        assessment.recommendations.isEmpty) {
+      return const <Widget>[];
+    }
+    return <Widget>[
+      SpecialtyDepthCard(assessment: assessment),
+      const SizedBox(height: 16),
+    ];
+  }
+
   List<Widget> _planContent(
     SwitchPlan plan,
     PatientContext ctx,
@@ -417,9 +453,13 @@ class _ResultBody extends ConsumerWidget {
             patientContext: ctx,
           ),
           const SizedBox(height: 16),
-          // Predicted AE profile for the to-drug, comparing against
-          // the from-drug to highlight what's better on the new agent.
+          // Specialty depth — pregnancy / breastfeeding / pediatric /
+          // geriatric. Renders only when patient context activates.
+          ..._specialtySection(ctx),
+          // Predicted AE profile for the to-drug.
           ..._predictedAeSection(),
+          // Affordability hint.
+          ..._costSection(),
           _CitationsCard(citations: ok.citations),
         ],
       SwitchPlanMaudsleyGuidance(
