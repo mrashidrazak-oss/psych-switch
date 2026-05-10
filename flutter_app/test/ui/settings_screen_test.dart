@@ -50,12 +50,15 @@ void main() {
     await tester.pumpWidget(_harness());
     await tester.pumpAndSettle();
 
-    final sw = find.byType(Switch);
-    expect(sw, findsOneWidget);
-    expect(tester.widget<Switch>(sw).value, true);
+    // Two switches now: citations (default true) + reminders (default false).
+    final switches = find.byType(Switch);
+    expect(switches, findsNWidgets(2));
 
-    await tester.tap(sw);
+    final citations = switches.first;
+    expect(tester.widget<Switch>(citations).value, true);
+
+    await tester.tap(citations);
     await tester.pumpAndSettle();
-    expect(tester.widget<Switch>(sw).value, false);
+    expect(tester.widget<Switch>(citations).value, false);
   });
 }

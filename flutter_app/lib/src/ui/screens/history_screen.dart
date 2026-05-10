@@ -14,6 +14,7 @@ import 'package:intl/intl.dart';
 import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/providers/saved_cases_provider.dart';
 import 'package:psychswitch/src/router.dart';
+import 'package:psychswitch/src/services/notification_service.dart';
 import 'package:psychswitch/src/ui/screens/result_screen.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
@@ -147,6 +148,8 @@ class _CaseList extends ConsumerWidget {
     );
     if (confirmed != true) return;
     await ref.read(savedCaseRepositoryProvider).delete(c.id);
+    // Cancel any pending monitoring reminders for the deleted case.
+    await NotificationService.instance.cancelForCase(c.id);
   }
 
   @override

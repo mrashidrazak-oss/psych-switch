@@ -18,8 +18,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/providers/patient_context_provider.dart';
+import 'package:psychswitch/src/providers/preferences_provider.dart';
 import 'package:psychswitch/src/providers/saved_cases_provider.dart';
 import 'package:psychswitch/src/router.dart';
+import 'package:psychswitch/src/services/notification_service.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/cost_comparison_card.dart';
@@ -134,6 +136,22 @@ class ResultScreen extends ConsumerWidget {
     );
     await ref.read(savedCaseRepositoryProvider).save(saved);
     unawaited(hapticsConfirm());
+
+    // Schedule monitoring reminders if the user has opted in. The
+    // service writes nothing when permission is denied or no entries
+    // are actionable from today onwards.
+    final remindersOn =
+        await ref.read(remindersEnabledProvider.future);
+    if (remindersOn) {
+      final engine = await ref.read(engineProvider.future);
+      final ctx = ref.read(patientContextProvider);
+      await NotificationService.instance.scheduleForCase(
+        saved: saved,
+        engine: engine,
+        context: ctx,
+      );
+    }
+
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

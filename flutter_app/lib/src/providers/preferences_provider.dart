@@ -31,3 +31,25 @@ class _BoolPref extends AsyncNotifier<bool> {
     await prefs.setBool(_key, value);
   }
 }
+
+/// Whether monitoring-reminder notifications fire on saved cases.
+/// Default: false — opt-in. Toggling off cancels every pending
+/// reminder via `NotificationService.cancelAll`.
+final remindersEnabledProvider =
+    AsyncNotifierProvider<_RemindersPref, bool>(_RemindersPref.new);
+
+class _RemindersPref extends AsyncNotifier<bool> {
+  static const _key = 'pref_reminders_enabled';
+
+  @override
+  Future<bool> build() async {
+    final prefs = await ref.watch(sharedPreferencesProvider.future);
+    return prefs.getBool(_key) ?? false;
+  }
+
+  Future<void> set({required bool value}) async {
+    state = AsyncValue.data(value);
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    await prefs.setBool(_key, value);
+  }
+}

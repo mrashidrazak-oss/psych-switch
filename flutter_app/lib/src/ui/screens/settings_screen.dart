@@ -12,15 +12,28 @@ import 'package:go_router/go_router.dart';
 
 import 'package:psychswitch/src/providers/preferences_provider.dart';
 import 'package:psychswitch/src/providers/saved_cases_provider.dart';
+import 'package:psychswitch/src/services/notification_service.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
+  Future<void> _onRemindersToggled(WidgetRef ref, bool value) async {
+    await ref.read(remindersEnabledProvider.notifier).set(value: value);
+    if (value) {
+      // Lazy-prompt for permission the first time the toggle is on.
+      await NotificationService.instance.requestPermission();
+    } else {
+      // Off → cancel everything pending.
+      await NotificationService.instance.cancelAll();
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final showCitations = ref.watch(showCitationsProvider);
+    final reminders = ref.watch(remindersEnabledProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -48,6 +61,20 @@ class SettingsScreen extends ConsumerWidget {
               loading: showCitations.isLoading,
               onChanged: (v) =>
                   ref.read(showCitationsProvider.notifier).set(value: v),
+            ),
+
+            const Gap.v(AppSpace.xl),
+            const _SectionHeader(text: 'REMINDERS'),
+            _ToggleTile(
+              label: 'Monitoring reminders',
+              description:
+                  'Schedule a local notification on the day each '
+                  'monitoring entry comes due for saved cases. '
+                  'On-device only — never via remote push, never with '
+                  'patient identifiers.',
+              value: reminders.value ?? false,
+              loading: reminders.isLoading,
+              onChanged: (v) => _onRemindersToggled(ref, v),
             ),
 
             const Gap.v(AppSpace.xl),
@@ -94,6 +121,9 @@ class SettingsScreen extends ConsumerWidget {
     unawaited(hapticsWarning());
     final db = ref.read(databaseProvider);
     final removed = await db.deleteAll();
+    // Cancel every pending monitoring reminder — the cases that
+    // queued them no longer exist.
+    await NotificationService.instance.cancelAll();
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
