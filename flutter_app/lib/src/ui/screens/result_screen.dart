@@ -53,6 +53,7 @@ import 'package:psychswitch_engine/psych_switch_score.dart';
 import 'package:psychswitch_engine/scale_schedule.dart';
 import 'package:psychswitch_engine/specialty.dart';
 import 'package:psychswitch_engine/switching_engine.dart';
+import 'package:psychswitch_engine/taper_speed.dart';
 import 'package:psychswitch_engine/types/drug.dart';
 import 'package:psychswitch_engine/types/enums.dart';
 import 'package:psychswitch_engine/types/schedule_step.dart';
@@ -88,6 +89,20 @@ enum _ScheduleView { adapted, reviewed }
 /// the clinician is currently looking at).
 final _scheduleViewProvider =
     StateProvider.autoDispose<_ScheduleView>((_) => _ScheduleView.adapted);
+
+/// Taper-speed selection — the dose progression in a reviewed rule
+/// (100% → 75% → 50% → 25% → 0) is what's clinically reviewed; the
+/// DAY INTERVALS between those steps are context-dependent (faster
+/// for stable / monitored, slower for first-episode / high-relapse).
+///
+/// Only applies to cross-taper / plateau-cross-taper strategies AND
+/// schedules long enough to compress (≥ 10 days, ≥ 3 steps — see
+/// [speedToggleApplies]). Direct switches and washouts ignore this.
+///
+/// `autoDispose` so leaving /result resets to `TaperSpeed.standard`
+/// (the Maudsley-reviewed default) for the next case.
+final _taperSpeedProvider =
+    StateProvider.autoDispose<TaperSpeed>((_) => TaperSpeed.standard);
 
 class ResultScreen extends ConsumerWidget {
   const ResultScreen({super.key, this.args});
@@ -221,31 +236,47 @@ class _ShareMenu extends ConsumerWidget {
   final Drug? fromDrug;
   final Drug? toDrug;
 
-  /// Build the [SwitchPlanOk] payload for share/export. When the user
-  /// is viewing the adapted schedule and the scaler actually adapted,
-  /// swap in the scaled schedule + flip `dosesMatchReference` to true
-  /// so downstream formatters don't print the "but you entered X mg"
-  /// banner — the schedule already reflects the user's doses.
-  SwitchPlanOk _payloadFor(_ScheduleView view) {
+  /// Build the [SwitchPlanOk] payload for share/export. Two transforms:
+  ///   1. Adapted view: swap in the dose-scaled schedule and flip
+  ///      `dosesMatchReference` so the formatter doesn't print the
+  ///      "but you entered X mg" note (schedule already reflects the
+  ///      user's doses).
+  ///   2. Taper speed: compress / expand the day intervals to match
+  ///      whichever speed the clinician picked on screen.
+  ///
+  /// Applied in that order — scaling first (doses), then speed (timing).
+  SwitchPlanOk _payloadFor(_ScheduleView view, TaperSpeed speed) {
     if (fromDrug == null || toDrug == null) return plan;
-    if (view == _ScheduleView.reviewed) return plan;
-    final scaled = scaleSchedule(
-      rule: plan.rule,
-      fromDrug: fromDrug!,
-      toDrug: toDrug!,
-      userFromDose: input.fromDoseMg,
-      userToDose: input.toDoseMg,
-    );
-    if (!scaled.adapted) return plan;
+    var schedule = plan.schedule;
+    var dosesMatchReference = plan.dosesMatchReference;
+    if (view == _ScheduleView.adapted) {
+      final scaled = scaleSchedule(
+        rule: plan.rule,
+        fromDrug: fromDrug!,
+        toDrug: toDrug!,
+        userFromDose: input.fromDoseMg,
+        userToDose: input.toDoseMg,
+      );
+      if (scaled.adapted) {
+        schedule = scaled.schedule;
+        // Schedule is now in the user's doses — suppress the formatter's
+        // dose-mismatch note by claiming reference parity.
+        dosesMatchReference = true;
+      }
+    }
+    if (speed != TaperSpeed.standard) {
+      schedule = compressSchedule(schedule, speed);
+    }
+    if (identical(schedule, plan.schedule) &&
+        dosesMatchReference == plan.dosesMatchReference) {
+      return plan;
+    }
     return SwitchPlanOk(
       rule: plan.rule,
-      schedule: scaled.schedule,
+      schedule: schedule,
       safetyFlags: plan.safetyFlags,
       citations: plan.citations,
-      // The shared schedule is now expressed in the user's doses, so
-      // the "you entered X, reviewed is Y" note in the formatter would
-      // be redundant — suppress it by claiming reference parity.
-      dosesMatchReference: true,
+      dosesMatchReference: dosesMatchReference,
       inputDoses: plan.inputDoses,
     );
   }
@@ -254,12 +285,21 @@ class _ShareMenu extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     if (fromDrug == null || toDrug == null) return const SizedBox.shrink();
     final view = ref.watch(_scheduleViewProvider);
+    final pickedSpeed = ref.watch(_taperSpeedProvider);
+    // Same speed-supported gate as the body: cross-taper / plateau /
+    // overlap, ≥ 10-day span. Otherwise force standard for export.
+    final s = plan.rule.strategy;
+    final speedSupported = (s == Strategy.crossTaper ||
+            s == Strategy.plateauCrossTaper ||
+            s == Strategy.overlapTaper) &&
+        speedToggleApplies(plan.schedule);
+    final effectiveSpeed = speedSupported ? pickedSpeed : TaperSpeed.standard;
     return PopupMenuButton<String>(
       tooltip: 'Share or export',
       icon: const Icon(Icons.ios_share),
       onSelected: (v) async {
         unawaited(hapticsTap());
-        final payload = _payloadFor(view);
+        final payload = _payloadFor(view, effectiveSpeed);
         switch (v) {
           case 'text':
             final body = formatPlanForShare(
@@ -404,6 +444,7 @@ class _ResultBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final ctx = ref.watch(patientContextProvider);
     final view = ref.watch(_scheduleViewProvider);
+    final pickedSpeed = ref.watch(_taperSpeedProvider);
     // Pull warnings for both ends of the switch — the from-drug warning
     // matters because the patient is still on it during cross-titration,
     // and the to-drug warning matters because they're starting it.
@@ -418,7 +459,29 @@ class _ResultBody extends ConsumerWidget {
     // on every build.
     final scaleResult = _scaleResultFor(plan);
 
-    final body = _planContent(plan, ctx, ctxWarnings, scaleResult, view, ref);
+    // Effective taper speed: only apply the user's pick when the rule
+    // supports compression (cross-taper / plateau-cross-taper, ≥ 10
+    // days, ≥ 3 steps). Direct switches and washouts ignore the toggle.
+    final speedSupported = _speedSupported(plan);
+    final effectiveSpeed = speedSupported ? pickedSpeed : TaperSpeed.standard;
+    final adjustedDuration = plan is SwitchPlanOk
+        ? adjustedDurationDays(
+            (plan as SwitchPlanOk).rule.durationDays,
+            effectiveSpeed,
+          )
+        : null;
+
+    final body = _planContent(
+      plan,
+      ctx,
+      ctxWarnings,
+      scaleResult,
+      view,
+      ref,
+      effectiveSpeed,
+      pickedSpeed,
+      speedSupported,
+    );
     final hero = <Widget>[
       EntranceFade(
         child: _ResultHero(
@@ -428,6 +491,7 @@ class _ResultBody extends ConsumerWidget {
           plan: plan,
           toDrug: engine.getDrug(input.toDrugId),
           contextWarnings: ctxWarnings,
+          overrideDurationDays: adjustedDuration,
         ),
       ),
       const Gap.v(AppSpace.xl - 4),
@@ -513,6 +577,20 @@ class _ResultBody extends ConsumerWidget {
   ) {
     if (scaleResult == null || !scaleResult.adapted) return ok.schedule;
     return view == _ScheduleView.adapted ? scaleResult.schedule : ok.schedule;
+  }
+
+  /// Whether taper-speed compression makes sense for this plan. True
+  /// only for cross-taper / plateau-cross-taper strategies whose
+  /// schedule has enough headroom (≥ 3 steps, ≥ 10-day span). Direct
+  /// switches (1–2 day) and washouts get no toggle.
+  static bool _speedSupported(SwitchPlan plan) {
+    if (plan is! SwitchPlanOk) return false;
+    final s = plan.rule.strategy;
+    final crossish = s == Strategy.crossTaper ||
+        s == Strategy.plateauCrossTaper ||
+        s == Strategy.overlapTaper;
+    if (!crossish) return false;
+    return speedToggleApplies(plan.schedule);
   }
 
   /// DDI checker output as a list of widgets — empty when no hits, so
@@ -633,6 +711,9 @@ class _ResultBody extends ConsumerWidget {
     ScaleResult? scaleResult,
     _ScheduleView view,
     WidgetRef ref,
+    TaperSpeed effectiveSpeed,
+    TaperSpeed pickedSpeed,
+    bool speedSupported,
   ) {
     return switch (plan) {
       final SwitchPlanOk ok => <Widget>[
@@ -673,16 +754,49 @@ class _ResultBody extends ConsumerWidget {
             ),
             const Gap.v(AppSpace.lg),
           ],
+          // Taper-speed selector — only renders when the rule's
+          // strategy supports compression (cross-taper / plateau /
+          // overlap, ≥ 10-day span). Lets the clinician pick Faster
+          // (~½ Maudsley), Standard (Maudsley default), or Slower
+          // (~1½× Maudsley) — driven by NHS / Stahl / real-world
+          // evidence that the dose progression is what's reviewed,
+          // not the day intervals.
+          if (speedSupported) ...<Widget>[
+            _TaperSpeedSelector(
+              picked: pickedSpeed,
+              onPick: (s) {
+                unawaited(hapticsTap());
+                ref.read(_taperSpeedProvider.notifier).state = s;
+              },
+              durationDays: adjustedDurationDays(
+                ok.rule.durationDays,
+                effectiveSpeed,
+              ),
+              originalDurationDays: ok.rule.durationDays,
+            ),
+            const Gap.v(AppSpace.lg),
+          ],
           // Crossover shape chart — read the curves before the table.
           // The schedule both views render reflects the user's current
-          // toggle: adapted (default, scaled to input doses) or
-          // reviewed (unmodified rule schedule).
+          // toggle (adapted / reviewed) AND taper-speed (compresses
+          // day intervals while keeping the dose progression intact).
           CrossoverChart(
-            schedule: _displaySchedule(ok, scaleResult, view),
-            totalDays: ok.rule.durationDays,
+            schedule: compressSchedule(
+              _displaySchedule(ok, scaleResult, view),
+              effectiveSpeed,
+            ),
+            totalDays: adjustedDurationDays(
+              ok.rule.durationDays,
+              effectiveSpeed,
+            ),
           ),
           const Gap.v(AppSpace.lg),
-          _ScheduleCard(schedule: _displaySchedule(ok, scaleResult, view)),
+          _ScheduleCard(
+            schedule: compressSchedule(
+              _displaySchedule(ok, scaleResult, view),
+              effectiveSpeed,
+            ),
+          ),
           const Gap.v(AppSpace.lg),
           // Why this strategy was chosen — sits with the schedule.
           RationalePanel(rationale: ok.rule.rationale),
@@ -769,6 +883,7 @@ class _ResultHero extends StatelessWidget {
     required this.plan,
     required this.toDrug,
     required this.contextWarnings,
+    this.overrideDurationDays,
   });
 
   final SwitchInput input;
@@ -777,6 +892,12 @@ class _ResultHero extends StatelessWidget {
   final SwitchPlan plan;
   final Drug? toDrug;
   final List<ContextWarning> contextWarnings;
+
+  /// Duration to render in the strategy eyebrow, overriding
+  /// `plan.rule.durationDays` so the hero reflects the user's
+  /// taper-speed selection (Faster / Slower compress / expand).
+  /// Null for non-OK plans or when the speed toggle doesn't apply.
+  final int? overrideDurationDays;
 
   @override
   Widget build(BuildContext context) {
@@ -814,6 +935,7 @@ class _ResultHero extends StatelessWidget {
                   plan: plan,
                   toDrug: toDrug,
                   contextWarnings: contextWarnings,
+                  overrideDurationDays: overrideDurationDays,
                 ),
               ],
             ),
@@ -962,11 +1084,13 @@ class _HeroVerdictBand extends StatelessWidget {
     required this.plan,
     required this.toDrug,
     required this.contextWarnings,
+    this.overrideDurationDays,
   });
 
   final SwitchPlan plan;
   final Drug? toDrug;
   final List<ContextWarning> contextWarnings;
+  final int? overrideDurationDays;
 
   @override
   Widget build(BuildContext context) {
@@ -975,6 +1099,7 @@ class _HeroVerdictBand extends StatelessWidget {
           plan: ok,
           toDrug: toDrug,
           contextWarnings: contextWarnings,
+          overrideDurationDays: overrideDurationDays,
         ),
       SwitchPlanMaudsleyGuidance(:final guidance) => _ToneVerdict(
           tone: AppColors.accent,
@@ -1015,11 +1140,13 @@ class _OkVerdict extends StatelessWidget {
     required this.plan,
     required this.toDrug,
     required this.contextWarnings,
+    this.overrideDurationDays,
   });
 
   final SwitchPlanOk plan;
   final Drug? toDrug;
   final List<ContextWarning> contextWarnings;
+  final int? overrideDurationDays;
 
   String get _strategyLabel => switch (plan.rule.strategy) {
         Strategy.direct => 'DIRECT SWITCH',
@@ -1077,10 +1204,14 @@ class _OkVerdict extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            '$_strategyLabel · ${plan.rule.durationDays} DAY'
-            '${plan.rule.durationDays == 1 ? '' : 'S'}',
-            style: AppTextSizes.eyebrow.copyWith(color: AppColors.to),
+          Builder(
+            builder: (_) {
+              final days = overrideDurationDays ?? plan.rule.durationDays;
+              return Text(
+                '$_strategyLabel · $days DAY${days == 1 ? '' : 'S'}',
+                style: AppTextSizes.eyebrow.copyWith(color: AppColors.to),
+              );
+            },
           ),
           const Gap.v(AppSpace.md),
           Row(
@@ -1504,6 +1635,195 @@ class _AdaptiveToggleButton extends StatelessWidget {
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.2,
               ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Taper-speed selector — segmented control with three options.
+///
+/// The dose progression in a reviewed rule (100% → 75% → 50% → 25% → 0)
+/// is the clinically reviewed component — receptor occupancy and
+/// discontinuation risk hinge on the dose ratios. The DAY INTERVALS
+/// between those steps are context-dependent:
+///
+///   • **Faster** (~½ Maudsley duration) — NHS inpatient / Stahl /
+///     real-world (Spanish registry avg 16 days). Stable, monitored.
+///   • **Standard** (Maudsley 15th) — the reviewed reference. Default.
+///   • **Slower** (~1½× Maudsley) — first-episode psychosis, high
+///     relapse risk, history of discontinuation symptoms.
+///
+/// Renders inside a card with a small "Taper speed" eyebrow, the
+/// adjusted duration headline ("14-day taper · ~½ Maudsley"), and the
+/// 3-segment control. Non-default segments tint to warning amber so
+/// the clinician sees they've stepped outside the reviewed schedule.
+class _TaperSpeedSelector extends StatelessWidget {
+  const _TaperSpeedSelector({
+    required this.picked,
+    required this.onPick,
+    required this.durationDays,
+    required this.originalDurationDays,
+  });
+
+  final TaperSpeed picked;
+  final ValueChanged<TaperSpeed> onPick;
+  final int durationDays;
+  final int originalDurationDays;
+
+  @override
+  Widget build(BuildContext context) {
+    final isNonDefault = picked != TaperSpeed.standard;
+    final accentTone = isNonDefault ? AppColors.warning : AppColors.muted;
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        border: Border.all(
+          color: AppColors.border.withValues(alpha: 0.7),
+          width: 0.5,
+        ),
+        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+      ),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpace.lg - 2,
+        AppSpace.md + 2,
+        AppSpace.lg - 2,
+        AppSpace.lg - 2,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              const Text(
+                'TAPER SPEED',
+                style: AppTextSizes.eyebrow,
+              ),
+              const Spacer(),
+              Text(
+                isNonDefault
+                    ? '$durationDays-day taper · was $originalDurationDays'
+                    : '$durationDays-day taper · Maudsley',
+                style: TextStyle(
+                  color: accentTone,
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
+          ),
+          const Gap.v(AppSpace.sm + 2),
+          // Segmented control.
+          Container(
+            decoration: BoxDecoration(
+              color: AppColors.bg,
+              borderRadius: BorderRadius.circular(AppRadii.md + 2),
+              border: Border.all(
+                color: AppColors.border.withValues(alpha: 0.5),
+                width: 0.5,
+              ),
+            ),
+            padding: const EdgeInsets.all(3),
+            child: Row(
+              children: <Widget>[
+                for (final s in taperSpeeds)
+                  Expanded(
+                    child: _TaperSpeedSegment(
+                      speed: s,
+                      isActive: s == picked,
+                      onTap: () => onPick(s),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          if (isNonDefault) ...<Widget>[
+            const Gap.v(AppSpace.sm + 2),
+            Text(
+              speedBasis[picked]!,
+              style: const TextStyle(
+                color: AppColors.muted,
+                fontSize: 11.5,
+                height: 1.5,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _TaperSpeedSegment extends StatelessWidget {
+  const _TaperSpeedSegment({
+    required this.speed,
+    required this.isActive,
+    required this.onTap,
+  });
+
+  final TaperSpeed speed;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final accent = speed != TaperSpeed.standard;
+    final activeTone = accent ? AppColors.warning : AppColors.text;
+    const inactiveTone = AppColors.muted;
+    return Semantics(
+      button: true,
+      selected: isActive,
+      label: '${speedLabel[speed]} taper — ${speedSublabel[speed]}',
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppRadii.md),
+          child: Container(
+            decoration: BoxDecoration(
+              color: isActive ? AppColors.surface : Colors.transparent,
+              borderRadius: BorderRadius.circular(AppRadii.md),
+              border: isActive
+                  ? Border.all(
+                      color: AppColors.border.withValues(alpha: 0.7),
+                      width: 0.5,
+                    )
+                  : null,
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpace.sm,
+              vertical: AppSpace.sm,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  speedLabel[speed]!,
+                  style: TextStyle(
+                    color: isActive ? activeTone : inactiveTone,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.1,
+                    height: 1.2,
+                  ),
+                ),
+                const Gap.v(1),
+                Text(
+                  speedSublabel[speed]!,
+                  style: TextStyle(
+                    color: isActive
+                        ? activeTone.withValues(alpha: 0.85)
+                        : inactiveTone.withValues(alpha: 0.85),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.2,
+                    height: 1.2,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
