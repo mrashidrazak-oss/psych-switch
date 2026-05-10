@@ -17,6 +17,7 @@ import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/screens/result_screen.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
+import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
 import 'package:psychswitch_engine/case_pulse.dart' show SavedCase;
 import 'package:psychswitch_engine/switching_engine.dart';
 
@@ -158,22 +159,27 @@ class _CaseList extends ConsumerWidget {
         final c = cases[i];
         final fromName = _drugName(c.fromDrugId);
         final toName = _drugName(c.toDrugId);
-        return _CaseTile(
-          caseRow: c,
-          fromName: fromName,
-          toName: toName,
-          onTap: () => context.pushNamed(
-            Routes.result,
-            extra: ResultScreenArgs(
-              input: SwitchInput(
-                fromDrugId: c.fromDrugId,
-                fromDoseMg: c.fromDoseMg,
-                toDrugId: c.toDrugId,
-                toDoseMg: c.toDoseMg,
+        // Only stagger the first 6 — past that, ListView clips and
+        // scrolling new items in shouldn't be animated.
+        return EntranceFade(
+          index: i.clamp(0, 5),
+          child: _CaseTile(
+            caseRow: c,
+            fromName: fromName,
+            toName: toName,
+            onTap: () => context.pushNamed(
+              Routes.result,
+              extra: ResultScreenArgs(
+                input: SwitchInput(
+                  fromDrugId: c.fromDrugId,
+                  fromDoseMg: c.fromDoseMg,
+                  toDrugId: c.toDrugId,
+                  toDoseMg: c.toDoseMg,
+                ),
               ),
             ),
+            onDelete: () => _onDeletePressed(context, ref, c),
           ),
-          onDelete: () => _onDeletePressed(context, ref, c),
         );
       },
     );

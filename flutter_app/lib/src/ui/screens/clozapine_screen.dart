@@ -33,47 +33,89 @@ import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch_engine/clozapine.dart';
 import 'package:psychswitch_engine/patient_context_pure.dart' show Sex;
 
-class ClozapineScreen extends ConsumerWidget {
+class ClozapineScreen extends ConsumerStatefulWidget {
   const ClozapineScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ClozapineScreen> createState() => _ClozapineScreenState();
+}
+
+class _ClozapineScreenState extends ConsumerState<ClozapineScreen>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabCtl;
+
+  /// Per-tab lazy-build flags. Only TITRATION (index 0) builds at
+  /// mount; the other four tabs build the first time the user lands
+  /// on them, then keep their widget state alive thereafter.
+  final List<bool> _built = <bool>[true, false, false, false, false];
+
+  @override
+  void initState() {
+    super.initState();
+    _tabCtl = TabController(length: 5, vsync: this)..addListener(_onTab);
+  }
+
+  void _onTab() {
+    final i = _tabCtl.index;
+    if (!_built[i]) {
+      setState(() => _built[i] = true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabCtl
+      ..removeListener(_onTab)
+      ..dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final asyncCloz = ref.watch(clozapineModuleProvider);
-    return DefaultTabController(
-      length: 5,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Clozapine'),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => context.pop(),
-          ),
-          bottom: const TabBar(
-            isScrollable: true,
-            tabAlignment: TabAlignment.start,
-            // Tab styling comes from the global TabBarTheme.
-            tabs: <Tab>[
-              Tab(text: 'TITRATION'),
-              Tab(text: 'FBC'),
-              Tab(text: 'ANC CHECK'),
-              Tab(text: 'RECHALLENGE'),
-              Tab(text: 'COMMUNITY'),
-            ],
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Clozapine'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
         ),
-        body: SafeArea(
-          child: asyncCloz.when(
-            loading: () => const EngineLoadingView(),
-            error: (e, st) => EngineErrorView(error: e),
-            data: (cloz) => TabBarView(
-              children: <Widget>[
-                _TitrationTab(module: cloz),
-                _FbcTab(schedule: cloz.getMonitoringSchedule()),
-                _AncCheckTab(thresholds: cloz.getMonitoringSchedule().fbcThresholds),
-                _RechallengeTab(module: cloz),
-                _CommunityTab(data: cloz.getCommunityInitiation()),
-              ],
-            ),
+        bottom: TabBar(
+          controller: _tabCtl,
+          isScrollable: true,
+          tabAlignment: TabAlignment.start,
+          // Tab styling comes from the global TabBarTheme.
+          tabs: const <Tab>[
+            Tab(text: 'TITRATION'),
+            Tab(text: 'FBC'),
+            Tab(text: 'ANC CHECK'),
+            Tab(text: 'RECHALLENGE'),
+            Tab(text: 'COMMUNITY'),
+          ],
+        ),
+      ),
+      body: SafeArea(
+        child: asyncCloz.when(
+          loading: () => const EngineLoadingView(),
+          error: (e, st) => EngineErrorView(error: e),
+          data: (cloz) => TabBarView(
+            controller: _tabCtl,
+            children: <Widget>[
+              if (_built[0]) _TitrationTab(module: cloz)
+              else const SizedBox.shrink(),
+              if (_built[1]) _FbcTab(schedule: cloz.getMonitoringSchedule())
+              else const SizedBox.shrink(),
+              if (_built[2])
+                _AncCheckTab(
+                  thresholds: cloz.getMonitoringSchedule().fbcThresholds,
+                )
+              else
+                const SizedBox.shrink(),
+              if (_built[3]) _RechallengeTab(module: cloz)
+              else const SizedBox.shrink(),
+              if (_built[4]) _CommunityTab(data: cloz.getCommunityInitiation())
+              else const SizedBox.shrink(),
+            ],
           ),
         ),
       ),

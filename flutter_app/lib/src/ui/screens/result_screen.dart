@@ -23,6 +23,7 @@ import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
+import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
 import 'package:psychswitch/src/ui/widgets/score_ring.dart';
 import 'package:psychswitch/src/ui/widgets/status_pill.dart' as ui;
 import 'package:psychswitch_engine/case_pulse.dart' show SavedCase;
@@ -229,19 +230,26 @@ class _ResultBody extends ConsumerWidget {
       ...warningsForDrug(ctx, input.fromDrugId),
       ...warningsForDrug(ctx, input.toDrugId),
     ];
+    final body = _planContent(plan, ctx, ctxWarnings);
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       children: <Widget>[
-        _DrugPairHeader(
-          fromName: _drugName(input.fromDrugId),
-          fromDose: input.fromDoseMg,
-          toName: _drugName(input.toDrugId),
-          toDose: input.toDoseMg,
+        EntranceFade(
+          child: _DrugPairHeader(
+            fromName: _drugName(input.fromDrugId),
+            fromDose: input.fromDoseMg,
+            toName: _drugName(input.toDrugId),
+            toDose: input.toDoseMg,
+          ),
         ),
         const SizedBox(height: 16),
-        _StatusPill(plan: plan),
+        EntranceFade(index: 1, child: _StatusPill(plan: plan)),
         const SizedBox(height: 24),
-        ..._planContent(plan, ctx, ctxWarnings),
+        // Stagger the rest of the body — clamp the stagger index so
+        // the tail (citations, monitoring) doesn't drag the entrance
+        // out past 700ms even when the plan has many cards.
+        for (var i = 0; i < body.length; i++)
+          EntranceFade(index: (2 + i).clamp(0, 6), child: body[i]),
       ],
     );
   }
