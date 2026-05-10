@@ -23,6 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:psychswitch/src/ui/screens/about_screen.dart';
+import 'package:psychswitch/src/ui/screens/adverse_effects_screen.dart';
 import 'package:psychswitch/src/ui/screens/clozapine_screen.dart';
 import 'package:psychswitch/src/ui/screens/depot_screen.dart';
 import 'package:psychswitch/src/ui/screens/errata_screen.dart';
@@ -55,6 +56,7 @@ abstract final class Routes {
   static const lithiumTapering = 'lithium_tapering';
   static const qtcStacker = 'qtc_stacker';
   static const errata = 'errata';
+  static const adverseEffects = 'adverse_effects';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -194,6 +196,14 @@ GoRouter buildRouter() => GoRouter(
           pageBuilder: (context, state) => _fadeThroughPage(
             state: state,
             child: const ErrataScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.adverseEffects,
+          path: '/adverse-effects',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const AdverseEffectsScreen(),
           ),
         ),
         GoRoute(

@@ -580,6 +580,14 @@ class _ToolsRow extends StatelessWidget {
           children: <Widget>[
             Expanded(
               child: _ToolChip(
+                label: 'AE lookup',
+                icon: Icons.health_and_safety_outlined,
+                onPressed: () => context.pushNamed(Routes.adverseEffects),
+              ),
+            ),
+            const Gap.h(AppSpace.sm),
+            Expanded(
+              child: _ToolChip(
                 label: 'Settings',
                 icon: Icons.settings_outlined,
                 onPressed: () => context.pushNamed(Routes.settings),
@@ -593,8 +601,6 @@ class _ToolsRow extends StatelessWidget {
                 onPressed: () => context.pushNamed(Routes.about),
               ),
             ),
-            const Gap.h(AppSpace.sm),
-            const Expanded(child: SizedBox.shrink()),
           ],
         ),
       ],

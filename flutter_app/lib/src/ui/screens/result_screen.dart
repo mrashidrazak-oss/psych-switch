@@ -25,8 +25,10 @@ import 'package:psychswitch/src/services/notification_service.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/cost_comparison_card.dart';
+import 'package:psychswitch/src/ui/widgets/counselling_card.dart';
 import 'package:psychswitch/src/ui/widgets/crossover_chart.dart';
 import 'package:psychswitch/src/ui/widgets/ddi_warnings_card.dart';
+import 'package:psychswitch/src/ui/widgets/discontinuation_card.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
 import 'package:psychswitch/src/ui/widgets/predicted_ae_card.dart';
@@ -34,10 +36,12 @@ import 'package:psychswitch/src/ui/widgets/score_ring.dart';
 import 'package:psychswitch/src/ui/widgets/specialty_depth_card.dart';
 import 'package:psychswitch/src/ui/widgets/status_pill.dart' as ui;
 import 'package:psychswitch/src/util/export_pdf.dart';
+import 'package:psychswitch/src/util/format_counselling.dart';
 import 'package:psychswitch/src/util/share_plan.dart';
 import 'package:psychswitch_engine/case_pulse.dart' show SavedCase;
 import 'package:psychswitch_engine/citations.dart';
 import 'package:psychswitch_engine/ddi.dart';
+import 'package:psychswitch_engine/discontinuation.dart';
 import 'package:psychswitch_engine/monitoring.dart';
 import 'package:psychswitch_engine/patient_context_pure.dart';
 import 'package:psychswitch_engine/predicted_ae_profile.dart';
@@ -400,6 +404,41 @@ class _ResultBody extends ConsumerWidget {
     ];
   }
 
+  /// Discontinuation banner for the from-drug. Renders only when the
+  /// engine flags moderate+ severity (the helper itself self-hides
+  /// for `low`).
+  List<Widget> _discontinuationSection() {
+    final flag = getDiscontinuationFlag(input.fromDrugId);
+    if (flag == null || flag.severity == DiscontinuationSeverity.low) {
+      return const <Widget>[];
+    }
+    final from = engine.getDrug(input.fromDrugId);
+    if (from == null) return const <Widget>[];
+    return <Widget>[
+      DiscontinuationCard(
+        flag: flag,
+        drugDisplayName: from.genericName,
+      ),
+      const SizedBox(height: 16),
+    ];
+  }
+
+  /// Patient counselling card — collapsible plain-language handout.
+  List<Widget> _counsellingSection(SwitchPlanOk plan) {
+    final from = engine.getDrug(input.fromDrugId);
+    final to = engine.getDrug(input.toDrugId);
+    if (from == null || to == null) return const <Widget>[];
+    final text = formatCounsellingCard(
+      fromDrug: from,
+      toDrug: to,
+      plan: plan,
+    );
+    return <Widget>[
+      CounsellingCard(text: text),
+      const SizedBox(height: 16),
+    ];
+  }
+
   /// Specialty depth (pregnancy / breastfeeding / pediatric / geriatric).
   List<Widget> _specialtySection(PatientContext ctx) {
     final from = engine.getDrug(input.fromDrugId);
@@ -462,6 +501,9 @@ class _ResultBody extends ConsumerWidget {
             _SafetyFlagsCard(flags: ok.safetyFlags),
             const SizedBox(height: 16),
           ],
+          // Discontinuation-syndrome banner for the from-drug — sits
+          // with the other safety surfaces above the DDI list.
+          ..._discontinuationSection(),
           // DDI checker for the cross-taper overlap window. Renders
           // nothing when checkPair returns no hits.
           ..._ddiSection(input),
@@ -478,6 +520,8 @@ class _ResultBody extends ConsumerWidget {
           ..._predictedAeSection(),
           // Affordability hint.
           ..._costSection(),
+          // Patient counselling card — plain-language handout.
+          ..._counsellingSection(ok),
           _CitationsCard(citations: ok.citations),
         ],
       SwitchPlanMaudsleyGuidance(
