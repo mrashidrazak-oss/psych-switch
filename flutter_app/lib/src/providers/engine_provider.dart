@@ -13,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:psychswitch/src/data/content_loader.dart';
 import 'package:psychswitch_engine/clozapine.dart';
+import 'package:psychswitch_engine/mood_stabilizer_tapering.dart';
 import 'package:psychswitch_engine/switching_engine.dart';
 
 /// Loads the entire clinical content bundle exactly once, asynchronously.
@@ -43,4 +44,12 @@ final engineProvider = FutureProvider<SwitchingEngine>((ref) async {
 final clozapineModuleProvider = FutureProvider<ClozapineModule>((ref) async {
   final content = await ref.watch(loadedContentProvider.future);
   return content.clozapine;
+});
+
+/// Convenience: the lithium [TaperingProtocol] (Maudsley 15 Box 2.3).
+/// Used by the Lithium-tapering screen in the mood-stabiliser module.
+final lithiumTaperingProvider =
+    FutureProvider<TaperingProtocol>((ref) async {
+  final content = await ref.watch(loadedContentProvider.future);
+  return content.lithiumTapering;
 });

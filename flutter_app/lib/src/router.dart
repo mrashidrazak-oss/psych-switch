@@ -28,6 +28,9 @@ import 'package:psychswitch/src/ui/screens/depot_screen.dart';
 import 'package:psychswitch/src/ui/screens/glossary_screen.dart';
 import 'package:psychswitch/src/ui/screens/history_screen.dart';
 import 'package:psychswitch/src/ui/screens/home_screen.dart';
+import 'package:psychswitch/src/ui/screens/lithium_tapering_screen.dart';
+import 'package:psychswitch/src/ui/screens/mood_stabilizer_detail_screen.dart';
+import 'package:psychswitch/src/ui/screens/mood_stabilizer_home_screen.dart';
 import 'package:psychswitch/src/ui/screens/result_screen.dart';
 import 'package:psychswitch/src/ui/screens/settings_screen.dart';
 import 'package:psychswitch/src/ui/screens/switch_screen.dart';
@@ -45,6 +48,9 @@ abstract final class Routes {
   static const clozapine = 'clozapine';
   static const depotIndex = 'depot_index';
   static const depot = 'depot';
+  static const moodStabilizers = 'mood_stabilizers';
+  static const moodStabilizerDetail = 'mood_stabilizer_detail';
+  static const lithiumTapering = 'lithium_tapering';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -140,6 +146,35 @@ GoRouter buildRouter() => GoRouter(
           path: '/clozapine',
           pageBuilder: (context, state) =>
               _fadeThroughPage(state: state, child: const ClozapineScreen()),
+        ),
+        GoRoute(
+          name: Routes.moodStabilizers,
+          path: '/mood-stabilizers',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const MoodStabilizerHomeScreen(),
+          ),
+          routes: <RouteBase>[
+            GoRoute(
+              name: Routes.moodStabilizerDetail,
+              path: ':id',
+              pageBuilder: (context, state) {
+                final id = state.pathParameters['id'] ?? '';
+                return _fadeThroughPage(
+                  state: state,
+                  child: MoodStabilizerDetailScreen(drugId: id),
+                );
+              },
+            ),
+          ],
+        ),
+        GoRoute(
+          name: Routes.lithiumTapering,
+          path: '/lithium-tapering',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const LithiumTaperingScreen(),
+          ),
         ),
         GoRoute(
           name: Routes.depotIndex,

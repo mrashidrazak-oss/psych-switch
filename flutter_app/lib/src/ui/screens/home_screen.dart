@@ -426,26 +426,47 @@ class _ModulesRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       children: <Widget>[
-        Expanded(
-          child: _ModuleCard(
-            title: 'Clozapine',
-            subtitle: 'Titration · FBC · rechallenge',
-            icon: Icons.medical_services_outlined,
-            tone: AppColors.warning,
-            onPressed: () => context.pushNamed(Routes.clozapine),
-          ),
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: _ModuleCard(
+                title: 'Clozapine',
+                subtitle: 'Titration · FBC · rechallenge',
+                icon: Icons.medical_services_outlined,
+                tone: AppColors.warning,
+                onPressed: () => context.pushNamed(Routes.clozapine),
+              ),
+            ),
+            const Gap.h(AppSpace.sm),
+            Expanded(
+              child: _ModuleCard(
+                title: 'Depot LAI',
+                subtitle: 'Sustenna · Trinza · Maintena',
+                icon: Icons.colorize_outlined,
+                tone: AppColors.accent,
+                onPressed: () => context.pushNamed(Routes.depotIndex),
+              ),
+            ),
+          ],
         ),
-        const Gap.h(AppSpace.sm),
-        Expanded(
-          child: _ModuleCard(
-            title: 'Depot LAI',
-            subtitle: 'Sustenna · Trinza · Maintena',
-            icon: Icons.colorize_outlined,
-            tone: AppColors.accent,
-            onPressed: () => context.pushNamed(Routes.depotIndex),
-          ),
+        const Gap.v(AppSpace.sm),
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: _ModuleCard(
+                title: 'Mood stabilisers',
+                subtitle: 'Lithium · VPA · LTG · CBZ',
+                icon: Icons.balance_rounded,
+                tone: AppColors.to,
+                onPressed: () =>
+                    context.pushNamed(Routes.moodStabilizers),
+              ),
+            ),
+            const Gap.h(AppSpace.sm),
+            const Expanded(child: SizedBox.shrink()),
+          ],
         ),
       ],
     );
