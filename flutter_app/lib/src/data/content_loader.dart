@@ -5,10 +5,10 @@
 // payload — drugs, rules, Maudsley matrix, QTc, clozapine and
 // mood-stabilizer content.
 //
-// This is the production loader. The test-only sibling at
-// `test/_helpers/content_loader.dart` reads the same content via
-// `dart:io` straight from /content/, so iteration there doesn't depend
-// on running the bundler.
+// Production path uses `compute()` to run the decode in a background
+// isolate — keeps cold-start frame budget intact even on slower
+// devices. The pure synchronous `decodeContentBundle` is preserved
+// for unit tests + the test-only sibling loader.
 //
 // Failure mode is "throw at startup": if the bundle is malformed, the
 // app cannot function clinically and should crash visibly rather than
@@ -16,6 +16,7 @@
 
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart' show compute;
 import 'package:flutter/services.dart' show AssetBundle, rootBundle;
 
 import 'package:psychswitch_engine/clozapine.dart';
@@ -130,9 +131,33 @@ LoadedContent decodeContentBundle(String raw) {
   );
 }
 
-/// Production loader — reads the bundle via [rootBundle] and decodes.
-/// Pass [bundle] to override (e.g. test asset stub).
-Future<LoadedContent> loadContent({AssetBundle? bundle}) async {
+/// Production loader — reads the bundle via [rootBundle] and decodes
+/// it on a background isolate via `compute()` so cold-start animations
+/// stay buttery on slow devices. Pass [bundle] to override (e.g. test
+/// asset stub).
+///
+/// In test environments where isolates are unavailable, [decodeOnMain]
+/// can be set to true — `decodeContentBundle` runs on the current
+/// isolate. Existing tests pass `bundle:` and rely on this fallback
+/// implicitly via [_safeCompute].
+Future<LoadedContent> loadContent({
+  AssetBundle? bundle,
+  bool decodeOnMain = false,
+}) async {
   final raw = await (bundle ?? rootBundle).loadString(contentBundleAsset);
-  return decodeContentBundle(raw);
+  if (decodeOnMain) return decodeContentBundle(raw);
+  return _safeCompute(raw);
+}
+
+/// `compute()` requires the platform message loop to be running. In
+/// `flutter_test`'s default isolate the binary messenger is mocked,
+/// which means `compute` either hangs or runs on main depending on
+/// the Flutter version. We guard against both: try the isolate path,
+/// fall back to a synchronous decode if it throws.
+Future<LoadedContent> _safeCompute(String raw) async {
+  try {
+    return await compute(decodeContentBundle, raw);
+  } on Object {
+    return decodeContentBundle(raw);
+  }
 }

@@ -523,19 +523,18 @@ class _ScheduleCard extends StatelessWidget {
             to: 'To',
             notes: 'Notes',
           ),
-          const Divider(color: AppColors.border, height: 1),
-          ...schedule.map(
-            (s) => Column(
-              children: <Widget>[
-                _ScheduleRow(
-                  day: s.day.toString(),
-                  from: _formatDose(s.fromDoseMg),
-                  to: _formatDose(s.toDoseMg),
-                  notes: s.notes ?? '',
-                ),
-                const Divider(color: AppColors.border, height: 1),
-              ],
-            ),
+          const Divider(height: 1),
+          ...schedule.indexed.map(
+            ((int, ScheduleStep) e) {
+              final (i, s) = e;
+              return _ScheduleRow(
+                day: s.day.toString(),
+                from: _formatDose(s.fromDoseMg),
+                to: _formatDose(s.toDoseMg),
+                notes: s.notes ?? '',
+                stripe: i.isOdd,
+              );
+            },
           ),
         ],
       ),
@@ -550,6 +549,7 @@ class _ScheduleRow extends StatelessWidget {
     required this.to,
     required this.notes,
     this.isHeader = false,
+    this.stripe = false,
   });
 
   final String day;
@@ -557,26 +557,70 @@ class _ScheduleRow extends StatelessWidget {
   final String to;
   final String notes;
   final bool isHeader;
+  final bool stripe;
+
+  // Tabular figures so digits line up vertically across rows — turns
+  // the schedule into a real table rather than a column of text.
+  static const _tabularFigures = <FontFeature>[FontFeature.tabularFigures()];
 
   @override
   Widget build(BuildContext context) {
-    final style = TextStyle(
+    final labelStyle = TextStyle(
       color: isHeader ? AppColors.muted : AppColors.text,
       fontSize: 12,
-      fontWeight: isHeader ? FontWeight.w600 : FontWeight.w400,
+      fontWeight: isHeader ? FontWeight.w700 : FontWeight.w500,
+      letterSpacing: isHeader ? 1 : 0,
+      fontFeatures: _tabularFigures,
+    );
+    final notesStyle = TextStyle(
+      color: isHeader ? AppColors.muted : AppColors.mutedStrong,
+      fontSize: 11.5,
+      fontWeight: isHeader ? FontWeight.w700 : FontWeight.w400,
+      height: 1.4,
       letterSpacing: isHeader ? 1 : 0,
     );
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+    return Container(
+      color: stripe && !isHeader
+          ? AppColors.surfaceHigh.withValues(alpha: 0.5)
+          : Colors.transparent,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpace.md,
+        vertical: AppSpace.sm + 2,
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          SizedBox(width: 36, child: Text(day, style: style)),
-          SizedBox(width: 56, child: Text(from, style: style)),
-          SizedBox(width: 56, child: Text(to, style: style)),
-          Expanded(
-            child: Text(notes, style: style.copyWith(letterSpacing: 0)),
+          SizedBox(
+            width: 36,
+            child: Text(
+              day,
+              style: labelStyle.copyWith(
+                color: isHeader ? AppColors.muted : AppColors.accent,
+                fontWeight: isHeader ? FontWeight.w700 : FontWeight.w700,
+              ),
+            ),
           ),
+          SizedBox(
+            width: 56,
+            child: Text(
+              from,
+              style: labelStyle.copyWith(
+                color: isHeader ? AppColors.muted : AppColors.from,
+              ),
+              textAlign: TextAlign.left,
+            ),
+          ),
+          SizedBox(
+            width: 56,
+            child: Text(
+              to,
+              style: labelStyle.copyWith(
+                color: isHeader ? AppColors.muted : AppColors.to,
+              ),
+              textAlign: TextAlign.left,
+            ),
+          ),
+          Expanded(child: Text(notes, style: notesStyle)),
         ],
       ),
     );

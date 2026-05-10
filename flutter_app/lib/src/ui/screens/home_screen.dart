@@ -14,6 +14,7 @@ import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
+import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
 import 'package:psychswitch/src/ui/widgets/status_pill.dart';
 import 'package:psychswitch/src/ui/widgets/today_pulse_card.dart';
 
@@ -24,13 +25,44 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncEngine = ref.watch(engineProvider);
     return Scaffold(
-      body: SafeArea(
-        child: asyncEngine.when(
-          loading: () => const EngineLoadingView(),
-          error: (e, st) => EngineErrorView(error: e),
-          data: (engine) => _HomeBody(
-            drugCount: engine.listDrugs().length,
-            ruleCount: engine.listRules().length,
+      body: Stack(
+        children: <Widget>[
+          // Ambient backdrop — radial glow from the top-left, gives the
+          // dark surface depth without being noisy.
+          const Positioned.fill(child: _AmbientBackdrop()),
+          SafeArea(
+            child: asyncEngine.when(
+              loading: () => const EngineLoadingView(),
+              error: (e, st) => EngineErrorView(error: e),
+              data: (engine) => _HomeBody(
+                drugCount: engine.listDrugs().length,
+                ruleCount: engine.listRules().length,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AmbientBackdrop extends StatelessWidget {
+  const _AmbientBackdrop();
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            center: const Alignment(-0.6, -0.85),
+            radius: 1.1,
+            colors: <Color>[
+              AppColors.from.withValues(alpha: 0.08),
+              AppColors.to.withValues(alpha: 0.04),
+              Colors.transparent,
+            ],
+            stops: const <double>[0, 0.45, 1],
           ),
         ),
       ),
@@ -57,43 +89,58 @@ class _HomeBody extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          const _Hero(),
+          const EntranceFade(child: _Hero()),
           const Gap.v(AppSpace.xl),
 
-          _ReadyBadge(drugs: drugCount, rules: ruleCount),
+          EntranceFade(
+            index: 1,
+            child: _ReadyBadge(drugs: drugCount, rules: ruleCount),
+          ),
           const Gap.v(AppSpace.lg),
 
           // Today's pulse — saved cases with monitoring due now.
           // Renders nothing when no cases or no pulses are due.
-          const TodayPulseCard(),
+          const EntranceFade(index: 2, child: TodayPulseCard()),
           const Gap.v(AppSpace.xl),
 
           // Primary CTA.
-          _StartSwitchButton(
-            onPressed: () => context.goNamed(Routes.switch_),
+          EntranceFade(
+            index: 3,
+            child: _StartSwitchButton(
+              onPressed: () => context.goNamed(Routes.switch_),
+            ),
           ),
           const Gap.v(AppSpace.md),
           // Secondary CTA — saved cases.
-          _SecondaryButton(
-            label: 'History',
-            icon: Icons.history,
-            onPressed: () => context.goNamed(Routes.history),
+          EntranceFade(
+            index: 4,
+            child: _SecondaryButton(
+              label: 'History',
+              icon: Icons.history,
+              onPressed: () => context.goNamed(Routes.history),
+            ),
           ),
           const Gap.v(AppSpace.xl),
 
           // Modules row — specialty surfaces.
-          const _SectionLabel(text: 'CLINICAL MODULES'),
+          const EntranceFade(
+            index: 5,
+            child: _SectionLabel(text: 'CLINICAL MODULES'),
+          ),
           const Gap.v(AppSpace.sm),
-          const _ModulesRow(),
+          const EntranceFade(index: 5, child: _ModulesRow()),
           const Gap.v(AppSpace.lg),
 
           // Tools row — Glossary · Settings · About.
-          const _SectionLabel(text: 'TOOLS'),
+          const EntranceFade(
+            index: 6,
+            child: _SectionLabel(text: 'TOOLS'),
+          ),
           const Gap.v(AppSpace.sm),
-          const _ToolsRow(),
+          const EntranceFade(index: 6, child: _ToolsRow()),
           const Gap.v(AppSpace.xxl),
 
-          const _Footer(),
+          const EntranceFade(index: 7, child: _Footer()),
         ],
       ),
     );
@@ -268,36 +315,38 @@ class _PulsingDotState extends State<_PulsingDot>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _ctl,
-      builder: (_, __) {
-        final t = Curves.easeInOut.transform(_ctl.value);
-        return SizedBox(
-          width: 12,
-          height: 12,
-          child: Stack(
-            alignment: Alignment.center,
-            children: <Widget>[
-              Container(
-                width: 12,
-                height: 12,
-                decoration: BoxDecoration(
-                  color: widget.color.withValues(alpha: 0.15 + 0.15 * t),
-                  shape: BoxShape.circle,
+    return RepaintBoundary(
+      child: AnimatedBuilder(
+        animation: _ctl,
+        builder: (_, __) {
+          final t = Curves.easeInOut.transform(_ctl.value);
+          return SizedBox(
+            width: 12,
+            height: 12,
+            child: Stack(
+              alignment: Alignment.center,
+              children: <Widget>[
+                Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: widget.color.withValues(alpha: 0.15 + 0.15 * t),
+                    shape: BoxShape.circle,
+                  ),
                 ),
-              ),
-              Container(
-                width: 6,
-                height: 6,
-                decoration: BoxDecoration(
-                  color: widget.color,
-                  shape: BoxShape.circle,
+                Container(
+                  width: 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: widget.color,
+                    shape: BoxShape.circle,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        );
-      },
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

@@ -100,7 +100,8 @@ class _ScoreRingState extends State<ScoreRing>
       label: 'PsychSwitch score ${widget.score.total} of 100, '
           '${bandLabel(widget.score.band)}',
       excludeSemantics: true,
-      child: SizedBox(
+      child: RepaintBoundary(
+        child: SizedBox(
         width: widget.size,
         height: widget.size,
         child: CustomPaint(
@@ -138,6 +139,7 @@ class _ScoreRingState extends State<ScoreRing>
             ),
           ),
         ),
+      ),
       ),
     );
   }

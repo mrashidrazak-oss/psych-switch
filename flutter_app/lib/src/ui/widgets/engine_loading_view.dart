@@ -43,10 +43,12 @@ class EngineLoadingView extends StatelessWidget {
             style: AppTextSizes.caption,
           ),
           const Gap.v(AppSpace.xl),
-          const SizedBox(
-            width: 22,
-            height: 22,
-            child: CircularProgressIndicator(strokeWidth: 2),
+          const RepaintBoundary(
+            child: SizedBox(
+              width: 22,
+              height: 22,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
           ),
         ],
       ),
