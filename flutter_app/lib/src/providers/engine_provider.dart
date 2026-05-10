@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:psychswitch/src/data/content_loader.dart';
 import 'package:psychswitch_engine/clozapine.dart';
 import 'package:psychswitch_engine/mood_stabilizer_tapering.dart';
+import 'package:psychswitch_engine/qtc_stacker.dart';
 import 'package:psychswitch_engine/switching_engine.dart';
 
 /// Loads the entire clinical content bundle exactly once, asynchronously.
@@ -52,4 +53,10 @@ final lithiumTaperingProvider =
     FutureProvider<TaperingProtocol>((ref) async {
   final content = await ref.watch(loadedContentProvider.future);
   return content.lithiumTapering;
+});
+
+/// Convenience: the QTc registry. Used by the QTc Stacker screen.
+final qtcDataProvider = FutureProvider<QtcRiskData>((ref) async {
+  final content = await ref.watch(loadedContentProvider.future);
+  return content.qtcData;
 });

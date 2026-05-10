@@ -546,30 +546,56 @@ class _ToolsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       children: <Widget>[
-        Expanded(
-          child: _ToolChip(
-            label: 'Glossary',
-            icon: Icons.menu_book_outlined,
-            onPressed: () => context.pushNamed(Routes.glossary),
-          ),
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: _ToolChip(
+                label: 'QTc stacker',
+                icon: Icons.monitor_heart_outlined,
+                onPressed: () => context.pushNamed(Routes.qtcStacker),
+              ),
+            ),
+            const Gap.h(AppSpace.sm),
+            Expanded(
+              child: _ToolChip(
+                label: 'Glossary',
+                icon: Icons.menu_book_outlined,
+                onPressed: () => context.pushNamed(Routes.glossary),
+              ),
+            ),
+            const Gap.h(AppSpace.sm),
+            Expanded(
+              child: _ToolChip(
+                label: 'Errata',
+                icon: Icons.fact_check_outlined,
+                onPressed: () => context.pushNamed(Routes.errata),
+              ),
+            ),
+          ],
         ),
-        const Gap.h(AppSpace.sm),
-        Expanded(
-          child: _ToolChip(
-            label: 'Settings',
-            icon: Icons.settings_outlined,
-            onPressed: () => context.pushNamed(Routes.settings),
-          ),
-        ),
-        const Gap.h(AppSpace.sm),
-        Expanded(
-          child: _ToolChip(
-            label: 'About',
-            icon: Icons.info_outline,
-            onPressed: () => context.pushNamed(Routes.about),
-          ),
+        const Gap.v(AppSpace.sm),
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: _ToolChip(
+                label: 'Settings',
+                icon: Icons.settings_outlined,
+                onPressed: () => context.pushNamed(Routes.settings),
+              ),
+            ),
+            const Gap.h(AppSpace.sm),
+            Expanded(
+              child: _ToolChip(
+                label: 'About',
+                icon: Icons.info_outline,
+                onPressed: () => context.pushNamed(Routes.about),
+              ),
+            ),
+            const Gap.h(AppSpace.sm),
+            const Expanded(child: SizedBox.shrink()),
+          ],
         ),
       ],
     );

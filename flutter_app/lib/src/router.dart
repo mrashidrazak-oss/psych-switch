@@ -25,12 +25,14 @@ import 'package:go_router/go_router.dart';
 import 'package:psychswitch/src/ui/screens/about_screen.dart';
 import 'package:psychswitch/src/ui/screens/clozapine_screen.dart';
 import 'package:psychswitch/src/ui/screens/depot_screen.dart';
+import 'package:psychswitch/src/ui/screens/errata_screen.dart';
 import 'package:psychswitch/src/ui/screens/glossary_screen.dart';
 import 'package:psychswitch/src/ui/screens/history_screen.dart';
 import 'package:psychswitch/src/ui/screens/home_screen.dart';
 import 'package:psychswitch/src/ui/screens/lithium_tapering_screen.dart';
 import 'package:psychswitch/src/ui/screens/mood_stabilizer_detail_screen.dart';
 import 'package:psychswitch/src/ui/screens/mood_stabilizer_home_screen.dart';
+import 'package:psychswitch/src/ui/screens/qtc_stacker_screen.dart';
 import 'package:psychswitch/src/ui/screens/result_screen.dart';
 import 'package:psychswitch/src/ui/screens/settings_screen.dart';
 import 'package:psychswitch/src/ui/screens/switch_screen.dart';
@@ -51,6 +53,8 @@ abstract final class Routes {
   static const moodStabilizers = 'mood_stabilizers';
   static const moodStabilizerDetail = 'mood_stabilizer_detail';
   static const lithiumTapering = 'lithium_tapering';
+  static const qtcStacker = 'qtc_stacker';
+  static const errata = 'errata';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -174,6 +178,22 @@ GoRouter buildRouter() => GoRouter(
           pageBuilder: (context, state) => _fadeThroughPage(
             state: state,
             child: const LithiumTaperingScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.qtcStacker,
+          path: '/qtc-stacker',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const QtcStackerScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.errata,
+          path: '/errata',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const ErrataScreen(),
           ),
         ),
         GoRoute(
