@@ -62,9 +62,15 @@ void main() {
       await _waitForReady(tester, find.text('Reviewed schedule'));
       expect(find.text('FROM'), findsOneWidget);
       expect(find.text('TO'), findsOneWidget);
+      // Schedule + citations live below the fold on a 800x600 viewport
+      // because the crossover chart and predicted-AE card sit between
+      // the hero and the table — drag both into view.
+      await tester.dragUntilVisible(
+        find.text('SCHEDULE'),
+        find.byType(ListView),
+        const Offset(0, -200),
+      );
       expect(find.text('SCHEDULE'), findsOneWidget);
-      // Citations card is below the visible viewport on a default
-      // 800x600 test screen — scroll it in.
       await tester.dragUntilVisible(
         find.text('CITATIONS'),
         find.byType(ListView),

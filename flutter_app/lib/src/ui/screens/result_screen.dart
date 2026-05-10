@@ -22,6 +22,7 @@ import 'package:psychswitch/src/providers/saved_cases_provider.dart';
 import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
+import 'package:psychswitch/src/ui/widgets/crossover_chart.dart';
 import 'package:psychswitch/src/ui/widgets/ddi_warnings_card.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
@@ -395,6 +396,12 @@ class _ResultBody extends ConsumerWidget {
             const _ReferenceDosesBanner(),
             const SizedBox(height: 16),
           ],
+          // Crossover shape chart — read the curves before the table.
+          CrossoverChart(
+            schedule: ok.schedule,
+            totalDays: ok.rule.durationDays,
+          ),
+          const SizedBox(height: 16),
           _ScheduleCard(schedule: ok.schedule),
           const SizedBox(height: 16),
           if (ok.safetyFlags.isNotEmpty) ...<Widget>[
