@@ -76,7 +76,7 @@ class DepotIndexScreen extends StatelessWidget {
               indication: sustenna.indication,
               interval: sustenna.injectionInterval,
               onTap: () =>
-                  context.goNamed(Routes.depot, pathParameters: <String, String>{
+                  context.pushNamed(Routes.depot, pathParameters: <String, String>{
                 'id': DepotKind.sustenna.name,
               }),
             ),
@@ -87,7 +87,7 @@ class DepotIndexScreen extends StatelessWidget {
               indication: trinza.indication,
               interval: trinza.injectionInterval,
               onTap: () =>
-                  context.goNamed(Routes.depot, pathParameters: <String, String>{
+                  context.pushNamed(Routes.depot, pathParameters: <String, String>{
                 'id': DepotKind.trinza.name,
               }),
             ),
@@ -98,7 +98,7 @@ class DepotIndexScreen extends StatelessWidget {
               indication: maintena.indication,
               interval: maintena.injectionInterval,
               onTap: () =>
-                  context.goNamed(Routes.depot, pathParameters: <String, String>{
+                  context.pushNamed(Routes.depot, pathParameters: <String, String>{
                 'id': DepotKind.maintena.name,
               }),
             ),

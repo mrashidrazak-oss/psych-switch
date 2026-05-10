@@ -107,7 +107,7 @@ class _HomeBody extends StatelessWidget {
           EntranceFade(
             index: 3,
             child: _StartSwitchButton(
-              onPressed: () => context.goNamed(Routes.switch_),
+              onPressed: () => context.pushNamed(Routes.switch_),
             ),
           ),
           const Gap.v(AppSpace.md),
@@ -117,7 +117,7 @@ class _HomeBody extends StatelessWidget {
             child: _SecondaryButton(
               label: 'History',
               icon: Icons.history,
-              onPressed: () => context.goNamed(Routes.history),
+              onPressed: () => context.pushNamed(Routes.history),
             ),
           ),
           const Gap.v(AppSpace.xl),
@@ -434,7 +434,7 @@ class _ModulesRow extends StatelessWidget {
             subtitle: 'Titration · FBC · rechallenge',
             icon: Icons.medical_services_outlined,
             tone: AppColors.warning,
-            onPressed: () => context.goNamed(Routes.clozapine),
+            onPressed: () => context.pushNamed(Routes.clozapine),
           ),
         ),
         const Gap.h(AppSpace.sm),
@@ -444,7 +444,7 @@ class _ModulesRow extends StatelessWidget {
             subtitle: 'Sustenna · Trinza · Maintena',
             icon: Icons.colorize_outlined,
             tone: AppColors.accent,
-            onPressed: () => context.goNamed(Routes.depotIndex),
+            onPressed: () => context.pushNamed(Routes.depotIndex),
           ),
         ),
       ],
@@ -531,7 +531,7 @@ class _ToolsRow extends StatelessWidget {
           child: _ToolChip(
             label: 'Glossary',
             icon: Icons.menu_book_outlined,
-            onPressed: () => context.goNamed(Routes.glossary),
+            onPressed: () => context.pushNamed(Routes.glossary),
           ),
         ),
         const Gap.h(AppSpace.sm),
@@ -539,7 +539,7 @@ class _ToolsRow extends StatelessWidget {
           child: _ToolChip(
             label: 'Settings',
             icon: Icons.settings_outlined,
-            onPressed: () => context.goNamed(Routes.settings),
+            onPressed: () => context.pushNamed(Routes.settings),
           ),
         ),
         const Gap.h(AppSpace.sm),
@@ -547,7 +547,7 @@ class _ToolsRow extends StatelessWidget {
           child: _ToolChip(
             label: 'About',
             icon: Icons.info_outline,
-            onPressed: () => context.goNamed(Routes.about),
+            onPressed: () => context.pushNamed(Routes.about),
           ),
         ),
       ],

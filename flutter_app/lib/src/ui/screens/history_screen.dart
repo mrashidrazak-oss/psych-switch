@@ -92,7 +92,7 @@ class _EmptyState extends StatelessWidget {
             ),
             const Gap.v(AppSpace.lg),
             FilledButton.icon(
-              onPressed: () => context.goNamed(Routes.switch_),
+              onPressed: () => context.pushNamed(Routes.switch_),
               icon: const Icon(Icons.arrow_forward_rounded, size: 18),
               label: const Text('Start a switch'),
             ),

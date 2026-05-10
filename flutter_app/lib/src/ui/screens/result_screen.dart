@@ -872,7 +872,7 @@ class _ClozapineRedirectCard extends StatelessWidget {
           Align(
             alignment: Alignment.centerLeft,
             child: FilledButton.icon(
-              onPressed: () => context.goNamed(Routes.clozapine),
+              onPressed: () => context.pushNamed(Routes.clozapine),
               icon: const Icon(Icons.medical_services_outlined, size: 16),
               label: const Text('Open Clozapine module'),
               style: FilledButton.styleFrom(
