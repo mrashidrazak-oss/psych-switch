@@ -1,4 +1,4 @@
-// Settings screen — Phase 7A.
+// Settings screen.
 //
 // Two surfaces today: a citations toggle and a "delete all saved
 // cases" destructive action. More toggles (reminders, locale, text
@@ -28,7 +28,12 @@ class SettingsScreen extends ConsumerWidget {
       ),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpace.lg,
+            AppSpace.md,
+            AppSpace.lg,
+            AppSpace.xl,
+          ),
           children: <Widget>[
             const _SectionHeader(text: 'DISPLAY'),
             _ToggleTile(
@@ -38,12 +43,11 @@ class SettingsScreen extends ConsumerWidget {
                   'Turn off to declutter when teaching or screen-sharing.',
               value: showCitations.value ?? true,
               loading: showCitations.isLoading,
-              onChanged: (v) => ref
-                  .read(showCitationsProvider.notifier)
-                  .set(value: v),
+              onChanged: (v) =>
+                  ref.read(showCitationsProvider.notifier).set(value: v),
             ),
 
-            const SizedBox(height: 24),
+            const Gap.v(AppSpace.xl),
             const _SectionHeader(text: 'DATA'),
             _DangerTile(
               label: 'Delete all saved cases',
@@ -62,15 +66,10 @@ class SettingsScreen extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor: AppColors.surface,
-        title: const Text(
-          'Delete all saved cases?',
-          style: TextStyle(color: AppColors.text),
-        ),
+        title: const Text('Delete all saved cases?'),
         content: const Text(
           'Every saved case is removed from this device. The clinical '
           'content registry (drugs, rules, citations) is not affected.',
-          style: TextStyle(color: AppColors.muted, height: 1.5),
         ),
         actions: <Widget>[
           TextButton(
@@ -94,12 +93,10 @@ class SettingsScreen extends ConsumerWidget {
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: AppColors.surface,
         content: Text(
           removed == 0
               ? 'Nothing to delete.'
               : 'Deleted $removed saved case${removed == 1 ? '' : 's'}.',
-          style: const TextStyle(color: AppColors.text),
         ),
       ),
     );
@@ -114,16 +111,13 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
-      child: Text(
-        text,
-        style: const TextStyle(
-          color: AppColors.muted,
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 1.5,
-        ),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpace.xs,
+        AppSpace.sm,
+        AppSpace.xs,
+        AppSpace.sm,
       ),
+      child: Text(text, style: AppTextSizes.eyebrow),
     );
   }
 }
@@ -149,9 +143,14 @@ class _ToggleTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppRadii.lg),
       ),
-      padding: const EdgeInsets.fromLTRB(14, 12, 8, 12),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpace.md + 2,
+        AppSpace.md,
+        AppSpace.sm,
+        AppSpace.md,
+      ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -167,22 +166,18 @@ class _ToggleTile extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const Gap.v(AppSpace.xxs),
                 Text(
                   description,
-                  style: const TextStyle(
-                    color: AppColors.muted,
-                    fontSize: 12,
-                    height: 1.45,
-                  ),
+                  style: AppTextSizes.caption.copyWith(height: 1.5),
                 ),
               ],
             ),
           ),
+          // Switch styling now comes from the global SwitchTheme.
           Switch(
             value: value,
             onChanged: loading ? null : onChanged,
-            activeThumbColor: AppColors.accent,
           ),
         ],
       ),
@@ -207,30 +202,41 @@ class _DangerTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.danger.withValues(alpha: 0.05),
         border: Border.all(color: AppColors.danger.withValues(alpha: 0.3)),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppRadii.lg),
       ),
-      padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpace.md + 2,
+        AppSpace.md,
+        AppSpace.md + 2,
+        AppSpace.md + 2,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            label,
-            style: const TextStyle(
-              color: AppColors.danger,
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ),
+          Row(
+            children: <Widget>[
+              const Icon(
+                Icons.warning_amber_rounded,
+                color: AppColors.danger,
+                size: 16,
+              ),
+              const Gap.h(AppSpace.sm),
+              Text(
+                label,
+                style: const TextStyle(
+                  color: AppColors.danger,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 4),
+          const Gap.v(AppSpace.xs),
           Text(
             description,
-            style: const TextStyle(
-              color: AppColors.muted,
-              fontSize: 12,
-              height: 1.45,
-            ),
+            style: AppTextSizes.caption.copyWith(height: 1.5),
           ),
-          const SizedBox(height: 10),
+          const Gap.v(AppSpace.md),
           Align(
             alignment: Alignment.centerLeft,
             child: OutlinedButton(

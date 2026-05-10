@@ -1,4 +1,4 @@
-// About screen — Phase 7A.
+// About screen.
 //
 // Renders live build info pulled from package_info_plus + the loaded
 // engine, plus a static block for license + contact + project links.
@@ -40,28 +40,67 @@ class AboutScreen extends ConsumerWidget {
             final version = asyncPkg.value?.version ?? '—';
             final build = asyncPkg.value?.buildNumber ?? '—';
             return ListView(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+              padding: const EdgeInsets.fromLTRB(
+                AppSpace.lg + 4,
+                AppSpace.xl,
+                AppSpace.lg + 4,
+                AppSpace.xl,
+              ),
               children: <Widget>[
-                const Text(
-                  'PsychSwitch',
-                  style: TextStyle(
-                    color: AppColors.text,
-                    fontSize: 28,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.8,
-                  ),
+                // Hero — wordmark + tagline + monogram.
+                Row(
+                  children: <Widget>[
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: <Color>[AppColors.from, AppColors.to],
+                        ),
+                        borderRadius: BorderRadius.circular(AppRadii.md),
+                        boxShadow: <BoxShadow>[
+                          BoxShadow(
+                            color: AppColors.accent.withValues(alpha: 0.18),
+                            blurRadius: 14,
+                            spreadRadius: -3,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: const Center(
+                        child: Text(
+                          'PS',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 19,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const Gap.h(AppSpace.md),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          const Text(
+                            'PsychSwitch',
+                            style: AppTextSizes.heading,
+                          ),
+                          const Gap.v(2),
+                          Text(
+                            'Reviewed cross-titration · cited at every step',
+                            style: AppTextSizes.caption.copyWith(height: 1.4),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 4),
-                const Text(
-                  'Reviewed cross-titration · cited at every step',
-                  style: TextStyle(
-                    color: AppColors.muted,
-                    fontSize: 13,
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: 20),
+                const Gap.v(AppSpace.xl),
 
                 _StatGrid(
                   stats: <_Stat>[
@@ -78,7 +117,7 @@ class AboutScreen extends ConsumerWidget {
                     _Stat(label: 'Errata logged', value: '${errataCount()}'),
                   ],
                 ),
-                const SizedBox(height: 24),
+                const Gap.v(AppSpace.xl),
 
                 const _Section(
                   title: 'CLINICAL SCOPE',
@@ -88,7 +127,7 @@ class AboutScreen extends ConsumerWidget {
                       'switch picker keeps them gated — both classes need more '
                       'clinical research before generic templating is safe.',
                 ),
-                const SizedBox(height: 16),
+                const Gap.v(AppSpace.lg),
 
                 const _Section(
                   title: 'INTENDED USE',
@@ -98,7 +137,7 @@ class AboutScreen extends ConsumerWidget {
                       'against the patient in front of you and the primary '
                       'references the rule cites.',
                 ),
-                const SizedBox(height: 16),
+                const Gap.v(AppSpace.lg),
 
                 const _Section(
                   title: 'PRIVACY',
@@ -108,7 +147,7 @@ class AboutScreen extends ConsumerWidget {
                       'never transmits clinical inputs. No network calls are '
                       'made by the engine itself.',
                 ),
-                const SizedBox(height: 16),
+                const Gap.v(AppSpace.lg),
 
                 const _Section(
                   title: 'LICENSING',
@@ -117,7 +156,7 @@ class AboutScreen extends ConsumerWidget {
                       '(drug profiles, switching rules, citations, errata): '
                       'CC BY-NC-SA 4.0.',
                 ),
-                const SizedBox(height: 16),
+                const Gap.v(AppSpace.lg),
 
                 const _Section(
                   title: 'CONTACT',
@@ -146,10 +185,26 @@ class _StatGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: stats.map((s) => _StatChip(stat: s)).toList(),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // 2-up grid; on tight widths fall back to 1 column.
+        final twoUp = constraints.maxWidth >= 320;
+        final itemWidth = twoUp
+            ? (constraints.maxWidth - AppSpace.sm) / 2
+            : constraints.maxWidth;
+        return Wrap(
+          spacing: AppSpace.sm,
+          runSpacing: AppSpace.sm,
+          children: stats
+              .map(
+                (s) => SizedBox(
+                  width: itemWidth,
+                  child: _StatChip(stat: s),
+                ),
+              )
+              .toList(),
+        );
+      },
     );
   }
 }
@@ -165,28 +220,25 @@ class _StatChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(AppRadii.lg),
       ),
-      padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpace.md + 2,
+        AppSpace.sm + 2,
+        AppSpace.md + 2,
+        AppSpace.md,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Text(
-            stat.label.toUpperCase(),
-            style: const TextStyle(
-              color: AppColors.muted,
-              fontSize: 9,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.5,
-            ),
-          ),
-          const SizedBox(height: 4),
+          Text(stat.label.toUpperCase(), style: AppTextSizes.eyebrow),
+          const Gap.v(AppSpace.xs),
           Text(
             stat.value,
             style: const TextStyle(
               color: AppColors.text,
-              fontSize: 14,
+              fontSize: 15,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -207,22 +259,14 @@ class _Section extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          title,
-          style: const TextStyle(
-            color: AppColors.muted,
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 1.5,
-          ),
-        ),
-        const SizedBox(height: 6),
+        Text(title, style: AppTextSizes.eyebrow),
+        const Gap.v(AppSpace.xs + 2),
         Text(
           body,
           style: const TextStyle(
             color: AppColors.text,
             fontSize: 13,
-            height: 1.55,
+            height: 1.6,
           ),
         ),
       ],

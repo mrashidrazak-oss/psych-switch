@@ -1,16 +1,12 @@
-// Switch wizard — Phase 4C MVP.
+// Switch wizard.
 //
-// Four-step flow: pick from-drug, enter from-dose, pick to-drug, enter
-// to-dose, navigate to /result with the assembled SwitchInput.
+// Patient context → from-drug + dose → to-drug + dose → Generate plan.
 //
 // Drug selection lists every visible (non-hidden) drug from the engine
 // in a searchable picker. The smart-picker tier ranking (top /
 // reviewed / fallback / caution / avoid) is applied to the to-drug
 // list once the from-drug is chosen, so reviewed pairs float to the
 // top.
-//
-// Patient context, AE filter, and saved-case integration are deferred
-// to Phase 5.
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -23,6 +19,7 @@ import 'package:psychswitch/src/ui/screens/result_screen.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch/src/ui/widgets/patient_context_sheet.dart';
+import 'package:psychswitch/src/ui/widgets/status_pill.dart';
 import 'package:psychswitch_engine/smart_picker.dart';
 import 'package:psychswitch_engine/switching_engine.dart';
 import 'package:psychswitch_engine/types/drug.dart';
@@ -113,18 +110,33 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
     final ctx = ref.watch(patientContextProvider);
     final ctxSummary = summarisePatientContext(ctx);
     return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpace.xl,
+        AppSpace.xl,
+        AppSpace.xl,
+        AppSpace.xxl,
+      ),
       children: <Widget>[
-        const _StepLabel(text: 'PATIENT CONTEXT'),
-        const SizedBox(height: 8),
+        const Text('PATIENT CONTEXT', style: AppTextSizes.eyebrow),
+        const Gap.v(AppSpace.sm),
         _PatientContextTile(
           summary: ctxSummary,
           onTap: _openPatientContextSheet,
         ),
-        const SizedBox(height: 32),
+        const Gap.v(AppSpace.xxl),
 
-        const _StepLabel(text: 'FROM DRUG'),
-        const SizedBox(height: 8),
+        // From-drug section.
+        Row(
+          children: <Widget>[
+            const _DrugDot(color: AppColors.from),
+            const Gap.h(AppSpace.sm),
+            Text(
+              'FROM DRUG',
+              style: AppTextSizes.eyebrow.copyWith(color: AppColors.from),
+            ),
+          ],
+        ),
+        const Gap.v(AppSpace.sm),
         _DrugPickerField(
           label: 'Choose drug',
           selected: _from,
@@ -137,17 +149,29 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
           }),
         ),
         if (_from != null) ...<Widget>[
-          const SizedBox(height: 16),
+          const Gap.v(AppSpace.md),
           _DoseField(
             label: '${_from!.genericName} dose (mg)',
             controller: _fromDoseCtl,
             onChanged: (_) => setState(() {}),
           ),
         ],
-        const SizedBox(height: 32),
 
-        const _StepLabel(text: 'TO DRUG'),
-        const SizedBox(height: 8),
+        // Visual transition between from and to.
+        const _TransitionRail(),
+
+        // To-drug section.
+        Row(
+          children: <Widget>[
+            const _DrugDot(color: AppColors.to),
+            const Gap.h(AppSpace.sm),
+            Text(
+              'TO DRUG',
+              style: AppTextSizes.eyebrow.copyWith(color: AppColors.to),
+            ),
+          ],
+        ),
+        const Gap.v(AppSpace.sm),
         _DrugPickerField(
           label: 'Choose drug',
           selected: _to,
@@ -157,34 +181,26 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
           onPicked: (d) => setState(() => _to = d),
         ),
         if (_to != null) ...<Widget>[
-          const SizedBox(height: 16),
+          const Gap.v(AppSpace.md),
           _DoseField(
             label: '${_to!.genericName} dose (mg)',
             controller: _toDoseCtl,
             onChanged: (_) => setState(() {}),
           ),
         ],
-        const SizedBox(height: 32),
+        const Gap.v(AppSpace.xl),
 
         SizedBox(
           width: double.infinity,
-          child: FilledButton(
+          child: FilledButton.icon(
             onPressed: _ready ? _onContinue : null,
+            icon: const Icon(Icons.auto_awesome_rounded, size: 18),
+            label: const Text('Generate plan'),
             style: FilledButton.styleFrom(
-              backgroundColor: AppColors.accent,
-              disabledBackgroundColor: AppColors.surface,
-              foregroundColor: Colors.white,
-              disabledForegroundColor: AppColors.muted,
               padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: const Text(
-              'Generate plan',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+              textStyle: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
                 letterSpacing: 0.2,
               ),
             ),
@@ -195,20 +211,49 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
   }
 }
 
-class _StepLabel extends StatelessWidget {
-  const _StepLabel({required this.text});
+class _DrugDot extends StatelessWidget {
+  const _DrugDot({required this.color});
 
-  final String text;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(
-        color: AppColors.muted,
-        fontSize: 11,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 1.5,
+    return Container(
+      width: 8,
+      height: 8,
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+    );
+  }
+}
+
+class _TransitionRail extends StatelessWidget {
+  const _TransitionRail();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpace.md),
+      child: Row(
+        children: <Widget>[
+          const Gap.h(AppSpace.xs),
+          Container(
+            width: 2,
+            height: 16,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: <Color>[AppColors.from, AppColors.to],
+              ),
+              borderRadius: BorderRadius.circular(1),
+            ),
+          ),
+          const Gap.h(AppSpace.md),
+          Text(
+            'Cross-titration',
+            style: AppTextSizes.micro.copyWith(letterSpacing: 0.5),
+          ),
+        ],
       ),
     );
   }
@@ -234,11 +279,7 @@ class _DrugPickerField extends StatelessWidget {
   Future<void> _open(BuildContext context) async {
     final picked = await showModalBottomSheet<Drug>(
       context: context,
-      backgroundColor: AppColors.surface,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
       builder: (_) => _DrugPickerSheet(
         drugs: drugs,
         rules: rules,
@@ -250,35 +291,68 @@ class _DrugPickerField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(12),
-      onTap: () => _open(context),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          border: Border.all(color: AppColors.border),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              child: Text(
-                selected?.genericName ?? label,
-                style: TextStyle(
-                  color: selected != null ? AppColors.text : AppColors.muted,
-                  fontSize: 15,
-                  fontWeight:
-                      selected != null ? FontWeight.w600 : FontWeight.w400,
+    final hasSelection = selected != null;
+    return Material(
+      color: AppColors.surface,
+      borderRadius: BorderRadius.circular(AppRadii.lg),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => _open(context),
+        child: Ink(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: hasSelection
+                  ? AppColors.borderStrong
+                  : AppColors.border,
+            ),
+            borderRadius: BorderRadius.circular(AppRadii.lg),
+          ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpace.md + 2,
+            vertical: AppSpace.md + 2,
+          ),
+          child: Row(
+            children: <Widget>[
+              Icon(
+                hasSelection ? Icons.medication : Icons.search,
+                size: 18,
+                color: hasSelection ? AppColors.text : AppColors.muted,
+              ),
+              const Gap.h(AppSpace.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      hasSelection ? selected!.genericName : label,
+                      style: TextStyle(
+                        color: hasSelection
+                            ? AppColors.text
+                            : AppColors.muted,
+                        fontSize: 15,
+                        fontWeight: hasSelection
+                            ? FontWeight.w600
+                            : FontWeight.w400,
+                      ),
+                    ),
+                    if (hasSelection) ...<Widget>[
+                      const Gap.v(2),
+                      Text(
+                        selected!.drugClass,
+                        style: AppTextSizes.micro,
+                      ),
+                    ],
+                  ],
                 ),
               ),
-            ),
-            const Icon(
-              Icons.expand_more,
-              color: AppColors.muted,
-              size: 20,
-            ),
-          ],
+              const Icon(
+                Icons.expand_more,
+                color: AppColors.muted,
+                size: 20,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -332,59 +406,70 @@ class _DrugPickerSheetState extends State<_DrugPickerSheet> {
       // Avoid the on-screen keyboard.
       padding: EdgeInsets.only(bottom: mq.viewInsets.bottom),
       child: SizedBox(
-        height: mq.size.height * 0.7,
+        height: mq.size.height * 0.72,
         child: Column(
           children: <Widget>[
-            const SizedBox(height: 12),
+            const Gap.v(AppSpace.md),
             // Drag handle.
             Container(
-              width: 36,
+              width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: AppColors.border,
+                color: AppColors.borderStrong,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            const SizedBox(height: 16),
+            const Gap.v(AppSpace.md),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.fromLTRB(
+                AppSpace.lg,
+                0,
+                AppSpace.lg,
+                AppSpace.sm,
+              ),
+              child: Row(
+                children: <Widget>[
+                  Text(
+                    widget.fromDrugId == null ? 'Pick from-drug' : 'Pick to-drug',
+                    style: AppTextSizes.subtitle,
+                  ),
+                  const Spacer(),
+                  Text(
+                    '${ranked.length} drug${ranked.length == 1 ? '' : 's'}',
+                    style: AppTextSizes.micro,
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpace.lg),
               child: TextField(
                 controller: _searchCtl,
                 autofocus: true,
                 style: const TextStyle(color: AppColors.text, fontSize: 15),
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Search drugs',
-                  hintStyle: const TextStyle(color: AppColors.muted),
-                  filled: true,
-                  fillColor: AppColors.bg,
-                  prefixIcon: const Icon(
+                  prefixIcon: Icon(
                     Icons.search,
                     color: AppColors.muted,
                     size: 20,
                   ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: AppColors.border),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: AppColors.border),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(color: AppColors.accent),
-                  ),
+                  // The global InputDecorationTheme handles the rest.
                 ),
                 onChanged: (_) => setState(() {}),
               ),
             ),
-            const SizedBox(height: 12),
+            const Gap.v(AppSpace.md),
             Expanded(
               child: ListView.separated(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpace.lg,
+                  0,
+                  AppSpace.lg,
+                  AppSpace.lg,
+                ),
                 itemCount: ranked.length,
-                separatorBuilder: (_, __) =>
-                    const Divider(color: AppColors.border, height: 1),
+                separatorBuilder: (_, __) => const Divider(height: 1),
                 itemBuilder: (_, i) => _DrugRow(ranked: ranked[i]),
               ),
             ),
@@ -405,7 +490,7 @@ class _DrugRow extends StatelessWidget {
     return InkWell(
       onTap: () => Navigator.of(context).pop(ranked.drug),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 14),
+        padding: const EdgeInsets.symmetric(vertical: AppSpace.md + 2),
         child: Row(
           children: <Widget>[
             Expanded(
@@ -420,57 +505,34 @@ class _DrugRow extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  const Gap.v(2),
                   Text(
                     ranked.drug.drugClass,
-                    style: const TextStyle(
-                      color: AppColors.muted,
-                      fontSize: 12,
-                    ),
+                    style: AppTextSizes.micro,
                   ),
                 ],
               ),
             ),
-            if (ranked.tags.isNotEmpty) _TierTag(ranked: ranked),
+            if (ranked.tags.isNotEmpty)
+              StatusPill(
+                label: ranked.tags.first,
+                tone: _toneFor(ranked.tier),
+                compact: true,
+              ),
           ],
         ),
       ),
     );
   }
-}
 
-class _TierTag extends StatelessWidget {
-  const _TierTag({required this.ranked});
-
-  final RankedDrug ranked;
-
-  @override
-  Widget build(BuildContext context) {
-    final tag = ranked.tags.first;
-    final color = switch (ranked.tier) {
+  static Color _toneFor(RelevanceTier tier) {
+    return switch (tier) {
       RelevanceTier.top => AppColors.to,
       RelevanceTier.reviewed => AppColors.accent,
       RelevanceTier.fallback => AppColors.muted,
       RelevanceTier.caution => AppColors.warning,
       RelevanceTier.avoid => AppColors.danger,
     };
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
-        border: Border.all(color: color.withValues(alpha: 0.4)),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        tag,
-        style: TextStyle(
-          color: color,
-          fontSize: 10,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.3,
-        ),
-      ),
-    );
   }
 }
 
@@ -483,44 +545,64 @@ class _PatientContextTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasContext = summary.isNotEmpty;
-    return InkWell(
-      borderRadius: BorderRadius.circular(12),
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          border: Border.all(color: AppColors.border),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: <Widget>[
-            Icon(
-              hasContext ? Icons.person : Icons.person_outline,
-              size: 18,
-              color: hasContext ? AppColors.accent : AppColors.muted,
+    return Material(
+      color: AppColors.surface,
+      borderRadius: BorderRadius.circular(AppRadii.lg),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Ink(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: hasContext
+                  ? AppColors.accent.withValues(alpha: 0.4)
+                  : AppColors.border,
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                hasContext
-                    ? summary
-                    : 'Tap to add age, sex, organ function, comorbidities…',
-                style: TextStyle(
-                  color: hasContext ? AppColors.text : AppColors.muted,
-                  fontSize: 13,
-                  fontWeight:
-                      hasContext ? FontWeight.w500 : FontWeight.w400,
-                  height: 1.4,
+            borderRadius: BorderRadius.circular(AppRadii.lg),
+          ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpace.md + 2,
+            vertical: AppSpace.md,
+          ),
+          child: Row(
+            children: <Widget>[
+              Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(
+                  color: hasContext
+                      ? AppColors.accent.withValues(alpha: 0.16)
+                      : AppColors.surfaceHigh,
+                  borderRadius: BorderRadius.circular(AppRadii.sm),
+                ),
+                child: Icon(
+                  hasContext ? Icons.person : Icons.person_outline,
+                  size: 16,
+                  color: hasContext ? AppColors.accent : AppColors.muted,
                 ),
               ),
-            ),
-            const Icon(
-              Icons.tune,
-              color: AppColors.muted,
-              size: 18,
-            ),
-          ],
+              const Gap.h(AppSpace.md),
+              Expanded(
+                child: Text(
+                  hasContext
+                      ? summary
+                      : 'Tap to add age, sex, organ function, comorbidities…',
+                  style: TextStyle(
+                    color: hasContext ? AppColors.text : AppColors.muted,
+                    fontSize: 13,
+                    fontWeight:
+                        hasContext ? FontWeight.w500 : FontWeight.w400,
+                    height: 1.4,
+                  ),
+                ),
+              ),
+              const Icon(
+                Icons.tune,
+                color: AppColors.muted,
+                size: 18,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -546,23 +628,16 @@ class _DoseField extends StatelessWidget {
       inputFormatters: <TextInputFormatter>[
         FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
       ],
-      style: const TextStyle(color: AppColors.text, fontSize: 15),
+      style: const TextStyle(
+        color: AppColors.text,
+        fontSize: 15,
+        fontWeight: FontWeight.w500,
+      ),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: AppColors.muted),
-        filled: true,
-        fillColor: AppColors.surface,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.border),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.accent),
+        suffixText: 'mg',
+        suffixStyle: AppTextSizes.micro.copyWith(
+          fontWeight: FontWeight.w600,
         ),
       ),
       onChanged: onChanged,
