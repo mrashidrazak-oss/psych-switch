@@ -26,6 +26,7 @@ import 'package:psychswitch/src/ui/screens/about_screen.dart';
 import 'package:psychswitch/src/ui/screens/adverse_effects_screen.dart';
 import 'package:psychswitch/src/ui/screens/clozapine_screen.dart';
 import 'package:psychswitch/src/ui/screens/depot_screen.dart';
+import 'package:psychswitch/src/ui/screens/equivalency_screen.dart';
 import 'package:psychswitch/src/ui/screens/errata_screen.dart';
 import 'package:psychswitch/src/ui/screens/glossary_screen.dart';
 import 'package:psychswitch/src/ui/screens/history_screen.dart';
@@ -57,6 +58,7 @@ abstract final class Routes {
   static const qtcStacker = 'qtc_stacker';
   static const errata = 'errata';
   static const adverseEffects = 'adverse_effects';
+  static const equivalency = 'equivalency';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -204,6 +206,14 @@ GoRouter buildRouter() => GoRouter(
           pageBuilder: (context, state) => _fadeThroughPage(
             state: state,
             child: const AdverseEffectsScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.equivalency,
+          path: '/equivalency',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const EquivalencyScreen(),
           ),
         ),
         GoRoute(

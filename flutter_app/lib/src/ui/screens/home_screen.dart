@@ -588,12 +588,24 @@ class _ToolsRow extends StatelessWidget {
             const Gap.h(AppSpace.sm),
             Expanded(
               child: _ToolChip(
+                label: 'Equivalency',
+                icon: Icons.swap_horiz_rounded,
+                onPressed: () => context.pushNamed(Routes.equivalency),
+              ),
+            ),
+            const Gap.h(AppSpace.sm),
+            Expanded(
+              child: _ToolChip(
                 label: 'Settings',
                 icon: Icons.settings_outlined,
                 onPressed: () => context.pushNamed(Routes.settings),
               ),
             ),
-            const Gap.h(AppSpace.sm),
+          ],
+        ),
+        const Gap.v(AppSpace.sm),
+        Row(
+          children: <Widget>[
             Expanded(
               child: _ToolChip(
                 label: 'About',
@@ -601,6 +613,10 @@ class _ToolsRow extends StatelessWidget {
                 onPressed: () => context.pushNamed(Routes.about),
               ),
             ),
+            const Gap.h(AppSpace.sm),
+            const Expanded(child: SizedBox.shrink()),
+            const Gap.h(AppSpace.sm),
+            const Expanded(child: SizedBox.shrink()),
           ],
         ),
       ],
