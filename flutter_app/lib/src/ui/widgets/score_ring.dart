@@ -3,6 +3,10 @@
 //
 // Pure presentation: takes a [PsychSwitchScore] and renders. The
 // engine-side composition lives in lib/src/engine/psych_switch_score.dart.
+//
+// The arc animates in on first paint (350ms) and re-animates whenever
+// the score changes — rebuilding the ring with a new score smoothly
+// re-tweens to the new value rather than snapping.
 
 import 'dart:math' as math;
 
@@ -10,7 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch_engine/psych_switch_score.dart';
 
-class ScoreRing extends StatelessWidget {
+class ScoreRing extends StatefulWidget {
   const ScoreRing({
     required this.score,
     super.key,
@@ -22,8 +26,62 @@ class ScoreRing extends StatelessWidget {
   final double size;
   final double strokeWidth;
 
+  @override
+  State<ScoreRing> createState() => _ScoreRingState();
+}
+
+class _ScoreRingState extends State<ScoreRing>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctl;
+  late Animation<double> _progressAnim;
+  late int _displayScore;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+    _displayScore = 0;
+    _progressAnim = Tween<double>(
+      begin: 0,
+      end: widget.score.total / 100,
+    ).animate(CurvedAnimation(parent: _ctl, curve: Curves.easeOutCubic))
+      ..addListener(_onTick);
+    _ctl.forward();
+  }
+
+  void _onTick() {
+    setState(() {
+      _displayScore = (_progressAnim.value * 100).round();
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant ScoreRing oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.score.total == widget.score.total) return;
+    final from = _progressAnim.value;
+    final to = widget.score.total / 100;
+    _progressAnim.removeListener(_onTick);
+    _progressAnim = Tween<double>(begin: from, end: to).animate(
+      CurvedAnimation(parent: _ctl, curve: Curves.easeOutCubic),
+    )..addListener(_onTick);
+    _ctl
+      ..reset()
+      ..forward();
+  }
+
+  @override
+  void dispose() {
+    _progressAnim.removeListener(_onTick);
+    _ctl.dispose();
+    super.dispose();
+  }
+
   Color _bandColor() {
-    switch (score.band) {
+    switch (widget.score.band) {
       case ScoreBand.excellent:
         return AppColors.to;
       case ScoreBand.good:
@@ -39,13 +97,13 @@ class ScoreRing extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = _bandColor();
     return SizedBox(
-      width: size,
-      height: size,
+      width: widget.size,
+      height: widget.size,
       child: CustomPaint(
         painter: _RingPainter(
-          progress: score.total / 100,
+          progress: _progressAnim.value,
           color: color,
-          strokeWidth: strokeWidth,
+          strokeWidth: widget.strokeWidth,
           trackColor: AppColors.border,
         ),
         child: Center(
@@ -53,10 +111,10 @@ class ScoreRing extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
-                score.total.toString(),
+                _displayScore.toString(),
                 style: TextStyle(
                   color: AppColors.text,
-                  fontSize: size * 0.32,
+                  fontSize: widget.size * 0.32,
                   fontWeight: FontWeight.w800,
                   height: 1,
                   letterSpacing: -1,
@@ -64,11 +122,11 @@ class ScoreRing extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                bandLabel(score.band).toUpperCase(),
+                bandLabel(widget.score.band).toUpperCase(),
                 style: TextStyle(
                   color: color,
                   fontSize: 9,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w700,
                   letterSpacing: 1,
                 ),
               ),
@@ -107,14 +165,29 @@ class _RingPainter extends CustomPainter {
 
     if (progress <= 0) return;
 
+    // Subtle gradient sweep from band colour at start to a slightly
+    // brighter shade at the leading edge — gives the arc presence
+    // without becoming psychedelic.
+    final rect = Rect.fromCircle(center: c, radius: r);
+    final shader = SweepGradient(
+      startAngle: -math.pi / 2,
+      endAngle: -math.pi / 2 + 2 * math.pi,
+      colors: <Color>[
+        color.withValues(alpha: 0.85),
+        color,
+      ],
+      stops: const <double>[0, 1],
+      transform: const GradientRotation(-math.pi / 2),
+    ).createShader(rect);
+
     final arc = Paint()
-      ..color = color
+      ..shader = shader
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
-    // Start at 12 o'clock, sweep clockwise.
+
     canvas.drawArc(
-      Rect.fromCircle(center: c, radius: r),
+      rect,
       -math.pi / 2,
       2 * math.pi * progress,
       false,

@@ -29,11 +29,8 @@ Future<PatientContext?> showPatientContextSheet(
 }) {
   return showModalBottomSheet<PatientContext>(
     context: context,
-    backgroundColor: AppColors.surface,
     isScrollControlled: true,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-    ),
+    // backgroundColor + shape come from the global BottomSheetTheme.
     builder: (_) => _PatientContextSheet(initial: initial),
   );
 }
@@ -195,47 +192,36 @@ class _PatientContextSheetState extends State<_PatientContextSheet> {
         height: mq.size.height * 0.85,
         child: Column(
           children: <Widget>[
-            const SizedBox(height: 12),
+            const Gap.v(AppSpace.md),
             Container(
-              width: 36,
+              width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: AppColors.border,
+                color: AppColors.borderStrong,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            const SizedBox(height: 12),
+            const Gap.v(AppSpace.md),
             const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: EdgeInsets.symmetric(horizontal: AppSpace.xl),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Text(
-                  'Patient context',
-                  style: TextStyle(
-                    color: AppColors.text,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+                child: Text('Patient context', style: AppTextSizes.subtitle),
               ),
             ),
-            const SizedBox(height: 4),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+            const Gap.v(AppSpace.xs),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpace.xl),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Optional. Every field below narrows the warnings, '
                   'monitoring add-ons, and PsychSwitch Score.',
-                  style: TextStyle(
-                    color: AppColors.muted,
-                    fontSize: 12,
-                    height: 1.4,
-                  ),
+                  style: AppTextSizes.caption.copyWith(height: 1.5),
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const Gap.v(AppSpace.lg),
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
@@ -365,15 +351,21 @@ class _PatientContextSheetState extends State<_PatientContextSheet> {
               decoration: const BoxDecoration(
                 border: Border(top: BorderSide(color: AppColors.border)),
               ),
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+              padding: const EdgeInsets.fromLTRB(
+                AppSpace.lg,
+                AppSpace.md,
+                AppSpace.lg,
+                AppSpace.lg,
+              ),
               child: Row(
                 children: <Widget>[
-                  TextButton(
+                  TextButton.icon(
                     onPressed: _clear,
+                    icon: const Icon(Icons.refresh_rounded, size: 16),
+                    label: const Text('Clear'),
                     style: TextButton.styleFrom(
                       foregroundColor: AppColors.muted,
                     ),
-                    child: const Text('Clear'),
                   ),
                   const Spacer(),
                   TextButton(
@@ -383,13 +375,9 @@ class _PatientContextSheetState extends State<_PatientContextSheet> {
                     ),
                     child: const Text('Cancel'),
                   ),
-                  const SizedBox(width: 8),
+                  const Gap.h(AppSpace.sm),
                   FilledButton(
                     onPressed: () => Navigator.of(context).pop(_build()),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.accent,
-                      foregroundColor: Colors.white,
-                    ),
                     child: const Text('Apply'),
                   ),
                 ],
@@ -409,15 +397,7 @@ class _SectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(
-        color: AppColors.muted,
-        fontSize: 11,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 1.5,
-      ),
-    );
+    return Text(text, style: AppTextSizes.eyebrow);
   }
 }
 
@@ -436,23 +416,10 @@ class _AgeField extends StatelessWidget {
         LengthLimitingTextInputFormatter(3),
       ],
       style: const TextStyle(color: AppColors.text, fontSize: 15),
-      decoration: InputDecoration(
+      // Decoration borders + fill come from the global InputDecorationTheme.
+      decoration: const InputDecoration(
         labelText: 'Age (years)',
-        labelStyle: const TextStyle(color: AppColors.muted),
-        filled: true,
-        fillColor: AppColors.bg,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.border),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.border),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.accent),
-        ),
+        suffixText: 'yrs',
       ),
     );
   }
@@ -484,40 +451,46 @@ class _SegmentedRow<T> extends StatelessWidget {
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 6),
+        const Gap.v(AppSpace.xs + 2),
         Wrap(
-          spacing: 6,
-          runSpacing: 6,
+          spacing: AppSpace.xs + 2,
+          runSpacing: AppSpace.xs + 2,
           children: options.map((opt) {
             final value = opt.$1;
             final text = opt.$2;
             final isSelected = value == selected;
-            return InkWell(
-              borderRadius: BorderRadius.circular(8),
-              onTap: () => onSelected(value),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.accent.withValues(alpha: 0.15)
-                      : AppColors.bg,
-                  border: Border.all(
-                    color: isSelected
-                        ? AppColors.accent
-                        : AppColors.border,
+            return Material(
+              color: isSelected
+                  ? AppColors.accent.withValues(alpha: 0.15)
+                  : AppColors.bg,
+              borderRadius: BorderRadius.circular(AppRadii.sm + 2),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: () => onSelected(value),
+                child: Ink(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: isSelected
+                          ? AppColors.accent
+                          : AppColors.border,
+                    ),
+                    borderRadius:
+                        BorderRadius.circular(AppRadii.sm + 2),
                   ),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  text,
-                  style: TextStyle(
-                    color: isSelected ? AppColors.accent : AppColors.text,
-                    fontSize: 12,
-                    fontWeight:
-                        isSelected ? FontWeight.w600 : FontWeight.w500,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpace.md,
+                    vertical: AppSpace.sm,
+                  ),
+                  child: Text(
+                    text,
+                    style: TextStyle(
+                      color:
+                          isSelected ? AppColors.accent : AppColors.text,
+                      fontSize: 12,
+                      fontWeight: isSelected
+                          ? FontWeight.w700
+                          : FontWeight.w500,
+                    ),
                   ),
                 ),
               ),
@@ -544,50 +517,58 @@ class _CheckRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(10),
-      onTap: () => onChanged(!value),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.bg,
-          border: Border.all(color: AppColors.border),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        padding: const EdgeInsets.fromLTRB(12, 10, 8, 10),
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    label,
-                    style: const TextStyle(
-                      color: AppColors.text,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  if (description != null) ...<Widget>[
-                    const SizedBox(height: 2),
+    return Material(
+      color: value
+          ? AppColors.accent.withValues(alpha: 0.06)
+          : AppColors.bg,
+      borderRadius: BorderRadius.circular(AppRadii.md),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => onChanged(!value),
+        child: Ink(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: value
+                  ? AppColors.accent.withValues(alpha: 0.4)
+                  : AppColors.border,
+            ),
+            borderRadius: BorderRadius.circular(AppRadii.md),
+          ),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpace.md,
+            AppSpace.sm + 2,
+            AppSpace.sm,
+            AppSpace.sm + 2,
+          ),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
                     Text(
-                      description!,
-                      style: const TextStyle(
-                        color: AppColors.muted,
-                        fontSize: 11,
-                        height: 1.4,
+                      label,
+                      style: TextStyle(
+                        color: value ? AppColors.text : AppColors.text,
+                        fontSize: 13,
+                        fontWeight:
+                            value ? FontWeight.w600 : FontWeight.w500,
                       ),
                     ),
+                    if (description != null) ...<Widget>[
+                      const Gap.v(2),
+                      Text(
+                        description!,
+                        style: AppTextSizes.micro.copyWith(height: 1.45),
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
-            ),
-            Switch(
-              value: value,
-              onChanged: onChanged,
-              activeThumbColor: AppColors.accent,
-            ),
-          ],
+              // Switch theming comes from the global SwitchTheme.
+              Switch(value: value, onChanged: onChanged),
+            ],
+          ),
         ),
       ),
     );

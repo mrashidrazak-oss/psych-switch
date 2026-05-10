@@ -21,6 +21,7 @@ import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch/src/ui/widgets/score_ring.dart';
+import 'package:psychswitch/src/ui/widgets/status_pill.dart' as ui;
 import 'package:psychswitch_engine/case_pulse.dart' show SavedCase;
 import 'package:psychswitch_engine/citations.dart';
 import 'package:psychswitch_engine/ddi.dart';
@@ -385,39 +386,52 @@ class _DrugTag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpace.md + 2,
+        AppSpace.md - 2,
+        AppSpace.md + 2,
+        AppSpace.md,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
         border: Border.all(color: color.withValues(alpha: 0.4)),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppRadii.lg),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            label,
-            style: TextStyle(
-              color: color,
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.5,
-            ),
+          Row(
+            children: <Widget>[
+              Container(
+                width: 6,
+                height: 6,
+                decoration:
+                    BoxDecoration(color: color, shape: BoxShape.circle),
+              ),
+              const Gap.h(AppSpace.xs + 2),
+              Text(
+                label,
+                style: AppTextSizes.eyebrow.copyWith(color: color),
+              ),
+            ],
           ),
-          const SizedBox(height: 4),
+          const Gap.v(AppSpace.xs + 2),
           Text(
             name,
             style: const TextStyle(
               color: AppColors.text,
               fontSize: 14,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
+              height: 1.2,
             ),
             overflow: TextOverflow.ellipsis,
           ),
+          const Gap.v(2),
           Text(
             '${_formatDose(dose)} mg',
-            style: const TextStyle(
-              color: AppColors.muted,
-              fontSize: 12,
+            style: AppTextSizes.caption.copyWith(
+              color: AppColors.mutedStrong,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -453,36 +467,10 @@ class _StatusPill extends StatelessWidget {
     final style = _styleFor();
     return Align(
       alignment: Alignment.centerLeft,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: style.color.withValues(alpha: 0.12),
-          border: Border.all(color: style.color.withValues(alpha: 0.4)),
-          borderRadius: BorderRadius.circular(999),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Container(
-              width: 6,
-              height: 6,
-              decoration: BoxDecoration(
-                color: style.color,
-                shape: BoxShape.circle,
-              ),
-            ),
-            const SizedBox(width: 6),
-            Text(
-              style.label,
-              style: TextStyle(
-                color: style.color,
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.3,
-              ),
-            ),
-          ],
-        ),
+      child: ui.StatusPill(
+        label: style.label,
+        tone: style.color,
+        dot: true,
       ),
     );
   }
@@ -687,23 +675,7 @@ class _FlagChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = _color();
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        color: c.withValues(alpha: 0.1),
-        border: Border.all(color: c.withValues(alpha: 0.35)),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        _label(),
-        style: TextStyle(
-          color: c,
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
+    return ui.StatusPill(label: _label(), tone: _color());
   }
 }
 
