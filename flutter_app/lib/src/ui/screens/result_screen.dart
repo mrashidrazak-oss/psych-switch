@@ -22,6 +22,7 @@ import 'package:psychswitch/src/providers/saved_cases_provider.dart';
 import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
+import 'package:psychswitch/src/ui/widgets/ddi_warnings_card.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
 import 'package:psychswitch/src/ui/widgets/score_ring.dart';
@@ -254,6 +255,17 @@ class _ResultBody extends ConsumerWidget {
     );
   }
 
+  /// DDI checker output as a list of widgets — empty when no hits, so
+  /// it spreads cleanly into the body via `...`.
+  List<Widget> _ddiSection(SwitchInput input) {
+    final hits = checkPair(input.fromDrugId, input.toDrugId);
+    if (hits.isEmpty) return const <Widget>[];
+    return <Widget>[
+      DdiWarningsCard(hits: hits),
+      const SizedBox(height: 16),
+    ];
+  }
+
   List<Widget> _planContent(
     SwitchPlan plan,
     PatientContext ctx,
@@ -288,6 +300,9 @@ class _ResultBody extends ConsumerWidget {
             _SafetyFlagsCard(flags: ok.safetyFlags),
             const SizedBox(height: 16),
           ],
+          // DDI checker for the cross-taper overlap window. Renders
+          // nothing when checkPair returns no hits.
+          ..._ddiSection(input),
           _MonitoringPlanCard(
             fromDrugId: input.fromDrugId,
             toDrugId: input.toDrugId,
