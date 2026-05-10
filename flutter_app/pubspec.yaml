@@ -104,3 +104,33 @@ flutter:
 
   assets:
     - assets/
+
+# ── Launcher icons (run: dart run flutter_launcher_icons) ─────────────
+# Source: assets/icon.png (1024×1024 PsychSwitch brand mark — two
+# crossing taper curves over the from→to palette).
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: 'assets/icon.png'
+  # Adaptive (Android 8+): solid bg matches the app surface so the
+  # cross fades naturally onto launchers; foreground crops the same
+  # mark with the 66% safe zone the SVG was designed against.
+  adaptive_icon_background: '#0B0F14'
+  adaptive_icon_foreground: 'assets/icon.png'
+  remove_alpha_ios: true
+  min_sdk_android: 21
+
+# ── Native splash (run: dart run flutter_native_splash:create) ────────
+# Paints the dark surface + brand mark before Flutter boots. Eliminates
+# the white flash on cold-start. The Flutter EngineLoadingView takes
+# over once main() resolves.
+flutter_native_splash:
+  color: '#0B0F14'
+  image: 'assets/icon.png'
+  android_12:
+    color: '#0B0F14'
+    image: 'assets/icon.png'
+    icon_background_color: '#0B0F14'
+  android: true
+  ios: true
+  fullscreen: false
