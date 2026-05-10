@@ -1,10 +1,25 @@
-// Home screen — hero brand block, ready badge, today's pulse,
-// primary actions, modules row, tools row, footer.
+// Home screen.
 //
-// Layout principle: every element on this screen earns its place.
-// The hero gives the app personality, the ready badge confirms the
-// engine loaded, the pulse card surfaces actionable monitoring, and
-// the actions/modules/tools rows are the everyday entry points.
+// Design principle: this app exists to plan a cross-titration. The
+// home screen exists to start one. Everything else is in service of
+// that single act, and earns its visual weight accordingly.
+//
+//   1. Hero — display headline + the giant Start-a-switch CTA.
+//      Restrained brand mark (24-pt), wordmark only as a quiet
+//      eyebrow line. The button is the focal point of the screen.
+//   2. Today's pulse — only renders when there's actionable
+//      monitoring on a saved case. Hidden silently when empty.
+//   3. Modules — a calm vertical list of clinical entry points
+//      (Clozapine, Depot, Mood stabilisers). Each row is a wide
+//      tap target with subtle chrome, not a tile in a grid.
+//   4. Tools — inline interpunct-separated text links. They're
+//      utilities; they don't deserve grid real estate.
+//   5. Sign-off footer — for licensed clinicians, decision support
+//      only, version. One line, dimmed.
+//
+// Wide screens (foldable inner / tablet / desktop) keep the same
+// vertical flow but cap the content column at ~640 px so we never
+// stretch a single button or row across an entire 7.6" panel.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,8 +30,12 @@ import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
-import 'package:psychswitch/src/ui/widgets/status_pill.dart';
 import 'package:psychswitch/src/ui/widgets/today_pulse_card.dart';
+
+/// Maximum content-column width on wide screens. Anything wider gets
+/// flanked by whitespace — never stretch a single CTA across a
+/// 7.6-inch foldable.
+const double _maxContentWidth = 640;
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -25,44 +44,13 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncEngine = ref.watch(engineProvider);
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          // Ambient backdrop — radial glow from the top-left, gives the
-          // dark surface depth without being noisy.
-          const Positioned.fill(child: _AmbientBackdrop()),
-          SafeArea(
-            child: asyncEngine.when(
-              loading: () => const EngineLoadingView(),
-              error: (e, st) => EngineErrorView(error: e),
-              data: (engine) => _HomeBody(
-                drugCount: engine.listDrugs().length,
-                ruleCount: engine.listRules().length,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _AmbientBackdrop extends StatelessWidget {
-  const _AmbientBackdrop();
-
-  @override
-  Widget build(BuildContext context) {
-    return IgnorePointer(
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: RadialGradient(
-            center: const Alignment(-0.6, -0.85),
-            radius: 1.1,
-            colors: <Color>[
-              AppColors.from.withValues(alpha: 0.08),
-              AppColors.to.withValues(alpha: 0.04),
-              Colors.transparent,
-            ],
-            stops: const <double>[0, 0.45, 1],
+      body: SafeArea(
+        child: asyncEngine.when(
+          loading: () => const EngineLoadingView(),
+          error: (e, st) => EngineErrorView(error: e),
+          data: (engine) => _HomeBody(
+            drugCount: engine.listDrugs().length,
+            ruleCount: engine.listRules().length,
           ),
         ),
       ),
@@ -80,68 +68,66 @@ class _HomeBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(
-        AppSpace.xl,
-        AppSpace.xl,
-        AppSpace.xl,
-        AppSpace.xl,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const EntranceFade(child: _Hero()),
-          const Gap.v(AppSpace.xl),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: _maxContentWidth),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpace.xl,
+              AppSpace.xxl,
+              AppSpace.xl,
+              AppSpace.xl,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const EntranceFade(child: _Mark()),
+                const Gap.v(AppSpace.xxl + AppSpace.md),
+                const EntranceFade(index: 1, child: _Headline()),
+                const Gap.v(AppSpace.lg),
+                EntranceFade(
+                  index: 2,
+                  child: _Stats(
+                    drugCount: drugCount,
+                    ruleCount: ruleCount,
+                  ),
+                ),
+                const Gap.v(AppSpace.xxl + AppSpace.md),
+                EntranceFade(
+                  index: 3,
+                  child: _StartButton(
+                    onPressed: () =>
+                        context.pushNamed(Routes.switch_),
+                  ),
+                ),
+                const Gap.v(AppSpace.lg),
+                EntranceFade(
+                  index: 4,
+                  child: _HistoryLink(
+                    onPressed: () =>
+                        context.pushNamed(Routes.history),
+                  ),
+                ),
+                const Gap.v(AppSpace.xxl),
 
-          EntranceFade(
-            index: 1,
-            child: _ReadyBadge(drugs: drugCount, rules: ruleCount),
-          ),
-          const Gap.v(AppSpace.lg),
+                // Today's pulse — only renders when there are
+                // actionable saved-case reminders, otherwise the
+                // widget collapses to SizedBox.shrink and this
+                // section disappears completely.
+                const EntranceFade(index: 5, child: TodayPulseCard()),
+                const Gap.v(AppSpace.xl),
 
-          // Today's pulse — saved cases with monitoring due now.
-          // Renders nothing when no cases or no pulses are due.
-          const EntranceFade(index: 2, child: TodayPulseCard()),
-          const Gap.v(AppSpace.xl),
+                const EntranceFade(index: 6, child: _ModulesSection()),
+                const Gap.v(AppSpace.xxl),
 
-          // Primary CTA.
-          EntranceFade(
-            index: 3,
-            child: _StartSwitchButton(
-              onPressed: () => context.pushNamed(Routes.switch_),
+                const EntranceFade(index: 7, child: _ToolsSection()),
+                const Gap.v(AppSpace.xxl + AppSpace.md),
+
+                const EntranceFade(index: 8, child: _SignOff()),
+              ],
             ),
           ),
-          const Gap.v(AppSpace.md),
-          // Secondary CTA — saved cases.
-          EntranceFade(
-            index: 4,
-            child: _SecondaryButton(
-              label: 'History',
-              icon: Icons.history,
-              onPressed: () => context.pushNamed(Routes.history),
-            ),
-          ),
-          const Gap.v(AppSpace.xl),
-
-          // Modules row — specialty surfaces.
-          const EntranceFade(
-            index: 5,
-            child: _SectionLabel(text: 'CLINICAL MODULES'),
-          ),
-          const Gap.v(AppSpace.sm),
-          const EntranceFade(index: 5, child: _ModulesRow()),
-          const Gap.v(AppSpace.lg),
-
-          // Tools row — Glossary · Settings · About.
-          const EntranceFade(
-            index: 6,
-            child: _SectionLabel(text: 'TOOLS'),
-          ),
-          const Gap.v(AppSpace.sm),
-          const EntranceFade(index: 6, child: _ToolsRow()),
-          const Gap.v(AppSpace.xxl),
-
-          const EntranceFade(index: 7, child: _Footer()),
-        ],
+        ),
       ),
     );
   }
@@ -149,43 +135,69 @@ class _HomeBody extends StatelessWidget {
 
 // ── Hero ──────────────────────────────────────────────────────────────
 
-class _Hero extends StatelessWidget {
-  const _Hero();
+/// The brand mark — kept small and quiet. The product speaks louder
+/// than the logo on a working clinician's screen.
+class _Mark extends StatelessWidget {
+  const _Mark();
 
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      header: true,
-      label: 'PsychSwitch. Reviewed cross-titration, cited at every step.',
+      label: 'PsychSwitch · Reviewed cross-titration',
       child: ExcludeSemantics(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const _BrandMonogram(),
-                const Gap.h(AppSpace.md),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        'PsychSwitch',
-                        style: AppTextSizes.display.copyWith(
-                          letterSpacing: -1,
-                          fontSize: 30,
-                        ),
-                      ),
-                      const Gap.v(AppSpace.xxs),
-                      Text(
-                        'Reviewed cross-titration · cited at every step',
-                        style: AppTextSizes.caption.copyWith(height: 1.4),
-                      ),
-                    ],
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: <Color>[AppColors.from, AppColors.to],
+                ),
+                borderRadius: BorderRadius.circular(AppRadii.sm + 2),
+              ),
+              child: const Center(
+                child: Text(
+                  'PS',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.3,
                   ),
                 ),
-              ],
+              ),
+            ),
+            const Gap.h(AppSpace.sm + 2),
+            const Text(
+              'PsychSwitch',
+              style: TextStyle(
+                color: AppColors.text,
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.1,
+              ),
+            ),
+            const Gap.h(AppSpace.sm),
+            Container(
+              width: 3,
+              height: 3,
+              decoration: const BoxDecoration(
+                color: AppColors.muted,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const Gap.h(AppSpace.sm),
+            const Text(
+              'Reviewed cross-titration',
+              style: TextStyle(
+                color: AppColors.muted,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ],
         ),
@@ -194,89 +206,93 @@ class _Hero extends StatelessWidget {
   }
 }
 
-class _BrandMonogram extends StatelessWidget {
-  const _BrandMonogram();
+class _Headline extends StatelessWidget {
+  const _Headline();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 44,
-      height: 44,
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: <Color>[AppColors.from, AppColors.to],
-        ),
-        borderRadius: BorderRadius.circular(AppRadii.md),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: AppColors.accent.withValues(alpha: 0.18),
-            blurRadius: 14,
-            spreadRadius: -3,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: const Center(
-        child: Text(
-          'PS',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 17,
-            fontWeight: FontWeight.w800,
-            letterSpacing: -0.5,
-          ),
-        ),
+    return const Text(
+      'Plan a cross-\ntitration.',
+      style: TextStyle(
+        color: AppColors.text,
+        fontSize: 40,
+        fontWeight: FontWeight.w800,
+        height: 1.05,
+        letterSpacing: -1.4,
       ),
     );
   }
 }
 
-// ── Ready badge ───────────────────────────────────────────────────────
+class _Stats extends StatelessWidget {
+  const _Stats({required this.drugCount, required this.ruleCount});
 
-class _ReadyBadge extends StatelessWidget {
-  const _ReadyBadge({required this.drugs, required this.rules});
-
-  final int drugs;
-  final int rules;
+  final int drugCount;
+  final int ruleCount;
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      label: 'Engine ready. $drugs drugs and '
-          '$rules reviewed switching rules loaded.',
-      container: true,
-      child: ExcludeSemantics(
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpace.md,
-            vertical: AppSpace.md,
+    // Wording deliberately preserved: existing widget tests + RN
+    // parity assert "<drugs> drugs · <rules> reviewed switching rules".
+    return Text(
+      '$drugCount drugs · $ruleCount reviewed switching rules',
+      style: const TextStyle(
+        color: AppColors.muted,
+        fontSize: 13,
+        fontWeight: FontWeight.w500,
+        height: 1.4,
+        letterSpacing: 0.1,
+      ),
+    );
+  }
+}
+
+/// The screen's single focal point. Big rounded rectangle, accent
+/// fill, generous internal padding. The button itself is the design.
+class _StartButton extends StatelessWidget {
+  const _StartButton({required this.onPressed});
+
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(AppRadii.xl),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+              color: AppColors.accent.withValues(alpha: 0.28),
+              blurRadius: 28,
+              spreadRadius: -6,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: FilledButton(
+          onPressed: onPressed,
+          style: FilledButton.styleFrom(
+            backgroundColor: AppColors.accent,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 22),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadii.xl),
+            ),
           ),
-          decoration: BoxDecoration(
-            color: AppColors.to.withValues(alpha: 0.06),
-            border: Border.all(color: AppColors.to.withValues(alpha: 0.3)),
-            borderRadius: BorderRadius.circular(AppRadii.lg),
-          ),
-          child: Row(
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const _PulsingDot(color: AppColors.to),
-              const Gap.h(AppSpace.md),
-              Expanded(
-                child: Text(
-                  '$drugs drugs · $rules reviewed switching rules',
-                  style: AppTextSizes.caption.copyWith(
-                    color: AppColors.text,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                  ),
+              Text(
+                'Start a switch',
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.1,
                 ),
               ),
-              const StatusPill(
-                label: 'READY',
-                tone: AppColors.to,
-                compact: true,
-              ),
+              Gap.h(AppSpace.sm + 2),
+              Icon(Icons.arrow_forward_rounded, size: 18),
             ],
           ),
         ),
@@ -285,196 +301,90 @@ class _ReadyBadge extends StatelessWidget {
   }
 }
 
-class _PulsingDot extends StatefulWidget {
-  const _PulsingDot({required this.color});
-
-  final Color color;
-
-  @override
-  State<_PulsingDot> createState() => _PulsingDotState();
-}
-
-class _PulsingDotState extends State<_PulsingDot>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _ctl;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1600),
-    )..repeat(reverse: true);
-  }
-
-  @override
-  void dispose() {
-    _ctl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return RepaintBoundary(
-      child: AnimatedBuilder(
-        animation: _ctl,
-        builder: (_, __) {
-          final t = Curves.easeInOut.transform(_ctl.value);
-          return SizedBox(
-            width: 12,
-            height: 12,
-            child: Stack(
-              alignment: Alignment.center,
-              children: <Widget>[
-                Container(
-                  width: 12,
-                  height: 12,
-                  decoration: BoxDecoration(
-                    color: widget.color.withValues(alpha: 0.15 + 0.15 * t),
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                Container(
-                  width: 6,
-                  height: 6,
-                  decoration: BoxDecoration(
-                    color: widget.color,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-// ── CTAs ──────────────────────────────────────────────────────────────
-
-class _StartSwitchButton extends StatelessWidget {
-  const _StartSwitchButton({required this.onPressed});
+/// History as a quiet text link, not a button. Tertiary action.
+class _HistoryLink extends StatelessWidget {
+  const _HistoryLink({required this.onPressed});
 
   final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: FilledButton.icon(
+    return Center(
+      child: TextButton(
         onPressed: onPressed,
-        icon: const Icon(Icons.arrow_forward_rounded, size: 18),
-        label: const Text('Start a switch'),
-        style: FilledButton.styleFrom(
-          backgroundColor: AppColors.accent,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+        style: TextButton.styleFrom(
+          foregroundColor: AppColors.mutedStrong,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpace.md,
+            vertical: AppSpace.sm,
+          ),
           textStyle: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
             letterSpacing: 0.2,
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _SecondaryButton extends StatelessWidget {
-  const _SecondaryButton({
-    required this.label,
-    required this.icon,
-    required this.onPressed,
-  });
-
-  final String label;
-  final IconData icon;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton.icon(
-        onPressed: onPressed,
-        icon: Icon(icon, size: 18),
-        label: Text(label),
-        style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 14),
+        child: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Icon(Icons.history, size: 14),
+            Gap.h(AppSpace.xs + 2),
+            Text('History'),
+          ],
         ),
       ),
     );
   }
 }
 
-// ── Modules + tools rows ──────────────────────────────────────────────
+// ── Modules ──────────────────────────────────────────────────────────
 
-class _SectionLabel extends StatelessWidget {
-  const _SectionLabel({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(text, style: AppTextSizes.eyebrow);
-  }
-}
-
-class _ModulesRow extends StatelessWidget {
-  const _ModulesRow();
+class _ModulesSection extends StatelessWidget {
+  const _ModulesSection();
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: _ModuleCard(
-                title: 'Clozapine',
-                subtitle: 'Titration · FBC · rechallenge',
-                icon: Icons.medical_services_outlined,
-                tone: AppColors.warning,
-                onPressed: () => context.pushNamed(Routes.clozapine),
-              ),
-            ),
-            const Gap.h(AppSpace.sm),
-            Expanded(
-              child: _ModuleCard(
-                title: 'Depot LAI',
-                subtitle: 'Sustenna · Trinza · Maintena',
-                icon: Icons.colorize_outlined,
-                tone: AppColors.accent,
-                onPressed: () => context.pushNamed(Routes.depotIndex),
-              ),
-            ),
-          ],
+        const Padding(
+          padding: EdgeInsets.only(left: AppSpace.xs),
+          child: Text('CLINICAL MODULES', style: AppTextSizes.eyebrow),
         ),
-        const Gap.v(AppSpace.sm),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: _ModuleCard(
-                title: 'Mood stabilisers',
-                subtitle: 'Lithium · VPA · LTG · CBZ',
-                icon: Icons.balance_rounded,
-                tone: AppColors.to,
-                onPressed: () =>
-                    context.pushNamed(Routes.moodStabilizers),
-              ),
-            ),
-            const Gap.h(AppSpace.sm),
-            const Expanded(child: SizedBox.shrink()),
-          ],
+        const Gap.v(AppSpace.md),
+        _ModuleRow(
+          title: 'Clozapine',
+          subtitle: 'Titration · FBC monitoring · ANC checker · '
+              'rechallenge · community criteria',
+          icon: Icons.medical_services_outlined,
+          tone: AppColors.warning,
+          onPressed: () => context.pushNamed(Routes.clozapine),
+        ),
+        const Gap.v(AppSpace.sm + 2),
+        _ModuleRow(
+          title: 'Depot LAI',
+          subtitle: 'Sustenna · Trinza · Maintena initiation, '
+              'missed-dose flows, needle guides',
+          icon: Icons.colorize_outlined,
+          tone: AppColors.accent,
+          onPressed: () => context.pushNamed(Routes.depotIndex),
+        ),
+        const Gap.v(AppSpace.sm + 2),
+        _ModuleRow(
+          title: 'Mood stabilisers',
+          subtitle: 'Lithium · valproate · lamotrigine · '
+              'carbamazepine · Maudsley 15 lithium taper',
+          icon: Icons.balance_rounded,
+          tone: AppColors.to,
+          onPressed: () => context.pushNamed(Routes.moodStabilizers),
         ),
       ],
     );
   }
 }
 
-class _ModuleCard extends StatelessWidget {
-  const _ModuleCard({
+class _ModuleRow extends StatelessWidget {
+  const _ModuleRow({
     required this.title,
     required this.subtitle,
     required this.icon,
@@ -491,153 +401,6 @@ class _ModuleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: tone.withValues(alpha: 0.07),
-      borderRadius: BorderRadius.circular(AppRadii.lg),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onPressed,
-        child: Ink(
-          decoration: BoxDecoration(
-            border: Border.all(color: tone.withValues(alpha: 0.28)),
-            borderRadius: BorderRadius.circular(AppRadii.lg),
-          ),
-          padding: const EdgeInsets.fromLTRB(
-            AppSpace.md,
-            AppSpace.md,
-            AppSpace.md,
-            AppSpace.md + 2,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                width: 30,
-                height: 30,
-                decoration: BoxDecoration(
-                  color: tone.withValues(alpha: 0.16),
-                  borderRadius: BorderRadius.circular(AppRadii.sm),
-                ),
-                child: Icon(icon, size: 16, color: tone),
-              ),
-              const Gap.v(AppSpace.sm),
-              Text(
-                title,
-                style: TextStyle(
-                  color: tone,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const Gap.v(2),
-              Text(
-                subtitle,
-                style: AppTextSizes.micro.copyWith(height: 1.4),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ToolsRow extends StatelessWidget {
-  const _ToolsRow();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: _ToolChip(
-                label: 'QTc stacker',
-                icon: Icons.monitor_heart_outlined,
-                onPressed: () => context.pushNamed(Routes.qtcStacker),
-              ),
-            ),
-            const Gap.h(AppSpace.sm),
-            Expanded(
-              child: _ToolChip(
-                label: 'Glossary',
-                icon: Icons.menu_book_outlined,
-                onPressed: () => context.pushNamed(Routes.glossary),
-              ),
-            ),
-            const Gap.h(AppSpace.sm),
-            Expanded(
-              child: _ToolChip(
-                label: 'Errata',
-                icon: Icons.fact_check_outlined,
-                onPressed: () => context.pushNamed(Routes.errata),
-              ),
-            ),
-          ],
-        ),
-        const Gap.v(AppSpace.sm),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: _ToolChip(
-                label: 'AE lookup',
-                icon: Icons.health_and_safety_outlined,
-                onPressed: () => context.pushNamed(Routes.adverseEffects),
-              ),
-            ),
-            const Gap.h(AppSpace.sm),
-            Expanded(
-              child: _ToolChip(
-                label: 'Equivalency',
-                icon: Icons.swap_horiz_rounded,
-                onPressed: () => context.pushNamed(Routes.equivalency),
-              ),
-            ),
-            const Gap.h(AppSpace.sm),
-            Expanded(
-              child: _ToolChip(
-                label: 'Settings',
-                icon: Icons.settings_outlined,
-                onPressed: () => context.pushNamed(Routes.settings),
-              ),
-            ),
-          ],
-        ),
-        const Gap.v(AppSpace.sm),
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: _ToolChip(
-                label: 'About',
-                icon: Icons.info_outline,
-                onPressed: () => context.pushNamed(Routes.about),
-              ),
-            ),
-            const Gap.h(AppSpace.sm),
-            const Expanded(child: SizedBox.shrink()),
-            const Gap.h(AppSpace.sm),
-            const Expanded(child: SizedBox.shrink()),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class _ToolChip extends StatelessWidget {
-  const _ToolChip({
-    required this.label,
-    required this.icon,
-    required this.onPressed,
-  });
-
-  final String label;
-  final IconData icon;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
       color: AppColors.surface,
       borderRadius: BorderRadius.circular(AppRadii.lg),
       clipBehavior: Clip.antiAlias,
@@ -648,19 +411,50 @@ class _ToolChip extends StatelessWidget {
             border: Border.all(color: AppColors.border),
             borderRadius: BorderRadius.circular(AppRadii.lg),
           ),
-          padding: const EdgeInsets.symmetric(vertical: AppSpace.md),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+          padding: const EdgeInsets.fromLTRB(
+            AppSpace.md + 2,
+            AppSpace.md + 2,
+            AppSpace.md + 2,
+            AppSpace.md + 2,
+          ),
+          child: Row(
             children: <Widget>[
-              Icon(icon, size: 18, color: AppColors.text),
-              const Gap.v(AppSpace.xs + 2),
-              Text(
-                label,
-                style: const TextStyle(
-                  color: AppColors.text,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: tone.withValues(alpha: 0.14),
+                  borderRadius: BorderRadius.circular(AppRadii.sm + 2),
                 ),
+                child: Icon(icon, size: 18, color: tone),
+              ),
+              const Gap.h(AppSpace.md + 2),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        color: AppColors.text,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.1,
+                      ),
+                    ),
+                    const Gap.v(2),
+                    Text(
+                      subtitle,
+                      style: AppTextSizes.micro.copyWith(height: 1.45),
+                    ),
+                  ],
+                ),
+              ),
+              const Gap.h(AppSpace.sm),
+              const Icon(
+                Icons.chevron_right_rounded,
+                color: AppColors.muted,
+                size: 22,
               ),
             ],
           ),
@@ -670,10 +464,100 @@ class _ToolChip extends StatelessWidget {
   }
 }
 
-// ── Footer ────────────────────────────────────────────────────────────
+// ── Tools ────────────────────────────────────────────────────────────
 
-class _Footer extends StatelessWidget {
-  const _Footer();
+class _ToolsSection extends StatelessWidget {
+  const _ToolsSection();
+
+  static const _items = <_ToolItem>[
+    _ToolItem('QTc', Routes.qtcStacker),
+    _ToolItem('Equivalency', Routes.equivalency),
+    _ToolItem('AE lookup', Routes.adverseEffects),
+    _ToolItem('Glossary', Routes.glossary),
+    _ToolItem('Errata', Routes.errata),
+    _ToolItem('Settings', Routes.settings),
+    _ToolItem('About', Routes.about),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        const Padding(
+          padding: EdgeInsets.only(left: AppSpace.xs),
+          child: Text('TOOLS', style: AppTextSizes.eyebrow),
+        ),
+        const Gap.v(AppSpace.sm + 2),
+        Padding(
+          padding: const EdgeInsets.only(left: AppSpace.xs),
+          child: Wrap(
+            runSpacing: AppSpace.xs,
+            children: <Widget>[
+              for (var i = 0; i < _items.length; i++) ...<Widget>[
+                _ToolLink(item: _items[i]),
+                if (i < _items.length - 1)
+                  const Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: AppSpace.sm + 2,
+                    ),
+                    child: Text(
+                      '·',
+                      style: TextStyle(
+                        color: AppColors.muted,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ToolItem {
+  const _ToolItem(this.label, this.route);
+  final String label;
+  final String route;
+}
+
+class _ToolLink extends StatelessWidget {
+  const _ToolLink({required this.item});
+
+  final _ToolItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => context.pushNamed(item.route),
+      borderRadius: BorderRadius.circular(AppRadii.sm),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpace.xs,
+          vertical: AppSpace.xs,
+        ),
+        child: Text(
+          item.label,
+          style: const TextStyle(
+            color: AppColors.accent,
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.1,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Sign-off footer ──────────────────────────────────────────────────
+
+class _SignOff extends StatelessWidget {
+  const _SignOff();
 
   @override
   Widget build(BuildContext context) {
@@ -681,33 +565,25 @@ class _Footer extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Container(
-            width: 32,
-            height: 2,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: <Color>[
-                  AppColors.from.withValues(alpha: 0.7),
-                  AppColors.to.withValues(alpha: 0.7),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(1),
-            ),
+            width: 24,
+            height: 1,
+            color: AppColors.border,
           ),
           const Gap.v(AppSpace.md),
           Text(
-            'For licensed clinicians',
+            'For licensed clinicians.',
             style: AppTextSizes.micro.copyWith(
-              color: AppColors.muted,
-              letterSpacing: 0.5,
+              color: AppColors.mutedStrong,
+              letterSpacing: 0.3,
             ),
           ),
           const Gap.v(2),
           Text(
-            'Decision support — not a substitute for clinical judgement',
+            'Decision support — not medical advice.',
             style: AppTextSizes.micro.copyWith(
+              color: AppColors.muted,
               fontSize: 10,
-              color: AppColors.muted.withValues(alpha: 0.7),
-              letterSpacing: 0.3,
+              letterSpacing: 0.2,
             ),
           ),
         ],
