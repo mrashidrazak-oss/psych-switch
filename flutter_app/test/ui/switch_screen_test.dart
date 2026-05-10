@@ -70,7 +70,7 @@ void main() {
     expect(generate, findsOneWidget);
 
     // Open the from-drug picker.
-    await tester.tap(find.text('Choose drug').first);
+    await tester.tap(find.text('Pick a drug').first);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
 
@@ -93,7 +93,7 @@ void main() {
     await tester.pump();
 
     // Open to-drug picker.
-    await tester.tap(find.text('Choose drug'));
+    await tester.tap(find.text('Pick a drug'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
 

@@ -1,12 +1,26 @@
-// Switch wizard.
+// Switch screen.
 //
-// Patient context → from-drug + dose → to-drug + dose → Generate plan.
+// Designed around one metaphor: a cross-titration is a transformation
+// from drug A to drug B. The screen embodies that. A single hero card
+// holds both ends of the switch (FROM | TO), connected by a vertical
+// rail on phones or a horizontal arrow on the foldable inner display.
+// Patient context lives as an AppBar action — always reachable, never
+// in the way of the form.
 //
-// Drug selection lists every visible (non-hidden) drug from the engine
-// in a searchable picker. The smart-picker tier ranking (top /
-// reviewed / fallback / caution / avoid) is applied to the to-drug
-// list once the from-drug is chosen, so reviewed pairs float to the
-// top.
+// Function changes from the previous design:
+//   • Doses prefill to the drug's typical starting dose the moment a
+//     drug is picked. Saves typing 90% of the time; user can edit.
+//   • Range hint ("typical: 50–200 mg") sits below the dose field so
+//     the clinician knows when they've gone off-piste.
+//   • CTA carries a live preview subtitle ("≈ 14-day cross-taper")
+//     once both ends are filled, so the clinician knows roughly
+//     what they're about to see before tapping.
+//   • Same-drug guard renders a soft inline warning instead of
+//     silently disabling the button without explanation.
+//
+// Drug picker sheet, patient context sheet, smart-picker tier ranking
+// — all preserved verbatim. The redesign is purely scaffolding +
+// affordances on top.
 
 import 'dart:async';
 
@@ -29,6 +43,11 @@ import 'package:psychswitch_engine/switching_engine.dart';
 import 'package:psychswitch_engine/types/drug.dart';
 import 'package:psychswitch_engine/types/switching_rule.dart';
 
+/// Maximum hero-card width on wide displays. Anything wider gets
+/// flanked by whitespace — the cross-titration metaphor only reads
+/// when both ends are visible to the same eye in one beat.
+const double _maxFormWidth = 720;
+
 class SwitchScreen extends ConsumerWidget {
   const SwitchScreen({super.key});
 
@@ -36,13 +55,6 @@ class SwitchScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncEngine = ref.watch(engineProvider);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('New switch'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
-      ),
       body: SafeArea(
         child: asyncEngine.when(
           loading: () => const EngineLoadingView(),
@@ -76,14 +88,57 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
     super.dispose();
   }
 
+  bool get _sameDrug =>
+      _from != null && _to != null && _from!.id == _to!.id;
+
   bool get _ready {
-    if (_from == null || _to == null || _from!.id == _to!.id) return false;
+    if (_from == null || _to == null || _sameDrug) return false;
     final fromDose = double.tryParse(_fromDoseCtl.text);
     final toDose = double.tryParse(_toDoseCtl.text);
     return fromDose != null &&
         toDose != null &&
         fromDose > 0 &&
         toDose > 0;
+  }
+
+  /// Estimated plan preview for the CTA subtitle. Returns null until
+  /// both drugs and doses are valid; returns "—" when the engine has
+  /// no rule (still useful info — saves the user a tap).
+  String? get _previewLabel {
+    if (!_ready) return null;
+    final input = SwitchInput(
+      fromDrugId: _from!.id,
+      fromDoseMg: double.parse(_fromDoseCtl.text),
+      toDrugId: _to!.id,
+      toDoseMg: double.parse(_toDoseCtl.text),
+    );
+    final plan = widget.engine.generateSwitchPlan(input);
+    return switch (plan) {
+      SwitchPlanOk(:final rule) =>
+        '≈ ${rule.durationDays}-day ${_strategyLabel(rule.strategy.jsonValue)}',
+      SwitchPlanMaoiWashout(:final washoutDays) =>
+        'MAOI washout — $washoutDays days',
+      SwitchPlanMaudsleyGuidance() => 'Maudsley class-level guidance',
+      SwitchPlanClozapineRedirect() => 'Use the Clozapine module',
+      SwitchPlanNoRule() => 'No reviewed rule',
+    };
+  }
+
+  static String _strategyLabel(String key) {
+    switch (key) {
+      case 'direct':
+        return 'direct switch';
+      case 'cross-taper':
+        return 'cross-taper';
+      case 'plateau-cross-taper':
+        return 'plateau cross-taper';
+      case 'overlap-taper':
+        return 'overlap taper';
+      case 'washout':
+        return 'washout';
+      default:
+        return key;
+    }
   }
 
   void _onContinue() {
@@ -106,7 +161,7 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
     final next = await showPatientContextSheet(context, initial: current);
     if (next == null) return;
     ref.read(patientContextProvider.notifier).state = next;
-    setState(() {}); // force header summary rebuild
+    setState(() {});
   }
 
   @override
@@ -114,227 +169,113 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
     final visibleDrugs = widget.engine.listDrugs();
     final ctx = ref.watch(patientContextProvider);
     final ctxSummary = summarisePatientContext(ctx);
+    final hasCtx = ctxSummary.isNotEmpty;
 
-    final patientContextSection = <Widget>[
-      const Text('PATIENT CONTEXT', style: AppTextSizes.eyebrow),
-      const Gap.v(AppSpace.sm),
-      _PatientContextTile(
-        summary: ctxSummary,
-        onTap: _openPatientContextSheet,
-      ),
-    ];
-
-    final fromSection = <Widget>[
-      Row(
-        children: <Widget>[
-          const _DrugDot(color: AppColors.from),
-          const Gap.h(AppSpace.sm),
-          Text(
-            'FROM DRUG',
-            style: AppTextSizes.eyebrow.copyWith(color: AppColors.from),
-          ),
-        ],
-      ),
-      const Gap.v(AppSpace.sm),
-      _DrugPickerField(
-        label: 'Choose drug',
-        selected: _from,
-        drugs: visibleDrugs,
-        rules: widget.engine.listRules(),
-        onPicked: (d) => setState(() {
-          _from = d;
-          if (_to?.id == d.id) _to = null;
-        }),
-      ),
-      if (_from != null) ...<Widget>[
-        const Gap.v(AppSpace.md),
-        _DoseField(
-          label: '${_from!.genericName} dose (mg)',
-          controller: _fromDoseCtl,
-          onChanged: (_) => setState(() {}),
-        ),
-      ],
-    ];
-
-    final toSection = <Widget>[
-      Row(
-        children: <Widget>[
-          const _DrugDot(color: AppColors.to),
-          const Gap.h(AppSpace.sm),
-          Text(
-            'TO DRUG',
-            style: AppTextSizes.eyebrow.copyWith(color: AppColors.to),
-          ),
-        ],
-      ),
-      const Gap.v(AppSpace.sm),
-      _DrugPickerField(
-        label: 'Choose drug',
-        selected: _to,
-        drugs: visibleDrugs.where((d) => d.id != _from?.id).toList(),
-        rules: widget.engine.listRules(),
-        fromDrugId: _from?.id,
-        onPicked: (d) => setState(() => _to = d),
-      ),
-      if (_to != null) ...<Widget>[
-        const Gap.v(AppSpace.md),
-        _DoseField(
-          label: '${_to!.genericName} dose (mg)',
-          controller: _toDoseCtl,
-          onChanged: (_) => setState(() {}),
-        ),
-      ],
-    ];
-
-    final generateButton = SizedBox(
-      width: double.infinity,
-      child: FilledButton.icon(
-        onPressed: _ready ? _onContinue : null,
-        icon: const Icon(Icons.auto_awesome_rounded, size: 18),
-        label: const Text('Generate plan'),
-        style: FilledButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          textStyle: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.2,
-          ),
-        ),
-      ),
+    final hero = _HeroCard(
+      from: _from,
+      to: _to,
+      fromDoseCtl: _fromDoseCtl,
+      toDoseCtl: _toDoseCtl,
+      sameDrug: _sameDrug,
+      onPickFrom: () async {
+        final picked = await _openPicker(
+          drugs: visibleDrugs,
+          rules: widget.engine.listRules(),
+        );
+        if (picked != null) {
+          setState(() {
+            _from = picked;
+            // Prefill typical starting dose. User can edit.
+            _fromDoseCtl.text =
+                _formatDose(picked.dosing.startingDoseMg);
+            // Clear to-drug if it's now the same drug.
+            if (_to?.id == picked.id) _to = null;
+          });
+        }
+      },
+      onPickTo: () async {
+        final picked = await _openPicker(
+          drugs:
+              visibleDrugs.where((d) => d.id != _from?.id).toList(),
+          rules: widget.engine.listRules(),
+          fromDrugId: _from?.id,
+        );
+        if (picked != null) {
+          setState(() {
+            _to = picked;
+            _toDoseCtl.text =
+                _formatDose(picked.dosing.startingDoseMg);
+          });
+        }
+      },
+      onDoseChanged: () => setState(() {}),
     );
 
-    if (context.isWide) {
-      // Wide: patient context + FROM in the left column, TO + Generate
-      // on the right. The transition rail collapses to a centre divider.
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(
-          AppSpace.xl,
-          AppSpace.xl,
-          AppSpace.xl,
-          AppSpace.xxl,
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    ...patientContextSection,
-                    const Gap.v(AppSpace.xl),
-                    ...fromSection,
-                  ],
-                ),
-              ),
-            ),
-            const Gap.h(AppSpace.xl),
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    ...toSection,
-                    const Gap.v(AppSpace.xl),
-                    generateButton,
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpace.xl,
-        AppSpace.xl,
-        AppSpace.xl,
-        AppSpace.xxl,
-      ),
-      children: <Widget>[
-        ...patientContextSection,
-        const Gap.v(AppSpace.xxl),
-        ...fromSection,
-        const _TransitionRail(),
-        ...toSection,
-        const Gap.v(AppSpace.xl),
-        generateButton,
-      ],
-    );
-  }
-}
-
-class _DrugDot extends StatelessWidget {
-  const _DrugDot({required this.color});
-
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 8,
-      height: 8,
-      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-    );
-  }
-}
-
-class _TransitionRail extends StatelessWidget {
-  const _TransitionRail();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpace.md),
-      child: Row(
-        children: <Widget>[
+        title: const Text('New switch'),
+        actions: <Widget>[
+          _PatientContextAction(
+            hasContext: hasCtx,
+            onPressed: _openPatientContextSheet,
+          ),
           const Gap.h(AppSpace.xs),
-          Container(
-            width: 2,
-            height: 16,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: <Color>[AppColors.from, AppColors.to],
+        ],
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: _maxFormWidth),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpace.xl,
+                  AppSpace.lg,
+                  AppSpace.xl,
+                  AppSpace.xl,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    if (hasCtx)
+                      _ContextSummaryChip(
+                        summary: ctxSummary,
+                        onTap: _openPatientContextSheet,
+                      ),
+                    if (hasCtx) const Gap.v(AppSpace.lg),
+                    hero,
+                    if (_sameDrug) ...<Widget>[
+                      const Gap.v(AppSpace.md),
+                      const _SameDrugWarning(),
+                    ],
+                    const Gap.v(AppSpace.xl),
+                    _PrimaryCta(
+                      enabled: _ready,
+                      preview: _previewLabel,
+                      onPressed: _onContinue,
+                    ),
+                    const Gap.v(AppSpace.xl),
+                  ],
+                ),
               ),
-              borderRadius: BorderRadius.circular(1),
             ),
           ),
-          const Gap.h(AppSpace.md),
-          Text(
-            'Cross-titration',
-            style: AppTextSizes.micro.copyWith(letterSpacing: 0.5),
-          ),
-        ],
+        ),
       ),
     );
   }
-}
 
-class _DrugPickerField extends StatelessWidget {
-  const _DrugPickerField({
-    required this.label,
-    required this.selected,
-    required this.drugs,
-    required this.rules,
-    required this.onPicked,
-    this.fromDrugId,
-  });
-
-  final String label;
-  final Drug? selected;
-  final List<Drug> drugs;
-  final List<SwitchingRule> rules;
-  final ValueChanged<Drug> onPicked;
-  final String? fromDrugId;
-
-  Future<void> _open(BuildContext context) async {
-    final picked = await showModalBottomSheet<Drug>(
+  Future<Drug?> _openPicker({
+    required List<Drug> drugs,
+    required List<SwitchingRule> rules,
+    String? fromDrugId,
+  }) {
+    return showModalBottomSheet<Drug>(
       context: context,
       isScrollControlled: true,
       builder: (_) => _DrugPickerSheet(
@@ -343,70 +284,317 @@ class _DrugPickerField extends StatelessWidget {
         fromDrugId: fromDrugId,
       ),
     );
-    if (picked != null) onPicked(picked);
   }
+}
+
+// ── AppBar action ───────────────────────────────────────────────────
+
+class _PatientContextAction extends StatelessWidget {
+  const _PatientContextAction({
+    required this.hasContext,
+    required this.onPressed,
+  });
+
+  final bool hasContext;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
-    final hasSelection = selected != null;
+    return Tooltip(
+      message: hasContext ? 'Edit patient context' : 'Add patient context',
+      child: IconButton(
+        onPressed: onPressed,
+        icon: Stack(
+          clipBehavior: Clip.none,
+          children: <Widget>[
+            Icon(
+              hasContext ? Icons.person : Icons.person_outline,
+              color: hasContext ? AppColors.accent : AppColors.text,
+            ),
+            if (hasContext)
+              Positioned(
+                right: -2,
+                top: -2,
+                child: Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: AppColors.accent,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.bg, width: 1.5),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ContextSummaryChip extends StatelessWidget {
+  const _ContextSummaryChip({required this.summary, required this.onTap});
+
+  final String summary;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
     return Material(
-      color: AppColors.surface,
+      color: AppColors.accent.withValues(alpha: 0.06),
       borderRadius: BorderRadius.circular(AppRadii.lg),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () => _open(context),
+        onTap: onTap,
         child: Ink(
           decoration: BoxDecoration(
             border: Border.all(
-              color: hasSelection
+              color: AppColors.accent.withValues(alpha: 0.3),
+            ),
+            borderRadius: BorderRadius.circular(AppRadii.lg),
+          ),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpace.md,
+            AppSpace.sm + 2,
+            AppSpace.sm,
+            AppSpace.sm + 2,
+          ),
+          child: Row(
+            children: <Widget>[
+              const Icon(
+                Icons.person,
+                size: 14,
+                color: AppColors.accent,
+              ),
+              const Gap.h(AppSpace.sm),
+              Expanded(
+                child: Text(
+                  'Adjusts for: $summary',
+                  style: const TextStyle(
+                    color: AppColors.text,
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w500,
+                    height: 1.4,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const Icon(
+                Icons.tune,
+                size: 14,
+                color: AppColors.accent,
+              ),
+              const Gap.h(AppSpace.xs),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Hero card ───────────────────────────────────────────────────────
+
+class _HeroCard extends StatelessWidget {
+  const _HeroCard({
+    required this.from,
+    required this.to,
+    required this.fromDoseCtl,
+    required this.toDoseCtl,
+    required this.sameDrug,
+    required this.onPickFrom,
+    required this.onPickTo,
+    required this.onDoseChanged,
+  });
+
+  final Drug? from;
+  final Drug? to;
+  final TextEditingController fromDoseCtl;
+  final TextEditingController toDoseCtl;
+  final bool sameDrug;
+  final VoidCallback onPickFrom;
+  final VoidCallback onPickTo;
+  final VoidCallback onDoseChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final fromSection = _DrugSection(
+      side: 'FROM DRUG',
+      tone: AppColors.from,
+      drug: from,
+      doseCtl: fromDoseCtl,
+      onPick: onPickFrom,
+      onDoseChanged: onDoseChanged,
+    );
+    final toSection = _DrugSection(
+      side: 'TO DRUG',
+      tone: AppColors.to,
+      drug: to,
+      doseCtl: toDoseCtl,
+      onPick: onPickTo,
+      onDoseChanged: onDoseChanged,
+    );
+
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(AppRadii.xl),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: context.isWide
+          ? IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Expanded(child: fromSection),
+                  const _HConnector(),
+                  Expanded(child: toSection),
+                ],
+              ),
+            )
+          : Column(
+              children: <Widget>[
+                fromSection,
+                const _VConnector(),
+                toSection,
+              ],
+            ),
+    );
+  }
+}
+
+class _DrugSection extends StatelessWidget {
+  const _DrugSection({
+    required this.side,
+    required this.tone,
+    required this.drug,
+    required this.doseCtl,
+    required this.onPick,
+    required this.onDoseChanged,
+  });
+
+  final String side;
+  final Color tone;
+  final Drug? drug;
+  final TextEditingController doseCtl;
+  final VoidCallback onPick;
+  final VoidCallback onDoseChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpace.lg,
+        AppSpace.md + 2,
+        AppSpace.lg,
+        AppSpace.lg,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Container(
+                width: 6,
+                height: 6,
+                decoration: BoxDecoration(
+                  color: tone,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const Gap.h(AppSpace.sm),
+              Text(
+                side,
+                style: AppTextSizes.eyebrow.copyWith(color: tone),
+              ),
+            ],
+          ),
+          const Gap.v(AppSpace.sm + 2),
+          _DrugPickerTile(drug: drug, onPick: onPick),
+          if (drug != null) ...<Widget>[
+            const Gap.v(AppSpace.md),
+            _DoseField(
+              drug: drug!,
+              controller: doseCtl,
+              onChanged: onDoseChanged,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _DrugPickerTile extends StatelessWidget {
+  const _DrugPickerTile({required this.drug, required this.onPick});
+
+  final Drug? drug;
+  final VoidCallback onPick;
+
+  @override
+  Widget build(BuildContext context) {
+    final hasDrug = drug != null;
+    return Material(
+      color: AppColors.bg.withValues(alpha: 0.5),
+      borderRadius: BorderRadius.circular(AppRadii.lg),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onPick,
+        child: Ink(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: hasDrug
                   ? AppColors.borderStrong
                   : AppColors.border,
             ),
             borderRadius: BorderRadius.circular(AppRadii.lg),
           ),
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpace.md + 2,
-            vertical: AppSpace.md + 2,
+          padding: const EdgeInsets.fromLTRB(
+            AppSpace.md + 2,
+            AppSpace.md - 2,
+            AppSpace.md,
+            AppSpace.md - 2,
           ),
           child: Row(
             children: <Widget>[
-              Icon(
-                hasSelection ? Icons.medication : Icons.search,
-                size: 18,
-                color: hasSelection ? AppColors.text : AppColors.muted,
-              ),
-              const Gap.h(AppSpace.md),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Text(
-                      hasSelection ? selected!.genericName : label,
-                      style: TextStyle(
-                        color: hasSelection
-                            ? AppColors.text
-                            : AppColors.muted,
-                        fontSize: 15,
-                        fontWeight: hasSelection
-                            ? FontWeight.w600
-                            : FontWeight.w400,
+                child: hasDrug
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(
+                            drug!.genericName,
+                            style: const TextStyle(
+                              color: AppColors.text,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -0.3,
+                              height: 1.2,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const Gap.v(2),
+                          Text(
+                            drug!.drugClass,
+                            style: AppTextSizes.micro,
+                          ),
+                        ],
+                      )
+                    : const Text(
+                        'Pick a drug',
+                        style: TextStyle(
+                          color: AppColors.muted,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                    if (hasSelection) ...<Widget>[
-                      const Gap.v(2),
-                      Text(
-                        selected!.drugClass,
-                        style: AppTextSizes.micro,
-                      ),
-                    ],
-                  ],
-                ),
               ),
               const Icon(
-                Icons.expand_more,
+                Icons.expand_more_rounded,
                 color: AppColors.muted,
-                size: 20,
+                size: 22,
               ),
             ],
           ),
@@ -415,6 +603,275 @@ class _DrugPickerField extends StatelessWidget {
     );
   }
 }
+
+class _DoseField extends StatelessWidget {
+  const _DoseField({
+    required this.drug,
+    required this.controller,
+    required this.onChanged,
+  });
+
+  final Drug drug;
+  final TextEditingController controller;
+  final VoidCallback onChanged;
+
+  String _rangeLabel() {
+    final r = drug.dosing.typicalTargetRangeMg;
+    if (r.length < 2) return '';
+    return 'typical ${_formatDose(r[0])}–${_formatDose(r[1])} mg';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        TextField(
+          controller: controller,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          inputFormatters: <TextInputFormatter>[
+            FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+          ],
+          style: const TextStyle(
+            color: AppColors.text,
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            fontFeatures: <FontFeature>[FontFeature.tabularFigures()],
+          ),
+          decoration: InputDecoration(
+            // RN parity + test contract: '<drug> dose (mg)'.
+            labelText: '${drug.genericName} dose (mg)',
+            suffixText: 'mg',
+            suffixStyle: AppTextSizes.micro.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          onChanged: (_) => onChanged(),
+        ),
+        const Gap.v(AppSpace.xs),
+        Padding(
+          padding: const EdgeInsets.only(left: AppSpace.md),
+          child: Text(
+            _rangeLabel(),
+            style: AppTextSizes.micro,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Vertical from→to connector — sits between the FROM and TO sections
+/// on phones. A pair of horizontal hairlines top + bottom with a
+/// centred badge holding a down-arrow.
+class _VConnector extends StatelessWidget {
+  const _VConnector();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 36,
+      child: Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          const Positioned.fill(
+            child: Center(
+              child: Divider(height: 1, thickness: 0.5),
+            ),
+          ),
+          Container(
+            width: 28,
+            height: 28,
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              border: Border.all(color: AppColors.border),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.arrow_downward_rounded,
+              size: 14,
+              color: AppColors.muted,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Horizontal connector — sits between the FROM and TO sections on
+/// the foldable inner / tablet / desktop. Vertical hairline + centred
+/// badge with a right-arrow.
+class _HConnector extends StatelessWidget {
+  const _HConnector();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 36,
+      child: Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          const Positioned.fill(
+            child: Center(
+              child: VerticalDivider(width: 1, thickness: 0.5),
+            ),
+          ),
+          Container(
+            width: 28,
+            height: 28,
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              border: Border.all(color: AppColors.border),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.arrow_forward_rounded,
+              size: 14,
+              color: AppColors.muted,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Same-drug warning ──────────────────────────────────────────────
+
+class _SameDrugWarning extends StatelessWidget {
+  const _SameDrugWarning();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpace.md,
+        AppSpace.sm + 2,
+        AppSpace.md,
+        AppSpace.sm + 2,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.warning.withValues(alpha: 0.08),
+        border: Border.all(
+          color: AppColors.warning.withValues(alpha: 0.35),
+        ),
+        borderRadius: BorderRadius.circular(AppRadii.md),
+      ),
+      child: const Row(
+        children: <Widget>[
+          Icon(
+            Icons.swap_calls_rounded,
+            size: 14,
+            color: AppColors.warning,
+          ),
+          Gap.h(AppSpace.sm),
+          Expanded(
+            child: Text(
+              'From and To are the same drug. Pick a different target.',
+              style: TextStyle(
+                color: AppColors.warning,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                height: 1.4,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Primary CTA ─────────────────────────────────────────────────────
+
+class _PrimaryCta extends StatelessWidget {
+  const _PrimaryCta({
+    required this.enabled,
+    required this.preview,
+    required this.onPressed,
+  });
+
+  final bool enabled;
+  final String? preview;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(AppRadii.xl),
+          boxShadow: enabled
+              ? <BoxShadow>[
+                  BoxShadow(
+                    color: AppColors.accent.withValues(alpha: 0.28),
+                    blurRadius: 24,
+                    spreadRadius: -6,
+                    offset: const Offset(0, 8),
+                  ),
+                ]
+              : null,
+        ),
+        child: FilledButton(
+          onPressed: enabled ? onPressed : null,
+          style: FilledButton.styleFrom(
+            backgroundColor: AppColors.accent,
+            foregroundColor: Colors.white,
+            disabledBackgroundColor: AppColors.surface,
+            disabledForegroundColor: AppColors.muted,
+            padding: const EdgeInsets.symmetric(vertical: 18),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadii.xl),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  // RN parity + test contract: 'Generate plan'.
+                  const Text(
+                    'Generate plan',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.1,
+                    ),
+                  ),
+                  const Gap.h(AppSpace.sm + 2),
+                  Icon(
+                    Icons.arrow_forward_rounded,
+                    size: 18,
+                    color: enabled
+                        ? Colors.white
+                        : AppColors.muted,
+                  ),
+                ],
+              ),
+              if (enabled && preview != null) ...<Widget>[
+                const Gap.v(2),
+                Text(
+                  preview!,
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.78),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Drug picker sheet (unchanged from previous design) ─────────────
 
 class _DrugPickerSheet extends StatefulWidget {
   const _DrugPickerSheet({
@@ -460,14 +917,12 @@ class _DrugPickerSheetState extends State<_DrugPickerSheet> {
     final mq = MediaQuery.of(context);
     final ranked = _ranked();
     return Padding(
-      // Avoid the on-screen keyboard.
       padding: EdgeInsets.only(bottom: mq.viewInsets.bottom),
       child: SizedBox(
         height: mq.size.height * 0.72,
         child: Column(
           children: <Widget>[
             const Gap.v(AppSpace.md),
-            // Drag handle.
             Container(
               width: 40,
               height: 4,
@@ -511,7 +966,6 @@ class _DrugPickerSheetState extends State<_DrugPickerSheet> {
                     color: AppColors.muted,
                     size: 20,
                   ),
-                  // The global InputDecorationTheme handles the rest.
                 ),
                 onChanged: (_) => setState(() {}),
               ),
@@ -593,111 +1047,9 @@ class _DrugRow extends StatelessWidget {
   }
 }
 
-class _PatientContextTile extends StatelessWidget {
-  const _PatientContextTile({required this.summary, required this.onTap});
+// ── Helpers ─────────────────────────────────────────────────────────
 
-  final String summary;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final hasContext = summary.isNotEmpty;
-    return Material(
-      color: AppColors.surface,
-      borderRadius: BorderRadius.circular(AppRadii.lg),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Ink(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: hasContext
-                  ? AppColors.accent.withValues(alpha: 0.4)
-                  : AppColors.border,
-            ),
-            borderRadius: BorderRadius.circular(AppRadii.lg),
-          ),
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpace.md + 2,
-            vertical: AppSpace.md,
-          ),
-          child: Row(
-            children: <Widget>[
-              Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  color: hasContext
-                      ? AppColors.accent.withValues(alpha: 0.16)
-                      : AppColors.surfaceHigh,
-                  borderRadius: BorderRadius.circular(AppRadii.sm),
-                ),
-                child: Icon(
-                  hasContext ? Icons.person : Icons.person_outline,
-                  size: 16,
-                  color: hasContext ? AppColors.accent : AppColors.muted,
-                ),
-              ),
-              const Gap.h(AppSpace.md),
-              Expanded(
-                child: Text(
-                  hasContext
-                      ? summary
-                      : 'Tap to add age, sex, organ function, comorbidities…',
-                  style: TextStyle(
-                    color: hasContext ? AppColors.text : AppColors.muted,
-                    fontSize: 13,
-                    fontWeight:
-                        hasContext ? FontWeight.w500 : FontWeight.w400,
-                    height: 1.4,
-                  ),
-                ),
-              ),
-              const Icon(
-                Icons.tune,
-                color: AppColors.muted,
-                size: 18,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _DoseField extends StatelessWidget {
-  const _DoseField({
-    required this.label,
-    required this.controller,
-    required this.onChanged,
-  });
-
-  final String label;
-  final TextEditingController controller;
-  final ValueChanged<String> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      inputFormatters: <TextInputFormatter>[
-        FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
-      ],
-      style: const TextStyle(
-        color: AppColors.text,
-        fontSize: 15,
-        fontWeight: FontWeight.w500,
-      ),
-      decoration: InputDecoration(
-        labelText: label,
-        suffixText: 'mg',
-        suffixStyle: AppTextSizes.micro.copyWith(
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      onChanged: onChanged,
-    );
-  }
+String _formatDose(num n) {
+  if (n is int || n == n.toInt()) return n.toInt().toString();
+  return n.toString();
 }
