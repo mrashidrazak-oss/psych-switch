@@ -465,88 +465,169 @@ class _ModuleRow extends StatelessWidget {
 }
 
 // ── Tools ────────────────────────────────────────────────────────────
+//
+// Two grouped cells, Apple-Settings style. The clinical reference
+// utilities cluster as one group (QTc, Equivalency, AE lookup,
+// Glossary, Errata); app-shell utilities (Settings, About) cluster as
+// a second. Each row is a quiet tap-target with a monochrome icon, a
+// label, and a chevron — no accent blue, no tinted tiles. The chrome
+// is borderless surface with hairline dividers between rows so the
+// cluster reads as one considered unit, not a list of links.
 
 class _ToolsSection extends StatelessWidget {
   const _ToolsSection();
 
-  static const _items = <_ToolItem>[
-    _ToolItem('QTc', Routes.qtcStacker),
-    _ToolItem('Equivalency', Routes.equivalency),
-    _ToolItem('AE lookup', Routes.adverseEffects),
-    _ToolItem('Glossary', Routes.glossary),
-    _ToolItem('Errata', Routes.errata),
-    _ToolItem('Settings', Routes.settings),
-    _ToolItem('About', Routes.about),
+  static const _reference = <_ToolItem>[
+    _ToolItem(
+      label: 'QTc stacker',
+      icon: Icons.monitor_heart_outlined,
+      route: Routes.qtcStacker,
+    ),
+    _ToolItem(
+      label: 'Dose equivalency',
+      icon: Icons.swap_horiz_rounded,
+      route: Routes.equivalency,
+    ),
+    _ToolItem(
+      label: 'Adverse-effect lookup',
+      icon: Icons.health_and_safety_outlined,
+      route: Routes.adverseEffects,
+    ),
+    _ToolItem(
+      label: 'Glossary',
+      icon: Icons.menu_book_outlined,
+      route: Routes.glossary,
+    ),
+    _ToolItem(
+      label: 'Errata',
+      icon: Icons.fact_check_outlined,
+      route: Routes.errata,
+    ),
+  ];
+
+  static const _app = <_ToolItem>[
+    _ToolItem(
+      label: 'Settings',
+      icon: Icons.settings_outlined,
+      route: Routes.settings,
+    ),
+    _ToolItem(
+      label: 'About',
+      icon: Icons.info_outline,
+      route: Routes.about,
+    ),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        const Padding(
-          padding: EdgeInsets.only(left: AppSpace.xs),
-          child: Text('TOOLS', style: AppTextSizes.eyebrow),
-        ),
-        const Gap.v(AppSpace.sm + 2),
         Padding(
-          padding: const EdgeInsets.only(left: AppSpace.xs),
-          child: Wrap(
-            runSpacing: AppSpace.xs,
-            children: <Widget>[
-              for (var i = 0; i < _items.length; i++) ...<Widget>[
-                _ToolLink(item: _items[i]),
-                if (i < _items.length - 1)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: AppSpace.sm + 2,
-                    ),
-                    child: Text(
-                      '·',
-                      style: TextStyle(
-                        color: AppColors.muted,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-              ],
-            ],
-          ),
+          padding: EdgeInsets.only(left: AppSpace.xs),
+          child: Text('REFERENCE', style: AppTextSizes.eyebrow),
         ),
+        Gap.v(AppSpace.sm + 2),
+        _ToolGroup(items: _reference),
+        Gap.v(AppSpace.lg),
+        Padding(
+          padding: EdgeInsets.only(left: AppSpace.xs),
+          child: Text('APP', style: AppTextSizes.eyebrow),
+        ),
+        Gap.v(AppSpace.sm + 2),
+        _ToolGroup(items: _app),
       ],
     );
   }
 }
 
 class _ToolItem {
-  const _ToolItem(this.label, this.route);
+  const _ToolItem({
+    required this.label,
+    required this.icon,
+    required this.route,
+  });
   final String label;
+  final IconData icon;
   final String route;
 }
 
-class _ToolLink extends StatelessWidget {
-  const _ToolLink({required this.item});
+class _ToolGroup extends StatelessWidget {
+  const _ToolGroup({required this.items});
+
+  final List<_ToolItem> items;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(AppRadii.lg),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: <Widget>[
+          for (var i = 0; i < items.length; i++) ...<Widget>[
+            _ToolRow(item: items[i]),
+            if (i < items.length - 1)
+              const Padding(
+                padding: EdgeInsets.only(left: 56),
+                child: Divider(height: 1, thickness: 0.5),
+              ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _ToolRow extends StatelessWidget {
+  const _ToolRow({required this.item});
 
   final _ToolItem item;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => context.pushNamed(item.route),
-      borderRadius: BorderRadius.circular(AppRadii.sm),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpace.xs,
-          vertical: AppSpace.xs,
-        ),
-        child: Text(
-          item.label,
-          style: const TextStyle(
-            color: AppColors.accent,
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.1,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => context.pushNamed(item.route),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpace.md + 2,
+            AppSpace.md - 2,
+            AppSpace.md + 2,
+            AppSpace.md - 2,
+          ),
+          child: Row(
+            children: <Widget>[
+              SizedBox(
+                width: 28,
+                child: Icon(
+                  item.icon,
+                  size: 18,
+                  color: AppColors.mutedStrong,
+                ),
+              ),
+              const Gap.h(AppSpace.md - 2),
+              Expanded(
+                child: Text(
+                  item.label,
+                  style: const TextStyle(
+                    color: AppColors.text,
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: -0.05,
+                  ),
+                ),
+              ),
+              const Icon(
+                Icons.chevron_right_rounded,
+                color: AppColors.muted,
+                size: 20,
+              ),
+            ],
           ),
         ),
       ),
