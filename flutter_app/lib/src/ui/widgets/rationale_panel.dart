@@ -37,14 +37,17 @@ class _RationalePanelState extends State<RationalePanel> {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(AppRadii.lg),
+        border: Border.all(
+          color: AppColors.border.withValues(alpha: 0.7),
+          width: 0.5,
+        ),
+        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
       ),
       padding: const EdgeInsets.fromLTRB(
+        AppSpace.lg - 2,
         AppSpace.md + 2,
-        AppSpace.md - 2,
-        AppSpace.md + 2,
-        AppSpace.md - 2,
+        AppSpace.lg - 2,
+        AppSpace.lg - 2,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

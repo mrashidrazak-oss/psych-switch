@@ -60,11 +60,14 @@ void main() {
         ),
       );
       await _waitForReady(tester, find.text('Reviewed schedule'));
-      expect(find.text('FROM'), findsOneWidget);
-      expect(find.text('TO'), findsOneWidget);
+      // "FROM" / "TO" appear in both the hero drug-pair band AND the
+      // schedule-table header now (post-redesign). Test that at least
+      // one exists for each — the hero label is what we're verifying.
+      expect(find.text('FROM'), findsWidgets);
+      expect(find.text('TO'), findsWidgets);
       // Schedule + citations live below the fold on a 800x600 viewport
-      // because the crossover chart and predicted-AE card sit between
-      // the hero and the table — drag both into view.
+      // because the predicted-AE card sits between the hero and the
+      // table — drag both into view.
       await tester.dragUntilVisible(
         find.text('SCHEDULE'),
         find.byType(ListView),

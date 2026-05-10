@@ -26,9 +26,6 @@ import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/breakpoints.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/alternatives_card.dart';
-import 'package:psychswitch/src/ui/widgets/cost_comparison_card.dart';
-import 'package:psychswitch/src/ui/widgets/counselling_card.dart';
-import 'package:psychswitch/src/ui/widgets/crossover_chart.dart';
 import 'package:psychswitch/src/ui/widgets/ddi_warnings_card.dart';
 import 'package:psychswitch/src/ui/widgets/discontinuation_card.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
@@ -40,7 +37,6 @@ import 'package:psychswitch/src/ui/widgets/score_ring.dart';
 import 'package:psychswitch/src/ui/widgets/specialty_depth_card.dart';
 import 'package:psychswitch/src/ui/widgets/status_pill.dart' as ui;
 import 'package:psychswitch/src/util/export_pdf.dart';
-import 'package:psychswitch/src/util/format_counselling.dart';
 import 'package:psychswitch/src/util/share_plan.dart';
 import 'package:psychswitch_engine/case_pulse.dart' show SavedCase;
 import 'package:psychswitch_engine/citations.dart';
@@ -464,12 +460,21 @@ class _ResultBody extends ConsumerWidget {
     // days, ≥ 3 steps). Direct switches and washouts ignore the toggle.
     final speedSupported = _speedSupported(plan);
     final effectiveSpeed = speedSupported ? pickedSpeed : TaperSpeed.standard;
-    final adjustedDuration = plan is SwitchPlanOk
-        ? adjustedDurationDays(
-            (plan as SwitchPlanOk).rule.durationDays,
-            effectiveSpeed,
-          )
-        : null;
+
+    // Derive the on-screen duration from the COMPRESSED schedule's
+    // last day rather than `adjustedDurationDays(...)`. The two
+    // diverge by 1 day on certain speeds because per-step rounding
+    // and total-duration rounding are independent functions — the
+    // schedule's last day is the source of truth shown to the user.
+    int? adjustedDuration;
+    if (plan is SwitchPlanOk) {
+      final pl = plan as SwitchPlanOk;
+      final base = _displaySchedule(pl, scaleResult, view);
+      final compressed = compressSchedule(base, effectiveSpeed);
+      adjustedDuration = compressed.isEmpty
+          ? pl.rule.durationDays
+          : compressed.last.day;
+    }
 
     final body = _planContent(
       plan,
@@ -619,17 +624,6 @@ class _ResultBody extends ConsumerWidget {
     ];
   }
 
-  /// Cost comparison card section.
-  List<Widget> _costSection() {
-    final from = engine.getDrug(input.fromDrugId);
-    final to = engine.getDrug(input.toDrugId);
-    if (from == null || to == null) return const <Widget>[];
-    return <Widget>[
-      CostComparisonCard(fromDrug: from, toDrug: to),
-      const SizedBox(height: 16),
-    ];
-  }
-
   /// Discontinuation banner for the from-drug. Renders only when the
   /// engine flags moderate+ severity (the helper itself self-hides
   /// for `low`).
@@ -662,22 +656,6 @@ class _ResultBody extends ConsumerWidget {
         currentToDrug: to,
         context: ctx,
       ),
-      const SizedBox(height: 16),
-    ];
-  }
-
-  /// Patient counselling card — collapsible plain-language handout.
-  List<Widget> _counsellingSection(SwitchPlanOk plan) {
-    final from = engine.getDrug(input.fromDrugId);
-    final to = engine.getDrug(input.toDrugId);
-    if (from == null || to == null) return const <Widget>[];
-    final text = formatCounsellingCard(
-      fromDrug: from,
-      toDrug: to,
-      plan: plan,
-    );
-    return <Widget>[
-      CounsellingCard(text: text),
       const SizedBox(height: 16),
     ];
   }
@@ -762,35 +740,37 @@ class _ResultBody extends ConsumerWidget {
           // evidence that the dose progression is what's reviewed,
           // not the day intervals.
           if (speedSupported) ...<Widget>[
-            _TaperSpeedSelector(
-              picked: pickedSpeed,
-              onPick: (s) {
-                unawaited(hapticsTap());
-                ref.read(_taperSpeedProvider.notifier).state = s;
+            Builder(
+              builder: (_) {
+                // Same single-source-of-truth as the hero: derive the
+                // displayed taper duration from the compressed schedule's
+                // last day, not from a parallel rounding function. Keeps
+                // the hero, the selector, and the table all in agreement.
+                final compressed = compressSchedule(
+                  _displaySchedule(ok, scaleResult, view),
+                  effectiveSpeed,
+                );
+                final adjustedDays = compressed.isEmpty
+                    ? ok.rule.durationDays
+                    : compressed.last.day;
+                return _TaperSpeedSelector(
+                  picked: pickedSpeed,
+                  onPick: (s) {
+                    unawaited(hapticsTap());
+                    ref.read(_taperSpeedProvider.notifier).state = s;
+                  },
+                  durationDays: adjustedDays,
+                  originalDurationDays: ok.rule.durationDays,
+                );
               },
-              durationDays: adjustedDurationDays(
-                ok.rule.durationDays,
-                effectiveSpeed,
-              ),
-              originalDurationDays: ok.rule.durationDays,
             ),
             const Gap.v(AppSpace.lg),
           ],
-          // Crossover shape chart — read the curves before the table.
-          // The schedule both views render reflects the user's current
-          // toggle (adapted / reviewed) AND taper-speed (compresses
-          // day intervals while keeping the dose progression intact).
-          CrossoverChart(
-            schedule: compressSchedule(
-              _displaySchedule(ok, scaleResult, view),
-              effectiveSpeed,
-            ),
-            totalDays: adjustedDurationDays(
-              ok.rule.durationDays,
-              effectiveSpeed,
-            ),
-          ),
-          const Gap.v(AppSpace.lg),
+          // Day-by-day cross-taper schedule. Schedule reflects both the
+          // adapted/reviewed view and the taper-speed selection. The
+          // CrossoverChart that used to sit above this is intentionally
+          // removed — the schedule table is the primary source of truth;
+          // a parallel curve added visual weight without adding signal.
           _ScheduleCard(
             schedule: compressSchedule(
               _displaySchedule(ok, scaleResult, view),
@@ -822,13 +802,9 @@ class _ResultBody extends ConsumerWidget {
           ..._specialtySection(ctx),
           // Predicted AE profile for the to-drug.
           ..._predictedAeSection(),
-          // Affordability hint.
-          ..._costSection(),
           // What-if alternatives — top 3 reviewed targets from the
           // same from-drug.
           ..._alternativesSection(ctx, ok),
-          // Patient counselling card — plain-language handout.
-          ..._counsellingSection(ok),
           // Rule provenance footer — trust signals for CME audit.
           RuleProvenanceCard(rule: ok.rule),
           const Gap.v(AppSpace.lg),
@@ -1857,6 +1833,10 @@ class _FixedProtocolNotice extends StatelessWidget {
   }
 }
 
+/// Day-by-day cross-taper schedule. Stripeless — hairline row dividers
+/// only, tabular figures for the dose columns, color-coded from/to so
+/// the schedule visually carries the same identity as the hero. No
+/// drop-shadow, no fill — the table sits inside [_Card]'s chrome.
 class _ScheduleCard extends StatelessWidget {
   const _ScheduleCard({required this.schedule});
 
@@ -1867,112 +1847,120 @@ class _ScheduleCard extends StatelessWidget {
     return _Card(
       title: 'Schedule',
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          const _ScheduleRow(
-            isHeader: true,
-            day: 'Day',
-            from: 'From',
-            to: 'To',
-            notes: 'Notes',
-          ),
-          const Divider(height: 1),
-          ...schedule.indexed.map(
-            ((int, ScheduleStep) e) {
-              final (i, s) = e;
-              return _ScheduleRow(
-                day: s.day.toString(),
-                from: _formatDose(s.fromDoseMg),
-                to: _formatDose(s.toDoseMg),
-                notes: s.notes ?? '',
-                stripe: i.isOdd,
-              );
-            },
-          ),
+          const _ScheduleHeaderRow(),
+          for (var i = 0; i < schedule.length; i++) ...<Widget>[
+            Container(
+              height: 0.5,
+              color: AppColors.border.withValues(alpha: 0.6),
+            ),
+            _ScheduleRow(step: schedule[i]),
+          ],
         ],
       ),
     );
   }
 }
 
+/// Tiny eyebrow row that labels the four schedule columns.
+class _ScheduleHeaderRow extends StatelessWidget {
+  const _ScheduleHeaderRow();
+
+  @override
+  Widget build(BuildContext context) {
+    const style = AppTextSizes.eyebrow;
+    return const Padding(
+      padding: EdgeInsets.fromLTRB(
+        0,
+        AppSpace.xs,
+        0,
+        AppSpace.sm + 2,
+      ),
+      child: Row(
+        children: <Widget>[
+          SizedBox(width: 32, child: Text('DAY', style: style)),
+          SizedBox(width: 64, child: Text('FROM', style: style)),
+          SizedBox(width: 64, child: Text('TO', style: style)),
+          Expanded(child: Text('NOTES', style: style)),
+        ],
+      ),
+    );
+  }
+}
+
+/// Single schedule step. Day in muted-strong, dose figures in tabular
+/// from/to tones for instant visual scanning, notes in body grey.
 class _ScheduleRow extends StatelessWidget {
-  const _ScheduleRow({
-    required this.day,
-    required this.from,
-    required this.to,
-    required this.notes,
-    this.isHeader = false,
-    this.stripe = false,
-  });
+  const _ScheduleRow({required this.step});
 
-  final String day;
-  final String from;
-  final String to;
-  final String notes;
-  final bool isHeader;
-  final bool stripe;
+  final ScheduleStep step;
 
-  // Tabular figures so digits line up vertically across rows — turns
-  // the schedule into a real table rather than a column of text.
+  /// Tabular figures so digits line up vertically across rows — turns
+  /// the schedule into a real table rather than a column of text.
   static const _tabularFigures = <FontFeature>[FontFeature.tabularFigures()];
 
   @override
   Widget build(BuildContext context) {
-    final labelStyle = TextStyle(
-      color: isHeader ? AppColors.muted : AppColors.text,
-      fontSize: 12,
-      fontWeight: isHeader ? FontWeight.w700 : FontWeight.w500,
-      letterSpacing: isHeader ? 1 : 0,
+    const dayStyle = TextStyle(
+      color: AppColors.mutedStrong,
+      fontSize: 13,
+      fontWeight: FontWeight.w600,
       fontFeatures: _tabularFigures,
+      letterSpacing: -0.1,
     );
-    final notesStyle = TextStyle(
-      color: isHeader ? AppColors.muted : AppColors.mutedStrong,
-      fontSize: 11.5,
-      fontWeight: isHeader ? FontWeight.w700 : FontWeight.w400,
-      height: 1.4,
-      letterSpacing: isHeader ? 1 : 0,
+    final doseStyleFrom = TextStyle(
+      color: step.fromDoseMg == 0
+          ? AppColors.muted.withValues(alpha: 0.5)
+          : AppColors.from,
+      fontSize: 14,
+      fontWeight: FontWeight.w700,
+      fontFeatures: _tabularFigures,
+      letterSpacing: -0.1,
     );
-    return Container(
-      color: stripe && !isHeader
-          ? AppColors.surfaceHigh.withValues(alpha: 0.5)
-          : Colors.transparent,
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpace.md,
-        vertical: AppSpace.sm + 2,
-      ),
+    final doseStyleTo = TextStyle(
+      color: step.toDoseMg == 0
+          ? AppColors.muted.withValues(alpha: 0.5)
+          : AppColors.to,
+      fontSize: 14,
+      fontWeight: FontWeight.w700,
+      fontFeatures: _tabularFigures,
+      letterSpacing: -0.1,
+    );
+    const notesStyle = TextStyle(
+      color: AppColors.muted,
+      fontSize: 12,
+      height: 1.5,
+    );
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpace.sm + 2),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           SizedBox(
-            width: 36,
+            width: 32,
+            child: Text(step.day.toString(), style: dayStyle),
+          ),
+          SizedBox(
+            width: 64,
             child: Text(
-              day,
-              style: labelStyle.copyWith(
-                color: isHeader ? AppColors.muted : AppColors.accent,
-                fontWeight: isHeader ? FontWeight.w700 : FontWeight.w700,
-              ),
+              '${_formatDose(step.fromDoseMg)} mg',
+              style: doseStyleFrom,
             ),
           ),
           SizedBox(
-            width: 56,
+            width: 64,
             child: Text(
-              from,
-              style: labelStyle.copyWith(
-                color: isHeader ? AppColors.muted : AppColors.from,
-              ),
-              textAlign: TextAlign.left,
+              '${_formatDose(step.toDoseMg)} mg',
+              style: doseStyleTo,
             ),
           ),
-          SizedBox(
-            width: 56,
-            child: Text(
-              to,
-              style: labelStyle.copyWith(
-                color: isHeader ? AppColors.muted : AppColors.to,
-              ),
-              textAlign: TextAlign.left,
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 1),
+              child: Text(step.notes ?? '', style: notesStyle),
             ),
           ),
-          Expanded(child: Text(notes, style: notesStyle)),
         ],
       ),
     );
