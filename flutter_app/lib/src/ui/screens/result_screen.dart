@@ -56,6 +56,7 @@ import 'package:psychswitch_engine/switching_engine.dart';
 import 'package:psychswitch_engine/types/drug.dart';
 import 'package:psychswitch_engine/types/enums.dart';
 import 'package:psychswitch_engine/types/schedule_step.dart';
+import 'package:psychswitch_engine/types/switching_rule.dart';
 import 'package:psychswitch_engine/util/case_id.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -65,6 +66,28 @@ class ResultScreenArgs {
 
   final SwitchInput input;
 }
+
+/// Which schedule the result body is showing.
+///
+/// • `adapted` — the rule's reviewed schedule scaled proportionally to
+///   the user's actual input doses (rounded to formulation increments,
+///   clinical-max-capped, duplicate steps merged). The clinically-useful
+///   default — what the prescriber should hand off.
+/// • `reviewed` — the unmodified reviewed reference schedule, doses
+///   exactly as published. Useful for verification: "what does the
+///   source actually say?"
+///
+/// Only meaningful when the user's doses don't match the rule's
+/// reviewed reference AND the scaling mode isn't `noScale` (fixed
+/// protocols like LAI / washouts can't be proportionally scaled).
+enum _ScheduleView { adapted, reviewed }
+
+/// `autoDispose` so leaving /result resets the view to `.adapted` for
+/// the next case. Shared between [_ResultBody] (which renders the
+/// schedule) and [_ShareMenu] (which exports / shares whichever view
+/// the clinician is currently looking at).
+final _scheduleViewProvider =
+    StateProvider.autoDispose<_ScheduleView>((_) => _ScheduleView.adapted);
 
 class ResultScreen extends ConsumerWidget {
   const ResultScreen({super.key, this.args});
@@ -95,6 +118,7 @@ class ResultScreen extends ConsumerWidget {
                 if (plan is! SwitchPlanOk) return const SizedBox.shrink();
                 return _ShareMenu(
                   plan: plan,
+                  input: args!.input,
                   fromDrug: engine.getDrug(args!.input.fromDrugId),
                   toDrug: engine.getDrug(args!.input.toDrugId),
                 );
@@ -179,31 +203,69 @@ class ResultScreen extends ConsumerWidget {
 /// sheet) and "Export PDF" (system print/share). Disabled when the
 /// engine returns anything other than [SwitchPlanOk] — washout /
 /// guidance / no-rule paths don't carry a schedule worth sharing.
-class _ShareMenu extends StatelessWidget {
+///
+/// Watches [_scheduleViewProvider] so the exported plan reflects the
+/// view the clinician is currently looking at: adapted (default) or
+/// reviewed reference. Re-runs `scaleSchedule` locally so it doesn't
+/// have to share state with `_ResultBody` beyond the provider.
+class _ShareMenu extends ConsumerWidget {
   const _ShareMenu({
     required this.plan,
+    required this.input,
     required this.fromDrug,
     required this.toDrug,
   });
 
   final SwitchPlanOk plan;
+  final SwitchInput input;
   final Drug? fromDrug;
   final Drug? toDrug;
 
+  /// Build the [SwitchPlanOk] payload for share/export. When the user
+  /// is viewing the adapted schedule and the scaler actually adapted,
+  /// swap in the scaled schedule + flip `dosesMatchReference` to true
+  /// so downstream formatters don't print the "but you entered X mg"
+  /// banner — the schedule already reflects the user's doses.
+  SwitchPlanOk _payloadFor(_ScheduleView view) {
+    if (fromDrug == null || toDrug == null) return plan;
+    if (view == _ScheduleView.reviewed) return plan;
+    final scaled = scaleSchedule(
+      rule: plan.rule,
+      fromDrug: fromDrug!,
+      toDrug: toDrug!,
+      userFromDose: input.fromDoseMg,
+      userToDose: input.toDoseMg,
+    );
+    if (!scaled.adapted) return plan;
+    return SwitchPlanOk(
+      rule: plan.rule,
+      schedule: scaled.schedule,
+      safetyFlags: plan.safetyFlags,
+      citations: plan.citations,
+      // The shared schedule is now expressed in the user's doses, so
+      // the "you entered X, reviewed is Y" note in the formatter would
+      // be redundant — suppress it by claiming reference parity.
+      dosesMatchReference: true,
+      inputDoses: plan.inputDoses,
+    );
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     if (fromDrug == null || toDrug == null) return const SizedBox.shrink();
+    final view = ref.watch(_scheduleViewProvider);
     return PopupMenuButton<String>(
       tooltip: 'Share or export',
       icon: const Icon(Icons.ios_share),
       onSelected: (v) async {
         unawaited(hapticsTap());
+        final payload = _payloadFor(view);
         switch (v) {
           case 'text':
             final body = formatPlanForShare(
               fromDrug: fromDrug!,
               toDrug: toDrug!,
-              plan: plan,
+              plan: payload,
             );
             await Share.share(
               body,
@@ -214,7 +276,7 @@ class _ShareMenu extends StatelessWidget {
             await exportSwitchPlanPdf(
               fromDrug: fromDrug!,
               toDrug: toDrug!,
-              plan: plan,
+              plan: payload,
             );
         }
       },
@@ -341,6 +403,7 @@ class _ResultBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ctx = ref.watch(patientContextProvider);
+    final view = ref.watch(_scheduleViewProvider);
     // Pull warnings for both ends of the switch — the from-drug warning
     // matters because the patient is still on it during cross-titration,
     // and the to-drug warning matters because they're starting it.
@@ -348,7 +411,14 @@ class _ResultBody extends ConsumerWidget {
       ...warningsForDrug(ctx, input.fromDrugId),
       ...warningsForDrug(ctx, input.toDrugId),
     ];
-    final body = _planContent(plan, ctx, ctxWarnings);
+
+    // For OK plans, run the dose scaler so we have both views available
+    // (adapted = scaled to the user's input doses; reviewed = the rule's
+    // raw schedule). `scaleSchedule` is pure and cheap — fine to call
+    // on every build.
+    final scaleResult = _scaleResultFor(plan);
+
+    final body = _planContent(plan, ctx, ctxWarnings, scaleResult, view, ref);
     final hero = <Widget>[
       EntranceFade(
         child: _ResultHero(
@@ -410,6 +480,39 @@ class _ResultBody extends ConsumerWidget {
           EntranceFade(index: (2 + i).clamp(0, 6), child: body[i]),
       ],
     );
+  }
+
+  /// Run the dose scaler for OK plans so the body has both the adapted
+  /// and the reviewed schedules ready to render. Returns null for any
+  /// non-OK branch (washout / guidance / clozapine / no-rule have no
+  /// scalable schedule) and for OK plans where one of the drugs has
+  /// gone missing from the registry (defensive).
+  ScaleResult? _scaleResultFor(SwitchPlan plan) {
+    if (plan is! SwitchPlanOk) return null;
+    final fromDrug = engine.getDrug(input.fromDrugId);
+    final toDrug = engine.getDrug(input.toDrugId);
+    if (fromDrug == null || toDrug == null) return null;
+    return scaleSchedule(
+      rule: plan.rule,
+      fromDrug: fromDrug,
+      toDrug: toDrug,
+      userFromDose: input.fromDoseMg,
+      userToDose: input.toDoseMg,
+    );
+  }
+
+  /// Pick which schedule to render. Defaults to adapted (scaled to the
+  /// user's input doses) — falls back to the rule's reviewed schedule
+  /// when (a) the user explicitly toggled to `.reviewed`, (b) the scaler
+  /// didn't actually adapt anything (doses already match reference, or
+  /// fixed protocol), or (c) the scaler couldn't run.
+  static List<ScheduleStep> _displaySchedule(
+    SwitchPlanOk ok,
+    ScaleResult? scaleResult,
+    _ScheduleView view,
+  ) {
+    if (scaleResult == null || !scaleResult.adapted) return ok.schedule;
+    return view == _ScheduleView.adapted ? scaleResult.schedule : ok.schedule;
   }
 
   /// DDI checker output as a list of widgets — empty when no hits, so
@@ -527,6 +630,9 @@ class _ResultBody extends ConsumerWidget {
     SwitchPlan plan,
     PatientContext ctx,
     List<ContextWarning> ctxWarnings,
+    ScaleResult? scaleResult,
+    _ScheduleView view,
+    WidgetRef ref,
   ) {
     return switch (plan) {
       final SwitchPlanOk ok => <Widget>[
@@ -536,17 +642,45 @@ class _ResultBody extends ConsumerWidget {
             _ContextWarningsCard(warnings: ctxWarnings),
             const Gap.v(AppSpace.lg),
           ],
-          if (!ok.dosesMatchReference) ...<Widget>[
-            const _ReferenceDosesBanner(),
+          // Adapted-vs-reviewed banner — only when the user's input
+          // doses don't match the rule's reviewed reference AND the
+          // scaler actually produced a different schedule. Lets the
+          // clinician flip between "schedule scaled to your patient"
+          // (the default — what you hand off) and "reviewed reference"
+          // (verification — what the source actually says).
+          if (scaleResult != null &&
+              scaleResult.adapted &&
+              scaleResult.applied.mode != ScalingMode.noScale &&
+              !ok.dosesMatchReference) ...<Widget>[
+            _AdaptiveScheduleBanner(
+              view: view,
+              inputDoses: ok.inputDoses,
+              rule: ok.rule,
+              scaleResult: scaleResult,
+              onToggle: () {
+                ref.read(_scheduleViewProvider.notifier).state =
+                    view == _ScheduleView.adapted
+                        ? _ScheduleView.reviewed
+                        : _ScheduleView.adapted;
+              },
+            ),
+            const Gap.v(AppSpace.lg),
+          ] else if (scaleResult != null &&
+              scaleResult.applied.mode == ScalingMode.noScale &&
+              !ok.dosesMatchReference) ...<Widget>[
+            _FixedProtocolNotice(inputDoses: ok.inputDoses),
             const Gap.v(AppSpace.lg),
           ],
           // Crossover shape chart — read the curves before the table.
+          // The schedule both views render reflects the user's current
+          // toggle: adapted (default, scaled to input doses) or
+          // reviewed (unmodified rule schedule).
           CrossoverChart(
-            schedule: ok.schedule,
+            schedule: _displaySchedule(ok, scaleResult, view),
             totalDays: ok.rule.durationDays,
           ),
           const Gap.v(AppSpace.lg),
-          _ScheduleCard(schedule: ok.schedule),
+          _ScheduleCard(schedule: _displaySchedule(ok, scaleResult, view)),
           const Gap.v(AppSpace.lg),
           // Why this strategy was chosen — sits with the schedule.
           RationalePanel(rationale: ok.rule.rationale),
@@ -1137,19 +1271,228 @@ class _ClozapineVerdict extends StatelessWidget {
   }
 }
 
-class _ReferenceDosesBanner extends StatelessWidget {
-  const _ReferenceDosesBanner();
+/// Adaptive-schedule banner — shown when the user's input doses differ
+/// from the rule's reviewed reference AND the scaler successfully
+/// produced an adapted schedule. Holds:
+///   • a tone-tinted eyebrow that flips with the view,
+///   • a compact dose-context line ("You entered X mg → Y mg. Reviewed
+///     reference is A mg → B mg" + scale factors when adapted),
+///   • a "View reviewed" / "View adapted" pill that toggles the view,
+///   • optional warning bullets from the scaler (extreme factors etc.).
+///
+/// Replaces the older static `_ReferenceDosesBanner` that just said
+/// "adapt this yourself" — the engine can adapt for you now, and the
+/// reviewed view stays one tap away for verification.
+class _AdaptiveScheduleBanner extends StatelessWidget {
+  const _AdaptiveScheduleBanner({
+    required this.view,
+    required this.inputDoses,
+    required this.rule,
+    required this.scaleResult,
+    required this.onToggle,
+  });
+
+  final _ScheduleView view;
+  final ({num fromMg, num toMg}) inputDoses;
+  final SwitchingRule rule;
+  final ScaleResult scaleResult;
+  final VoidCallback onToggle;
+
+  bool get _isAdapted => view == _ScheduleView.adapted;
 
   @override
   Widget build(BuildContext context) {
-    return const _Banner(
-      tone: AppColors.accent,
-      eyebrow: 'REFERENCE DOSES',
-      title: 'Schedule shown at reviewed reference doses',
-      body:
-          "The doses you entered differ from the rule's reviewed reference. "
-          'Treat this schedule as an example — adapt proportionally to your '
-          "patient's doses, rounding to formulation increments.",
+    const tone = AppColors.accent;
+    final eyebrow = _isAdapted
+        ? 'SCHEDULE ADAPTED TO YOUR PATIENT'
+        : 'SHOWING REVIEWED REFERENCE';
+    final ctaLabel = _isAdapted ? 'View reviewed' : 'View adapted';
+    final warnings = scaleResult.warnings;
+    return Container(
+      decoration: BoxDecoration(
+        color: tone.withValues(alpha: 0.06),
+        border: const Border(left: BorderSide(color: tone, width: 3)),
+        borderRadius: const BorderRadius.only(
+          topRight: Radius.circular(AppRadii.lg),
+          bottomRight: Radius.circular(AppRadii.lg),
+        ),
+      ),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpace.lg,
+        AppSpace.md,
+        AppSpace.md,
+        AppSpace.md + 2,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  eyebrow,
+                  style: AppTextSizes.eyebrow.copyWith(color: tone),
+                ),
+              ),
+              const Gap.h(AppSpace.sm),
+              _AdaptiveToggleButton(label: ctaLabel, onPressed: onToggle),
+            ],
+          ),
+          const Gap.v(AppSpace.sm),
+          RichText(
+            text: TextSpan(
+              style: const TextStyle(
+                color: AppColors.text,
+                fontSize: 13,
+                height: 1.5,
+              ),
+              children: <InlineSpan>[
+                const TextSpan(text: 'You entered '),
+                TextSpan(
+                  text:
+                      '${_formatDose(inputDoses.fromMg)} mg → ${_formatDose(inputDoses.toMg)} mg',
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                const TextSpan(text: '. Reviewed reference is '),
+                TextSpan(
+                  text:
+                      '${_formatDose(rule.doseRatios.fromCurrentDoseMg)} mg → ${_formatDose(rule.doseRatios.toTargetDoseMg)} mg',
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                if (_isAdapted) ...<InlineSpan>[
+                  const TextSpan(text: ' — scaled '),
+                  TextSpan(
+                    text:
+                        '${scaleResult.applied.fromFactor.toStringAsFixed(2)}× from / '
+                        '${scaleResult.applied.toFactor.toStringAsFixed(2)}× to',
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  const TextSpan(text: ', rounded to formulation.'),
+                ] else
+                  const TextSpan(
+                    text:
+                        '. Doses below are the unmodified reviewed reference '
+                        'for verification.',
+                  ),
+              ],
+            ),
+          ),
+          if (_isAdapted && warnings.isNotEmpty) ...<Widget>[
+            const Gap.v(AppSpace.sm + 2),
+            Container(
+              decoration: BoxDecoration(
+                color: AppColors.bg.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(AppRadii.md),
+              ),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpace.md,
+                vertical: AppSpace.sm,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  for (final w in warnings.take(4))
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpace.xxs),
+                      child: Text(
+                        '• ${w.message}',
+                        style: const TextStyle(
+                          color: AppColors.warning,
+                          fontSize: 11.5,
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                  if (warnings.length > 4)
+                    Text(
+                      '+${warnings.length - 4} more',
+                      style: AppTextSizes.eyebrow,
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Compact pill button used inside [_AdaptiveScheduleBanner] to flip
+/// between adapted and reviewed views. Hairline border, eyebrow-style
+/// label so it sits visually with the banner's headline.
+class _AdaptiveToggleButton extends StatelessWidget {
+  const _AdaptiveToggleButton({
+    required this.label,
+    required this.onPressed,
+  });
+
+  final String label;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: label,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            unawaited(hapticsTap());
+            onPressed();
+          },
+          borderRadius: BorderRadius.circular(AppRadii.md),
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.bg,
+              border: Border.all(
+                color: AppColors.border.withValues(alpha: 0.7),
+                width: 0.5,
+              ),
+              borderRadius: BorderRadius.circular(AppRadii.md),
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpace.sm + 2,
+              vertical: AppSpace.xs + 2,
+            ),
+            child: Text(
+              label.toUpperCase(),
+              style: const TextStyle(
+                color: AppColors.text,
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.2,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Fixed-protocol notice — fired when the user's input doses differ
+/// from the rule's reference but the scaling mode is `noScale` (LAI,
+/// MAOI washouts, fluoxetine bridges where doses are dictated by the
+/// product PI / PK rather than by the patient's current dose). No
+/// toggle here: the schedule below is always the reviewed values.
+class _FixedProtocolNotice extends StatelessWidget {
+  const _FixedProtocolNotice({required this.inputDoses});
+
+  final ({num fromMg, num toMg}) inputDoses;
+
+  @override
+  Widget build(BuildContext context) {
+    return _Banner(
+      tone: AppColors.warning,
+      eyebrow: 'FIXED PROTOCOL',
+      title: 'Schedule not scaled to your input doses',
+      body: "This rule's doses are dictated by the product PI or "
+          "pharmacokinetics, not the patient's current dose. You entered "
+          '${_formatDose(inputDoses.fromMg)} mg → '
+          '${_formatDose(inputDoses.toMg)} mg; the schedule below uses '
+          'the reviewed values.',
     );
   }
 }
