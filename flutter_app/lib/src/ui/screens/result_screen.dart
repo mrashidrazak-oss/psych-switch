@@ -25,6 +25,7 @@ import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/ddi_warnings_card.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
+import 'package:psychswitch/src/ui/widgets/predicted_ae_card.dart';
 import 'package:psychswitch/src/ui/widgets/score_ring.dart';
 import 'package:psychswitch/src/ui/widgets/status_pill.dart' as ui;
 import 'package:psychswitch_engine/case_pulse.dart' show SavedCase;
@@ -32,6 +33,7 @@ import 'package:psychswitch_engine/citations.dart';
 import 'package:psychswitch_engine/ddi.dart';
 import 'package:psychswitch_engine/monitoring.dart';
 import 'package:psychswitch_engine/patient_context_pure.dart';
+import 'package:psychswitch_engine/predicted_ae_profile.dart';
 import 'package:psychswitch_engine/psych_switch_score.dart';
 import 'package:psychswitch_engine/scale_schedule.dart';
 import 'package:psychswitch_engine/switching_engine.dart';
@@ -266,6 +268,21 @@ class _ResultBody extends ConsumerWidget {
     ];
   }
 
+  /// Predicted AE card section. Returns empty when the engine produces
+  /// no predictions (defensive — the typed risk fields + reverse-lookup
+  /// table almost always yield at least one row).
+  List<Widget> _predictedAeSection() {
+    final toDrug = engine.getDrug(input.toDrugId);
+    if (toDrug == null) return const <Widget>[];
+    final fromDrug = engine.getDrug(input.fromDrugId);
+    final profile = predictAeProfile(toDrug, fromDrug);
+    if (profile.predictions.isEmpty) return const <Widget>[];
+    return <Widget>[
+      PredictedAeCard(profile: profile),
+      const SizedBox(height: 16),
+    ];
+  }
+
   List<Widget> _planContent(
     SwitchPlan plan,
     PatientContext ctx,
@@ -309,6 +326,9 @@ class _ResultBody extends ConsumerWidget {
             patientContext: ctx,
           ),
           const SizedBox(height: 16),
+          // Predicted AE profile for the to-drug, comparing against
+          // the from-drug to highlight what's better on the new agent.
+          ..._predictedAeSection(),
           _CitationsCard(citations: ok.citations),
         ],
       SwitchPlanMaudsleyGuidance(
