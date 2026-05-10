@@ -24,6 +24,7 @@ import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/services/notification_service.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
+import 'package:psychswitch/src/ui/widgets/alternatives_card.dart';
 import 'package:psychswitch/src/ui/widgets/cost_comparison_card.dart';
 import 'package:psychswitch/src/ui/widgets/counselling_card.dart';
 import 'package:psychswitch/src/ui/widgets/crossover_chart.dart';
@@ -32,6 +33,8 @@ import 'package:psychswitch/src/ui/widgets/discontinuation_card.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
 import 'package:psychswitch/src/ui/widgets/predicted_ae_card.dart';
+import 'package:psychswitch/src/ui/widgets/rationale_panel.dart';
+import 'package:psychswitch/src/ui/widgets/rule_provenance_card.dart';
 import 'package:psychswitch/src/ui/widgets/score_ring.dart';
 import 'package:psychswitch/src/ui/widgets/specialty_depth_card.dart';
 import 'package:psychswitch/src/ui/widgets/status_pill.dart' as ui;
@@ -423,6 +426,23 @@ class _ResultBody extends ConsumerWidget {
     ];
   }
 
+  /// What-if alternatives — top 3 reviewed switch targets from the
+  /// same from-drug, excluding the current to-drug.
+  List<Widget> _alternativesSection(PatientContext ctx, SwitchPlanOk plan) {
+    final from = engine.getDrug(input.fromDrugId);
+    final to = engine.getDrug(input.toDrugId);
+    if (from == null || to == null) return const <Widget>[];
+    return <Widget>[
+      AlternativesCard(
+        engine: engine,
+        fromDrug: from,
+        currentToDrug: to,
+        context: ctx,
+      ),
+      const SizedBox(height: 16),
+    ];
+  }
+
   /// Patient counselling card — collapsible plain-language handout.
   List<Widget> _counsellingSection(SwitchPlanOk plan) {
     final from = engine.getDrug(input.fromDrugId);
@@ -497,6 +517,9 @@ class _ResultBody extends ConsumerWidget {
           const SizedBox(height: 16),
           _ScheduleCard(schedule: ok.schedule),
           const SizedBox(height: 16),
+          // Why this strategy was chosen — sits with the schedule.
+          RationalePanel(rationale: ok.rule.rationale),
+          const SizedBox(height: 16),
           if (ok.safetyFlags.isNotEmpty) ...<Widget>[
             _SafetyFlagsCard(flags: ok.safetyFlags),
             const SizedBox(height: 16),
@@ -520,8 +543,14 @@ class _ResultBody extends ConsumerWidget {
           ..._predictedAeSection(),
           // Affordability hint.
           ..._costSection(),
+          // What-if alternatives — top 3 reviewed targets from the
+          // same from-drug.
+          ..._alternativesSection(ctx, ok),
           // Patient counselling card — plain-language handout.
           ..._counsellingSection(ok),
+          // Rule provenance footer — trust signals for CME audit.
+          RuleProvenanceCard(rule: ok.rule),
+          const SizedBox(height: 16),
           _CitationsCard(citations: ok.citations),
         ],
       SwitchPlanMaudsleyGuidance(
