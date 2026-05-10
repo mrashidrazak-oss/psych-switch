@@ -28,6 +28,8 @@ import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
 import 'package:psychswitch/src/ui/widgets/predicted_ae_card.dart';
 import 'package:psychswitch/src/ui/widgets/score_ring.dart';
 import 'package:psychswitch/src/ui/widgets/status_pill.dart' as ui;
+import 'package:psychswitch/src/util/export_pdf.dart';
+import 'package:psychswitch/src/util/share_plan.dart';
 import 'package:psychswitch_engine/case_pulse.dart' show SavedCase;
 import 'package:psychswitch_engine/citations.dart';
 import 'package:psychswitch_engine/ddi.dart';
@@ -40,6 +42,7 @@ import 'package:psychswitch_engine/switching_engine.dart';
 import 'package:psychswitch_engine/types/drug.dart';
 import 'package:psychswitch_engine/types/schedule_step.dart';
 import 'package:psychswitch_engine/util/case_id.dart';
+import 'package:share_plus/share_plus.dart';
 
 /// Payload passed via `GoRouterState.extra` when navigating to /result.
 class ResultScreenArgs {
@@ -69,6 +72,20 @@ class ResultScreen extends ConsumerWidget {
               icon: const Icon(Icons.bookmark_add_outlined),
               tooltip: 'Save case',
               onPressed: () => _onSavePressed(context, ref, args!.input),
+            ),
+          if (args != null)
+            asyncEngine.when(
+              data: (engine) {
+                final plan = engine.generateSwitchPlan(args!.input);
+                if (plan is! SwitchPlanOk) return const SizedBox.shrink();
+                return _ShareMenu(
+                  plan: plan,
+                  fromDrug: engine.getDrug(args!.input.fromDrugId),
+                  toDrug: engine.getDrug(args!.input.toDrugId),
+                );
+              },
+              loading: () => const SizedBox.shrink(),
+              error: (_, __) => const SizedBox.shrink(),
             ),
         ],
       ),
@@ -123,6 +140,73 @@ class ResultScreen extends ConsumerWidget {
         ),
         duration: const Duration(seconds: 2),
       ),
+    );
+  }
+}
+
+/// Action menu in the AppBar — exposes "Share as text" (system share
+/// sheet) and "Export PDF" (system print/share). Disabled when the
+/// engine returns anything other than [SwitchPlanOk] — washout /
+/// guidance / no-rule paths don't carry a schedule worth sharing.
+class _ShareMenu extends StatelessWidget {
+  const _ShareMenu({
+    required this.plan,
+    required this.fromDrug,
+    required this.toDrug,
+  });
+
+  final SwitchPlanOk plan;
+  final Drug? fromDrug;
+  final Drug? toDrug;
+
+  @override
+  Widget build(BuildContext context) {
+    if (fromDrug == null || toDrug == null) return const SizedBox.shrink();
+    return PopupMenuButton<String>(
+      tooltip: 'Share or export',
+      icon: const Icon(Icons.ios_share),
+      onSelected: (v) async {
+        unawaited(hapticsTap());
+        switch (v) {
+          case 'text':
+            final body = formatPlanForShare(
+              fromDrug: fromDrug!,
+              toDrug: toDrug!,
+              plan: plan,
+            );
+            await Share.share(
+              body,
+              subject:
+                  'PsychSwitch — ${fromDrug!.genericName} → ${toDrug!.genericName}',
+            );
+          case 'pdf':
+            await exportSwitchPlanPdf(
+              fromDrug: fromDrug!,
+              toDrug: toDrug!,
+              plan: plan,
+            );
+        }
+      },
+      itemBuilder: (_) => <PopupMenuEntry<String>>[
+        const PopupMenuItem<String>(
+          value: 'text',
+          child: ListTile(
+            leading: Icon(Icons.notes_rounded),
+            title: Text('Share as text'),
+            subtitle: Text('WhatsApp · SMS · Email'),
+            contentPadding: EdgeInsets.zero,
+          ),
+        ),
+        const PopupMenuItem<String>(
+          value: 'pdf',
+          child: ListTile(
+            leading: Icon(Icons.picture_as_pdf_outlined),
+            title: Text('Export PDF'),
+            subtitle: Text('Print · Save · AirDrop'),
+            contentPadding: EdgeInsets.zero,
+          ),
+        ),
+      ],
     );
   }
 }
