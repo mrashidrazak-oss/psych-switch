@@ -48,14 +48,7 @@ class ClozapineScreen extends ConsumerWidget {
           bottom: const TabBar(
             isScrollable: true,
             tabAlignment: TabAlignment.start,
-            indicatorColor: AppColors.accent,
-            labelColor: AppColors.accent,
-            unselectedLabelColor: AppColors.muted,
-            labelStyle: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.2,
-            ),
+            // Tab styling comes from the global TabBarTheme.
             tabs: <Tab>[
               Tab(text: 'TITRATION'),
               Tab(text: 'FBC'),
@@ -1255,15 +1248,7 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(
-        color: AppColors.muted,
-        fontSize: 11,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 1.5,
-      ),
-    );
+    return Text(text, style: AppTextSizes.eyebrow);
   }
 }
 
@@ -1293,40 +1278,46 @@ class _SegmentedRow<T> extends StatelessWidget {
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 6),
+        const Gap.v(AppSpace.xs + 2),
         Wrap(
-          spacing: 6,
-          runSpacing: 6,
+          spacing: AppSpace.xs + 2,
+          runSpacing: AppSpace.xs + 2,
           children: options.map((opt) {
             final value = opt.$1;
             final text = opt.$2;
             final isSelected = value == selected;
-            return InkWell(
-              borderRadius: BorderRadius.circular(8),
-              onTap: () => onSelected(value),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.accent.withValues(alpha: 0.15)
-                      : AppColors.surface,
-                  border: Border.all(
-                    color: isSelected
-                        ? AppColors.accent
-                        : AppColors.border,
+            return Material(
+              color: isSelected
+                  ? AppColors.accent.withValues(alpha: 0.15)
+                  : AppColors.surface,
+              borderRadius: BorderRadius.circular(AppRadii.sm + 2),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: () => onSelected(value),
+                child: Ink(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: isSelected
+                          ? AppColors.accent
+                          : AppColors.border,
+                    ),
+                    borderRadius:
+                        BorderRadius.circular(AppRadii.sm + 2),
                   ),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  text,
-                  style: TextStyle(
-                    color: isSelected ? AppColors.accent : AppColors.text,
-                    fontSize: 12,
-                    fontWeight:
-                        isSelected ? FontWeight.w600 : FontWeight.w500,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpace.md,
+                    vertical: AppSpace.sm,
+                  ),
+                  child: Text(
+                    text,
+                    style: TextStyle(
+                      color:
+                          isSelected ? AppColors.accent : AppColors.text,
+                      fontSize: 12,
+                      fontWeight: isSelected
+                          ? FontWeight.w700
+                          : FontWeight.w500,
+                    ),
                   ),
                 ),
               ),
@@ -1363,24 +1354,8 @@ class _NumberField extends StatelessWidget {
           FilteringTextInputFormatter.digitsOnly,
       ],
       style: const TextStyle(color: AppColors.text, fontSize: 15),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(color: AppColors.muted),
-        filled: true,
-        fillColor: AppColors.surface,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.border),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.border),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.accent),
-        ),
-      ),
+      // Decoration borders + fill come from the global InputDecorationTheme.
+      decoration: InputDecoration(labelText: label),
       onChanged: onChanged,
     );
   }
@@ -1400,31 +1375,31 @@ class _NoteCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(AppSpace.md + 2),
       decoration: BoxDecoration(
         color: tone.withValues(alpha: 0.06),
         border: Border.all(color: tone.withValues(alpha: 0.3)),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(AppRadii.md),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
             eyebrow.toUpperCase(),
-            style: TextStyle(
+            style: AppTextSizes.eyebrow.copyWith(
               color: tone,
               fontSize: 11,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.3,
             ),
           ),
-          const SizedBox(height: 4),
+          const Gap.v(AppSpace.xs),
           Text(
             body,
             style: const TextStyle(
               color: AppColors.text,
               fontSize: 13,
-              height: 1.5,
+              height: 1.55,
             ),
           ),
         ],
@@ -1445,16 +1420,15 @@ class _CitationsList extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         const _SectionHeader(text: 'CITATIONS'),
-        const SizedBox(height: 6),
+        const Gap.v(AppSpace.xs + 2),
         ...citations.map(
           (c) => Padding(
             padding: const EdgeInsets.symmetric(vertical: 2),
             child: Text(
               '• $c',
-              style: const TextStyle(
-                color: AppColors.muted,
+              style: AppTextSizes.micro.copyWith(
                 fontSize: 11.5,
-                height: 1.4,
+                height: 1.5,
               ),
             ),
           ),

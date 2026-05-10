@@ -55,20 +55,21 @@ class DepotIndexScreen extends StatelessWidget {
       ),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpace.xl,
+            AppSpace.xl,
+            AppSpace.xl,
+            AppSpace.xl,
+          ),
           children: <Widget>[
-            const Text(
+            Text(
               'Once-monthly and quarterly LAI antipsychotics. Reviewed '
               'against FDA labelling and Maudsley 15. Each protocol has '
               'its own initiation rules, missed-dose flows, and needle '
               'guidance — read the agent before mixing them up.',
-              style: TextStyle(
-                color: AppColors.muted,
-                fontSize: 13,
-                height: 1.5,
-              ),
+              style: AppTextSizes.caption.copyWith(height: 1.55),
             ),
-            const SizedBox(height: 20),
+            const Gap.v(AppSpace.lg + 4),
             _DepotIndexCard(
               title: sustenna.brandName,
               subtitle: sustenna.genericName,
@@ -79,7 +80,7 @@ class DepotIndexScreen extends StatelessWidget {
                 'id': DepotKind.sustenna.name,
               }),
             ),
-            const SizedBox(height: 12),
+            const Gap.v(AppSpace.md),
             _DepotIndexCard(
               title: trinza.brandName,
               subtitle: trinza.genericName,
@@ -90,7 +91,7 @@ class DepotIndexScreen extends StatelessWidget {
                 'id': DepotKind.trinza.name,
               }),
             ),
-            const SizedBox(height: 12),
+            const Gap.v(AppSpace.md),
             _DepotIndexCard(
               title: maintena.brandName,
               subtitle: maintena.genericName,
@@ -127,19 +128,38 @@ class _DepotIndexCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: AppColors.surface,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(AppRadii.lg),
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
         child: Ink(
           decoration: BoxDecoration(
             border: Border.all(color: AppColors.border),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppRadii.lg),
           ),
-          padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpace.lg,
+            AppSpace.md + 2,
+            AppSpace.md + 2,
+            AppSpace.md + 2,
+          ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: AppColors.accent.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(AppRadii.sm + 2),
+                ),
+                child: const Icon(
+                  Icons.colorize_outlined,
+                  color: AppColors.accent,
+                  size: 18,
+                ),
+              ),
+              const Gap.h(AppSpace.md),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,17 +170,12 @@ class _DepotIndexCard extends StatelessWidget {
                         color: AppColors.text,
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
+                        letterSpacing: -0.2,
                       ),
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      subtitle,
-                      style: const TextStyle(
-                        color: AppColors.muted,
-                        fontSize: 12,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
+                    const Gap.v(2),
+                    Text(subtitle, style: AppTextSizes.micro),
+                    const Gap.v(AppSpace.sm),
                     Text(
                       indication,
                       style: const TextStyle(
@@ -169,31 +184,47 @@ class _DepotIndexCard extends StatelessWidget {
                         height: 1.5,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const Gap.v(AppSpace.sm),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
+                        horizontal: AppSpace.sm + 2,
                         vertical: 3,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.accent.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        interval,
-                        style: const TextStyle(
-                          color: AppColors.accent,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
+                        color: AppColors.accent.withValues(alpha: 0.14),
+                        border: Border.all(
+                          color: AppColors.accent.withValues(alpha: 0.3),
                         ),
+                        borderRadius:
+                            BorderRadius.circular(AppRadii.pill),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          const Icon(
+                            Icons.schedule,
+                            size: 11,
+                            color: AppColors.accent,
+                          ),
+                          const Gap.h(AppSpace.xs),
+                          Text(
+                            interval,
+                            style: const TextStyle(
+                              color: AppColors.accent,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.2,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
+              const Gap.h(AppSpace.sm),
               const Icon(
-                Icons.chevron_right,
+                Icons.chevron_right_rounded,
                 color: AppColors.muted,
                 size: 20,
               ),
@@ -506,15 +537,7 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(
-        color: AppColors.muted,
-        fontSize: 11,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 1.5,
-      ),
-    );
+    return Text(text, style: AppTextSizes.eyebrow);
   }
 }
 
