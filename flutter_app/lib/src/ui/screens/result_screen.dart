@@ -642,21 +642,28 @@ class _ResultBody extends ConsumerWidget {
             _ContextWarningsCard(warnings: ctxWarnings),
             const Gap.v(AppSpace.lg),
           ],
-          // Adapted-vs-reviewed banner — only when the user's input
-          // doses don't match the rule's reviewed reference AND the
-          // scaler actually produced a different schedule. Lets the
-          // clinician flip between "schedule scaled to your patient"
-          // (the default — what you hand off) and "reviewed reference"
-          // (verification — what the source actually says).
+          // Adapted-vs-reviewed banner — ALWAYS shown for OK plans so the
+          // toggle is discoverable. Three states:
+          //   • doses differ + scalable → full toggle banner
+          //   • doses match reference   → "doses match" confirmation +
+          //                               toggle still works (the two
+          //                               views happen to render the
+          //                               same schedule, but the label
+          //                               clarifies what you're seeing)
+          //   • fixed protocol + differ → no-toggle "schedule not scaled"
           if (scaleResult != null &&
-              scaleResult.adapted &&
-              scaleResult.applied.mode != ScalingMode.noScale &&
+              scaleResult.applied.mode == ScalingMode.noScale &&
               !ok.dosesMatchReference) ...<Widget>[
+            _FixedProtocolNotice(inputDoses: ok.inputDoses),
+            const Gap.v(AppSpace.lg),
+          ] else if (scaleResult != null &&
+              scaleResult.applied.mode != ScalingMode.noScale) ...<Widget>[
             _AdaptiveScheduleBanner(
               view: view,
               inputDoses: ok.inputDoses,
               rule: ok.rule,
               scaleResult: scaleResult,
+              dosesMatchReference: ok.dosesMatchReference,
               onToggle: () {
                 ref.read(_scheduleViewProvider.notifier).state =
                     view == _ScheduleView.adapted
@@ -664,11 +671,6 @@ class _ResultBody extends ConsumerWidget {
                         : _ScheduleView.adapted;
               },
             ),
-            const Gap.v(AppSpace.lg),
-          ] else if (scaleResult != null &&
-              scaleResult.applied.mode == ScalingMode.noScale &&
-              !ok.dosesMatchReference) ...<Widget>[
-            _FixedProtocolNotice(inputDoses: ok.inputDoses),
             const Gap.v(AppSpace.lg),
           ],
           // Crossover shape chart — read the curves before the table.
@@ -1271,14 +1273,18 @@ class _ClozapineVerdict extends StatelessWidget {
   }
 }
 
-/// Adaptive-schedule banner — shown when the user's input doses differ
-/// from the rule's reviewed reference AND the scaler successfully
-/// produced an adapted schedule. Holds:
-///   • a tone-tinted eyebrow that flips with the view,
-///   • a compact dose-context line ("You entered X mg → Y mg. Reviewed
-///     reference is A mg → B mg" + scale factors when adapted),
-///   • a "View reviewed" / "View adapted" pill that toggles the view,
-///   • optional warning bullets from the scaler (extreme factors etc.).
+/// Adaptive-schedule banner. Always shown for OK plans (fixed-protocol
+/// rules excepted — they get [_FixedProtocolNotice] instead). Three
+/// modes:
+///
+///   • **adapted** (default, doses differ) — schedule has been scaled
+///     to the user's input doses. Eyebrow flips on toggle.
+///   • **reviewed** (toggled, doses differ) — unmodified rule schedule.
+///     One tap returns to adapted.
+///   • **matched** (doses match reference) — both views render the
+///     same schedule. The toggle is still rendered so the feature is
+///     discoverable; the eyebrow stays informational ("doses match
+///     reviewed reference") and the dose-context line is suppressed.
 ///
 /// Replaces the older static `_ReferenceDosesBanner` that just said
 /// "adapt this yourself" — the engine can adapt for you now, and the
@@ -1289,6 +1295,7 @@ class _AdaptiveScheduleBanner extends StatelessWidget {
     required this.inputDoses,
     required this.rule,
     required this.scaleResult,
+    required this.dosesMatchReference,
     required this.onToggle,
   });
 
@@ -1296,22 +1303,28 @@ class _AdaptiveScheduleBanner extends StatelessWidget {
   final ({num fromMg, num toMg}) inputDoses;
   final SwitchingRule rule;
   final ScaleResult scaleResult;
+  final bool dosesMatchReference;
   final VoidCallback onToggle;
 
   bool get _isAdapted => view == _ScheduleView.adapted;
 
   @override
   Widget build(BuildContext context) {
-    const tone = AppColors.accent;
-    final eyebrow = _isAdapted
-        ? 'SCHEDULE ADAPTED TO YOUR PATIENT'
-        : 'SHOWING REVIEWED REFERENCE';
+    final tone = dosesMatchReference ? AppColors.to : AppColors.accent;
+    final String eyebrow;
+    if (dosesMatchReference) {
+      eyebrow = 'DOSES MATCH REVIEWED REFERENCE';
+    } else {
+      eyebrow = _isAdapted
+          ? 'SCHEDULE ADAPTED TO YOUR PATIENT'
+          : 'SHOWING REVIEWED REFERENCE';
+    }
     final ctaLabel = _isAdapted ? 'View reviewed' : 'View adapted';
     final warnings = scaleResult.warnings;
     return Container(
       decoration: BoxDecoration(
         color: tone.withValues(alpha: 0.06),
-        border: const Border(left: BorderSide(color: tone, width: 3)),
+        border: Border(left: BorderSide(color: tone, width: 3)),
         borderRadius: const BorderRadius.only(
           topRight: Radius.circular(AppRadii.lg),
           bottomRight: Radius.circular(AppRadii.lg),
@@ -1339,45 +1352,72 @@ class _AdaptiveScheduleBanner extends StatelessWidget {
             ],
           ),
           const Gap.v(AppSpace.sm),
-          RichText(
-            text: TextSpan(
-              style: const TextStyle(
-                color: AppColors.text,
-                fontSize: 13,
-                height: 1.5,
-              ),
-              children: <InlineSpan>[
-                const TextSpan(text: 'You entered '),
-                TextSpan(
-                  text:
-                      '${_formatDose(inputDoses.fromMg)} mg → ${_formatDose(inputDoses.toMg)} mg',
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+          if (dosesMatchReference)
+            // Matched case — no dose-context line needed; the schedule
+            // below IS the reviewed reference, exact to the published rule.
+            RichText(
+              text: TextSpan(
+                style: const TextStyle(
+                  color: AppColors.text,
+                  fontSize: 13,
+                  height: 1.5,
                 ),
-                const TextSpan(text: '. Reviewed reference is '),
-                TextSpan(
-                  text:
-                      '${_formatDose(rule.doseRatios.fromCurrentDoseMg)} mg → ${_formatDose(rule.doseRatios.toTargetDoseMg)} mg',
-                  style: const TextStyle(fontWeight: FontWeight.w600),
-                ),
-                if (_isAdapted) ...<InlineSpan>[
-                  const TextSpan(text: ' — scaled '),
+                children: <InlineSpan>[
+                  const TextSpan(
+                    text: 'Your input doses match the reviewed reference of ',
+                  ),
                   TextSpan(
                     text:
-                        '${scaleResult.applied.fromFactor.toStringAsFixed(2)}× from / '
-                        '${scaleResult.applied.toFactor.toStringAsFixed(2)}× to',
+                        '${_formatDose(rule.doseRatios.fromCurrentDoseMg)} mg → ${_formatDose(rule.doseRatios.toTargetDoseMg)} mg',
                     style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
-                  const TextSpan(text: ', rounded to formulation.'),
-                ] else
                   const TextSpan(
                     text:
-                        '. Doses below are the unmodified reviewed reference '
-                        'for verification.',
+                        '. The schedule below is the published reviewed schedule.',
                   ),
-              ],
+                ],
+              ),
+            )
+          else
+            RichText(
+              text: TextSpan(
+                style: const TextStyle(
+                  color: AppColors.text,
+                  fontSize: 13,
+                  height: 1.5,
+                ),
+                children: <InlineSpan>[
+                  const TextSpan(text: 'You entered '),
+                  TextSpan(
+                    text:
+                        '${_formatDose(inputDoses.fromMg)} mg → ${_formatDose(inputDoses.toMg)} mg',
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  const TextSpan(text: '. Reviewed reference is '),
+                  TextSpan(
+                    text:
+                        '${_formatDose(rule.doseRatios.fromCurrentDoseMg)} mg → ${_formatDose(rule.doseRatios.toTargetDoseMg)} mg',
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  if (_isAdapted) ...<InlineSpan>[
+                    const TextSpan(text: ' — scaled '),
+                    TextSpan(
+                      text:
+                          '${scaleResult.applied.fromFactor.toStringAsFixed(2)}× from / '
+                          '${scaleResult.applied.toFactor.toStringAsFixed(2)}× to',
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    const TextSpan(text: ', rounded to formulation.'),
+                  ] else
+                    const TextSpan(
+                      text:
+                          '. Doses below are the unmodified reviewed reference '
+                          'for verification.',
+                    ),
+                ],
+              ),
             ),
-          ),
-          if (_isAdapted && warnings.isNotEmpty) ...<Widget>[
+          if (!dosesMatchReference && _isAdapted && warnings.isNotEmpty) ...<Widget>[
             const Gap.v(AppSpace.sm + 2),
             Container(
               decoration: BoxDecoration(
