@@ -110,7 +110,13 @@ void main() {
     );
     await tester.pump();
 
-    // Generate plan should now be enabled — tap and assert navigation.
+    // The new preflight card pushes Generate plan past the 800×600
+    // test viewport — scroll it into view before tapping.
+    await tester.dragUntilVisible(
+      find.text('Generate plan'),
+      find.byType(SingleChildScrollView).first,
+      const Offset(0, -200),
+    );
     await tester.tap(find.text('Generate plan'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
