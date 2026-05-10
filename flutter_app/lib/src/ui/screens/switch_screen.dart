@@ -8,6 +8,8 @@
 // list once the from-drug is chosen, so reviewed pairs float to the
 // top.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,6 +17,7 @@ import 'package:go_router/go_router.dart';
 import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/providers/patient_context_provider.dart';
 import 'package:psychswitch/src/router.dart';
+import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/screens/result_screen.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
@@ -84,6 +87,7 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
 
   void _onContinue() {
     if (!_ready) return;
+    unawaited(hapticsConfirm());
     final input = SwitchInput(
       fromDrugId: _from!.id,
       fromDoseMg: double.parse(_fromDoseCtl.text),

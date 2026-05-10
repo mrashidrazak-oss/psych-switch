@@ -8,12 +8,18 @@
 //   /glossary → Clinical-term lookup
 //   /settings → Toggles + destructive actions
 //   /about    → Version, stats, licenses
-//
-// Phase 7C+ adds /clozapine and /depot.
+//   /clozapine→ Clozapine module (5 tabs)
+//   /depot    → Depot LAI index, with /:id detail children
 //
 // Routes are typed via `name` constants so screens never hard-code
 // path strings.
+//
+// Every route uses [_fadeThroughPage] so navigation feels smooth and
+// brand-cohesive instead of the platform-default slide. The transition
+// auto-disables when MediaQuery.disableAnimations is true (system
+// reduced-motion preference) — accessibility-correct without ceremony.
 
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:psychswitch/src/ui/screens/about_screen.dart';
@@ -41,67 +47,118 @@ abstract final class Routes {
   static const depot = 'depot';
 }
 
+/// Custom fade-through page builder. Mirrors Material's fade-through
+/// motion spec — incoming page fades in from 92% scale, outgoing page
+/// fades out — but kept short (200ms) so it never feels in the way.
+CustomTransitionPage<T> _fadeThroughPage<T>({
+  required GoRouterState state,
+  required Widget child,
+}) {
+  return CustomTransitionPage<T>(
+    key: state.pageKey,
+    child: child,
+    transitionDuration: const Duration(milliseconds: 220),
+    reverseTransitionDuration: const Duration(milliseconds: 180),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      // Honour system reduced-motion preference.
+      if (MediaQuery.disableAnimationsOf(context)) return child;
+
+      final fadeIn = CurvedAnimation(
+        parent: animation,
+        curve: const Interval(0.3, 1, curve: Curves.easeOutCubic),
+      );
+      final scaleIn = Tween<double>(begin: 0.985, end: 1).animate(
+        CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+      );
+      final fadeOut = CurvedAnimation(
+        parent: secondaryAnimation,
+        curve: const Interval(0, 0.6, curve: Curves.easeIn),
+      );
+      return FadeTransition(
+        opacity: ReverseAnimation(fadeOut),
+        child: FadeTransition(
+          opacity: fadeIn,
+          child: ScaleTransition(scale: scaleIn, child: child),
+        ),
+      );
+    },
+  );
+}
+
 GoRouter buildRouter() => GoRouter(
       initialLocation: '/',
       routes: <RouteBase>[
         GoRoute(
           name: Routes.home,
           path: '/',
-          builder: (context, state) => const HomeScreen(),
+          pageBuilder: (context, state) =>
+              _fadeThroughPage(state: state, child: const HomeScreen()),
         ),
         GoRoute(
           name: Routes.switch_,
           path: '/switch',
-          builder: (context, state) => const SwitchScreen(),
+          pageBuilder: (context, state) =>
+              _fadeThroughPage(state: state, child: const SwitchScreen()),
         ),
         GoRoute(
           name: Routes.result,
           path: '/result',
-          builder: (context, state) {
+          pageBuilder: (context, state) {
             final args = state.extra as ResultScreenArgs?;
-            return ResultScreen(args: args);
+            return _fadeThroughPage(
+              state: state,
+              child: ResultScreen(args: args),
+            );
           },
         ),
         GoRoute(
           name: Routes.history,
           path: '/history',
-          builder: (context, state) => const HistoryScreen(),
+          pageBuilder: (context, state) =>
+              _fadeThroughPage(state: state, child: const HistoryScreen()),
         ),
         GoRoute(
           name: Routes.glossary,
           path: '/glossary',
-          builder: (context, state) => const GlossaryScreen(),
+          pageBuilder: (context, state) =>
+              _fadeThroughPage(state: state, child: const GlossaryScreen()),
         ),
         GoRoute(
           name: Routes.settings,
           path: '/settings',
-          builder: (context, state) => const SettingsScreen(),
+          pageBuilder: (context, state) =>
+              _fadeThroughPage(state: state, child: const SettingsScreen()),
         ),
         GoRoute(
           name: Routes.about,
           path: '/about',
-          builder: (context, state) => const AboutScreen(),
+          pageBuilder: (context, state) =>
+              _fadeThroughPage(state: state, child: const AboutScreen()),
         ),
         GoRoute(
           name: Routes.clozapine,
           path: '/clozapine',
-          builder: (context, state) => const ClozapineScreen(),
+          pageBuilder: (context, state) =>
+              _fadeThroughPage(state: state, child: const ClozapineScreen()),
         ),
         GoRoute(
           name: Routes.depotIndex,
           path: '/depot',
-          builder: (context, state) => const DepotIndexScreen(),
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const DepotIndexScreen(),
+          ),
           routes: <RouteBase>[
             GoRoute(
               name: Routes.depot,
               path: ':id',
-              builder: (context, state) {
+              pageBuilder: (context, state) {
                 final kind = DepotKind.parse(state.pathParameters['id']);
-                if (kind == null) {
-                  // Unknown id → fall back to the index.
-                  return const DepotIndexScreen();
-                }
-                return DepotProtocolScreen(kind: kind);
+                final child = kind == null
+                    // Unknown id → fall back to the index.
+                    ? const DepotIndexScreen()
+                    : DepotProtocolScreen(kind: kind);
+                return _fadeThroughPage(state: state, child: child);
               },
             ),
           ],

@@ -107,36 +107,42 @@ class _Hero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Row(
+    return Semantics(
+      header: true,
+      label: 'PsychSwitch. Reviewed cross-titration, cited at every step.',
+      child: ExcludeSemantics(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const _BrandMonogram(),
-            const Gap.h(AppSpace.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    'PsychSwitch',
-                    style: AppTextSizes.display.copyWith(
-                      letterSpacing: -1,
-                      fontSize: 30,
-                    ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const _BrandMonogram(),
+                const Gap.h(AppSpace.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        'PsychSwitch',
+                        style: AppTextSizes.display.copyWith(
+                          letterSpacing: -1,
+                          fontSize: 30,
+                        ),
+                      ),
+                      const Gap.v(AppSpace.xxs),
+                      Text(
+                        'Reviewed cross-titration · cited at every step',
+                        style: AppTextSizes.caption.copyWith(height: 1.4),
+                      ),
+                    ],
                   ),
-                  const Gap.v(AppSpace.xxs),
-                  Text(
-                    'Reviewed cross-titration · cited at every step',
-                    style: AppTextSizes.caption.copyWith(height: 1.4),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         ),
-      ],
+      ),
     );
   }
 }
@@ -190,36 +196,43 @@ class _ReadyBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpace.md,
-        vertical: AppSpace.md,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.to.withValues(alpha: 0.06),
-        border: Border.all(color: AppColors.to.withValues(alpha: 0.3)),
-        borderRadius: BorderRadius.circular(AppRadii.lg),
-      ),
-      child: Row(
-        children: <Widget>[
-          const _PulsingDot(color: AppColors.to),
-          const Gap.h(AppSpace.md),
-          Expanded(
-            child: Text(
-              '$drugs drugs · $rules reviewed switching rules',
-              style: AppTextSizes.caption.copyWith(
-                color: AppColors.text,
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
+    return Semantics(
+      label: 'Engine ready. $drugs drugs and '
+          '$rules reviewed switching rules loaded.',
+      container: true,
+      child: ExcludeSemantics(
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpace.md,
+            vertical: AppSpace.md,
+          ),
+          decoration: BoxDecoration(
+            color: AppColors.to.withValues(alpha: 0.06),
+            border: Border.all(color: AppColors.to.withValues(alpha: 0.3)),
+            borderRadius: BorderRadius.circular(AppRadii.lg),
+          ),
+          child: Row(
+            children: <Widget>[
+              const _PulsingDot(color: AppColors.to),
+              const Gap.h(AppSpace.md),
+              Expanded(
+                child: Text(
+                  '$drugs drugs · $rules reviewed switching rules',
+                  style: AppTextSizes.caption.copyWith(
+                    color: AppColors.text,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
-            ),
+              const StatusPill(
+                label: 'READY',
+                tone: AppColors.to,
+                compact: true,
+              ),
+            ],
           ),
-          const StatusPill(
-            label: 'READY',
-            tone: AppColors.to,
-            compact: true,
-          ),
-        ],
+        ),
       ),
     );
   }

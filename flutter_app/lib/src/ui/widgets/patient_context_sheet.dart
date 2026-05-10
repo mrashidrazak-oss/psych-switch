@@ -16,8 +16,11 @@
 // header shows an inline summary so the clinician knows what they're
 // editing.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch_engine/patient_context_pure.dart';
 
@@ -377,7 +380,10 @@ class _PatientContextSheetState extends State<_PatientContextSheet> {
                   ),
                   const Gap.h(AppSpace.sm),
                   FilledButton(
-                    onPressed: () => Navigator.of(context).pop(_build()),
+                    onPressed: () {
+                      unawaited(hapticsConfirm());
+                      Navigator.of(context).pop(_build());
+                    },
                     child: const Text('Apply'),
                   ),
                 ],

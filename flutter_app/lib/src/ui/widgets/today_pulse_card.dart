@@ -186,23 +186,27 @@ class _PulseRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = _tierColor();
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(AppRadii.sm),
-        onTap: () => context.pushNamed(
-          Routes.result,
-          extra: ResultScreenArgs(
-            input: engine.SwitchInput(
-              fromDrugId: pulse.fromDrugId,
-              fromDoseMg: 0, // doses unknown from pulse alone — Result
-              // screen falls back to the rule's reference doses.
-              toDrugId: pulse.toDrugId,
-              toDoseMg: 0,
+    return Semantics(
+      button: true,
+      label: '${pulse.entry.label}, ${pulse.caseLabel}, ${_whenText()}',
+      child: ExcludeSemantics(
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(AppRadii.sm),
+            onTap: () => context.pushNamed(
+              Routes.result,
+              extra: ResultScreenArgs(
+                input: engine.SwitchInput(
+                  fromDrugId: pulse.fromDrugId,
+                  fromDoseMg: 0, // doses unknown from pulse alone — Result
+                  // screen falls back to the rule's reference doses.
+                  toDrugId: pulse.toDrugId,
+                  toDoseMg: 0,
+                ),
+              ),
             ),
-          ),
-        ),
-        child: Padding(
+            child: Padding(
           padding: const EdgeInsets.symmetric(
             vertical: AppSpace.xs + 2,
             horizontal: AppSpace.xs,
@@ -250,6 +254,8 @@ class _PulseRow extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+        ),
           ),
         ),
       ),

@@ -4,12 +4,15 @@
 // cases" destructive action. More toggles (reminders, locale, text
 // size) follow as those features land.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:psychswitch/src/providers/preferences_provider.dart';
 import 'package:psychswitch/src/providers/saved_cases_provider.dart';
+import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -88,6 +91,7 @@ class SettingsScreen extends ConsumerWidget {
       ),
     );
     if (confirmed != true) return;
+    unawaited(hapticsWarning());
     final db = ref.read(databaseProvider);
     final removed = await db.deleteAll();
     if (!context.mounted) return;

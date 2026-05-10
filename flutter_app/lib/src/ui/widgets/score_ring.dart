@@ -96,41 +96,46 @@ class _ScoreRingState extends State<ScoreRing>
   @override
   Widget build(BuildContext context) {
     final color = _bandColor();
-    return SizedBox(
-      width: widget.size,
-      height: widget.size,
-      child: CustomPaint(
-        painter: _RingPainter(
-          progress: _progressAnim.value,
-          color: color,
-          strokeWidth: widget.strokeWidth,
-          trackColor: AppColors.border,
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                _displayScore.toString(),
-                style: TextStyle(
-                  color: AppColors.text,
-                  fontSize: widget.size * 0.32,
-                  fontWeight: FontWeight.w800,
-                  height: 1,
-                  letterSpacing: -1,
+    return Semantics(
+      label: 'PsychSwitch score ${widget.score.total} of 100, '
+          '${bandLabel(widget.score.band)}',
+      excludeSemantics: true,
+      child: SizedBox(
+        width: widget.size,
+        height: widget.size,
+        child: CustomPaint(
+          painter: _RingPainter(
+            progress: _progressAnim.value,
+            color: color,
+            strokeWidth: widget.strokeWidth,
+            trackColor: AppColors.border,
+          ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  _displayScore.toString(),
+                  style: TextStyle(
+                    color: AppColors.text,
+                    fontSize: widget.size * 0.32,
+                    fontWeight: FontWeight.w800,
+                    height: 1,
+                    letterSpacing: -1,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                bandLabel(widget.score.band).toUpperCase(),
-                style: TextStyle(
-                  color: color,
-                  fontSize: 9,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 1,
+                const SizedBox(height: 2),
+                Text(
+                  bandLabel(widget.score.band).toUpperCase(),
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 9,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

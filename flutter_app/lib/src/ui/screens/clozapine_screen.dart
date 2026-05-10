@@ -19,12 +19,15 @@
 // Every tab is read-only except ANC CHECK and RECHALLENGE which run
 // engine algorithms on entered values.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:psychswitch/src/providers/engine_provider.dart';
+import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch_engine/clozapine.dart';
@@ -671,14 +674,24 @@ class _AncCheckTabState extends State<_AncCheckTab> {
       setState(() => _result = null);
       return;
     }
-    setState(() {
-      _result = classifyFbc(
-        ancE9PerL: anc,
-        wbcE9PerL: wbc,
-        thresholds: widget.thresholds,
-        applyBen: _ben,
-      );
-    });
+    final next = classifyFbc(
+      ancE9PerL: anc,
+      wbcE9PerL: wbc,
+      thresholds: widget.thresholds,
+      applyBen: _ben,
+    );
+    // Fire haptic only when the zone *changes* — and louder for red.
+    if (next.zone != _result?.zone) {
+      switch (next.zone) {
+        case FbcZone.red:
+          unawaited(hapticsWarning());
+        case FbcZone.amber:
+          unawaited(hapticsConfirm());
+        case FbcZone.green:
+          unawaited(hapticsTap());
+      }
+    }
+    setState(() => _result = next);
   }
 
   @override

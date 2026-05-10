@@ -11,6 +11,8 @@
 //
 // Predicted-AE card, cost hint, smart alternatives — deferred to 5B+.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -18,6 +20,7 @@ import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/providers/patient_context_provider.dart';
 import 'package:psychswitch/src/providers/saved_cases_provider.dart';
 import 'package:psychswitch/src/router.dart';
+import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch/src/ui/widgets/score_ring.dart';
@@ -105,6 +108,7 @@ class ResultScreen extends ConsumerWidget {
       updatedISO: now,
     );
     await ref.read(savedCaseRepositoryProvider).save(saved);
+    unawaited(hapticsConfirm());
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -338,34 +342,42 @@ class _DrugPairHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Expanded(
-          child: _DrugTag(
-            label: 'FROM',
-            name: fromName,
-            dose: fromDose,
-            color: AppColors.from,
-          ),
+    return Semantics(
+      header: true,
+      label: 'Switch from $fromName ${_formatDose(fromDose)} milligrams '
+          'to $toName ${_formatDose(toDose)} milligrams.',
+      container: true,
+      child: ExcludeSemantics(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Expanded(
+              child: _DrugTag(
+                label: 'FROM',
+                name: fromName,
+                dose: fromDose,
+                color: AppColors.from,
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 18),
+              child: Icon(
+                Icons.arrow_forward,
+                color: AppColors.muted,
+                size: 20,
+              ),
+            ),
+            Expanded(
+              child: _DrugTag(
+                label: 'TO',
+                name: toName,
+                dose: toDose,
+                color: AppColors.to,
+              ),
+            ),
+          ],
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 18),
-          child: Icon(
-            Icons.arrow_forward,
-            color: AppColors.muted,
-            size: 20,
-          ),
-        ),
-        Expanded(
-          child: _DrugTag(
-            label: 'TO',
-            name: toName,
-            dose: toDose,
-            color: AppColors.to,
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
