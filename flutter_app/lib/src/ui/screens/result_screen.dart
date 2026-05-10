@@ -54,6 +54,7 @@ import 'package:psychswitch_engine/scale_schedule.dart';
 import 'package:psychswitch_engine/specialty.dart';
 import 'package:psychswitch_engine/switching_engine.dart';
 import 'package:psychswitch_engine/types/drug.dart';
+import 'package:psychswitch_engine/types/enums.dart';
 import 'package:psychswitch_engine/types/schedule_step.dart';
 import 'package:psychswitch_engine/util/case_id.dart';
 import 'package:share_plus/share_plus.dart';
@@ -350,25 +351,26 @@ class _ResultBody extends ConsumerWidget {
     final body = _planContent(plan, ctx, ctxWarnings);
     final hero = <Widget>[
       EntranceFade(
-        child: _DrugPairHeader(
+        child: _ResultHero(
+          input: input,
           fromName: _drugName(input.fromDrugId),
-          fromDose: input.fromDoseMg,
           toName: _drugName(input.toDrugId),
-          toDose: input.toDoseMg,
+          plan: plan,
+          toDrug: engine.getDrug(input.toDrugId),
+          contextWarnings: ctxWarnings,
         ),
       ),
-      const SizedBox(height: 16),
-      EntranceFade(index: 1, child: _StatusPill(plan: plan)),
-      const SizedBox(height: 24),
+      const Gap.v(AppSpace.xl - 4),
     ];
 
     if (context.isWide) {
       // Wide: hero band stays full width; the body splits into a
-      // 2-up Wrap so each card fills half the row. Spacer SizedBoxes
-      // are filtered out — Wrap handles its own spacing.
+      // 2-up Wrap so each card fills half the row. Spacer gaps and
+      // SizedBoxes are filtered out — Wrap handles its own spacing.
       final cards = body.whereType<Widget>().where((w) {
-        if (w is! SizedBox) return true;
-        return false;
+        if (w is SizedBox) return false;
+        if (w is Gap) return false;
+        return true;
       }).toList();
       return ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
@@ -527,42 +529,31 @@ class _ResultBody extends ConsumerWidget {
     List<ContextWarning> ctxWarnings,
   ) {
     return switch (plan) {
-      final SwitchPlanOk ok =>
-        <Widget>[
-          // PsychSwitch Score ring — composite 0-100 over evidence,
-          // AE alignment, context safety, DDI safety, dose fidelity.
-          // Patient-context warnings feed in via 7B; DDI hits + AE
-          // filter still TODO from earlier phases.
-          if (engine.getDrug(input.toDrugId) case final toDrug?)
-            _ScoreRingCard(
-              plan: ok,
-              toDrug: toDrug,
-              dosesMatchReference: ok.dosesMatchReference,
-              contextWarnings: ctxWarnings,
-            ),
-          const SizedBox(height: 16),
+      final SwitchPlanOk ok => <Widget>[
+          // Score ring + strategy + status now live in _ResultHero.
+          // The body picks up from the supporting clinical surfaces.
           if (ctxWarnings.isNotEmpty) ...<Widget>[
             _ContextWarningsCard(warnings: ctxWarnings),
-            const SizedBox(height: 16),
+            const Gap.v(AppSpace.lg),
           ],
           if (!ok.dosesMatchReference) ...<Widget>[
             const _ReferenceDosesBanner(),
-            const SizedBox(height: 16),
+            const Gap.v(AppSpace.lg),
           ],
           // Crossover shape chart — read the curves before the table.
           CrossoverChart(
             schedule: ok.schedule,
             totalDays: ok.rule.durationDays,
           ),
-          const SizedBox(height: 16),
+          const Gap.v(AppSpace.lg),
           _ScheduleCard(schedule: ok.schedule),
-          const SizedBox(height: 16),
+          const Gap.v(AppSpace.lg),
           // Why this strategy was chosen — sits with the schedule.
           RationalePanel(rationale: ok.rule.rationale),
-          const SizedBox(height: 16),
+          const Gap.v(AppSpace.lg),
           if (ok.safetyFlags.isNotEmpty) ...<Widget>[
             _SafetyFlagsCard(flags: ok.safetyFlags),
-            const SizedBox(height: 16),
+            const Gap.v(AppSpace.lg),
           ],
           // Discontinuation-syndrome banner for the from-drug — sits
           // with the other safety surfaces above the DDI list.
@@ -575,7 +566,7 @@ class _ResultBody extends ConsumerWidget {
             toDrugId: input.toDrugId,
             patientContext: ctx,
           ),
-          const SizedBox(height: 16),
+          const Gap.v(AppSpace.lg),
           // Specialty depth — pregnancy / breastfeeding / pediatric /
           // geriatric. Renders only when patient context activates.
           ..._specialtySection(ctx),
@@ -590,7 +581,7 @@ class _ResultBody extends ConsumerWidget {
           ..._counsellingSection(ok),
           // Rule provenance footer — trust signals for CME audit.
           RuleProvenanceCard(rule: ok.rule),
-          const SizedBox(height: 16),
+          const Gap.v(AppSpace.lg),
           _CitationsCard(citations: ok.citations),
         ],
       SwitchPlanMaudsleyGuidance(
@@ -598,42 +589,109 @@ class _ResultBody extends ConsumerWidget {
         :final safetyFlags,
       ) =>
         <Widget>[
-          _GuidanceCard(
-            headline: guidance.headline,
-            detail: guidance.detail,
-            waitDays: guidance.waitDays,
-          ),
-          const SizedBox(height: 16),
+          // Verdict (eyebrow + headline + body) now lives in hero.
           if (safetyFlags.isNotEmpty) ...<Widget>[
             _SafetyFlagsCard(flags: safetyFlags),
-            const SizedBox(height: 16),
+            const Gap.v(AppSpace.lg),
           ],
           _CitationsCard(citations: guidance.citations),
         ],
-      SwitchPlanMaoiWashout(
-        :final washoutDays,
-        :final reason,
-        :final safetyFlags,
-      ) =>
-        <Widget>[
-          _MaoiWashoutCard(washoutDays: washoutDays, reason: reason),
-          const SizedBox(height: 16),
-          if (safetyFlags.isNotEmpty)
-            _SafetyFlagsCard(flags: safetyFlags),
+      SwitchPlanMaoiWashout(:final safetyFlags) => <Widget>[
+          // Verdict (X-day washout + reason) now lives in hero.
+          if (safetyFlags.isNotEmpty) _SafetyFlagsCard(flags: safetyFlags),
         ],
-      SwitchPlanClozapineRedirect(:final guidance) =>
-        <Widget>[
-          _ClozapineRedirectCard(guidance: guidance),
+      SwitchPlanClozapineRedirect() => const <Widget>[
+          // Verdict + Open-Clozapine-module CTA both live in hero.
         ],
-      SwitchPlanNoRule(:final reason) => <Widget>[
-          _NoRuleCard(reason: reason),
+      SwitchPlanNoRule() => const <Widget>[
+          // Verdict (eyebrow + reason) lives in hero.
         ],
     };
   }
 }
 
-class _DrugPairHeader extends StatelessWidget {
-  const _DrugPairHeader({
+String _formatDose(num n) {
+  if (n is int || n == n.toInt()) return n.toInt().toString();
+  return n.toString();
+}
+
+/// Unified result hero — drug-pair band on top, verdict band below.
+///
+/// Every plan branch lives here so the clinician sees ONE focal object:
+/// the pair of drugs they asked about, and the engine's verdict on the
+/// switch. For OK plans the verdict is composed (strategy · duration
+/// eyebrow + ScoreRing + "Reviewed schedule"); for non-OK plans it's
+/// a tone-tinted callout (washout / guidance / clozapine / no-rule).
+///
+/// The two bands are joined by a 0.5-px hairline divider, no shadow,
+/// 0.5-px outer border. The same chrome rhythm as the new Switch hero.
+class _ResultHero extends StatelessWidget {
+  const _ResultHero({
+    required this.input,
+    required this.fromName,
+    required this.toName,
+    required this.plan,
+    required this.toDrug,
+    required this.contextWarnings,
+  });
+
+  final SwitchInput input;
+  final String fromName;
+  final String toName;
+  final SwitchPlan plan;
+  final Drug? toDrug;
+  final List<ContextWarning> contextWarnings;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      header: true,
+      label: 'Switch from $fromName ${_formatDose(input.fromDoseMg)} milligrams '
+          'to $toName ${_formatDose(input.toDoseMg)} milligrams.',
+      container: true,
+      child: ExcludeSemantics(
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(AppRadii.xl),
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              border: Border.all(
+                color: AppColors.border.withValues(alpha: 0.7),
+                width: 0.5,
+              ),
+              borderRadius: BorderRadius.circular(AppRadii.xl),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                _HeroDrugBand(
+                  fromName: fromName,
+                  fromDose: input.fromDoseMg,
+                  toName: toName,
+                  toDose: input.toDoseMg,
+                ),
+                Container(
+                  height: 0.5,
+                  color: AppColors.border.withValues(alpha: 0.7),
+                ),
+                _HeroVerdictBand(
+                  plan: plan,
+                  toDrug: toDrug,
+                  contextWarnings: contextWarnings,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Drug-pair band. Two columns (FROM left, TO right) joined by a quiet
+/// arrow. Names are sized to breathe — 17pt w700, -0.3 letter-spacing.
+class _HeroDrugBand extends StatelessWidget {
+  const _HeroDrugBand({
     required this.fromName,
     required this.fromDose,
     required this.toName,
@@ -647,108 +705,38 @@ class _DrugPairHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      header: true,
-      label: 'Switch from $fromName ${_formatDose(fromDose)} milligrams '
-          'to $toName ${_formatDose(toDose)} milligrams.',
-      container: true,
-      child: ExcludeSemantics(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              child: _DrugTag(
-                label: 'FROM',
-                name: fromName,
-                dose: fromDose,
-                color: AppColors.from,
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 18),
-              child: Icon(
-                Icons.arrow_forward,
-                color: AppColors.muted,
-                size: 20,
-              ),
-            ),
-            Expanded(
-              child: _DrugTag(
-                label: 'TO',
-                name: toName,
-                dose: toDose,
-                color: AppColors.to,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _DrugTag extends StatelessWidget {
-  const _DrugTag({
-    required this.label,
-    required this.name,
-    required this.dose,
-    required this.color,
-  });
-
-  final String label;
-  final String name;
-  final num dose;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
+    return Padding(
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.md + 2,
-        AppSpace.md - 2,
-        AppSpace.md + 2,
-        AppSpace.md,
+        AppSpace.lg + 2,
+        AppSpace.lg,
+        AppSpace.lg + 2,
+        AppSpace.lg,
       ),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.08),
-        border: Border.all(color: color.withValues(alpha: 0.4)),
-        borderRadius: BorderRadius.circular(AppRadii.lg),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              Container(
-                width: 6,
-                height: 6,
-                decoration:
-                    BoxDecoration(color: color, shape: BoxShape.circle),
-              ),
-              const Gap.h(AppSpace.xs + 2),
-              Text(
-                label,
-                style: AppTextSizes.eyebrow.copyWith(color: color),
-              ),
-            ],
-          ),
-          const Gap.v(AppSpace.xs + 2),
-          Text(
-            name,
-            style: const TextStyle(
-              color: AppColors.text,
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              height: 1.2,
+          Expanded(
+            child: _HeroDrugCell(
+              label: 'FROM',
+              name: fromName,
+              dose: fromDose,
+              tone: AppColors.from,
             ),
-            overflow: TextOverflow.ellipsis,
           ),
-          const Gap.v(2),
-          Text(
-            '${_formatDose(dose)} mg',
-            style: AppTextSizes.caption.copyWith(
-              color: AppColors.mutedStrong,
-              fontWeight: FontWeight.w500,
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpace.sm),
+            child: Icon(
+              Icons.arrow_forward_rounded,
+              color: AppColors.muted.withValues(alpha: 0.7),
+              size: 18,
+            ),
+          ),
+          Expanded(
+            child: _HeroDrugCell(
+              label: 'TO',
+              name: toName,
+              dose: toDose,
+              tone: AppColors.to,
+              alignEnd: true,
             ),
           ),
         ],
@@ -757,37 +745,393 @@ class _DrugTag extends StatelessWidget {
   }
 }
 
-String _formatDose(num n) {
-  if (n is int || n == n.toInt()) return n.toInt().toString();
-  return n.toString();
-}
+class _HeroDrugCell extends StatelessWidget {
+  const _HeroDrugCell({
+    required this.label,
+    required this.name,
+    required this.dose,
+    required this.tone,
+    this.alignEnd = false,
+  });
 
-class _StatusPill extends StatelessWidget {
-  const _StatusPill({required this.plan});
-
-  final SwitchPlan plan;
-
-  ({String label, Color color}) _styleFor() => switch (plan) {
-        SwitchPlanOk() => (label: 'Reviewed schedule', color: AppColors.to),
-        SwitchPlanMaudsleyGuidance() =>
-          (label: 'Maudsley class-level guidance', color: AppColors.accent),
-        SwitchPlanMaoiWashout() =>
-          (label: 'MAOI washout required', color: AppColors.danger),
-        SwitchPlanClozapineRedirect() =>
-          (label: 'Use Clozapine module', color: AppColors.warning),
-        SwitchPlanNoRule() =>
-          (label: 'No reviewed rule', color: AppColors.muted),
-      };
+  final String label;
+  final String name;
+  final num dose;
+  final Color tone;
+  final bool alignEnd;
 
   @override
   Widget build(BuildContext context) {
-    final style = _styleFor();
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: ui.StatusPill(
-        label: style.label,
-        tone: style.color,
-        dot: true,
+    final align = alignEnd ? CrossAxisAlignment.end : CrossAxisAlignment.start;
+    final textAlign = alignEnd ? TextAlign.end : TextAlign.start;
+    final dot = Container(
+      width: 6,
+      height: 6,
+      decoration: BoxDecoration(color: tone, shape: BoxShape.circle),
+    );
+    return Column(
+      crossAxisAlignment: align,
+      children: <Widget>[
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            if (!alignEnd) ...<Widget>[
+              dot,
+              const Gap.h(AppSpace.xs + 2),
+            ],
+            Text(
+              label,
+              style: AppTextSizes.eyebrow.copyWith(color: tone),
+            ),
+            if (alignEnd) ...<Widget>[
+              const Gap.h(AppSpace.xs + 2),
+              dot,
+            ],
+          ],
+        ),
+        const Gap.v(AppSpace.sm + 2),
+        Text(
+          name,
+          style: const TextStyle(
+            color: AppColors.text,
+            fontSize: 17,
+            fontWeight: FontWeight.w700,
+            height: 1.15,
+            letterSpacing: -0.3,
+          ),
+          textAlign: textAlign,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        const Gap.v(AppSpace.xxs),
+        Text(
+          '${_formatDose(dose)} mg',
+          style: const TextStyle(
+            color: AppColors.mutedStrong,
+            fontSize: 12.5,
+            fontWeight: FontWeight.w500,
+            height: 1.2,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Verdict band — switches on plan type. OK = composed (strategy +
+/// score ring + status). Non-OK = tone-tinted callout with eyebrow +
+/// headline + status text + body, and an optional CTA for clozapine.
+class _HeroVerdictBand extends StatelessWidget {
+  const _HeroVerdictBand({
+    required this.plan,
+    required this.toDrug,
+    required this.contextWarnings,
+  });
+
+  final SwitchPlan plan;
+  final Drug? toDrug;
+  final List<ContextWarning> contextWarnings;
+
+  @override
+  Widget build(BuildContext context) {
+    return switch (plan) {
+      final SwitchPlanOk ok => _OkVerdict(
+          plan: ok,
+          toDrug: toDrug,
+          contextWarnings: contextWarnings,
+        ),
+      SwitchPlanMaudsleyGuidance(:final guidance) => _ToneVerdict(
+          tone: AppColors.accent,
+          eyebrow: 'GUIDANCE',
+          headline: guidance.headline,
+          status: 'Maudsley class-level guidance',
+          body: guidance.waitDays != null
+              ? '${guidance.detail}\n\nWait period: ${guidance.waitDays} '
+                  'day${guidance.waitDays == 1 ? '' : 's'}.'
+              : guidance.detail,
+        ),
+      SwitchPlanMaoiWashout(:final washoutDays, :final reason) => _ToneVerdict(
+          tone: AppColors.danger,
+          eyebrow: 'MAOI WASHOUT',
+          headline: '$washoutDays-day washout required',
+          status: 'MAOI washout required',
+          body: reason,
+        ),
+      SwitchPlanClozapineRedirect(:final guidance) => _ClozapineVerdict(
+          guidance: guidance,
+        ),
+      SwitchPlanNoRule(:final reason) => _ToneVerdict(
+          tone: AppColors.muted,
+          eyebrow: 'NO REVIEWED RULE',
+          headline: 'No specific reviewed rule for this pair',
+          status: 'No reviewed rule',
+          body: reason,
+        ),
+    };
+  }
+}
+
+/// OK verdict band — strategy · duration eyebrow, ScoreRing, and the
+/// "Reviewed schedule" status text alongside a meta line ("Doses
+/// adapted · 3 safety flags" / etc.).
+class _OkVerdict extends StatelessWidget {
+  const _OkVerdict({
+    required this.plan,
+    required this.toDrug,
+    required this.contextWarnings,
+  });
+
+  final SwitchPlanOk plan;
+  final Drug? toDrug;
+  final List<ContextWarning> contextWarnings;
+
+  String get _strategyLabel => switch (plan.rule.strategy) {
+        Strategy.direct => 'DIRECT SWITCH',
+        Strategy.crossTaper => 'CROSS-TAPER',
+        Strategy.plateauCrossTaper => 'PLATEAU CROSS-TAPER',
+        Strategy.overlapTaper => 'OVERLAP TAPER',
+        Strategy.washout => 'WASHOUT',
+      };
+
+  String get _metaLine {
+    final parts = <String>[];
+    if (!plan.dosesMatchReference) parts.add('Doses adapted');
+    final flagCount = plan.safetyFlags.length;
+    if (flagCount > 0) {
+      parts.add('$flagCount safety flag${flagCount == 1 ? '' : 's'}');
+    }
+    return parts.join(' · ');
+  }
+
+  PsychSwitchScore _computeScore(Drug drug) {
+    final grade = gradeCitations(plan.citations);
+    final scaleResult = ScaleResult(
+      schedule: plan.schedule,
+      applied: const ScaleApplied(
+        mode: ScalingMode.proportional,
+        fromFactor: 1,
+        toFactor: 1,
+      ),
+      adapted: !plan.dosesMatchReference,
+      warnings: const <ScaleWarning>[],
+      evidencePenalty: plan.dosesMatchReference ? 0 : 1,
+    );
+    return computePsychSwitchScore(
+      ScoreInputs(
+        toDrug: drug,
+        scaleResult: scaleResult,
+        ddiHits: const <DdiHit>[],
+        contextWarnings: contextWarnings,
+        evidenceGrade: grade,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final score = toDrug == null ? null : _computeScore(toDrug!);
+    final meta = _metaLine;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpace.lg + 2,
+        AppSpace.md + 2,
+        AppSpace.lg + 2,
+        AppSpace.lg,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            '$_strategyLabel · ${plan.rule.durationDays} DAY'
+            '${plan.rule.durationDays == 1 ? '' : 'S'}',
+            style: AppTextSizes.eyebrow.copyWith(color: AppColors.to),
+          ),
+          const Gap.v(AppSpace.md),
+          Row(
+            children: <Widget>[
+              if (score != null) ...<Widget>[
+                ScoreRing(score: score, size: 64, strokeWidth: 6),
+                const Gap.h(AppSpace.lg),
+              ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Text(
+                      'Reviewed schedule',
+                      style: TextStyle(
+                        color: AppColors.text,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        height: 1.25,
+                        letterSpacing: -0.1,
+                      ),
+                    ),
+                    const Gap.v(AppSpace.xs),
+                    Text(
+                      meta.isNotEmpty
+                          ? meta
+                          : (score?.headline ?? 'Reviewed cross-titration'),
+                      style: const TextStyle(
+                        color: AppColors.muted,
+                        fontSize: 12.5,
+                        height: 1.45,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Tone-tinted verdict for non-OK plans. Left rail in `tone`, eyebrow
+/// in `tone`, dark headline, then a status row in `tone` and the body.
+class _ToneVerdict extends StatelessWidget {
+  const _ToneVerdict({
+    required this.tone,
+    required this.eyebrow,
+    required this.headline,
+    required this.status,
+    required this.body,
+  });
+
+  final Color tone;
+  final String eyebrow;
+  final String headline;
+
+  /// Short status text shown in `tone` between headline and body —
+  /// equivalent to the legacy StatusPill label.
+  final String status;
+  final String body;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: tone.withValues(alpha: 0.06),
+        border: Border(left: BorderSide(color: tone, width: 3)),
+      ),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpace.lg,
+        AppSpace.md + 2,
+        AppSpace.lg + 2,
+        AppSpace.lg,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            eyebrow,
+            style: AppTextSizes.eyebrow.copyWith(color: tone),
+          ),
+          const Gap.v(AppSpace.xs + 2),
+          Text(
+            headline,
+            style: const TextStyle(
+              color: AppColors.text,
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              height: 1.25,
+              letterSpacing: -0.3,
+            ),
+          ),
+          const Gap.v(AppSpace.xs + 2),
+          Text(
+            status,
+            style: TextStyle(
+              color: tone,
+              fontSize: 12.5,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.2,
+            ),
+          ),
+          const Gap.v(AppSpace.sm + 2),
+          Text(
+            body,
+            style: const TextStyle(
+              color: AppColors.mutedStrong,
+              fontSize: 13,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Clozapine redirect — same tone-tinted shape as `_ToneVerdict` but
+/// adds the "Open Clozapine module" CTA. Kept distinct so the button
+/// styling stays first-class.
+class _ClozapineVerdict extends StatelessWidget {
+  const _ClozapineVerdict({required this.guidance});
+
+  final String guidance;
+
+  @override
+  Widget build(BuildContext context) {
+    const tone = AppColors.warning;
+    return Container(
+      decoration: BoxDecoration(
+        color: tone.withValues(alpha: 0.06),
+        border: const Border(left: BorderSide(color: tone, width: 3)),
+      ),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpace.lg,
+        AppSpace.md + 2,
+        AppSpace.lg + 2,
+        AppSpace.lg,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'CLOZAPINE INITIATION',
+            style: AppTextSizes.eyebrow.copyWith(color: tone),
+          ),
+          const Gap.v(AppSpace.xs + 2),
+          const Text(
+            'Use Clozapine module',
+            style: TextStyle(
+              color: AppColors.text,
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              height: 1.25,
+              letterSpacing: -0.3,
+            ),
+          ),
+          const Gap.v(AppSpace.sm + 2),
+          Text(
+            guidance,
+            style: const TextStyle(
+              color: AppColors.mutedStrong,
+              fontSize: 13,
+              height: 1.5,
+            ),
+          ),
+          const Gap.v(AppSpace.md + 2),
+          FilledButton.icon(
+            onPressed: () => context.pushNamed(Routes.clozapine),
+            icon: const Icon(Icons.medical_services_outlined, size: 16),
+            label: const Text('Open Clozapine module'),
+            style: FilledButton.styleFrom(
+              backgroundColor: tone,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpace.md + 2,
+                vertical: AppSpace.sm + 2,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppRadii.md),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -1071,139 +1415,6 @@ class _CitationsCard extends StatelessWidget {
   }
 }
 
-class _GuidanceCard extends StatelessWidget {
-  const _GuidanceCard({
-    required this.headline,
-    required this.detail,
-    this.waitDays,
-  });
-
-  final String headline;
-  final String detail;
-  final int? waitDays;
-
-  @override
-  Widget build(BuildContext context) {
-    return _Banner(
-      tone: AppColors.accent,
-      eyebrow: 'GUIDANCE',
-      title: headline,
-      body: waitDays != null
-          ? '$detail\n\nWait period: $waitDays day${waitDays == 1 ? '' : 's'}.'
-          : detail,
-    );
-  }
-}
-
-class _MaoiWashoutCard extends StatelessWidget {
-  const _MaoiWashoutCard({
-    required this.washoutDays,
-    required this.reason,
-  });
-
-  final int washoutDays;
-  final String reason;
-
-  @override
-  Widget build(BuildContext context) {
-    return _Banner(
-      tone: AppColors.danger,
-      eyebrow: 'MAOI WASHOUT',
-      title: '$washoutDays-day washout required',
-      body: reason,
-    );
-  }
-}
-
-class _ClozapineRedirectCard extends StatelessWidget {
-  const _ClozapineRedirectCard({required this.guidance});
-
-  final String guidance;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.warning.withValues(alpha: 0.08),
-        border: const Border(
-          left: BorderSide(color: AppColors.warning, width: 3),
-        ),
-        borderRadius: const BorderRadius.only(
-          topRight: Radius.circular(8),
-          bottomRight: Radius.circular(8),
-        ),
-      ),
-      padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const Text(
-            'CLOZAPINE INITIATION',
-            style: TextStyle(
-              color: AppColors.warning,
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.5,
-            ),
-          ),
-          const SizedBox(height: 4),
-          const Text(
-            'Use the Clozapine module',
-            style: TextStyle(
-              color: AppColors.text,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            guidance,
-            style: const TextStyle(
-              color: AppColors.muted,
-              fontSize: 12,
-              height: 1.5,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: FilledButton.icon(
-              onPressed: () => context.pushNamed(Routes.clozapine),
-              icon: const Icon(Icons.medical_services_outlined, size: 16),
-              label: const Text('Open Clozapine module'),
-              style: FilledButton.styleFrom(
-                backgroundColor: AppColors.warning,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 8,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _NoRuleCard extends StatelessWidget {
-  const _NoRuleCard({required this.reason});
-
-  final String reason;
-
-  @override
-  Widget build(BuildContext context) {
-    return _Banner(
-      tone: AppColors.muted,
-      eyebrow: 'NO REVIEWED RULE',
-      title: 'No specific reviewed rule for this pair',
-      body: reason,
-    );
-  }
-}
-
 class _Banner extends StatelessWidget {
   const _Banner({
     required this.tone,
@@ -1274,104 +1485,32 @@ class _Card extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Hairline border + slightly larger radius. Same chrome rhythm as
+    // the result hero so cards read as a calmer secondary stream.
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppColors.border.withValues(alpha: 0.7),
+          width: 0.5,
+        ),
+        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
       ),
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpace.lg - 2,
+        AppSpace.md + 2,
+        AppSpace.lg - 2,
+        AppSpace.lg - 2,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
             title.toUpperCase(),
-            style: const TextStyle(
-              color: AppColors.muted,
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.5,
-            ),
+            style: AppTextSizes.eyebrow,
           ),
-          const SizedBox(height: 10),
+          const Gap.v(AppSpace.sm + 2),
           child,
-        ],
-      ),
-    );
-  }
-}
-
-class _ScoreRingCard extends StatelessWidget {
-  const _ScoreRingCard({
-    required this.plan,
-    required this.toDrug,
-    required this.dosesMatchReference,
-    required this.contextWarnings,
-  });
-
-  final SwitchPlanOk plan;
-  final Drug toDrug;
-  final bool dosesMatchReference;
-  final List<ContextWarning> contextWarnings;
-
-  @override
-  Widget build(BuildContext context) {
-    final grade = gradeCitations(plan.citations);
-    // Phase 7B feeds patient-context warnings; DDI hits + AE filter are
-    // still scaffolded empty until those features land. Dose fidelity is
-    // approximate — true when input doses match the rule's reference,
-    // otherwise treated as mild adaptation.
-    final scaleResult = ScaleResult(
-      schedule: plan.schedule,
-      applied: const ScaleApplied(
-        mode: ScalingMode.proportional,
-        fromFactor: 1,
-        toFactor: 1,
-      ),
-      adapted: !dosesMatchReference,
-      warnings: const <ScaleWarning>[],
-      evidencePenalty: dosesMatchReference ? 0 : 1,
-    );
-    final score = computePsychSwitchScore(
-      ScoreInputs(
-        toDrug: toDrug,
-        scaleResult: scaleResult,
-        ddiHits: const <DdiHit>[],
-        contextWarnings: contextWarnings,
-        evidenceGrade: grade,
-      ),
-    );
-    return _Card(
-      title: 'PsychSwitch Score',
-      child: Row(
-        children: <Widget>[
-          ScoreRing(score: score),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  score.headline,
-                  style: const TextStyle(
-                    color: AppColors.text,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  score.components.evidence.note,
-                  style: const TextStyle(
-                    color: AppColors.muted,
-                    fontSize: 11,
-                    height: 1.4,
-                  ),
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );
