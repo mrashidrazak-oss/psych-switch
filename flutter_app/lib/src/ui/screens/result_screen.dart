@@ -23,6 +23,7 @@ import 'package:psychswitch/src/providers/saved_cases_provider.dart';
 import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/services/notification_service.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
+import 'package:psychswitch/src/ui/theme/breakpoints.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/alternatives_card.dart';
 import 'package:psychswitch/src/ui/widgets/cost_comparison_card.dart';
@@ -347,20 +348,59 @@ class _ResultBody extends ConsumerWidget {
       ...warningsForDrug(ctx, input.toDrugId),
     ];
     final body = _planContent(plan, ctx, ctxWarnings);
+    final hero = <Widget>[
+      EntranceFade(
+        child: _DrugPairHeader(
+          fromName: _drugName(input.fromDrugId),
+          fromDose: input.fromDoseMg,
+          toName: _drugName(input.toDrugId),
+          toDose: input.toDoseMg,
+        ),
+      ),
+      const SizedBox(height: 16),
+      EntranceFade(index: 1, child: _StatusPill(plan: plan)),
+      const SizedBox(height: 24),
+    ];
+
+    if (context.isWide) {
+      // Wide: hero band stays full width; the body splits into a
+      // 2-up Wrap so each card fills half the row. Spacer SizedBoxes
+      // are filtered out — Wrap handles its own spacing.
+      final cards = body.whereType<Widget>().where((w) {
+        if (w is! SizedBox) return true;
+        return false;
+      }).toList();
+      return ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        children: <Widget>[
+          ...hero,
+          LayoutBuilder(
+            builder: (ctx, constraints) {
+              final w = (constraints.maxWidth - AppSpace.lg) / 2;
+              return Wrap(
+                spacing: AppSpace.lg,
+                runSpacing: AppSpace.lg,
+                children: <Widget>[
+                  for (var i = 0; i < cards.length; i++)
+                    SizedBox(
+                      width: w,
+                      child: EntranceFade(
+                        index: (2 + i).clamp(0, 6),
+                        child: cards[i],
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
+        ],
+      );
+    }
+
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       children: <Widget>[
-        EntranceFade(
-          child: _DrugPairHeader(
-            fromName: _drugName(input.fromDrugId),
-            fromDose: input.fromDoseMg,
-            toName: _drugName(input.toDrugId),
-            toDose: input.toDoseMg,
-          ),
-        ),
-        const SizedBox(height: 16),
-        EntranceFade(index: 1, child: _StatusPill(plan: plan)),
-        const SizedBox(height: 24),
+        ...hero,
         // Stagger the rest of the body — clamp the stagger index so
         // the tail (citations, monitoring) doesn't drag the entrance
         // out past 700ms even when the plan has many cards.

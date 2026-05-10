@@ -6,6 +6,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:psychswitch/src/ui/theme/breakpoints.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch_engine/glossary.dart';
 
@@ -110,6 +111,28 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
             ),
             if (entries.isEmpty)
               const Expanded(child: _GlossaryEmpty())
+            else if (context.isWide)
+              // Wide: 2-column tile grid via GridView for proper
+              // wrapping at long-content rows.
+              Expanded(
+                child: GridView.builder(
+                  padding: const EdgeInsets.fromLTRB(
+                    AppSpace.lg,
+                    AppSpace.xs,
+                    AppSpace.lg,
+                    AppSpace.xl,
+                  ),
+                  gridDelegate:
+                      const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 480,
+                    crossAxisSpacing: AppSpace.sm,
+                    mainAxisSpacing: AppSpace.sm,
+                    childAspectRatio: 2.6,
+                  ),
+                  itemCount: entries.length,
+                  itemBuilder: (_, i) => _GlossaryTile(entry: entries[i]),
+                ),
+              )
             else
               Expanded(
                 child: ListView.separated(

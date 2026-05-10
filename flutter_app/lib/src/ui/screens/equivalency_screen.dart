@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:psychswitch/src/ui/theme/breakpoints.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch_engine/dose_equivalents.dart';
 
@@ -68,23 +69,8 @@ class _EquivalencyScreenState extends State<EquivalencyScreen> {
             ? convertWithinFamily(_family, _fromId!, fromDose, _toId!)
             : null;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dose equivalency'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
-      ),
-      body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpace.lg + 4,
-            AppSpace.lg,
-            AppSpace.lg + 4,
-            AppSpace.xl,
-          ),
-          children: <Widget>[
+    // Form column — picker + dose input + family tabs + meta.
+    final form = <Widget>[
             // Family tabs.
             Container(
               decoration: BoxDecoration(
@@ -192,8 +178,10 @@ class _EquivalencyScreenState extends State<EquivalencyScreen> {
               onChanged: (id) => setState(() => _toId = id),
               hint: 'Pick a target drug',
             ),
-            const Gap.v(AppSpace.lg),
+    ];
 
+    // Output column — equivalent dose + limitations + citations.
+    final output = <Widget>[
             // Result.
             if (refResult != null)
               _ResultPanel(
@@ -255,8 +243,63 @@ class _EquivalencyScreenState extends State<EquivalencyScreen> {
                 ],
               ),
             ),
-          ],
+    ];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Dose equivalency'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
         ),
+      ),
+      body: SafeArea(
+        child: context.isWide
+            ? Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpace.lg + 4,
+                  AppSpace.lg,
+                  AppSpace.lg + 4,
+                  AppSpace.xl,
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: form,
+                        ),
+                      ),
+                    ),
+                    const Gap.h(AppSpace.xl),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: output,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : ListView(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpace.lg + 4,
+                  AppSpace.lg,
+                  AppSpace.lg + 4,
+                  AppSpace.xl,
+                ),
+                children: <Widget>[
+                  ...form,
+                  const Gap.v(AppSpace.lg),
+                  ...output,
+                ],
+              ),
       ),
     );
   }

@@ -16,6 +16,7 @@ import 'package:psychswitch/src/providers/saved_cases_provider.dart';
 import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/services/notification_service.dart';
 import 'package:psychswitch/src/ui/screens/result_screen.dart';
+import 'package:psychswitch/src/ui/theme/breakpoints.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
@@ -152,39 +153,54 @@ class _CaseList extends ConsumerWidget {
     await NotificationService.instance.cancelForCase(c.id);
   }
 
+  Widget _buildTile(BuildContext context, WidgetRef ref, int i) {
+    final c = cases[i];
+    final fromName = _drugName(c.fromDrugId);
+    final toName = _drugName(c.toDrugId);
+    // Only stagger the first 6 — past that, ListView clips and
+    // scrolling new items in shouldn't be animated.
+    return EntranceFade(
+      index: i.clamp(0, 5),
+      child: _CaseTile(
+        caseRow: c,
+        fromName: fromName,
+        toName: toName,
+        onTap: () => context.pushNamed(
+          Routes.result,
+          extra: ResultScreenArgs(
+            input: SwitchInput(
+              fromDrugId: c.fromDrugId,
+              fromDoseMg: c.fromDoseMg,
+              toDrugId: c.toDrugId,
+              toDoseMg: c.toDoseMg,
+            ),
+          ),
+        ),
+        onDelete: () => _onDeletePressed(context, ref, c),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (context.isWide) {
+      return GridView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 460,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+          childAspectRatio: 4.5,
+        ),
+        itemCount: cases.length,
+        itemBuilder: (_, i) => _buildTile(context, ref, i),
+      );
+    }
     return ListView.separated(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       itemCount: cases.length,
       separatorBuilder: (_, __) => const SizedBox(height: 8),
-      itemBuilder: (_, i) {
-        final c = cases[i];
-        final fromName = _drugName(c.fromDrugId);
-        final toName = _drugName(c.toDrugId);
-        // Only stagger the first 6 — past that, ListView clips and
-        // scrolling new items in shouldn't be animated.
-        return EntranceFade(
-          index: i.clamp(0, 5),
-          child: _CaseTile(
-            caseRow: c,
-            fromName: fromName,
-            toName: toName,
-            onTap: () => context.pushNamed(
-              Routes.result,
-              extra: ResultScreenArgs(
-                input: SwitchInput(
-                  fromDrugId: c.fromDrugId,
-                  fromDoseMg: c.fromDoseMg,
-                  toDrugId: c.toDrugId,
-                  toDoseMg: c.toDoseMg,
-                ),
-              ),
-            ),
-            onDelete: () => _onDeletePressed(context, ref, c),
-          ),
-        );
-      },
+      itemBuilder: (_, i) => _buildTile(context, ref, i),
     );
   }
 }

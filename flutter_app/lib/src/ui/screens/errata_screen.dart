@@ -11,6 +11,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:psychswitch/src/ui/theme/breakpoints.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch_engine/errata.dart';
 
@@ -160,6 +161,25 @@ class _ErrataScreenState extends State<ErrataScreen> {
                     style: TextStyle(color: AppColors.muted, fontSize: 13),
                   ),
                 ),
+              )
+            else if (context.isWide)
+              // Wide: 2-column masonry-ish grid via Wrap + half-width
+              // tiles. Each tile retains its own expand/collapse state.
+              LayoutBuilder(
+                builder: (ctx, constraints) {
+                  final w = (constraints.maxWidth - AppSpace.sm) / 2;
+                  return Wrap(
+                    spacing: AppSpace.sm,
+                    runSpacing: AppSpace.sm,
+                    children: <Widget>[
+                      for (final e in filtered)
+                        SizedBox(
+                          width: w,
+                          child: _ErrataRow(entry: e),
+                        ),
+                    ],
+                  );
+                },
               )
             else
               for (final e in filtered) ...<Widget>[

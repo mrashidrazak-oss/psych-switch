@@ -19,6 +19,7 @@ import 'package:psychswitch/src/providers/patient_context_provider.dart';
 import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/screens/result_screen.dart';
+import 'package:psychswitch/src/ui/theme/breakpoints.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch/src/ui/widgets/patient_context_sheet.dart';
@@ -113,6 +114,140 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
     final visibleDrugs = widget.engine.listDrugs();
     final ctx = ref.watch(patientContextProvider);
     final ctxSummary = summarisePatientContext(ctx);
+
+    final patientContextSection = <Widget>[
+      const Text('PATIENT CONTEXT', style: AppTextSizes.eyebrow),
+      const Gap.v(AppSpace.sm),
+      _PatientContextTile(
+        summary: ctxSummary,
+        onTap: _openPatientContextSheet,
+      ),
+    ];
+
+    final fromSection = <Widget>[
+      Row(
+        children: <Widget>[
+          const _DrugDot(color: AppColors.from),
+          const Gap.h(AppSpace.sm),
+          Text(
+            'FROM DRUG',
+            style: AppTextSizes.eyebrow.copyWith(color: AppColors.from),
+          ),
+        ],
+      ),
+      const Gap.v(AppSpace.sm),
+      _DrugPickerField(
+        label: 'Choose drug',
+        selected: _from,
+        drugs: visibleDrugs,
+        rules: widget.engine.listRules(),
+        onPicked: (d) => setState(() {
+          _from = d;
+          if (_to?.id == d.id) _to = null;
+        }),
+      ),
+      if (_from != null) ...<Widget>[
+        const Gap.v(AppSpace.md),
+        _DoseField(
+          label: '${_from!.genericName} dose (mg)',
+          controller: _fromDoseCtl,
+          onChanged: (_) => setState(() {}),
+        ),
+      ],
+    ];
+
+    final toSection = <Widget>[
+      Row(
+        children: <Widget>[
+          const _DrugDot(color: AppColors.to),
+          const Gap.h(AppSpace.sm),
+          Text(
+            'TO DRUG',
+            style: AppTextSizes.eyebrow.copyWith(color: AppColors.to),
+          ),
+        ],
+      ),
+      const Gap.v(AppSpace.sm),
+      _DrugPickerField(
+        label: 'Choose drug',
+        selected: _to,
+        drugs: visibleDrugs.where((d) => d.id != _from?.id).toList(),
+        rules: widget.engine.listRules(),
+        fromDrugId: _from?.id,
+        onPicked: (d) => setState(() => _to = d),
+      ),
+      if (_to != null) ...<Widget>[
+        const Gap.v(AppSpace.md),
+        _DoseField(
+          label: '${_to!.genericName} dose (mg)',
+          controller: _toDoseCtl,
+          onChanged: (_) => setState(() {}),
+        ),
+      ],
+    ];
+
+    final generateButton = SizedBox(
+      width: double.infinity,
+      child: FilledButton.icon(
+        onPressed: _ready ? _onContinue : null,
+        icon: const Icon(Icons.auto_awesome_rounded, size: 18),
+        label: const Text('Generate plan'),
+        style: FilledButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          textStyle: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.2,
+          ),
+        ),
+      ),
+    );
+
+    if (context.isWide) {
+      // Wide: patient context + FROM in the left column, TO + Generate
+      // on the right. The transition rail collapses to a centre divider.
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(
+          AppSpace.xl,
+          AppSpace.xl,
+          AppSpace.xl,
+          AppSpace.xxl,
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    ...patientContextSection,
+                    const Gap.v(AppSpace.xl),
+                    ...fromSection,
+                  ],
+                ),
+              ),
+            ),
+            const Gap.h(AppSpace.xl),
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    ...toSection,
+                    const Gap.v(AppSpace.xl),
+                    generateButton,
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     return ListView(
       padding: const EdgeInsets.fromLTRB(
         AppSpace.xl,
@@ -121,95 +256,13 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
         AppSpace.xxl,
       ),
       children: <Widget>[
-        const Text('PATIENT CONTEXT', style: AppTextSizes.eyebrow),
-        const Gap.v(AppSpace.sm),
-        _PatientContextTile(
-          summary: ctxSummary,
-          onTap: _openPatientContextSheet,
-        ),
+        ...patientContextSection,
         const Gap.v(AppSpace.xxl),
-
-        // From-drug section.
-        Row(
-          children: <Widget>[
-            const _DrugDot(color: AppColors.from),
-            const Gap.h(AppSpace.sm),
-            Text(
-              'FROM DRUG',
-              style: AppTextSizes.eyebrow.copyWith(color: AppColors.from),
-            ),
-          ],
-        ),
-        const Gap.v(AppSpace.sm),
-        _DrugPickerField(
-          label: 'Choose drug',
-          selected: _from,
-          drugs: visibleDrugs,
-          rules: widget.engine.listRules(),
-          onPicked: (d) => setState(() {
-            _from = d;
-            // Clear to-drug if it was the same drug.
-            if (_to?.id == d.id) _to = null;
-          }),
-        ),
-        if (_from != null) ...<Widget>[
-          const Gap.v(AppSpace.md),
-          _DoseField(
-            label: '${_from!.genericName} dose (mg)',
-            controller: _fromDoseCtl,
-            onChanged: (_) => setState(() {}),
-          ),
-        ],
-
-        // Visual transition between from and to.
+        ...fromSection,
         const _TransitionRail(),
-
-        // To-drug section.
-        Row(
-          children: <Widget>[
-            const _DrugDot(color: AppColors.to),
-            const Gap.h(AppSpace.sm),
-            Text(
-              'TO DRUG',
-              style: AppTextSizes.eyebrow.copyWith(color: AppColors.to),
-            ),
-          ],
-        ),
-        const Gap.v(AppSpace.sm),
-        _DrugPickerField(
-          label: 'Choose drug',
-          selected: _to,
-          drugs: visibleDrugs.where((d) => d.id != _from?.id).toList(),
-          rules: widget.engine.listRules(),
-          fromDrugId: _from?.id,
-          onPicked: (d) => setState(() => _to = d),
-        ),
-        if (_to != null) ...<Widget>[
-          const Gap.v(AppSpace.md),
-          _DoseField(
-            label: '${_to!.genericName} dose (mg)',
-            controller: _toDoseCtl,
-            onChanged: (_) => setState(() {}),
-          ),
-        ],
+        ...toSection,
         const Gap.v(AppSpace.xl),
-
-        SizedBox(
-          width: double.infinity,
-          child: FilledButton.icon(
-            onPressed: _ready ? _onContinue : null,
-            icon: const Icon(Icons.auto_awesome_rounded, size: 18),
-            label: const Text('Generate plan'),
-            style: FilledButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              textStyle: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.2,
-              ),
-            ),
-          ),
-        ),
+        generateButton,
       ],
     );
   }

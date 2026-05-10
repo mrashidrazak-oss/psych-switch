@@ -8,6 +8,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:psychswitch/src/ui/theme/breakpoints.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/status_pill.dart';
 import 'package:psychswitch_engine/adverse_effects.dart';
@@ -46,6 +47,57 @@ class _AdverseEffectsScreenState extends State<AdverseEffectsScreen> {
       grouped.putIfAbsent(ae.category, () => <AdverseEffect>[]).add(ae);
     }
 
+    final intro = Text(
+      'Find the cause and a candidate switch target for common '
+      'problems.',
+      style: AppTextSizes.caption.copyWith(height: 1.55),
+    );
+
+    final categorisedList = <Widget>[
+      for (final cat
+          in _categoryOrder.where((c) => grouped[c] != null))
+        Padding(
+          padding: const EdgeInsets.only(bottom: AppSpace.lg),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(left: AppSpace.xs),
+                child: Text(
+                  categoryLabels[cat]?.toUpperCase() ??
+                      cat.jsonValue.toUpperCase(),
+                  style: AppTextSizes.eyebrow,
+                ),
+              ),
+              const Gap.v(AppSpace.sm),
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  border: Border.all(color: AppColors.border),
+                  borderRadius: BorderRadius.circular(AppRadii.lg),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: Column(
+                  children: <Widget>[
+                    for (var i = 0; i < grouped[cat]!.length; i++)
+                      _AeRow(
+                        ae: grouped[cat]![i],
+                        isLast: i == grouped[cat]!.length - 1,
+                        isActive: _selected?.id == grouped[cat]![i].id,
+                        onTap: () => setState(() {
+                          _selected = _selected?.id == grouped[cat]![i].id
+                              ? null
+                              : grouped[cat]![i];
+                        }),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+    ];
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Adverse-effect lookup'),
@@ -55,86 +107,120 @@ class _AdverseEffectsScreenState extends State<AdverseEffectsScreen> {
         ),
       ),
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpace.lg + 4,
-            AppSpace.lg,
-            AppSpace.lg + 4,
-            AppSpace.xl,
-          ),
-          children: <Widget>[
-            Text(
-              'Find the cause and a candidate switch target for common '
-              'problems.',
-              style: AppTextSizes.caption.copyWith(height: 1.55),
-            ),
-            const Gap.v(AppSpace.md),
-
-            // Detail panel — visible at the top when something is
-            // selected. Smooth expand/collapse via AnimatedSize.
-            AnimatedSize(
-              duration: const Duration(milliseconds: 240),
-              curve: Curves.easeOutCubic,
-              alignment: Alignment.topCenter,
-              child: _selected == null
-                  ? const SizedBox.shrink()
-                  : Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpace.lg),
-                      child: _DetailPanel(
-                        ae: _selected!,
-                        capitalize: _capitalize,
-                        onClose: () => setState(() => _selected = null),
-                      ),
-                    ),
-            ),
-
-            // Categorised list.
-            for (final cat
-                in _categoryOrder.where((c) => grouped[c] != null))
-              Padding(
-                padding: const EdgeInsets.only(bottom: AppSpace.lg),
-                child: Column(
+        child: context.isWide
+            // Wide: list on the left, detail panel pinned to the right
+            // (or a soft "pick a problem" prompt when nothing's selected).
+            ? Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpace.lg + 4,
+                  AppSpace.lg,
+                  AppSpace.lg + 4,
+                  AppSpace.xl,
+                ),
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(left: AppSpace.xs),
-                      child: Text(
-                        categoryLabels[cat]?.toUpperCase() ??
-                            cat.jsonValue.toUpperCase(),
-                        style: AppTextSizes.eyebrow,
+                    Expanded(
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            intro,
+                            const Gap.v(AppSpace.md),
+                            ...categorisedList,
+                          ],
+                        ),
                       ),
                     ),
-                    const Gap.v(AppSpace.sm),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        border: Border.all(color: AppColors.border),
-                        borderRadius: BorderRadius.circular(AppRadii.lg),
-                      ),
-                      clipBehavior: Clip.antiAlias,
-                      child: Column(
-                        children: <Widget>[
-                          for (var i = 0; i < grouped[cat]!.length; i++)
-                            _AeRow(
-                              ae: grouped[cat]![i],
-                              isLast: i == grouped[cat]!.length - 1,
-                              isActive:
-                                  _selected?.id == grouped[cat]![i].id,
-                              onTap: () => setState(() {
-                                _selected = _selected?.id ==
-                                        grouped[cat]![i].id
-                                    ? null
-                                    : grouped[cat]![i];
-                              }),
-                            ),
-                        ],
+                    const Gap.h(AppSpace.xl),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        child: _selected == null
+                            ? _PickPrompt()
+                            : _DetailPanel(
+                                ae: _selected!,
+                                capitalize: _capitalize,
+                                onClose: () =>
+                                    setState(() => _selected = null),
+                              ),
                       ),
                     ),
                   ],
                 ),
+              )
+            // Narrow: detail expands inline above the list, AnimatedSize
+            // for the smooth reveal.
+            : ListView(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpace.lg + 4,
+                  AppSpace.lg,
+                  AppSpace.lg + 4,
+                  AppSpace.xl,
+                ),
+                children: <Widget>[
+                  intro,
+                  const Gap.v(AppSpace.md),
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 240),
+                    curve: Curves.easeOutCubic,
+                    alignment: Alignment.topCenter,
+                    child: _selected == null
+                        ? const SizedBox.shrink()
+                        : Padding(
+                            padding:
+                                const EdgeInsets.only(bottom: AppSpace.lg),
+                            child: _DetailPanel(
+                              ae: _selected!,
+                              capitalize: _capitalize,
+                              onClose: () =>
+                                  setState(() => _selected = null),
+                            ),
+                          ),
+                  ),
+                  ...categorisedList,
+                ],
               ),
-          ],
-        ),
+      ),
+    );
+  }
+}
+
+class _PickPrompt extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpace.xl),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(AppRadii.lg),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Icon(
+            Icons.touch_app_outlined,
+            color: AppColors.muted,
+            size: 28,
+          ),
+          const Gap.v(AppSpace.md),
+          const Text(
+            'Pick a problem',
+            style: TextStyle(
+              color: AppColors.text,
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const Gap.v(AppSpace.xs),
+          Text(
+            'Tap any adverse-effect on the left to see its common '
+            'causes, candidate switch targets, and management note.',
+            style: AppTextSizes.caption.copyWith(height: 1.5),
+          ),
+        ],
       ),
     );
   }
