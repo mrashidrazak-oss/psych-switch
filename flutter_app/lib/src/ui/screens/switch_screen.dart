@@ -1,34 +1,40 @@
 // Switch screen.
 //
-// One metaphor: a cross-titration is a transformation from drug A to
-// drug B. The screen embodies that. A single hero card holds both
-// ends of the switch (FROM | TO), connected by a swap-able rail that
-// is vertical on phones and horizontal on the foldable inner display.
-// Patient context lives as an AppBar action.
+// One card. One cross-titration. One beat.
 //
-// Function layer (the part that earns "world class"):
-//   • Recently-used drug chips above the picker — tap to fill the
-//     next-empty slot. Computed live from saved cases (most recent
-//     first, dedup'd, up to 5).
-//   • Auto-prefill typical starting dose when a drug is picked.
-//     Range hint sits below the field so off-piste doses are visible.
-//   • Tier badge persists on the TO drug after picking — the
-//     smart-picker verdict (★ Best fit / Reviewed / Caution / Avoid)
-//     stays visible. The picker sheet shows it; the form forgets it
-//     by default. We don't.
-//   • One-tap swap on the connector when both ends are filled.
+// FROM and TO are the two stations of a journey. The connector
+// between them is the journey itself: when the form is empty, it's
+// a quiet hairline with a directional badge. When the form is
+// valid, the connector EXPANDS to reveal the engine's verdict —
+// strategy, duration, score, safety counts. This is the preflight,
+// inlined. There is no separate "preflight card" competing with the
+// hero, because the hero IS the preflight, the moment both ends are
+// filled.
+//
+// Restraint pass over the previous design:
+//   • Drops the heavy drop-shadow. The card is a tinted surface
+//     against the scaffold; that's contrast enough.
+//   • Hairline 0.5-px border. The card holds itself; chrome is
+//     for navigation, not decoration.
+//   • Drug name typography upgraded to 24-pt w800 with -0.6
+//     letter-spacing — the drug is the focal point of each
+//     section.
+//   • Dose row presented as a quiet form line, no shouting label.
+//   • The tier badge on the TO drug, the swap button on the
+//     connector, the patient-context AppBar action — all kept,
+//     all calm.
+//
+// Function layer (preserved from prior pass):
+//   • Recently-used drug chips above the hero. Tap fills the
+//     next-empty slot.
+//   • Auto-prefill typical starting dose on pick. Range hint
+//     under the field.
+//   • Tier badge persists on TO once picked.
+//   • Same-drug guard renders soft warning callout.
+//   • Live engine preflight inside the connector (this is the
+//     redesign's core move).
+//   • One-tap swap on the connector when both ends filled.
 //   • One-tap clear in the AppBar.
-//   • Same-drug guard renders a soft inline warning with explanation.
-//   • Live preflight card the moment the form is valid: score ring,
-//     strategy + duration eyebrow, safety-flag count, DDI hit count,
-//     cost delta. Branches handle every SwitchPlan subtype (washout,
-//     Maudsley class guidance, clozapine redirect, no-rule).
-//   • The preflight is the moment of confidence — the clinician
-//     knows what Result will say before they tap Generate.
-//
-// Drug picker sheet, patient context sheet, smart-picker tier
-// ranking — preserved verbatim. The redesign is scaffolding +
-// affordances on top.
 
 import 'dart:async';
 
@@ -59,8 +65,9 @@ import 'package:psychswitch_engine/switching_engine.dart';
 import 'package:psychswitch_engine/types/drug.dart';
 import 'package:psychswitch_engine/types/switching_rule.dart';
 
-/// Maximum hero-card width on wide displays.
-const double _maxFormWidth = 760;
+const double _maxFormWidth = 720;
+const Key _fromDoseKey = ValueKey<String>('switch.fromDose');
+const Key _toDoseKey = ValueKey<String>('switch.toDose');
 
 class SwitchScreen extends ConsumerWidget {
   const SwitchScreen({super.key});
@@ -207,8 +214,6 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
     );
   }
 
-  /// Pick a drug from a recently-used chip — fills the next empty
-  /// slot (FROM if empty, otherwise TO unless TO would equal FROM).
   void _onRecentTap(Drug d) {
     unawaited(hapticsTap());
     if (_from == null) {
@@ -216,19 +221,14 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
     } else if (_to == null && _from!.id != d.id) {
       _setTo(d);
     } else if (_from!.id != d.id) {
-      // Both filled — replace TO.
       _setTo(d);
     }
   }
 
-  /// Engine output for the current input. Null until both ends are
-  /// valid. Used by the preflight card.
   ({SwitchPlan plan, RankedDrug? toRank})? _engineOutput() {
     final input = _input;
     if (input == null) return null;
     final plan = widget.engine.generateSwitchPlan(input);
-    // Resolve the TO drug's smart-picker verdict relative to FROM
-    // for the inline tier badge.
     final ranked = rankDrugs(
       <Drug>[_to!],
       RankInput(
@@ -248,7 +248,6 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
     final asyncCases = ref.watch(savedCasesProvider);
     final recents = _recentDrugs(asyncCases.value, widget.engine);
     final engineOut = _engineOutput();
-    final toRank = engineOut?.toRank;
 
     return Scaffold(
       appBar: AppBar(
@@ -299,16 +298,17 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
                         drugs: recents,
                         onTap: _onRecentTap,
                       ),
-                      const Gap.v(AppSpace.md),
+                      const Gap.v(AppSpace.md + 2),
                     ],
 
                     _HeroCard(
                       from: _from,
                       to: _to,
-                      toRank: toRank,
+                      toRank: engineOut?.toRank,
+                      plan: engineOut?.plan,
+                      ctx: ctx,
                       fromDoseCtl: _fromDoseCtl,
                       toDoseCtl: _toDoseCtl,
-                      sameDrug: _sameDrug,
                       onPickFrom: () async {
                         final picked = await _openPicker(
                           drugs: visibleDrugs,
@@ -335,17 +335,6 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
                       const _SameDrugWarning(),
                     ],
 
-                    if (engineOut != null) ...<Widget>[
-                      const Gap.v(AppSpace.lg),
-                      _PreflightCard(
-                        plan: engineOut.plan,
-                        engine: widget.engine,
-                        ctx: ctx,
-                        from: _from!,
-                        to: _to!,
-                      ),
-                    ],
-
                     const Gap.v(AppSpace.xl),
                     _PrimaryCta(
                       enabled: _ready,
@@ -362,8 +351,6 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
     );
   }
 
-  /// Last 5 unique drugs the user has touched (across both ends of
-  /// every saved case). Most recent first.
   static List<Drug> _recentDrugs(
     List<SavedCase>? cases,
     SwitchingEngine engine,
@@ -446,7 +433,7 @@ class _ContextSummaryChip extends StatelessWidget {
         child: Ink(
           decoration: BoxDecoration(
             border: Border.all(
-              color: AppColors.accent.withValues(alpha: 0.3),
+              color: AppColors.accent.withValues(alpha: 0.28),
             ),
             borderRadius: BorderRadius.circular(AppRadii.lg),
           ),
@@ -572,9 +559,10 @@ class _HeroCard extends StatelessWidget {
     required this.from,
     required this.to,
     required this.toRank,
+    required this.plan,
+    required this.ctx,
     required this.fromDoseCtl,
     required this.toDoseCtl,
-    required this.sameDrug,
     required this.onPickFrom,
     required this.onPickTo,
     required this.onSwap,
@@ -584,9 +572,10 @@ class _HeroCard extends StatelessWidget {
   final Drug? from;
   final Drug? to;
   final RankedDrug? toRank;
+  final SwitchPlan? plan;
+  final PatientContext ctx;
   final TextEditingController fromDoseCtl;
   final TextEditingController toDoseCtl;
-  final bool sameDrug;
   final VoidCallback onPickFrom;
   final VoidCallback onPickTo;
   final VoidCallback onSwap;
@@ -595,11 +584,13 @@ class _HeroCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final canSwap = from != null && to != null;
+
     final fromSection = _DrugSection(
       side: 'FROM DRUG',
       tone: AppColors.from,
       drug: from,
       doseCtl: fromDoseCtl,
+      doseFieldKey: _fromDoseKey,
       onPick: onPickFrom,
       onDoseChanged: onDoseChanged,
     );
@@ -608,25 +599,27 @@ class _HeroCard extends StatelessWidget {
       tone: AppColors.to,
       drug: to,
       doseCtl: toDoseCtl,
+      doseFieldKey: _toDoseKey,
       onPick: onPickTo,
       onDoseChanged: onDoseChanged,
       tier: toRank?.tier,
       tierTag: toRank?.tags.firstOrNull,
     );
 
+    final journey = _Journey(
+      plan: plan,
+      from: from,
+      to: to,
+      ctx: ctx,
+      canSwap: canSwap,
+      onSwap: onSwap,
+    );
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: AppColors.border, width: 0.5),
         borderRadius: BorderRadius.circular(AppRadii.xl),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.18),
-            blurRadius: 18,
-            spreadRadius: -10,
-            offset: const Offset(0, 6),
-          ),
-        ],
       ),
       clipBehavior: Clip.antiAlias,
       child: context.isWide
@@ -635,25 +628,13 @@ class _HeroCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   Expanded(child: fromSection),
-                  _Connector(
-                    horizontal: true,
-                    canSwap: canSwap,
-                    onSwap: onSwap,
-                  ),
+                  journey,
                   Expanded(child: toSection),
                 ],
               ),
             )
           : Column(
-              children: <Widget>[
-                fromSection,
-                _Connector(
-                  horizontal: false,
-                  canSwap: canSwap,
-                  onSwap: onSwap,
-                ),
-                toSection,
-              ],
+              children: <Widget>[fromSection, journey, toSection],
             ),
     );
   }
@@ -665,6 +646,7 @@ class _DrugSection extends StatelessWidget {
     required this.tone,
     required this.drug,
     required this.doseCtl,
+    required this.doseFieldKey,
     required this.onPick,
     required this.onDoseChanged,
     this.tier,
@@ -675,6 +657,7 @@ class _DrugSection extends StatelessWidget {
   final Color tone;
   final Drug? drug;
   final TextEditingController doseCtl;
+  final Key doseFieldKey;
   final VoidCallback onPick;
   final VoidCallback onDoseChanged;
   final RelevanceTier? tier;
@@ -684,10 +667,10 @@ class _DrugSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
+        AppSpace.xl - 2,
         AppSpace.lg,
-        AppSpace.md + 2,
-        AppSpace.lg,
-        AppSpace.lg,
+        AppSpace.xl - 2,
+        AppSpace.xl - 2,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -717,11 +700,12 @@ class _DrugSection extends StatelessWidget {
               ],
             ],
           ),
-          const Gap.v(AppSpace.sm + 2),
+          const Gap.v(AppSpace.md),
           _DrugPickerTile(drug: drug, onPick: onPick),
           if (drug != null) ...<Widget>[
-            const Gap.v(AppSpace.md),
+            const Gap.v(AppSpace.md + 2),
             _DoseField(
+              key: doseFieldKey,
               drug: drug!,
               controller: doseCtl,
               onChanged: onDoseChanged,
@@ -758,25 +742,13 @@ class _DrugPickerTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final hasDrug = drug != null;
     return Material(
-      color: AppColors.bg.withValues(alpha: 0.5),
+      color: Colors.transparent,
       borderRadius: BorderRadius.circular(AppRadii.lg),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onPick,
-        child: Ink(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color:
-                  hasDrug ? AppColors.borderStrong : AppColors.border,
-            ),
-            borderRadius: BorderRadius.circular(AppRadii.lg),
-          ),
-          padding: const EdgeInsets.fromLTRB(
-            AppSpace.md + 2,
-            AppSpace.md - 2,
-            AppSpace.md,
-            AppSpace.md - 2,
-          ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: AppSpace.xs),
           child: Row(
             children: <Widget>[
               Expanded(
@@ -789,23 +761,30 @@ class _DrugPickerTile extends StatelessWidget {
                             drug!.genericName,
                             style: const TextStyle(
                               color: AppColors.text,
-                              fontSize: 17,
+                              fontSize: 24,
                               fontWeight: FontWeight.w800,
-                              letterSpacing: -0.3,
-                              height: 1.2,
+                              letterSpacing: -0.6,
+                              height: 1.05,
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
-                          const Gap.v(AppSpace.xs + 2),
-                          _ClassChip(label: drug!.drugClass),
+                          const Gap.v(AppSpace.xs),
+                          Text(
+                            drug!.drugClass,
+                            style: AppTextSizes.micro.copyWith(
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.2,
+                            ),
+                          ),
                         ],
                       )
                     : const Text(
                         'Pick a drug',
                         style: TextStyle(
                           color: AppColors.muted,
-                          fontSize: 15,
+                          fontSize: 18,
                           fontWeight: FontWeight.w500,
+                          letterSpacing: -0.2,
                         ),
                       ),
               ),
@@ -822,40 +801,12 @@ class _DrugPickerTile extends StatelessWidget {
   }
 }
 
-class _ClassChip extends StatelessWidget {
-  const _ClassChip({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpace.sm,
-        vertical: 2,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.muted.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(AppRadii.sm - 2),
-      ),
-      child: Text(
-        label,
-        style: const TextStyle(
-          color: AppColors.mutedStrong,
-          fontSize: 10.5,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 0.3,
-        ),
-      ),
-    );
-  }
-}
-
 class _DoseField extends StatelessWidget {
   const _DoseField({
     required this.drug,
     required this.controller,
     required this.onChanged,
+    super.key,
   });
 
   final Drug drug;
@@ -886,6 +837,7 @@ class _DoseField extends StatelessWidget {
             fontFeatures: <FontFeature>[FontFeature.tabularFigures()],
           ),
           decoration: InputDecoration(
+            // Test contract + RN parity: '<drug> dose (mg)'.
             labelText: '${drug.genericName} dose (mg)',
             suffixText: 'mg',
             suffixStyle: AppTextSizes.micro.copyWith(
@@ -904,12 +856,87 @@ class _DoseField extends StatelessWidget {
   }
 }
 
-/// Connector between FROM and TO. Vertical hairline + centred swap
-/// button. Vertical orientation on phones, horizontal on the foldable
-/// inner / tablet. Becomes interactive (lights accent + animates) the
-/// moment both ends are filled.
-class _Connector extends StatelessWidget {
-  const _Connector({
+// ── Journey (the connector that becomes the preflight) ─────────────
+
+/// The connector between FROM and TO. Three states:
+///
+///   • Empty / partial form → minimal hairline + directional badge.
+///   • Form complete + valid SwitchPlanOk → expanded "journey" band
+///     showing strategy + duration + score + safety counts. The
+///     connector earns its place by carrying meaning, not by being a
+///     divider.
+///   • Form complete but plan is washout / Maudsley / clozapine /
+///     no-rule → tinted band with the engine's verdict in plain
+///     language.
+///
+/// The expand-collapse animation is AnimatedSize with easeOutCubic.
+/// Vertical on phones; horizontal on the foldable inner / tablet
+/// (the relationship reads as a left-to-right journey on wide).
+class _Journey extends StatelessWidget {
+  const _Journey({
+    required this.plan,
+    required this.from,
+    required this.to,
+    required this.ctx,
+    required this.canSwap,
+    required this.onSwap,
+  });
+
+  final SwitchPlan? plan;
+  final Drug? from;
+  final Drug? to;
+  final PatientContext ctx;
+  final bool canSwap;
+  final VoidCallback onSwap;
+
+  @override
+  Widget build(BuildContext context) {
+    final isWide = context.isWide;
+    final isEmpty = plan == null;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.bg.withValues(alpha: 0.5),
+        border: Border(
+          top: isWide
+              ? BorderSide.none
+              : const BorderSide(color: AppColors.border, width: 0.5),
+          bottom: isWide
+              ? BorderSide.none
+              : const BorderSide(color: AppColors.border, width: 0.5),
+          left: isWide
+              ? const BorderSide(color: AppColors.border, width: 0.5)
+              : BorderSide.none,
+          right: isWide
+              ? const BorderSide(color: AppColors.border, width: 0.5)
+              : BorderSide.none,
+        ),
+      ),
+      child: AnimatedSize(
+        duration: const Duration(milliseconds: 280),
+        curve: Curves.easeOutCubic,
+        child: isEmpty
+            ? _JourneyEmpty(
+                horizontal: isWide,
+                canSwap: canSwap,
+                onSwap: onSwap,
+              )
+            : _JourneyFilled(
+                plan: plan!,
+                from: from!,
+                to: to!,
+                ctx: ctx,
+                horizontal: isWide,
+                canSwap: canSwap,
+                onSwap: onSwap,
+              ),
+      ),
+    );
+  }
+}
+
+class _JourneyEmpty extends StatelessWidget {
+  const _JourneyEmpty({
     required this.horizontal,
     required this.canSwap,
     required this.onSwap,
@@ -921,18 +948,315 @@ class _Connector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final divider = horizontal
-        ? const VerticalDivider(width: 1, thickness: 0.5)
-        : const Divider(height: 1, thickness: 0.5);
-    final swap = _SwapBadge(canSwap: canSwap, onSwap: onSwap);
     return SizedBox(
-      width: horizontal ? 48 : double.infinity,
+      width: horizontal ? 56 : double.infinity,
       height: horizontal ? double.infinity : 44,
-      child: Stack(
-        alignment: Alignment.center,
+      child: Center(
+        child: _SwapBadge(
+          horizontal: horizontal,
+          canSwap: canSwap,
+          onSwap: onSwap,
+        ),
+      ),
+    );
+  }
+}
+
+class _JourneyFilled extends StatelessWidget {
+  const _JourneyFilled({
+    required this.plan,
+    required this.from,
+    required this.to,
+    required this.ctx,
+    required this.horizontal,
+    required this.canSwap,
+    required this.onSwap,
+  });
+
+  final SwitchPlan plan;
+  final Drug from;
+  final Drug to;
+  final PatientContext ctx;
+  final bool horizontal;
+  final bool canSwap;
+  final VoidCallback onSwap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpace.lg,
+        AppSpace.md + 2,
+        AppSpace.lg,
+        AppSpace.md + 2,
+      ),
+      child: switch (plan) {
+        final SwitchPlanOk ok => _OkJourney(
+            ok: ok,
+            from: from,
+            to: to,
+            ctx: ctx,
+            canSwap: canSwap,
+            onSwap: onSwap,
+          ),
+        SwitchPlanMaoiWashout(:final washoutDays, :final reason) =>
+          _ToneJourney(
+            tone: AppColors.danger,
+            eyebrow: 'MAOI WASHOUT · $washoutDays DAYS',
+            body: reason,
+          ),
+        SwitchPlanMaudsleyGuidance(:final guidance) => _ToneJourney(
+            tone: AppColors.accent,
+            eyebrow: 'CLASS-LEVEL GUIDANCE',
+            body: guidance.headline,
+          ),
+        SwitchPlanClozapineRedirect() => const _ToneJourney(
+            tone: AppColors.warning,
+            eyebrow: 'CLOZAPINE',
+            body: 'Use the Clozapine module for titration + monitoring.',
+          ),
+        SwitchPlanNoRule(:final reason) => _ToneJourney(
+            tone: AppColors.muted,
+            eyebrow: 'NO REVIEWED RULE',
+            body: reason,
+          ),
+      },
+    );
+  }
+}
+
+class _OkJourney extends StatelessWidget {
+  const _OkJourney({
+    required this.ok,
+    required this.from,
+    required this.to,
+    required this.ctx,
+    required this.canSwap,
+    required this.onSwap,
+  });
+
+  final SwitchPlanOk ok;
+  final Drug from;
+  final Drug to;
+  final PatientContext ctx;
+  final bool canSwap;
+  final VoidCallback onSwap;
+
+  String _strategyLabel(String key) {
+    switch (key) {
+      case 'direct':
+        return 'Direct switch';
+      case 'cross-taper':
+        return 'Cross-taper';
+      case 'plateau-cross-taper':
+        return 'Plateau cross-taper';
+      case 'overlap-taper':
+        return 'Overlap taper';
+      case 'washout':
+        return 'Washout';
+      default:
+        return key;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ddiHits = checkPair(from.id, to.id);
+    final scaleResult = ScaleResult(
+      schedule: ok.schedule,
+      applied: const ScaleApplied(
+        mode: ScalingMode.proportional,
+        fromFactor: 1,
+        toFactor: 1,
+      ),
+      adapted: !ok.dosesMatchReference,
+      warnings: const <ScaleWarning>[],
+      evidencePenalty: ok.dosesMatchReference ? 0 : 1,
+    );
+    final ctxWarnings = <ContextWarning>[
+      ...warningsForDrug(ctx, from.id),
+      ...warningsForDrug(ctx, to.id),
+    ];
+    final score = computePsychSwitchScore(
+      ScoreInputs(
+        toDrug: to,
+        scaleResult: scaleResult,
+        ddiHits: ddiHits,
+        contextWarnings: ctxWarnings,
+        evidenceGrade: gradeCitations(ok.citations),
+      ),
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: Text(
+                '${ok.rule.durationDays} DAYS · '
+                '${_strategyLabel(ok.rule.strategy.jsonValue).toUpperCase()}',
+                style: AppTextSizes.eyebrow.copyWith(
+                  color: AppColors.mutedStrong,
+                  letterSpacing: 1.6,
+                ),
+              ),
+            ),
+            _SwapBadge(
+              horizontal: false,
+              canSwap: canSwap,
+              onSwap: onSwap,
+            ),
+          ],
+        ),
+        const Gap.v(AppSpace.sm + 2),
+        Row(
+          children: <Widget>[
+            ScoreRing(score: score, size: 64, strokeWidth: 6),
+            const Gap.h(AppSpace.md + 2),
+            Expanded(
+              child: Wrap(
+                spacing: AppSpace.xs + 2,
+                runSpacing: AppSpace.xs + 2,
+                children: <Widget>[
+                  if (ddiHits.isNotEmpty)
+                    _MetaChip(
+                      icon: Icons.shield_outlined,
+                      label: '${ddiHits.length} '
+                          'interaction${ddiHits.length == 1 ? '' : 's'}',
+                      tone: _ddiTone(ddiHits),
+                    ),
+                  if (ok.safetyFlags.isNotEmpty)
+                    _MetaChip(
+                      icon: Icons.warning_amber_rounded,
+                      label: '${ok.safetyFlags.length} safety '
+                          'flag${ok.safetyFlags.length == 1 ? '' : 's'}',
+                      tone: AppColors.warning,
+                    ),
+                  if (!ok.dosesMatchReference)
+                    const _MetaChip(
+                      icon: Icons.tune_rounded,
+                      label: 'Dose-adapted',
+                      tone: AppColors.warning,
+                    ),
+                  if (ddiHits.isEmpty &&
+                      ok.safetyFlags.isEmpty &&
+                      ok.dosesMatchReference)
+                    const _MetaChip(
+                      icon: Icons.check_rounded,
+                      label: 'Reviewed schedule',
+                      tone: AppColors.to,
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  static Color _ddiTone(List<DdiHit> hits) {
+    var worst = AppColors.accent;
+    for (final h in hits) {
+      switch (h.severity) {
+        case DdiSeverity.avoid:
+          return AppColors.danger;
+        case DdiSeverity.warning:
+        case DdiSeverity.caution:
+          worst = AppColors.warning;
+        case DdiSeverity.info:
+          break;
+      }
+    }
+    return worst;
+  }
+}
+
+class _ToneJourney extends StatelessWidget {
+  const _ToneJourney({
+    required this.tone,
+    required this.eyebrow,
+    required this.body,
+  });
+
+  final Color tone;
+  final String eyebrow;
+  final String body;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: tone.withValues(alpha: 0.08),
+        border: Border.all(color: tone.withValues(alpha: 0.35)),
+        borderRadius: BorderRadius.circular(AppRadii.md),
+      ),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpace.md,
+        AppSpace.sm + 2,
+        AppSpace.md,
+        AppSpace.sm + 2,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Positioned.fill(child: Center(child: divider)),
-          swap,
+          Text(
+            eyebrow,
+            style: AppTextSizes.eyebrow.copyWith(color: tone),
+          ),
+          const Gap.v(2),
+          Text(
+            body,
+            style: const TextStyle(
+              color: AppColors.text,
+              fontSize: 12.5,
+              height: 1.45,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MetaChip extends StatelessWidget {
+  const _MetaChip({
+    required this.icon,
+    required this.label,
+    required this.tone,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color tone;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpace.sm,
+        vertical: 3,
+      ),
+      decoration: BoxDecoration(
+        color: tone.withValues(alpha: 0.1),
+        border: Border.all(color: tone.withValues(alpha: 0.3)),
+        borderRadius: BorderRadius.circular(AppRadii.pill),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Icon(icon, size: 11, color: tone),
+          const Gap.h(AppSpace.xs + 2),
+          Text(
+            label,
+            style: TextStyle(
+              color: tone,
+              fontSize: 10.5,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.2,
+            ),
+          ),
         ],
       ),
     );
@@ -940,8 +1264,13 @@ class _Connector extends StatelessWidget {
 }
 
 class _SwapBadge extends StatelessWidget {
-  const _SwapBadge({required this.canSwap, required this.onSwap});
+  const _SwapBadge({
+    required this.horizontal,
+    required this.canSwap,
+    required this.onSwap,
+  });
 
+  final bool horizontal;
   final bool canSwap;
   final VoidCallback onSwap;
 
@@ -950,8 +1279,8 @@ class _SwapBadge extends StatelessWidget {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeOutCubic,
-      width: 32,
-      height: 32,
+      width: 30,
+      height: 30,
       decoration: BoxDecoration(
         color: canSwap
             ? AppColors.accent.withValues(alpha: 0.14)
@@ -972,8 +1301,12 @@ class _SwapBadge extends StatelessWidget {
           child: InkWell(
             onTap: canSwap ? onSwap : null,
             child: Icon(
-              canSwap ? Icons.swap_vert_rounded : Icons.arrow_downward_rounded,
-              size: 16,
+              canSwap
+                  ? Icons.swap_vert_rounded
+                  : (horizontal
+                      ? Icons.arrow_forward_rounded
+                      : Icons.arrow_downward_rounded),
+              size: 15,
               color: canSwap ? AppColors.accent : AppColors.muted,
             ),
           ),
@@ -1021,380 +1354,6 @@ class _SameDrugWarning extends StatelessWidget {
                 fontWeight: FontWeight.w600,
                 height: 1.4,
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ── Preflight card ──────────────────────────────────────────────────
-
-class _PreflightCard extends StatelessWidget {
-  const _PreflightCard({
-    required this.plan,
-    required this.engine,
-    required this.ctx,
-    required this.from,
-    required this.to,
-  });
-
-  final SwitchPlan plan;
-  final SwitchingEngine engine;
-  final PatientContext ctx;
-  final Drug from;
-  final Drug to;
-
-  @override
-  Widget build(BuildContext context) {
-    return switch (plan) {
-      final SwitchPlanOk ok => _PreflightOk(
-          ok: ok,
-          engine: engine,
-          ctx: ctx,
-          from: from,
-          to: to,
-        ),
-      SwitchPlanMaoiWashout(:final washoutDays, :final reason) =>
-        _PreflightWarning(
-          tone: AppColors.danger,
-          eyebrow: 'MAOI WASHOUT REQUIRED',
-          headline: '$washoutDays-day washout — no overlap permitted',
-          body: reason,
-        ),
-      SwitchPlanMaudsleyGuidance(:final guidance) => _PreflightInfo(
-          eyebrow: 'CLASS-LEVEL GUIDANCE',
-          headline: guidance.headline,
-          body: guidance.detail,
-        ),
-      SwitchPlanClozapineRedirect() => const _PreflightInfo(
-          eyebrow: 'CLOZAPINE',
-          headline: 'Use the Clozapine module',
-          body: 'Clozapine has its own titration, FBC monitoring, and '
-              'rechallenge protocols. Open the module from Home.',
-        ),
-      SwitchPlanNoRule(:final reason) => _PreflightWarning(
-          tone: AppColors.warning,
-          eyebrow: 'NO REVIEWED RULE',
-          headline: 'No reviewed cross-taper rule for this pair',
-          body: reason,
-        ),
-    };
-  }
-}
-
-class _PreflightOk extends StatelessWidget {
-  const _PreflightOk({
-    required this.ok,
-    required this.engine,
-    required this.ctx,
-    required this.from,
-    required this.to,
-  });
-
-  final SwitchPlanOk ok;
-  final SwitchingEngine engine;
-  final PatientContext ctx;
-  final Drug from;
-  final Drug to;
-
-  String _strategyLabel(String key) {
-    switch (key) {
-      case 'direct':
-        return 'Direct switch';
-      case 'cross-taper':
-        return 'Cross-taper';
-      case 'plateau-cross-taper':
-        return 'Plateau cross-taper';
-      case 'overlap-taper':
-        return 'Overlap taper';
-      case 'washout':
-        return 'Washout';
-      default:
-        return key;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final ddiHits = checkPair(from.id, to.id);
-    final scaleResult = ScaleResult(
-      schedule: ok.schedule,
-      applied: const ScaleApplied(
-        mode: ScalingMode.proportional,
-        fromFactor: 1,
-        toFactor: 1,
-      ),
-      adapted: !ok.dosesMatchReference,
-      warnings: const <ScaleWarning>[],
-      evidencePenalty: ok.dosesMatchReference ? 0 : 1,
-    );
-    final ctxWarnings = <ContextWarning>[
-      ...warningsForDrug(ctx, from.id),
-      ...warningsForDrug(ctx, to.id),
-    ];
-    final score = computePsychSwitchScore(
-      ScoreInputs(
-        toDrug: to,
-        scaleResult: scaleResult,
-        ddiHits: ddiHits,
-        contextWarnings: ctxWarnings,
-        evidenceGrade: gradeCitations(ok.citations),
-      ),
-    );
-    final flagCount = ok.safetyFlags.length;
-    final ddiCount = ddiHits.length;
-    final strategyLabel = _strategyLabel(ok.rule.strategy.jsonValue);
-
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(AppRadii.xl),
-      ),
-      padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg,
-        AppSpace.md + 2,
-        AppSpace.lg,
-        AppSpace.md + 2,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const Text('PREFLIGHT', style: AppTextSizes.eyebrow),
-          const Gap.v(AppSpace.md),
-          Row(
-            children: <Widget>[
-              ScoreRing(score: score, size: 64, strokeWidth: 6),
-              const Gap.h(AppSpace.lg),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      strategyLabel,
-                      style: const TextStyle(
-                        color: AppColors.text,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: -0.2,
-                      ),
-                    ),
-                    const Gap.v(2),
-                    Text(
-                      '${ok.rule.durationDays} days · '
-                      '${ok.schedule.length} steps',
-                      style: AppTextSizes.micro.copyWith(height: 1.5),
-                    ),
-                    if (!ok.dosesMatchReference) ...<Widget>[
-                      const Gap.v(AppSpace.xs),
-                      Text(
-                        'Adapted from reviewed reference doses.',
-                        style: AppTextSizes.micro.copyWith(
-                          color: AppColors.warning,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ],
-          ),
-          if (ddiCount > 0 || flagCount > 0) ...<Widget>[
-            const Gap.v(AppSpace.md),
-            const Divider(height: 1, thickness: 0.5),
-            const Gap.v(AppSpace.md),
-            Wrap(
-              spacing: AppSpace.xs + 2,
-              runSpacing: AppSpace.xs + 2,
-              children: <Widget>[
-                if (ddiCount > 0)
-                  _PreflightChip(
-                    icon: Icons.shield_outlined,
-                    label: '$ddiCount '
-                        'interaction${ddiCount == 1 ? '' : 's'}',
-                    tone: _ddiTone(ddiHits),
-                  ),
-                if (flagCount > 0)
-                  _PreflightChip(
-                    icon: Icons.warning_amber_rounded,
-                    label: '$flagCount safety '
-                        'flag${flagCount == 1 ? '' : 's'}',
-                    tone: AppColors.warning,
-                  ),
-              ],
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  static Color _ddiTone(List<DdiHit> hits) {
-    var worst = AppColors.accent;
-    for (final h in hits) {
-      switch (h.severity) {
-        case DdiSeverity.avoid:
-          return AppColors.danger;
-        case DdiSeverity.warning:
-        case DdiSeverity.caution:
-          worst = AppColors.warning;
-        case DdiSeverity.info:
-          // keep accent
-          break;
-      }
-    }
-    return worst;
-  }
-}
-
-class _PreflightChip extends StatelessWidget {
-  const _PreflightChip({
-    required this.icon,
-    required this.label,
-    required this.tone,
-  });
-
-  final IconData icon;
-  final String label;
-  final Color tone;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpace.sm + 2,
-        vertical: 4,
-      ),
-      decoration: BoxDecoration(
-        color: tone.withValues(alpha: 0.12),
-        border: Border.all(color: tone.withValues(alpha: 0.35)),
-        borderRadius: BorderRadius.circular(AppRadii.pill),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Icon(icon, size: 12, color: tone),
-          const Gap.h(AppSpace.xs + 2),
-          Text(
-            label,
-            style: TextStyle(
-              color: tone,
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.2,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _PreflightWarning extends StatelessWidget {
-  const _PreflightWarning({
-    required this.tone,
-    required this.eyebrow,
-    required this.headline,
-    required this.body,
-  });
-
-  final Color tone;
-  final String eyebrow;
-  final String headline;
-  final String body;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: tone.withValues(alpha: 0.08),
-        border: Border.all(color: tone.withValues(alpha: 0.4)),
-        borderRadius: BorderRadius.circular(AppRadii.xl),
-      ),
-      padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg,
-        AppSpace.md,
-        AppSpace.lg,
-        AppSpace.md,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(eyebrow, style: AppTextSizes.eyebrow.copyWith(color: tone)),
-          const Gap.v(AppSpace.xs + 2),
-          Text(
-            headline,
-            style: TextStyle(
-              color: tone,
-              fontSize: 15,
-              fontWeight: FontWeight.w800,
-              height: 1.3,
-            ),
-          ),
-          const Gap.v(AppSpace.xs + 2),
-          Text(
-            body,
-            style: const TextStyle(
-              color: AppColors.text,
-              fontSize: 12.5,
-              height: 1.5,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _PreflightInfo extends StatelessWidget {
-  const _PreflightInfo({
-    required this.eyebrow,
-    required this.headline,
-    required this.body,
-  });
-
-  final String eyebrow;
-  final String headline;
-  final String body;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(AppRadii.xl),
-      ),
-      padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg,
-        AppSpace.md,
-        AppSpace.lg,
-        AppSpace.md,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(eyebrow, style: AppTextSizes.eyebrow),
-          const Gap.v(AppSpace.xs + 2),
-          Text(
-            headline,
-            style: const TextStyle(
-              color: AppColors.text,
-              fontSize: 15,
-              fontWeight: FontWeight.w800,
-              height: 1.3,
-            ),
-          ),
-          const Gap.v(AppSpace.xs + 2),
-          Text(
-            body,
-            style: const TextStyle(
-              color: AppColors.text,
-              fontSize: 12.5,
-              height: 1.5,
             ),
           ),
         ],
@@ -1466,7 +1425,7 @@ class _PrimaryCta extends StatelessWidget {
   }
 }
 
-// ── Drug picker sheet (unchanged) ──────────────────────────────────
+// ── Drug picker sheet ───────────────────────────────────────────────
 
 class _DrugPickerSheet extends StatefulWidget {
   const _DrugPickerSheet({
