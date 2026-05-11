@@ -68,9 +68,11 @@ void main() {
     await tester.pumpWidget(_harness());
     await _waitForEngine(tester);
 
-    // Hero monogram + wordmark.
+    // Hero wordmark + tagline. 'PS' monogram retired — the About
+    // hero now uses the real X-mark logo via Image.asset, matching
+    // home + disclaimer brand parity.
     expect(find.text('PsychSwitch'), findsWidgets);
-    expect(find.text('PS'), findsOneWidget);
+    expect(find.text('Reviewed cross-titration'), findsOneWidget);
 
     // Stat grid eyebrows.
     expect(find.text('VERSION'), findsOneWidget);

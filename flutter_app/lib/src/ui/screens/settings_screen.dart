@@ -10,11 +10,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:psychswitch/src/providers/onboarding_provider.dart';
 import 'package:psychswitch/src/providers/preferences_provider.dart';
 import 'package:psychswitch/src/providers/saved_cases_provider.dart';
 import 'package:psychswitch/src/services/notification_service.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
+
+final _versionProvider = FutureProvider<PackageInfo>(
+  (_) => PackageInfo.fromPlatform(),
+);
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -30,10 +36,22 @@ class SettingsScreen extends ConsumerWidget {
     }
   }
 
+  Future<void> _onReplayTour(BuildContext context, WidgetRef ref) async {
+    unawaited(hapticsTap());
+    await ref.read(onboardingCompleteProvider.notifier).reset();
+    if (!context.mounted) return;
+    // Pop back to the gate cascade — `_OnboardingGate` re-evaluates and
+    // pushes the OnboardingScreen because the flag is now false. The
+    // pop chain works because /settings sits on top of the router and
+    // popping clears every clinical-surface route on the stack.
+    Navigator.of(context).popUntil((r) => r.isFirst);
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final showCitations = ref.watch(showCitationsProvider);
     final reminders = ref.watch(remindersEnabledProvider);
+    final asyncPkg = ref.watch(_versionProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -78,6 +96,19 @@ class SettingsScreen extends ConsumerWidget {
             ),
 
             const Gap.v(AppSpace.xl),
+            const _SectionHeader(text: 'WELCOME'),
+            _ActionTile(
+              icon: Icons.replay_circle_filled_rounded,
+              label: 'Replay onboarding tour',
+              description:
+                  'Replays the three-card walkthrough next time the app '
+                  'opens (or right now). Useful for showing colleagues '
+                  'what the app does without a fresh install.',
+              actionLabel: 'Replay tour',
+              onPressed: () => _onReplayTour(context, ref),
+            ),
+
+            const Gap.v(AppSpace.xl),
             const _SectionHeader(text: 'DATA'),
             _DangerTile(
               label: 'Delete all saved cases',
@@ -85,6 +116,31 @@ class SettingsScreen extends ConsumerWidget {
                   'Wipes the local case database. Cannot be undone. '
                   'Does not affect the clinical content registry.',
               onPressed: () => _confirmDeleteAll(context, ref),
+            ),
+
+            const Gap.v(AppSpace.xxl),
+            // ── Version footer ────────────────────────────────────
+            Center(
+              child: Text(
+                asyncPkg.when(
+                  data: (p) => 'PsychSwitch v${p.version} (${p.buildNumber})',
+                  loading: () => 'PsychSwitch',
+                  error: (_, __) => 'PsychSwitch',
+                ),
+                style: AppTextSizes.micro.copyWith(
+                  letterSpacing: 0.3,
+                  color: AppColors.muted,
+                ),
+              ),
+            ),
+            const Gap.v(AppSpace.xs),
+            Center(
+              child: Text(
+                'On-device · never transmits patient data',
+                style: AppTextSizes.micro.copyWith(
+                  color: AppColors.muted.withValues(alpha: 0.65),
+                ),
+              ),
             ),
           ],
         ),
@@ -176,14 +232,17 @@ class _ToggleTile extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(AppRadii.lg),
+        border: Border.all(
+          color: AppColors.border.withValues(alpha: 0.7),
+          width: 0.5,
+        ),
+        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
       ),
       padding: const EdgeInsets.fromLTRB(
+        AppSpace.lg - 2,
         AppSpace.md + 2,
-        AppSpace.md,
         AppSpace.sm,
-        AppSpace.md,
+        AppSpace.md + 2,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -196,22 +255,115 @@ class _ToggleTile extends StatelessWidget {
                   label,
                   style: const TextStyle(
                     color: AppColors.text,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.1,
                   ),
                 ),
-                const Gap.v(AppSpace.xxs),
+                const Gap.v(AppSpace.xs),
                 Text(
                   description,
-                  style: AppTextSizes.caption.copyWith(height: 1.5),
+                  style: AppTextSizes.caption.copyWith(height: 1.55),
                 ),
               ],
             ),
           ),
-          // Switch styling now comes from the global SwitchTheme.
           Switch(
             value: value,
             onChanged: loading ? null : onChanged,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Action tile — like ToggleTile but with a tap-to-fire button instead
+/// of a switch. Used for one-shot affordances like "Replay tour".
+class _ActionTile extends StatelessWidget {
+  const _ActionTile({
+    required this.icon,
+    required this.label,
+    required this.description,
+    required this.actionLabel,
+    required this.onPressed,
+  });
+
+  final IconData icon;
+  final String label;
+  final String description;
+  final String actionLabel;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        border: Border.all(
+          color: AppColors.border.withValues(alpha: 0.7),
+          width: 0.5,
+        ),
+        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+      ),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpace.lg - 2,
+        AppSpace.md + 2,
+        AppSpace.lg - 2,
+        AppSpace.md + 2,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Icon(icon, size: 18, color: AppColors.accent),
+              const Gap.h(AppSpace.sm + 2),
+              Expanded(
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    color: AppColors.text,
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.1,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const Gap.v(AppSpace.xs + 1),
+          Text(
+            description,
+            style: AppTextSizes.caption.copyWith(height: 1.55),
+          ),
+          const Gap.v(AppSpace.md),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: OutlinedButton(
+              onPressed: onPressed,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColors.accent,
+                side: BorderSide(
+                  color: AppColors.accent.withValues(alpha: 0.5),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpace.lg - 2,
+                  vertical: AppSpace.xs + 2,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AppRadii.md),
+                ),
+              ),
+              child: Text(
+                actionLabel,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.1,
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -235,13 +387,16 @@ class _DangerTile extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.danger.withValues(alpha: 0.05),
-        border: Border.all(color: AppColors.danger.withValues(alpha: 0.3)),
-        borderRadius: BorderRadius.circular(AppRadii.lg),
+        border: Border.all(
+          color: AppColors.danger.withValues(alpha: 0.35),
+          width: 0.5,
+        ),
+        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
       ),
       padding: const EdgeInsets.fromLTRB(
+        AppSpace.lg - 2,
         AppSpace.md + 2,
-        AppSpace.md,
-        AppSpace.md + 2,
+        AppSpace.lg - 2,
         AppSpace.md + 2,
       ),
       child: Column(

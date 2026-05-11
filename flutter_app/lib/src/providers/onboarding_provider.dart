@@ -34,4 +34,13 @@ class _OnboardingComplete extends AsyncNotifier<bool> {
     final prefs = await ref.read(sharedPreferencesProvider.future);
     await prefs.setBool(_key, true);
   }
+
+  /// Wipe the completion flag — re-triggers the onboarding tour on
+  /// the next time the gate re-evaluates. Used by the Settings
+  /// "Replay onboarding tour" affordance.
+  Future<void> reset() async {
+    state = const AsyncValue.data(false);
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    await prefs.setBool(_key, false);
+  }
 }

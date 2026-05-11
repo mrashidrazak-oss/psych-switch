@@ -40,6 +40,14 @@ void main() {
     expect(find.text('Settings'), findsOneWidget);
     expect(find.text('DISPLAY'), findsOneWidget);
     expect(find.text('Show citation chips'), findsOneWidget);
+    // DATA section now sits below the new WELCOME (replay-tour)
+    // section which pushes it past the 800×600 test viewport — scroll
+    // to bring it on screen.
+    await tester.dragUntilVisible(
+      find.text('DATA'),
+      find.byType(ListView),
+      const Offset(0, -200),
+    );
     expect(find.text('DATA'), findsOneWidget);
     // The danger label appears twice — header + button.
     expect(find.text('Delete all saved cases'), findsAtLeastNWidgets(1));

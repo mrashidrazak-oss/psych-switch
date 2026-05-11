@@ -47,53 +47,86 @@ class AboutScreen extends ConsumerWidget {
                 AppSpace.xl,
               ),
               children: <Widget>[
-                // Hero — wordmark + tagline + monogram.
+                // Hero — real X-mark logo + dual-tone glow + wordmark.
+                // Brand parity with home / disclaimer.
                 Row(
                   children: <Widget>[
-                    Container(
-                      width: 48,
-                      height: 48,
+                    DecoratedBox(
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: <Color>[AppColors.from, AppColors.to],
-                        ),
-                        borderRadius: BorderRadius.circular(AppRadii.md),
+                        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
                         boxShadow: <BoxShadow>[
                           BoxShadow(
-                            color: AppColors.accent.withValues(alpha: 0.18),
-                            blurRadius: 14,
-                            spreadRadius: -3,
-                            offset: const Offset(0, 4),
+                            color: AppColors.from.withValues(alpha: 0.28),
+                            blurRadius: 30,
+                            spreadRadius: -8,
+                            offset: const Offset(-5, 6),
+                          ),
+                          BoxShadow(
+                            color: AppColors.to.withValues(alpha: 0.28),
+                            blurRadius: 30,
+                            spreadRadius: -8,
+                            offset: const Offset(5, 6),
                           ),
                         ],
                       ),
-                      child: const Center(
-                        child: Text(
-                          'PS',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 19,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: -0.5,
-                          ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+                        child: Image.asset(
+                          'assets/icon.png',
+                          width: 54,
+                          height: 54,
+                          fit: BoxFit.cover,
+                          filterQuality: FilterQuality.high,
                         ),
                       ),
                     ),
-                    const Gap.h(AppSpace.md),
+                    const Gap.h(AppSpace.md + 2),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           const Text(
                             'PsychSwitch',
-                            style: AppTextSizes.heading,
+                            style: TextStyle(
+                              color: AppColors.text,
+                              fontSize: 24,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -0.6,
+                              height: 1.1,
+                            ),
                           ),
-                          const Gap.v(2),
-                          Text(
-                            'Reviewed cross-titration · cited at every step',
-                            style: AppTextSizes.caption.copyWith(height: 1.4),
+                          const Gap.v(AppSpace.xs + 1),
+                          Row(
+                            children: <Widget>[
+                              Container(
+                                width: 5,
+                                height: 5,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.from,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const Gap.h(3),
+                              Container(
+                                width: 5,
+                                height: 5,
+                                decoration: const BoxDecoration(
+                                  color: AppColors.to,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const Gap.h(AppSpace.sm),
+                              const Text(
+                                'Reviewed cross-titration',
+                                style: TextStyle(
+                                  color: AppColors.mutedStrong,
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 0.2,
+                                  height: 1.2,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
