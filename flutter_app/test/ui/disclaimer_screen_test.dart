@@ -30,7 +30,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('PsychSwitch'), findsOneWidget);
-    expect(find.text('REVIEWED CROSS-TITRATION'), findsOneWidget);
+    // Tagline switched from all-caps eyebrow to sentence case when
+    // the disclaimer hero adopted the home screen's brand mark.
+    expect(find.text('Reviewed cross-titration'), findsOneWidget);
 
     expect(find.text('Decision support,'), findsOneWidget);
     expect(find.text('not medical advice.'), findsOneWidget);

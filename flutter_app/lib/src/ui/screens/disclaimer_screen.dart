@@ -119,8 +119,15 @@ class _AmbientBackdrop extends StatelessWidget {
   }
 }
 
+/// Brand hero on the disclaimer gate. Same composition as the home
+/// screen's mark — real X-mark logo with a dual-tone soft glow, plus
+/// a confident 24-pt wordmark and a two-tone-dot tagline. Replaces
+/// the prior "PS" gradient-tile placeholder for brand parity across
+/// the two screens the clinician sees most.
 class _BrandHero extends StatelessWidget {
   const _BrandHero();
+
+  static const double _markSize = 54;
 
   @override
   Widget build(BuildContext context) {
@@ -130,62 +137,88 @@ class _BrandHero extends StatelessWidget {
       child: ExcludeSemantics(
         child: Row(
           children: <Widget>[
-            Container(
-              width: 44,
-              height: 44,
+            // ── Brand mark with dual-tone glow ──────────────────────
+            DecoratedBox(
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: <Color>[AppColors.from, AppColors.to],
-                ),
-                borderRadius: BorderRadius.circular(AppRadii.md),
+                borderRadius: BorderRadius.circular(AppRadii.lg + 2),
                 boxShadow: <BoxShadow>[
                   BoxShadow(
-                    color: AppColors.accent.withValues(alpha: 0.22),
-                    blurRadius: 16,
-                    spreadRadius: -2,
-                    offset: const Offset(0, 4),
+                    color: AppColors.from.withValues(alpha: 0.28),
+                    blurRadius: 30,
+                    spreadRadius: -8,
+                    offset: const Offset(-5, 6),
+                  ),
+                  BoxShadow(
+                    color: AppColors.to.withValues(alpha: 0.28),
+                    blurRadius: 30,
+                    spreadRadius: -8,
+                    offset: const Offset(5, 6),
                   ),
                 ],
               ),
-              child: const Center(
-                child: Text(
-                  'PS',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 17,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.5,
-                  ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+                child: Image.asset(
+                  'assets/icon.png',
+                  width: _markSize,
+                  height: _markSize,
+                  fit: BoxFit.cover,
+                  filterQuality: FilterQuality.high,
                 ),
               ),
             ),
-            const Gap.h(AppSpace.md),
-            const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Text(
-                  'PsychSwitch',
-                  style: TextStyle(
-                    color: AppColors.text,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.5,
+            const Gap.h(AppSpace.md + 2),
+            // ── Wordmark + tagline ─────────────────────────────────
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  const Text(
+                    'PsychSwitch',
+                    style: TextStyle(
+                      color: AppColors.text,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.6,
+                      height: 1.1,
+                    ),
                   ),
-                ),
-                Gap.v(2),
-                Text(
-                  'REVIEWED CROSS-TITRATION',
-                  style: TextStyle(
-                    color: AppColors.muted,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.6,
+                  const Gap.v(AppSpace.xs + 1),
+                  Row(
+                    children: <Widget>[
+                      Container(
+                        width: 5,
+                        height: 5,
+                        decoration: const BoxDecoration(
+                          color: AppColors.from,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const Gap.h(3),
+                      Container(
+                        width: 5,
+                        height: 5,
+                        decoration: const BoxDecoration(
+                          color: AppColors.to,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const Gap.h(AppSpace.sm),
+                      const Text(
+                        'Reviewed cross-titration',
+                        style: TextStyle(
+                          color: AppColors.mutedStrong,
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.2,
+                          height: 1.2,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
