@@ -257,15 +257,64 @@ void main() {
       expect(result.modified, isFalse);
     });
 
-    test('clamps to Day 2 dose so the taper stays monotonic', () {
+    // v0.5+ — plateau-aware softening. Maudsley 15th halve-and-add
+    // explicitly supports reducing the from-drug from Day 1 onwards
+    // while the new drug is introduced; the old engine refused this
+    // case (Day 1 == Day 2 plateau) and was too restrictive for the
+    // antipsychotic introduce-then-taper protocols that depend on
+    // exactly this pattern.
+    test('softens the whole Day-1 plateau, not only Day 1', () {
       const schedule = <ScheduleStep>[
         ScheduleStep(day: 1, fromDoseMg: 10, toDoseMg: 5),
         ScheduleStep(day: 7, fromDoseMg: 10, toDoseMg: 10),
         ScheduleStep(day: 14, fromDoseMg: 0, toDoseMg: 15),
       ];
       final result = applyConservativeOverlap(schedule, _olanzapine());
-      expect(result.modified, isFalse);
+      expect(result.modified, isTrue);
+      // 10 × 0.75 = 7.5 (olanzapine has 7.5 in increments). The next
+      // taper step is 0, so 7.5 doesn't violate the clamp.
+      expect(result.schedule[0].fromDoseMg, equals(7.5));
+      // Plateau day (Day 7) is also softened to 7.5.
+      expect(result.schedule[1].fromDoseMg, equals(7.5));
+      // Post-plateau step is preserved.
+      expect(result.schedule[2].fromDoseMg, equals(0));
     });
+
+    test(
+      'clamps the softened dose to the first post-plateau step '
+      "(prevents inversion at the plateau's exit)",
+      () {
+        const schedule = <ScheduleStep>[
+          ScheduleStep(day: 1, fromDoseMg: 10, toDoseMg: 5),
+          ScheduleStep(day: 7, fromDoseMg: 10, toDoseMg: 10),
+          ScheduleStep(day: 14, fromDoseMg: 7.5, toDoseMg: 12.5),
+          ScheduleStep(day: 21, fromDoseMg: 0, toDoseMg: 15),
+        ];
+        final result = applyConservativeOverlap(schedule, _olanzapine());
+        // Target 7.5 == next taper step (7.5). Clamp keeps it at 7.5.
+        // 7.5 ≠ Day 1 (10), so still modified.
+        expect(result.modified, isTrue);
+        expect(result.schedule[0].fromDoseMg, equals(7.5));
+        expect(result.schedule[1].fromDoseMg, equals(7.5));
+      },
+    );
+
+    test(
+      'refuses when formulation rounding swallows the 25 % delta '
+      '(low-dose plateau)',
+      () {
+        // Day 1 = 2.5 mg (olanzapine's lowest increment). 2.5 × 0.75 =
+        // 1.875 → rounds back to 2.5 (no lower increment available).
+        // No useful softening is possible.
+        const schedule = <ScheduleStep>[
+          ScheduleStep(day: 1, fromDoseMg: 2.5, toDoseMg: 5),
+          ScheduleStep(day: 7, fromDoseMg: 2.5, toDoseMg: 10),
+          ScheduleStep(day: 14, fromDoseMg: 0, toDoseMg: 15),
+        ];
+        final result = applyConservativeOverlap(schedule, _olanzapine());
+        expect(result.modified, isFalse);
+      },
+    );
 
     test('appends a "Conservative mode" tag to Day 1 notes', () {
       const schedule = <ScheduleStep>[

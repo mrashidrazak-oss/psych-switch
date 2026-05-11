@@ -726,13 +726,25 @@ class _ResultBody extends ConsumerWidget {
     final day1Softened = preview.modified
         ? day1Original - preview.deltaMg
         : day1Original;
-    // Reason for refusal: either it's a flat plateau (day 1 == day 2)
-    // or formulation rounding swallows the 25 % delta.
-    final notApplicableReason = preview.modified
-        ? null
-        : (day1Original == day2
-            ? 'plateau'
-            : 'rounding');
+    // Plateau end-day: walk forward through the schedule and find the
+    // last step whose from-dose still equals Day-1's. That step's
+    // `.day` is when the plateau ends and the taper begins. For non-
+    // plateau schedules the value equals Day 1.
+    var plateauEndDay = base.isNotEmpty ? base.first.day : 1;
+    for (var i = 1; i < base.length; i++) {
+      if (base[i].fromDoseMg == day1Original) {
+        plateauEndDay = base[i].day;
+      } else {
+        break;
+      }
+    }
+    final isPlateau = plateauEndDay > (base.isNotEmpty ? base.first.day : 1);
+    // Reason for refusal — only one path now reaches the not-modified
+    // state with valid input: formulation rounding swallowed the 25 %
+    // delta (low-dose schedules where the available tablet strengths
+    // can't represent the softer dose). Plateau-only schedules are no
+    // longer refused — the engine softens the whole plateau.
+    final notApplicableReason = preview.modified ? null : 'rounding';
     return <Widget>[
       _SoftenDay1Card(
         on: conservative,
@@ -743,6 +755,8 @@ class _ResultBody extends ConsumerWidget {
         day1Softened: day1Softened,
         day2Dose: day2,
         deltaMg: preview.deltaMg,
+        plateauEndDay: plateauEndDay,
+        isPlateau: isPlateau,
         onToggle: (v) {
           unawaited(hapticsTap());
           ref.read(_conservativeProvider.notifier).state = v;
@@ -2059,14 +2073,16 @@ class _SoftenDay1Card extends StatelessWidget {
     required this.day1Softened,
     required this.day2Dose,
     required this.deltaMg,
+    required this.plateauEndDay,
+    required this.isPlateau,
     required this.onToggle,
   });
 
   final bool on;
   final bool applicable;
 
-  /// 'plateau' (day 1 == day 2) or 'rounding' (25 % cut rounds back).
-  /// Null when [applicable] is true.
+  /// Only 'rounding' today — set when formulation rounding swallows
+  /// the 25 % delta at low Day-1 doses. Null when [applicable] is true.
   final String? notApplicableReason;
 
   final String fromDrugName;
@@ -2074,6 +2090,14 @@ class _SoftenDay1Card extends StatelessWidget {
   final num day1Softened;
   final num day2Dose;
   final num deltaMg;
+
+  /// Last day of the Day-1 plateau (where the from-drug is held flat).
+  /// Equals Day 1 for schedules without a plateau.
+  final int plateauEndDay;
+
+  /// True when the rule holds the from-drug across more than one step
+  /// (typical of antipsychotic introduce-then-taper protocols).
+  final bool isPlateau;
   final ValueChanged<bool> onToggle;
 
   @override
@@ -2181,12 +2205,20 @@ class _SoftenDay1Card extends StatelessWidget {
                   height: 1.45,
                 ),
                 children: <InlineSpan>[
-                  const TextSpan(text: 'Day 1 '),
+                  TextSpan(
+                    text: isPlateau
+                        ? 'Plateau softened: '
+                        : 'Day 1 softened: ',
+                  ),
                   TextSpan(
                     text: fromDrugName,
                     style: const TextStyle(fontWeight: FontWeight.w700),
                   ),
-                  const TextSpan(text: ': '),
+                  TextSpan(
+                    text: isPlateau
+                        ? ' Day 1 → Day $plateauEndDay '
+                        : ' Day 1 ',
+                  ),
                   TextSpan(
                     text:
                         '${_formatDose(day1Original)} mg → ${_formatDose(day1Softened)} mg',
@@ -2197,11 +2229,18 @@ class _SoftenDay1Card extends StatelessWidget {
               ),
             )
           else
-            const Text(
-              "Reduce the from-drug's Day 1 dose by ~25 % to lower the "
-              'simultaneous receptor occupancy during the highest-risk '
-              'day of the cross-taper.',
-              style: TextStyle(
+            Text(
+              isPlateau
+                  ? 'Reduce $fromDrugName across its Day 1 → Day '
+                      "$plateauEndDay plateau by ~25 % — Maudsley 15th's "
+                      'halve-and-add approach, adapted for a softer '
+                      'reduction. Lowers the receptor load on the '
+                      'highest-risk overlap days while the new drug '
+                      'reaches target.'
+                  : "Reduce $fromDrugName's Day 1 dose by ~25 % to lower "
+                      'the simultaneous receptor occupancy during the '
+                      'highest-risk day of the cross-taper.',
+              style: const TextStyle(
                 color: AppColors.text,
                 fontSize: 13,
                 height: 1.5,
@@ -2395,6 +2434,17 @@ class _FixedProtocolNotice extends StatelessWidget {
   }
 }
 
+/// True for every step at or before the end of the Day-1 from-dose
+/// plateau — i.e. while the from-dose is equal to (or higher than)
+/// Day 1's. Used to mark every plateau step with the SOFTENED pill
+/// when Conservative mode is on, mirroring the engine's plateau-aware
+/// softening.
+bool _isInDay1Plateau(List<ScheduleStep> schedule, int i) {
+  if (schedule.isEmpty || i >= schedule.length) return false;
+  final day1Dose = schedule.first.fromDoseMg;
+  return schedule[i].fromDoseMg >= day1Dose;
+}
+
 /// Day-by-day cross-taper schedule.
 ///
 /// Each step is its own little narrative — a big "DAY N" anchor, two
@@ -2446,7 +2496,8 @@ class _ScheduleCard extends StatelessWidget {
               fromMax: fromMax,
               toMax: toMax,
               isFinal: i == schedule.length - 1,
-              isSoftened: i == 0 && day1Softened,
+              isSoftened: day1Softened &&
+                  _isInDay1Plateau(schedule, i),
             ),
           ],
         ],

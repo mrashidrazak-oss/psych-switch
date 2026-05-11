@@ -381,14 +381,39 @@ class ConservativeResult {
   final num deltaMg;
 }
 
-/// Apply Conservative mode: reduce Day 1's from-drug dose by 25%
-/// (rounded to formulation, clamped so it can never drop below the next
-/// step's dose — keeps the taper monotonic).
+/// Apply Conservative mode: reduce the from-drug's overlap-window
+/// "plateau" by ~25 % (rounded to formulation), then let the rule's
+/// taper continue unchanged from where it would naturally drop below
+/// the softened dose.
 ///
-/// Returns the schedule unchanged if:
-///  * Day 1 has fromDose == 0 (no overlap to soften).
-///  * The 25% reduction rounds to the same value as the current Day 1.
-///  * Day 2's dose is already ≥ Day 1 × 0.75.
+/// **Plateau-aware** (v0.5+). Many antipsychotic cross-tapers — and
+/// some antidepressant rules — intentionally hold the from-drug at a
+/// constant maintenance dose for the first N days while the new drug
+/// reaches target ("introduce-then-taper"). Earlier versions of this
+/// function only softened Day 1 and refused if Day 2 had the same
+/// dose (the entire plateau). That refusal was too conservative —
+/// Maudsley 15th edition's "halve-and-add" strategy explicitly
+/// supports reducing the from-drug from Day 1 onwards while the new
+/// drug is introduced, and Stahl's Essential Psychopharmacology
+/// likewise endorses concurrent dose-reduction during cross-titration
+/// when side-effect burden is a concern.
+///
+/// New algorithm:
+///   1. Compute the target Day-1 dose (× 0.75, rounded to formulation).
+///   2. Find the END of the Day-1 plateau (first step whose from-dose
+///      differs from Day 1's). That's where the rule's taper actually
+///      begins.
+///   3. Clamp the softened dose so it never drops below the first
+///      post-plateau dose (otherwise we'd invert the taper).
+///   4. Apply the softened dose to every plateau step (Day 1 through
+///      the last plateau day). The rule's taper from there onwards
+///      is preserved.
+///
+/// Returns the schedule unchanged when:
+///   • Day 1 has fromDose ≤ 0 (no overlap to soften).
+///   • Schedule has fewer than 2 steps.
+///   • The rounded target equals Day 1's dose (formulation rounding
+///     swallows the 25 % delta at low doses).
 ConservativeResult applyConservativeOverlap(
   List<ScheduleStep> schedule,
   Drug fromDrug,
@@ -409,14 +434,31 @@ ConservativeResult applyConservativeOverlap(
     );
   }
 
-  final day2 = schedule[1];
   final target = day1.fromDoseMg * 0.75;
   final incs = fromDrug.dosing.increments;
   var rounded = roundToIncrement(target, incs);
 
-  // Don't drop below day 2's from-dose — that would invert the taper.
-  if (day2.fromDoseMg > 0 && rounded < day2.fromDoseMg) {
-    rounded = day2.fromDoseMg;
+  // Find the index where the from-drug taper actually begins — the
+  // first step whose from-dose is LOWER than Day 1's. Indices 1..N-1
+  // with from-dose == Day 1's are the plateau; we'll soften all of
+  // them. (A step with from-dose > Day 1's would be a non-monotonic
+  // schedule — defensive: we treat anything not strictly less than
+  // Day 1 as part of the plateau, so step-up patterns also stay safe.)
+  var firstTaperIdx = schedule.length;
+  for (var i = 1; i < schedule.length; i++) {
+    if (schedule[i].fromDoseMg < day1.fromDoseMg) {
+      firstTaperIdx = i;
+      break;
+    }
+  }
+  final firstTaperDose = firstTaperIdx < schedule.length
+      ? schedule[firstTaperIdx].fromDoseMg
+      : 0;
+
+  // Don't drop below the first post-plateau taper step — that would
+  // invert the taper at the plateau exit.
+  if (rounded < firstTaperDose) {
+    rounded = firstTaperDose;
   }
 
   if (rounded == day1.fromDoseMg) {
@@ -427,15 +469,31 @@ ConservativeResult applyConservativeOverlap(
     );
   }
 
-  final note = _appendConservativeNote(
-    day1.notes,
-    day1.fromDoseMg,
-    rounded.toDouble(),
-  );
-  final newDay1 =
-      day1.copyWith(fromDoseMg: rounded.toDouble(), notes: note);
+  // Apply the softened dose to every plateau step (indices
+  // 0..firstTaperIdx-1). Preserve the rest of the schedule verbatim.
+  final out = <ScheduleStep>[];
+  for (var i = 0; i < schedule.length; i++) {
+    if (i < firstTaperIdx) {
+      final note = i == 0
+          ? _appendConservativeNote(
+              schedule[i].notes,
+              day1.fromDoseMg,
+              rounded.toDouble(),
+            )
+          : schedule[i].notes;
+      out.add(
+        schedule[i].copyWith(
+          fromDoseMg: rounded.toDouble(),
+          notes: note,
+        ),
+      );
+    } else {
+      out.add(schedule[i]);
+    }
+  }
+
   return ConservativeResult(
-    schedule: <ScheduleStep>[newDay1, ...schedule.skip(1)],
+    schedule: out,
     modified: true,
     deltaMg: day1.fromDoseMg - rounded,
   );
