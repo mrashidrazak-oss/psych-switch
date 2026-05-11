@@ -57,176 +57,293 @@ class DepotIndexScreen extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(
             AppSpace.xl,
-            AppSpace.xl,
+            AppSpace.xl - 4,
             AppSpace.xl,
             AppSpace.xl,
           ),
           children: <Widget>[
+            // ── Section eyebrow + hero blurb ──────────────────────
+            const Text(
+              'LONG-ACTING INJECTABLES',
+              style: TextStyle(
+                color: AppColors.muted,
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.6,
+              ),
+            ),
+            const Gap.v(AppSpace.sm),
+            const Text(
+              'Three reviewed depot protocols.',
+              style: TextStyle(
+                color: AppColors.text,
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.5,
+                height: 1.2,
+              ),
+            ),
+            const Gap.v(AppSpace.sm + 2),
             Text(
-              'Once-monthly and quarterly LAI antipsychotics. Reviewed '
+              'Once-monthly and quarterly antipsychotics, reviewed '
               'against FDA labelling and Maudsley 15. Each protocol has '
-              'its own initiation rules, missed-dose flows, and needle '
-              'guidance — read the agent before mixing them up.',
-              style: AppTextSizes.caption.copyWith(height: 1.55),
+              'its own initiation, missed-dose flows, and needle guide '
+              '— read the agent before mixing them up.',
+              style: AppTextSizes.caption.copyWith(height: 1.6),
             ),
-            const Gap.v(AppSpace.lg + 4),
+            const Gap.v(AppSpace.xl - 2),
             _DepotIndexCard(
-              title: sustenna.brandName,
-              subtitle: sustenna.genericName,
+              brandName: sustenna.brandName,
+              genericName: sustenna.genericName,
               indication: sustenna.indication,
-              interval: sustenna.injectionInterval,
-              onTap: () =>
-                  context.pushNamed(Routes.depot, pathParameters: <String, String>{
-                'id': DepotKind.sustenna.name,
-              }),
+              injectionInterval: sustenna.injectionInterval,
+              tone: AppColors.from,
+              cadenceLabel: 'MONTHLY',
+              codeLabel: 'PP1M',
+              onTap: () => _open(context, DepotKind.sustenna),
             ),
             const Gap.v(AppSpace.md),
             _DepotIndexCard(
-              title: trinza.brandName,
-              subtitle: trinza.genericName,
+              brandName: trinza.brandName,
+              genericName: trinza.genericName,
               indication: trinza.indication,
-              interval: trinza.injectionInterval,
-              onTap: () =>
-                  context.pushNamed(Routes.depot, pathParameters: <String, String>{
-                'id': DepotKind.trinza.name,
-              }),
+              injectionInterval: trinza.injectionInterval,
+              tone: AppColors.to,
+              cadenceLabel: 'QUARTERLY',
+              codeLabel: 'PP3M',
+              onTap: () => _open(context, DepotKind.trinza),
             ),
             const Gap.v(AppSpace.md),
             _DepotIndexCard(
-              title: maintena.brandName,
-              subtitle: maintena.genericName,
+              brandName: maintena.brandName,
+              genericName: maintena.genericName,
               indication: maintena.indication,
-              interval: maintena.injectionInterval,
-              onTap: () =>
-                  context.pushNamed(Routes.depot, pathParameters: <String, String>{
-                'id': DepotKind.maintena.name,
-              }),
+              injectionInterval: maintena.injectionInterval,
+              tone: AppColors.accent,
+              cadenceLabel: 'MONTHLY',
+              codeLabel: 'AOM',
+              onTap: () => _open(context, DepotKind.maintena),
             ),
           ],
         ),
       ),
     );
   }
+
+  void _open(BuildContext context, DepotKind k) {
+    context.pushNamed(
+      Routes.depot,
+      pathParameters: <String, String>{'id': k.name},
+    );
+  }
 }
 
+/// Depot LAI index card.
+///
+/// Composition:
+///   • Tone-tinted top band (per-agent identity colour) showing the
+///     brand name as a confident hero, the generic underneath, and
+///     the cadence chip ("MONTHLY" / "QUARTERLY") on the right.
+///   • Body: indication paragraph.
+///   • Footer row: agent code (PP1M / PP3M / AOM), interval label,
+///     trailing chevron.
 class _DepotIndexCard extends StatelessWidget {
   const _DepotIndexCard({
-    required this.title,
-    required this.subtitle,
+    required this.brandName,
+    required this.genericName,
     required this.indication,
-    required this.interval,
+    required this.injectionInterval,
+    required this.tone,
+    required this.cadenceLabel,
+    required this.codeLabel,
     required this.onTap,
   });
 
-  final String title;
-  final String subtitle;
+  final String brandName;
+  final String genericName;
   final String indication;
-  final String interval;
+  final String injectionInterval;
+  final Color tone;
+  final String cadenceLabel;
+  final String codeLabel;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return Material(
       color: AppColors.surface,
-      borderRadius: BorderRadius.circular(AppRadii.lg),
+      borderRadius: BorderRadius.circular(AppRadii.xl),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: Ink(
           decoration: BoxDecoration(
-            border: Border.all(color: AppColors.border),
-            borderRadius: BorderRadius.circular(AppRadii.lg),
+            border: Border.all(
+              color: AppColors.border.withValues(alpha: 0.7),
+              width: 0.5,
+            ),
+            borderRadius: BorderRadius.circular(AppRadii.xl),
           ),
-          padding: const EdgeInsets.fromLTRB(
-            AppSpace.lg,
-            AppSpace.md + 2,
-            AppSpace.md + 2,
-            AppSpace.md + 2,
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
+              // ── Identity band (tone-tinted) ─────────────────────
               Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: AppColors.accent.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(AppRadii.sm + 2),
+                color: tone.withValues(alpha: 0.08),
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpace.lg,
+                  AppSpace.md + 2,
+                  AppSpace.md - 2,
+                  AppSpace.md + 2,
                 ),
-                child: const Icon(
-                  Icons.colorize_outlined,
-                  color: AppColors.accent,
-                  size: 18,
-                ),
-              ),
-              const Gap.h(AppSpace.md),
-              Expanded(
-                child: Column(
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        color: AppColors.text,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.2,
-                      ),
-                    ),
-                    const Gap.v(2),
-                    Text(subtitle, style: AppTextSizes.micro),
-                    const Gap.v(AppSpace.sm),
-                    Text(
-                      indication,
-                      style: const TextStyle(
-                        color: AppColors.text,
-                        fontSize: 12.5,
-                        height: 1.5,
-                      ),
-                    ),
-                    const Gap.v(AppSpace.sm),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpace.sm + 2,
-                        vertical: 3,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.accent.withValues(alpha: 0.14),
-                        border: Border.all(
-                          color: AppColors.accent.withValues(alpha: 0.3),
-                        ),
-                        borderRadius:
-                            BorderRadius.circular(AppRadii.pill),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          const Icon(
-                            Icons.schedule,
-                            size: 11,
-                            color: AppColors.accent,
+                          Row(
+                            children: <Widget>[
+                              Container(
+                                width: 7,
+                                height: 7,
+                                decoration: BoxDecoration(
+                                  color: tone,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const Gap.h(AppSpace.sm + 2),
+                              Flexible(
+                                child: Text(
+                                  brandName,
+                                  style: const TextStyle(
+                                    color: AppColors.text,
+                                    fontSize: 19,
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: -0.4,
+                                    height: 1.15,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
                           ),
-                          const Gap.h(AppSpace.xs),
-                          Text(
-                            interval,
-                            style: const TextStyle(
-                              color: AppColors.accent,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.2,
+                          const Gap.v(AppSpace.xs - 1),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 15),
+                            child: Text(
+                              genericName,
+                              style: const TextStyle(
+                                color: AppColors.muted,
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 0.1,
+                                height: 1.3,
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
                       ),
                     ),
+                    const Gap.h(AppSpace.sm),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 9,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: tone.withValues(alpha: 0.18),
+                        borderRadius: BorderRadius.circular(AppRadii.pill),
+                      ),
+                      child: Text(
+                        cadenceLabel,
+                        style: TextStyle(
+                          color: tone,
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
-              const Gap.h(AppSpace.sm),
-              const Icon(
-                Icons.chevron_right_rounded,
-                color: AppColors.muted,
-                size: 20,
+              // ── Indication body ─────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpace.lg,
+                  AppSpace.md + 2,
+                  AppSpace.lg,
+                  AppSpace.md - 2,
+                ),
+                child: Text(
+                  indication,
+                  style: const TextStyle(
+                    color: AppColors.text,
+                    fontSize: 13,
+                    height: 1.55,
+                  ),
+                ),
+              ),
+              // ── Footer meta row ─────────────────────────────────
+              Container(
+                color: AppColors.bg.withValues(alpha: 0.4),
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpace.lg,
+                  AppSpace.sm + 2,
+                  AppSpace.md - 2,
+                  AppSpace.sm + 2,
+                ),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      codeLabel,
+                      style: TextStyle(
+                        color: tone,
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                    const Gap.h(AppSpace.sm + 2),
+                    const Text(
+                      '·',
+                      style: TextStyle(color: AppColors.muted),
+                    ),
+                    const Gap.h(AppSpace.sm + 2),
+                    Expanded(
+                      child: Row(
+                        children: <Widget>[
+                          const Icon(
+                            Icons.schedule_rounded,
+                            size: 13,
+                            color: AppColors.muted,
+                          ),
+                          const Gap.h(AppSpace.xs + 1),
+                          Flexible(
+                            child: Text(
+                              injectionInterval,
+                              style: const TextStyle(
+                                color: AppColors.mutedStrong,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.1,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(
+                      Icons.chevron_right_rounded,
+                      color: AppColors.muted,
+                      size: 20,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -277,10 +394,14 @@ class DepotProtocolScreen extends StatelessWidget {
   List<Widget> _sustennaContent() {
     return <Widget>[
       _OverviewCard(
+        brandName: sustenna.brandName,
         generic: sustenna.genericName,
         active: sustenna.activeSubstance,
         indication: sustenna.indication,
         interval: sustenna.injectionInterval,
+        tone: AppColors.from,
+        cadenceLabel: 'MONTHLY',
+        codeLabel: 'PP1M',
       ),
       const SizedBox(height: 16),
       const _SectionHeader('AVAILABLE STRENGTHS'),
@@ -343,10 +464,14 @@ class DepotProtocolScreen extends StatelessWidget {
   List<Widget> _trinzaContent() {
     return <Widget>[
       _OverviewCard(
+        brandName: trinza.brandName,
         generic: trinza.genericName,
         active: trinza.activeSubstance,
         indication: trinza.indication,
         interval: trinza.injectionInterval,
+        tone: AppColors.to,
+        cadenceLabel: 'QUARTERLY',
+        codeLabel: 'PP3M',
       ),
       const SizedBox(height: 16),
       const _SectionHeader('AVAILABLE STRENGTHS'),
@@ -437,10 +562,14 @@ class DepotProtocolScreen extends StatelessWidget {
   List<Widget> _maintenaContent() {
     return <Widget>[
       _OverviewCard(
+        brandName: maintena.brandName,
         generic: maintena.genericName,
         active: maintena.activeSubstance,
         indication: maintena.indication,
         interval: maintena.injectionInterval,
+        tone: AppColors.accent,
+        cadenceLabel: 'MONTHLY',
+        codeLabel: 'AOM',
       ),
       const SizedBox(height: 16),
       const _SectionHeader('AVAILABLE STRENGTHS'),
@@ -541,70 +670,257 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
+/// Detail-screen overview card — same four-band clinical-poster
+/// chrome as the Clozapine titration header. Tone-tinted identity
+/// band at top, hero indication paragraph, key-fact stat row, and a
+/// tinted footer holding the injection interval.
 class _OverviewCard extends StatelessWidget {
   const _OverviewCard({
     required this.generic,
     required this.active,
     required this.indication,
     required this.interval,
+    this.brandName,
+    this.tone,
+    this.cadenceLabel,
+    this.codeLabel,
   });
 
   final String generic;
   final String active;
   final String indication;
   final String interval;
+  final String? brandName;
+  final Color? tone;
+  final String? cadenceLabel;
+  final String? codeLabel;
 
   @override
   Widget build(BuildContext context) {
+    final t = tone ?? AppColors.accent;
     return Container(
-      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.accent.withValues(alpha: 0.06),
-        border: Border.all(color: AppColors.accent.withValues(alpha: 0.3)),
-        borderRadius: BorderRadius.circular(12),
+        color: AppColors.surface,
+        border: Border.all(
+          color: AppColors.border.withValues(alpha: 0.7),
+          width: 0.5,
+        ),
+        borderRadius: BorderRadius.circular(AppRadii.xl),
       ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          // ── Identity band ──────────────────────────────────────
+          Container(
+            color: t.withValues(alpha: 0.08),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpace.lg,
+              AppSpace.md + 2,
+              AppSpace.md - 2,
+              AppSpace.md + 2,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            width: 7,
+                            height: 7,
+                            decoration: BoxDecoration(
+                              color: t,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const Gap.h(AppSpace.sm + 2),
+                          Flexible(
+                            child: Text(
+                              brandName ?? generic,
+                              style: const TextStyle(
+                                color: AppColors.text,
+                                fontSize: 19,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: -0.4,
+                                height: 1.15,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Gap.v(AppSpace.xs - 1),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15),
+                        child: Text(
+                          generic,
+                          style: const TextStyle(
+                            color: AppColors.muted,
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.1,
+                            height: 1.3,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (cadenceLabel != null) ...<Widget>[
+                  const Gap.h(AppSpace.sm),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 9,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: t.withValues(alpha: 0.18),
+                      borderRadius: BorderRadius.circular(AppRadii.pill),
+                    ),
+                    child: Text(
+                      cadenceLabel!,
+                      style: TextStyle(
+                        color: t,
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          // ── Body: indication ────────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpace.lg,
+              AppSpace.md + 2,
+              AppSpace.lg,
+              AppSpace.md - 2,
+            ),
+            child: Text(
+              indication,
+              style: const TextStyle(
+                color: AppColors.text,
+                fontSize: 13.5,
+                height: 1.55,
+              ),
+            ),
+          ),
+          // ── Key-fact stat row ───────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpace.lg,
+              0,
+              AppSpace.lg,
+              AppSpace.md - 2,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  child: _OverviewMiniStat(
+                    eyebrow: 'ACTIVE SUBSTANCE',
+                    value: active,
+                  ),
+                ),
+                if (codeLabel != null) ...<Widget>[
+                  Container(
+                    width: 0.5,
+                    height: 32,
+                    color: AppColors.border.withValues(alpha: 0.6),
+                  ),
+                  Expanded(
+                    child: _OverviewMiniStat(
+                      eyebrow: 'AGENT CODE',
+                      value: codeLabel!,
+                      tone: t,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          // ── Footer: interval band ───────────────────────────────
+          Container(
+            color: AppColors.bg.withValues(alpha: 0.4),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpace.lg,
+              AppSpace.sm + 2,
+              AppSpace.lg,
+              AppSpace.sm + 2,
+            ),
+            child: Row(
+              children: <Widget>[
+                Icon(
+                  Icons.schedule_rounded,
+                  size: 14,
+                  color: t,
+                ),
+                const Gap.h(AppSpace.sm),
+                Expanded(
+                  child: Text(
+                    interval,
+                    style: const TextStyle(
+                      color: AppColors.mutedStrong,
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.1,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Mini stat for the overview card's middle band — eyebrow + value
+/// in a compact column. Reused for ACTIVE SUBSTANCE and AGENT CODE.
+class _OverviewMiniStat extends StatelessWidget {
+  const _OverviewMiniStat({
+    required this.eyebrow,
+    required this.value,
+    this.tone,
+  });
+
+  final String eyebrow;
+  final String value;
+  final Color? tone;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 2),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            generic,
-            style: const TextStyle(
-              color: AppColors.text,
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            'Active: $active',
+            eyebrow,
             style: const TextStyle(
               color: AppColors.muted,
-              fontSize: 12,
+              fontSize: 9.5,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.3,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 4),
           Text(
-            indication,
-            style: const TextStyle(
-              color: AppColors.text,
-              fontSize: 12.5,
-              height: 1.5,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-            decoration: BoxDecoration(
-              color: AppColors.accent.withValues(alpha: 0.18),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Text(
-              interval,
-              style: const TextStyle(
-                color: AppColors.accent,
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-              ),
+            value,
+            style: TextStyle(
+              color: tone ?? AppColors.text,
+              fontSize: 13.5,
+              fontWeight: FontWeight.w700,
+              letterSpacing: tone != null ? 1.2 : -0.1,
+              height: 1.2,
             ),
           ),
         ],
