@@ -2868,6 +2868,11 @@ class _FlagChip extends StatelessWidget {
   }
 }
 
+/// Citations list. Each citation key is a tappable row that opens a
+/// bottom-sheet with a plain-English breakdown of the source: which
+/// publication, which chapter / page, what it says, and how PsychSwitch
+/// uses it. Builds trust by making the evidence chain inspectable
+/// without leaving the result screen.
 class _CitationsCard extends StatelessWidget {
   const _CitationsCard({required this.citations});
 
@@ -2879,24 +2884,370 @@ class _CitationsCard extends StatelessWidget {
       title: 'Citations',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: citations
-            .map(
-              (c) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Text(
-                  '• $c',
-                  style: const TextStyle(
-                    color: AppColors.muted,
-                    fontSize: 12,
-                    height: 1.4,
-                  ),
-                ),
+        children: <Widget>[
+          for (var i = 0; i < citations.length; i++) ...<Widget>[
+            if (i > 0)
+              Container(
+                height: 0.5,
+                margin: const EdgeInsets.symmetric(vertical: AppSpace.xs),
+                color: AppColors.border.withValues(alpha: 0.5),
               ),
-            )
-            .toList(),
+            _CitationRow(key_: citations[i]),
+          ],
+        ],
       ),
     );
   }
+}
+
+/// Tappable citation row — surfaces a friendly source name + a small
+/// chevron, opens a bottom-sheet on tap with the plain-English summary
+/// from `_citationSummary(...)`.
+class _CitationRow extends StatelessWidget {
+  const _CitationRow({required this.key_});
+
+  final String key_;
+
+  @override
+  Widget build(BuildContext context) {
+    final info = _citationSummary(key_);
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(AppRadii.sm + 2),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {
+          unawaited(hapticsTap());
+          _showCitationSheet(context, key_, info);
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpace.xs + 2,
+            vertical: AppSpace.xs + 2,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                width: 4,
+                height: 4,
+                margin: const EdgeInsets.only(top: 7, right: AppSpace.sm + 2),
+                decoration: BoxDecoration(
+                  color: AppColors.accent.withValues(alpha: 0.7),
+                  shape: BoxShape.circle,
+                ),
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      info.title,
+                      style: const TextStyle(
+                        color: AppColors.text,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        height: 1.35,
+                        letterSpacing: -0.1,
+                      ),
+                    ),
+                    if (info.locator.isNotEmpty) ...<Widget>[
+                      const Gap.v(1),
+                      Text(
+                        info.locator,
+                        style: const TextStyle(
+                          color: AppColors.muted,
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.1,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              const Gap.h(AppSpace.sm),
+              const Icon(
+                Icons.expand_more_rounded,
+                color: AppColors.muted,
+                size: 18,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+void _showCitationSheet(
+  BuildContext context,
+  String key_,
+  _CitationInfo info,
+) {
+  showModalBottomSheet<void>(
+    context: context,
+    backgroundColor: AppColors.surface,
+    showDragHandle: true,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadii.xl)),
+    ),
+    builder: (_) => Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpace.xl,
+        0,
+        AppSpace.xl,
+        AppSpace.xxl,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'CITATION',
+            style: AppTextSizes.eyebrow.copyWith(color: AppColors.accent),
+          ),
+          const Gap.v(AppSpace.sm),
+          Text(
+            info.title,
+            style: const TextStyle(
+              color: AppColors.text,
+              fontSize: 19,
+              fontWeight: FontWeight.w800,
+              letterSpacing: -0.4,
+              height: 1.2,
+            ),
+          ),
+          if (info.locator.isNotEmpty) ...<Widget>[
+            const Gap.v(AppSpace.xs + 1),
+            Text(
+              info.locator,
+              style: const TextStyle(
+                color: AppColors.mutedStrong,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+          const Gap.v(AppSpace.lg),
+          Container(
+            height: 0.5,
+            color: AppColors.border.withValues(alpha: 0.6),
+          ),
+          const Gap.v(AppSpace.lg),
+          Text(
+            'WHAT IT SAYS',
+            style: AppTextSizes.eyebrow.copyWith(color: AppColors.mutedStrong),
+          ),
+          const Gap.v(AppSpace.sm),
+          Text(
+            info.summary,
+            style: const TextStyle(
+              color: AppColors.text,
+              fontSize: 13.5,
+              height: 1.6,
+            ),
+          ),
+          const Gap.v(AppSpace.lg),
+          Text(
+            'HOW PSYCHSWITCH USES IT',
+            style: AppTextSizes.eyebrow.copyWith(color: AppColors.mutedStrong),
+          ),
+          const Gap.v(AppSpace.sm),
+          Text(
+            info.usage,
+            style: const TextStyle(
+              color: AppColors.mutedStrong,
+              fontSize: 13,
+              height: 1.55,
+            ),
+          ),
+          const Gap.v(AppSpace.lg),
+          // Citation key footer — kept visible so the clinician can
+          // grep the source bundle / changelog if they need to.
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpace.sm + 2,
+              vertical: AppSpace.xs + 1,
+            ),
+            decoration: BoxDecoration(
+              color: AppColors.bg.withValues(alpha: 0.6),
+              borderRadius: BorderRadius.circular(AppRadii.sm),
+            ),
+            child: Text(
+              key_,
+              style: const TextStyle(
+                color: AppColors.muted,
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                fontFamily: 'monospace',
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+/// Plain-English summary returned from a citation key. Used by the
+/// bottom-sheet to surface what the source actually says + how
+/// PsychSwitch consumes it. New keys fall through to a defensive
+/// "PsychSwitch content library" entry so the sheet never breaks.
+class _CitationInfo {
+  const _CitationInfo({
+    required this.title,
+    required this.locator,
+    required this.summary,
+    required this.usage,
+  });
+
+  final String title;
+  final String locator;
+  final String summary;
+  final String usage;
+}
+
+_CitationInfo _citationSummary(String key) {
+  // Coarse pattern-matching — the keys carry the publisher + locator
+  // by convention (e.g. `maudsley15_ch3_p369_table_3_7`), and we
+  // surface a per-publication template plus the locator when present.
+  final lower = key.toLowerCase();
+  String locator() {
+    final match = RegExp(r'p(\d+)').firstMatch(lower);
+    final page = match != null ? 'page ${match.group(1)}' : '';
+    final chMatch = RegExp(r'ch(\d+)').firstMatch(lower);
+    final chapter = chMatch != null ? 'ch. ${chMatch.group(1)}' : '';
+    return <String>[chapter, page].where((s) => s.isNotEmpty).join(' · ');
+  }
+
+  if (lower.startsWith('maudsley15')) {
+    return _CitationInfo(
+      title: 'Maudsley Prescribing Guidelines, 15th edition',
+      locator: locator(),
+      summary:
+          'The Maudsley 15th (Taylor, Barnes & Young, 2021) is the '
+          'current default reference for UK psychotropic prescribing — '
+          'and the primary source PsychSwitch builds against. Each '
+          'switching rule traces back to a specific table, box, or '
+          'paragraph in the chapter cited here.',
+      usage:
+          'PsychSwitch lifts the dose progression, duration and any '
+          'explicit safety-flag wording directly from this source. '
+          'Where the Maudsley text gives a range, PsychSwitch picks '
+          'the midpoint and shows the original range in the rationale.',
+    );
+  }
+  if (lower.startsWith('maudsley14')) {
+    return _CitationInfo(
+      title: 'Maudsley Prescribing Guidelines, 14th edition',
+      locator: locator(),
+      summary:
+          'The previous (2018) edition of the Maudsley guidelines. '
+          'Some services and trial protocols still reference this '
+          "edition's faster clozapine titration and uniform 450 mg "
+          'antipsychotic target.',
+      usage:
+          "Used by the clozapine titration tab's 'Maudsley 14' regimen "
+          'option so clinicians can compare against — or follow — the '
+          'historical schedule when a site still uses it.',
+    );
+  }
+  if (lower.startsWith('bap2020') || lower.startsWith('bap2015')) {
+    return _CitationInfo(
+      title: 'BAP consensus guidelines',
+      locator: locator(),
+      summary:
+          'British Association for Psychopharmacology consensus '
+          'statements. These set the UK academic standard for '
+          'evidence-based prescribing in mood, anxiety, psychotic and '
+          'substance-use disorders.',
+      usage:
+          'PsychSwitch pulls switching-strategy direction (cross-taper '
+          'vs taper-then-wait vs direct) from the BAP statements where '
+          'the Maudsley table is silent, and surfaces the BAP wording '
+          'in the rationale paragraph.',
+    );
+  }
+  if (lower.startsWith('nice')) {
+    return _CitationInfo(
+      title: 'NICE clinical guideline',
+      locator: locator(),
+      summary:
+          'National Institute for Health and Care Excellence '
+          'guidelines. Sets the NHS standard for clinical decisions '
+          'and is the legal reference point for England + Wales.',
+      usage:
+          'PsychSwitch uses NICE for clozapine community-initiation '
+          'criteria, monitoring frequency baselines, and the '
+          'discontinuation-syndrome severity flags.',
+    );
+  }
+  if (lower.startsWith('cpms')) {
+    return _CitationInfo(
+      title: 'Clozapine Patient Monitoring Service (CPMS)',
+      locator: locator(),
+      summary:
+          'The UK monitoring service that holds the clozapine FBC '
+          'thresholds (ANC/WBC green/amber/red), the BEN-adjusted '
+          'thresholds, and the rechallenge tier rules.',
+      usage:
+          'Drives the FBC zone classifier on the ANC-check tab and '
+          'the rechallenge tier matching on the Rechallenge tab.',
+    );
+  }
+  if (lower.startsWith('trec')) {
+    return _CitationInfo(
+      title: 'TREC community clozapine protocol',
+      locator: locator(),
+      summary:
+          'A peer-reviewed outpatient clozapine initiation pathway. '
+          'Originally developed for South-London community teams; the '
+          'thrice-weekly clinic-visit cadence is its defining feature.',
+      usage:
+          'Source for the Community regimen in the clozapine titration '
+          'tab — the 28-day curve with Mon/Wed/Fri dose escalations.',
+    );
+  }
+  if (lower.startsWith('spina') || lower.startsWith('kennedy')) {
+    return _CitationInfo(
+      title: 'CYP1A2 / clozapine plasma-level pharmacology',
+      locator: locator(),
+      summary:
+          'Peer-reviewed pharmacokinetic studies on CYP1A2 induction '
+          'by smoking and its impact on clozapine plasma levels — the '
+          'evidence behind sex × smoker-specific maintenance targets.',
+      usage:
+          'Justifies the four Maudsley-15 titration variants (225 mg '
+          'female non-smoker → 375 mg male smoker) and the equivalent '
+          'Maudsley-14 personalisation in the same tab.',
+    );
+  }
+  if (lower.startsWith('fda')) {
+    return _CitationInfo(
+      title: 'FDA labelling',
+      locator: locator(),
+      summary:
+          'United States Food and Drug Administration product '
+          'labelling. Authoritative for boxed warnings, dose ceilings, '
+          'and depot LAI initiation protocols.',
+      usage:
+          "Drives the Depot LAI module's initiation tables (Sustenna "
+          'Day 1 + Day 8 + monthly, Maintena 14-day overlap vs 1-day '
+          'load) and missed-dose flows.',
+    );
+  }
+  return const _CitationInfo(
+    title: 'PsychSwitch content library',
+    locator: '',
+    summary:
+        "A reviewed entry in PsychSwitch's clinical-content bundle. "
+        "See the rule provenance card for the reviewer's name and "
+        'last-reviewed date.',
+    usage:
+        'Surfaces under the rationale paragraph when the engine picks '
+        'this rule. Tap the rule provenance card for the audit trail.',
+  );
 }
 
 /// Closes the result with a clean send-off. Sits below every plan
