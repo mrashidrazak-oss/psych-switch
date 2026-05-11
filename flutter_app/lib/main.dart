@@ -17,8 +17,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:psychswitch/src/observability/sentry_init.dart';
 import 'package:psychswitch/src/providers/disclaimer_provider.dart';
+import 'package:psychswitch/src/providers/onboarding_provider.dart';
 import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/screens/disclaimer_screen.dart';
+import 'package:psychswitch/src/ui/screens/onboarding_screen.dart';
 import 'package:psychswitch/src/ui/theme/app_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 
@@ -77,7 +79,9 @@ class _PsychSwitchAppState extends State<PsychSwitchApp> {
         return MediaQuery(
           data: mq.copyWith(textScaler: scaler),
           child: _DisclaimerGate(
-            child: child ?? const SizedBox.shrink(),
+            child: _OnboardingGate(
+              child: child ?? const SizedBox.shrink(),
+            ),
           ),
         );
       },
@@ -110,6 +114,28 @@ class _DisclaimerGate extends ConsumerWidget {
       error: (_, __) => const DisclaimerScreen(),
       data: (acknowledged) =>
           acknowledged ? child : const DisclaimerScreen(),
+    );
+  }
+}
+
+/// After the disclaimer, show the onboarding tour once. Returning
+/// users (`markComplete()` flipped on a prior launch) skip straight
+/// through to the router. Failure-mode bias: if SharedPreferences
+/// errors, we treat the user as already-onboarded — better to skip
+/// the tour for a returning user than to make them sit through it
+/// every cold start.
+class _OnboardingGate extends ConsumerWidget {
+  const _OnboardingGate({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncDone = ref.watch(onboardingCompleteProvider);
+    return asyncDone.when(
+      loading: () => const ColoredBox(color: AppColors.bg),
+      error: (_, __) => child,
+      data: (done) => done ? child : const OnboardingScreen(),
     );
   }
 }
