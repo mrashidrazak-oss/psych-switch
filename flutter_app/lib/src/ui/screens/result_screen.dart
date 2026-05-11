@@ -706,28 +706,42 @@ class _ResultBody extends ConsumerWidget {
   ) {
     final fromDrug = engine.getDrug(input.fromDrugId);
     if (fromDrug == null) return const <Widget>[];
-    // Preview what conservative WOULD do against the current (pre-
-    // compression) schedule — the toggle's reasoning card needs to
-    // know whether softening is meaningful for this rule before
-    // offering it.
-    final base = _displaySchedule(ok, scaleResult, view);
-    final preview = applyConservativeOverlap(base, fromDrug);
-    if (!preview.modified && !conservative) {
-      // Engine says softening wouldn't change anything (e.g. day 1
-      // already at 0, or rounding eats the 25 % delta). Don't tease
-      // the toggle in that case.
+    // Self-hide entirely if there's no overlap to soften — direct
+    // switches and washouts won't even show the option.
+    if (ok.schedule.length < 2 || ok.schedule.first.fromDoseMg <= 0) {
       return const <Widget>[];
     }
+    // Preview what conservative WOULD do against the current (pre-
+    // compression) schedule. We render the card EITHER way:
+    //   • modified=true  → applicable, toggle live
+    //   • modified=false → not applicable (plateau / rounding), toggle
+    //                      disabled with an inline explanation so the
+    //                      feature stays discoverable even when the
+    //                      engine refuses to soften this particular
+    //                      schedule.
+    final base = _displaySchedule(ok, scaleResult, view);
+    final preview = applyConservativeOverlap(base, fromDrug);
     final day1Original = base.isEmpty ? 0 : base.first.fromDoseMg;
+    final day2 = base.length >= 2 ? base[1].fromDoseMg : day1Original;
     final day1Softened = preview.modified
         ? day1Original - preview.deltaMg
         : day1Original;
+    // Reason for refusal: either it's a flat plateau (day 1 == day 2)
+    // or formulation rounding swallows the 25 % delta.
+    final notApplicableReason = preview.modified
+        ? null
+        : (day1Original == day2
+            ? 'plateau'
+            : 'rounding');
     return <Widget>[
       _SoftenDay1Card(
         on: conservative,
+        applicable: preview.modified,
+        notApplicableReason: notApplicableReason,
         fromDrugName: fromDrug.genericName,
         day1Original: day1Original,
         day1Softened: day1Softened,
+        day2Dose: day2,
         deltaMg: preview.deltaMg,
         onToggle: (v) {
           unawaited(hapticsTap());
@@ -926,6 +940,7 @@ class _ResultBody extends ConsumerWidget {
               effectiveSpeed,
               conservative,
             ),
+            day1Softened: conservative,
           ),
           const Gap.v(AppSpace.lg),
           // Overlap-intensity assessment — quantifies the clinical
@@ -2037,41 +2052,54 @@ class _TaperSpeedSegment extends StatelessWidget {
 class _SoftenDay1Card extends StatelessWidget {
   const _SoftenDay1Card({
     required this.on,
+    required this.applicable,
+    required this.notApplicableReason,
     required this.fromDrugName,
     required this.day1Original,
     required this.day1Softened,
+    required this.day2Dose,
     required this.deltaMg,
     required this.onToggle,
   });
 
   final bool on;
+  final bool applicable;
+
+  /// 'plateau' (day 1 == day 2) or 'rounding' (25 % cut rounds back).
+  /// Null when [applicable] is true.
+  final String? notApplicableReason;
+
   final String fromDrugName;
   final num day1Original;
   final num day1Softened;
+  final num day2Dose;
   final num deltaMg;
   final ValueChanged<bool> onToggle;
 
   @override
   Widget build(BuildContext context) {
-    final tone = on ? AppColors.accent : AppColors.mutedStrong;
+    final activeOn = on && applicable;
+    final tone = !applicable
+        ? AppColors.muted
+        : (on ? AppColors.accent : AppColors.mutedStrong);
     final pct = day1Original > 0
         ? ((deltaMg / day1Original) * 100).round()
         : 0;
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => onToggle(!on),
+        onTap: applicable ? () => onToggle(!on) : null,
         borderRadius: BorderRadius.circular(AppRadii.lg + 2),
         child: Container(
           decoration: BoxDecoration(
-            color: on
+            color: activeOn
                 ? AppColors.accent.withValues(alpha: 0.06)
                 : AppColors.surface,
             border: Border.all(
-              color: on
+              color: activeOn
                   ? AppColors.accent.withValues(alpha: 0.6)
                   : AppColors.border.withValues(alpha: 0.7),
-              width: on ? 1 : 0.5,
+              width: activeOn ? 1 : 0.5,
             ),
             borderRadius: BorderRadius.circular(AppRadii.lg + 2),
           ),
@@ -2084,37 +2112,67 @@ class _SoftenDay1Card extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              // ── Eyebrow + icon + switch ─────────────────────────
+              // ── Eyebrow + icon + switch / unavailable badge ─────
               Row(
                 children: <Widget>[
                   Icon(
-                    on ? Icons.spa_rounded : Icons.spa_outlined,
+                    activeOn ? Icons.spa_rounded : Icons.spa_outlined,
                     size: 18,
                     color: tone,
                   ),
                   const Gap.h(AppSpace.sm),
                   Expanded(
                     child: Text(
-                      on ? 'DAY 1 SOFTENED' : 'SOFTEN DAY 1 OVERLAP',
+                      !applicable
+                          ? 'SOFTEN DAY 1 — NOT APPLICABLE'
+                          : (on
+                              ? 'DAY 1 SOFTENED'
+                              : 'SOFTEN DAY 1 OVERLAP'),
                       style: AppTextSizes.eyebrow.copyWith(color: tone),
                     ),
                   ),
                   const Gap.h(AppSpace.sm),
-                  IgnorePointer(
-                    child: Transform.scale(
-                      scale: 0.85,
-                      child: Switch.adaptive(
-                        value: on,
-                        onChanged: onToggle,
-                        activeThumbColor: AppColors.accent,
+                  if (applicable)
+                    IgnorePointer(
+                      child: Transform.scale(
+                        scale: 0.85,
+                        child: Switch.adaptive(
+                          value: on,
+                          onChanged: onToggle,
+                          activeThumbColor: AppColors.accent,
+                        ),
+                      ),
+                    )
+                  else
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpace.sm,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.muted.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(AppRadii.pill),
+                      ),
+                      child: Text(
+                        'UNAVAILABLE',
+                        style: AppTextSizes.eyebrow.copyWith(
+                          color: AppColors.muted,
+                          letterSpacing: 1,
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
               const Gap.v(AppSpace.sm + 2),
           // ── State-dependent body ────────────────────────────────
-          if (on)
+          if (!applicable)
+            _NotApplicableBody(
+              reason: notApplicableReason ?? 'plateau',
+              fromDrugName: fromDrugName,
+              day1: day1Original,
+              day2: day2Dose,
+            )
+          else if (on)
             RichText(
               text: TextSpan(
                 style: const TextStyle(
@@ -2204,6 +2262,55 @@ class _SoftenDay1Card extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Body shown when the engine refuses to soften — explains WHY without
+/// teasing a button that won't work. Two reasons today:
+///   • `plateau` — Day 1 from-dose equals Day 2's, so reducing Day 1
+///     would invert the taper. Common in rules that intentionally
+///     hold the from-drug steady while the new drug stabilises at
+///     target.
+///   • `rounding` — the 25 % reduction rounds back to the same dose
+///     after formulation rounding (low-dose pairs).
+class _NotApplicableBody extends StatelessWidget {
+  const _NotApplicableBody({
+    required this.reason,
+    required this.fromDrugName,
+    required this.day1,
+    required this.day2,
+  });
+
+  final String reason;
+  final String fromDrugName;
+  final num day1;
+  final num day2;
+
+  @override
+  Widget build(BuildContext context) {
+    final body = switch (reason) {
+      'plateau' =>
+        'This schedule holds $fromDrugName at ${_formatDose(day1)} mg through '
+            'Day 2 to let the new drug reach target first. Reducing Day 1 '
+            'below the plateau (${_formatDose(day2)} mg) would invert the '
+            "taper — Day 1 lower than Day 2 — which isn't clinically "
+            'meaningful. If the overlap looks too aggressive here, consider '
+            'a Faster taper speed or a different from-drug starting dose.',
+      'rounding' =>
+        'A 25 % reduction of ${_formatDose(day1)} mg rounds back to '
+            '${_formatDose(day1)} mg after formulation rounding (the '
+            "available tablet strengths can't represent the softer dose). "
+            'No useful softening is possible at this Day-1 dose.',
+      _ => 'Softening is not applicable for this schedule.',
+    };
+    return Text(
+      body,
+      style: const TextStyle(
+        color: AppColors.mutedStrong,
+        fontSize: 13,
+        height: 1.55,
       ),
     );
   }
@@ -2302,9 +2409,17 @@ class _FixedProtocolNotice extends StatelessWidget {
 /// 100 % bar, and the rest land proportionally. That gives the visual
 /// rhythm without needing an external scale.
 class _ScheduleCard extends StatelessWidget {
-  const _ScheduleCard({required this.schedule});
+  const _ScheduleCard({
+    required this.schedule,
+    this.day1Softened = false,
+  });
 
   final List<ScheduleStep> schedule;
+
+  /// When true, the Day-1 block renders a small "SOFTENED" pill next
+  /// to the day anchor so the user sees the Soften-Day-1 modification
+  /// reflected in the schedule itself, not only in the toggle card.
+  final bool day1Softened;
 
   @override
   Widget build(BuildContext context) {
@@ -2331,6 +2446,7 @@ class _ScheduleCard extends StatelessWidget {
               fromMax: fromMax,
               toMax: toMax,
               isFinal: i == schedule.length - 1,
+              isSoftened: i == 0 && day1Softened,
             ),
           ],
         ],
@@ -2347,12 +2463,17 @@ class _ScheduleStepBlock extends StatelessWidget {
     required this.fromMax,
     required this.toMax,
     required this.isFinal,
+    this.isSoftened = false,
   });
 
   final ScheduleStep step;
   final num fromMax;
   final num toMax;
   final bool isFinal;
+
+  /// True only on the Day-1 block when Conservative mode is on —
+  /// surfaces the softening as a tone-tinted pill on the day anchor.
+  final bool isSoftened;
 
   @override
   Widget build(BuildContext context) {
@@ -2376,6 +2497,37 @@ class _ScheduleStepBlock extends StatelessWidget {
                 fontFeatures: <FontFeature>[FontFeature.tabularFigures()],
               ),
             ),
+            if (isSoftened) ...<Widget>[
+              const Gap.h(AppSpace.sm + 2),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpace.sm,
+                  vertical: 3,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.accent.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(AppRadii.pill),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    const Icon(
+                      Icons.spa_rounded,
+                      size: 11,
+                      color: AppColors.accent,
+                    ),
+                    const Gap.h(AppSpace.xs),
+                    Text(
+                      'SOFTENED',
+                      style: AppTextSizes.eyebrow.copyWith(
+                        color: AppColors.accent,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
             const Spacer(),
             if (showCompleteTag)
               Container(
