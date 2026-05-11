@@ -334,6 +334,12 @@ class _ShareMenu extends ConsumerWidget {
               toDrug: toDrug!,
               plan: payload,
             );
+          case 'handout':
+            await exportPatientHandoutPdf(
+              fromDrug: fromDrug!,
+              toDrug: toDrug!,
+              plan: payload,
+            );
         }
       },
       itemBuilder: (_) => <PopupMenuEntry<String>>[
@@ -350,8 +356,17 @@ class _ShareMenu extends ConsumerWidget {
           value: 'pdf',
           child: ListTile(
             leading: Icon(Icons.picture_as_pdf_outlined),
-            title: Text('Export PDF'),
+            title: Text('Export clinician PDF'),
             subtitle: Text('Print · Save · AirDrop'),
+            contentPadding: EdgeInsets.zero,
+          ),
+        ),
+        const PopupMenuItem<String>(
+          value: 'handout',
+          child: ListTile(
+            leading: Icon(Icons.assignment_ind_outlined),
+            title: Text('Patient handout PDF'),
+            subtitle: Text('Plain language · large print · sign-off block'),
             contentPadding: EdgeInsets.zero,
           ),
         ),
