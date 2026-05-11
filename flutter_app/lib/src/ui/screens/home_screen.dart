@@ -369,15 +369,10 @@ class _ModulesSection extends StatelessWidget {
           tone: AppColors.accent,
           onPressed: () => context.pushNamed(Routes.depotIndex),
         ),
-        const Gap.v(AppSpace.sm + 2),
-        _ModuleRow(
-          title: 'Mood stabilisers',
-          subtitle: 'Lithium · valproate · lamotrigine · '
-              'carbamazepine · Maudsley 15 lithium taper',
-          icon: Icons.balance_rounded,
-          tone: AppColors.to,
-          onPressed: () => context.pushNamed(Routes.moodStabilizers),
-        ),
+        // Mood-stabiliser module hidden pre-release pending clinical
+        // sign-off of lithium / valproate / lamotrigine / carbamazepine
+        // content. Route + screens kept in the codebase; restore the
+        // _ModuleRow here once content is reviewed.
       ],
     );
   }
