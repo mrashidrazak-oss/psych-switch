@@ -411,11 +411,22 @@ class _RegimenReasoningCard extends StatelessWidget {
 
 /// Protocol header card — the hero of the titration tab.
 ///
-/// Two large stat columns ("MAINTENANCE TARGET" + "TITRATION WINDOW")
-/// like an Apple Health dashboard, a context eyebrow naming the
-/// variant (e.g. "MAUDSLEY 15 · MALE SMOKER"), and the rule's
-/// rationale below. Replaces the tiny pill-style header that
-/// undersized one of the most important readings on the screen.
+/// Layout, top to bottom:
+///   1. **Identity band** (tone-tinted): regimen name as a confident
+///      h-level title, with a short tagline; variant chip on the
+///      right ("MALE · SMOKER" / "FEMALE · NON-SMOKER" /
+///      "OUTPATIENT").
+///   2. **Hero dose**: "TARGET MAINTENANCE" eyebrow, then a 44-pt
+///      tabular numeral with a smaller unit suffix. This is what
+///      the prescriber is titrating toward.
+///   3. **Secondary stats row**: two compact stats with icon —
+///      titration window (days) + test dose (Day-1 evening). Reads
+///      as a side-by-side caption, not as another hero.
+///   4. **Rationale band**: muted body text on a slightly darker bg
+///      so it reads as supporting context, not as primary signal.
+///
+/// Tone follows the regimen — accent-blue for Maudsley 15, muted
+/// strong for Maudsley 14, to-green for Community.
 class _ProtocolHeaderCard extends StatelessWidget {
   const _ProtocolHeaderCard({
     required this.protocol,
@@ -425,27 +436,44 @@ class _ProtocolHeaderCard extends StatelessWidget {
   final TitrationProtocol protocol;
   final TitrationRegimen regimen;
 
-  String _regimenLabel() =>
-      regimenSummaries[regimen]?.label ?? 'Maudsley';
+  String _regimenTitle() => switch (regimen) {
+        TitrationRegimen.maudsley15 => 'Maudsley 15th edition',
+        TitrationRegimen.maudsley14 => 'Maudsley 14th edition',
+        TitrationRegimen.community => 'Community pathway',
+      };
 
-  String _variantLabel() {
+  String _regimenTagline() => switch (regimen) {
+        TitrationRegimen.maudsley15 =>
+          'Reviewed default · CYP1A2-aware targets',
+        TitrationRegimen.maudsley14 =>
+          'Historical schedule · faster curve',
+        TitrationRegimen.community => 'Slower 28-day outpatient curve',
+      };
+
+  String _variantChip() {
     final v = protocol.variant;
-    if (regimen == TitrationRegimen.community) return 'OUTPATIENT PATHWAY';
-    final sexLabel = v.sex == Sex.male ? 'MALE' : 'FEMALE';
-    final smokerLabel = v.smoker ? 'SMOKER' : 'NON-SMOKER';
-    return '$sexLabel · $smokerLabel';
+    if (regimen == TitrationRegimen.community) return 'OUTPATIENT';
+    final sex = v.sex == Sex.male ? 'MALE' : 'FEMALE';
+    final smoker = v.smoker ? 'SMOKER' : 'NON-SMOKER';
+    return '$sex · $smoker';
   }
 
-  String _formatTarget() {
-    final n = protocol.targetDoseMg;
+  Color _tone() => switch (regimen) {
+        TitrationRegimen.maudsley15 => AppColors.accent,
+        TitrationRegimen.maudsley14 => AppColors.mutedStrong,
+        TitrationRegimen.community => AppColors.to,
+      };
+
+  String _formatNum(num n) {
     if (n == n.toInt()) return n.toInt().toString();
-    return n.toStringAsFixed(1);
+    return n.toStringAsFixed(2).replaceFirst(RegExp(r'\.?0+$'), '');
   }
 
   @override
   Widget build(BuildContext context) {
-    final regimenLabel = _regimenLabel();
-    final variantLabel = _variantLabel();
+    final tone = _tone();
+    final firstDoseMg =
+        protocol.steps.isNotEmpty ? protocol.steps.first.totalMg : 0;
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
@@ -453,77 +481,179 @@ class _ProtocolHeaderCard extends StatelessWidget {
           color: AppColors.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+        borderRadius: BorderRadius.circular(AppRadii.xl),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          // ── Context eyebrow ─────────────────────────────────────
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
-            child: Row(
-              children: <Widget>[
-                Container(
-                  width: 6,
-                  height: 6,
-                  decoration: const BoxDecoration(
-                    color: AppColors.accent,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    '${regimenLabel.toUpperCase()}  ·  $variantLabel',
-                    style: const TextStyle(
-                      color: AppColors.mutedStrong,
-                      fontSize: 10.5,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 1.4,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // ── Two-stat block ──────────────────────────────────────
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          // ─── 1. Identity band (tone-tinted) ─────────────────────
+          Container(
+            color: tone.withValues(alpha: 0.08),
+            padding: const EdgeInsets.fromLTRB(18, 16, 14, 14),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Expanded(
-                  child: _HeaderStat(
-                    eyebrow: 'MAINTENANCE TARGET',
-                    value: _formatTarget(),
-                    unit: 'mg/day',
-                    tone: AppColors.text,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            width: 7,
+                            height: 7,
+                            decoration: BoxDecoration(
+                              color: tone,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: Text(
+                              _regimenTitle(),
+                              style: const TextStyle(
+                                color: AppColors.text,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: -0.3,
+                                height: 1.2,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15),
+                        child: Text(
+                          _regimenTagline(),
+                          style: const TextStyle(
+                            color: AppColors.muted,
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.1,
+                            height: 1.3,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 14),
+                const SizedBox(width: 10),
                 Container(
-                  width: 0.5,
-                  height: 52,
-                  color: AppColors.border.withValues(alpha: 0.6),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: _HeaderStat(
-                    eyebrow: 'TITRATION WINDOW',
-                    value: protocol.totalDays.toString(),
-                    unit: protocol.totalDays == 1 ? 'day' : 'days',
-                    tone: AppColors.text,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 9,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: tone.withValues(alpha: 0.16),
+                    borderRadius: BorderRadius.circular(AppRadii.pill),
+                  ),
+                  child: Text(
+                    _variantChip(),
+                    style: TextStyle(
+                      color: tone,
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.2,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-          // ── Rationale band ──────────────────────────────────────
+          // ─── 2. Hero dose ───────────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.fromLTRB(18, 18, 18, 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const Text(
+                  'TARGET MAINTENANCE',
+                  style: TextStyle(
+                    color: AppColors.muted,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.6,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                RichText(
+                  text: TextSpan(
+                    children: <InlineSpan>[
+                      TextSpan(
+                        text: _formatNum(protocol.targetDoseMg),
+                        style: const TextStyle(
+                          color: AppColors.text,
+                          fontSize: 44,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -1.4,
+                          height: 1,
+                          fontFeatures: <FontFeature>[
+                            FontFeature.tabularFigures(),
+                          ],
+                        ),
+                      ),
+                      const WidgetSpan(child: SizedBox(width: 8)),
+                      const TextSpan(
+                        text: 'mg',
+                        style: TextStyle(
+                          color: AppColors.text,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                          height: 1,
+                          letterSpacing: -0.1,
+                        ),
+                      ),
+                      const TextSpan(
+                        text: ' / day',
+                        style: TextStyle(
+                          color: AppColors.muted,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                          height: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // ─── 3. Secondary stats row ─────────────────────────────
+          Padding(
+            padding: const EdgeInsets.fromLTRB(18, 0, 18, 16),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: _HeaderMiniStat(
+                    icon: Icons.schedule_rounded,
+                    label: 'Reached over',
+                    value: '${protocol.totalDays} '
+                        '${protocol.totalDays == 1 ? 'day' : 'days'}',
+                  ),
+                ),
+                Container(
+                  width: 0.5,
+                  height: 32,
+                  color: AppColors.border.withValues(alpha: 0.6),
+                ),
+                Expanded(
+                  child: _HeaderMiniStat(
+                    icon: Icons.medication_outlined,
+                    label: 'Test dose',
+                    value: '${_formatNum(firstDoseMg)} mg',
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // ─── 4. Rationale band ──────────────────────────────────
           Container(
-            color: AppColors.bg.withValues(alpha: 0.5),
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+            color: AppColors.bg.withValues(alpha: 0.4),
+            padding: const EdgeInsets.fromLTRB(18, 13, 18, 15),
             child: Text(
               protocol.rationale,
               style: const TextStyle(
@@ -539,64 +669,49 @@ class _ProtocolHeaderCard extends StatelessWidget {
   }
 }
 
-/// A single stat block within `_ProtocolHeaderCard`. Big tabular
-/// numeral, micro unit suffix, eyebrow above.
-class _HeaderStat extends StatelessWidget {
-  const _HeaderStat({
-    required this.eyebrow,
+/// Compact secondary stat for the header's middle band — icon + tiny
+/// muted label + 14-pt tabular value. Sits in a row with a 0.5-px
+/// hairline divider in between.
+class _HeaderMiniStat extends StatelessWidget {
+  const _HeaderMiniStat({
+    required this.icon,
+    required this.label,
     required this.value,
-    required this.unit,
-    required this.tone,
   });
 
-  final String eyebrow;
+  final IconData icon;
+  final String label;
   final String value;
-  final String unit;
-  final Color tone;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text(
-          eyebrow,
-          style: const TextStyle(
-            color: AppColors.muted,
-            fontSize: 10,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 1.4,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.baseline,
-          textBaseline: TextBaseline.alphabetic,
+        Icon(icon, size: 14, color: AppColors.mutedStrong),
+        const SizedBox(width: 8),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              value,
-              style: TextStyle(
-                color: tone,
-                fontSize: 28,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.8,
-                height: 1.05,
-                fontFeatures: const <FontFeature>[
-                  FontFeature.tabularFigures(),
-                ],
+              label,
+              style: const TextStyle(
+                color: AppColors.muted,
+                fontSize: 10.5,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.3,
               ),
             ),
-            const SizedBox(width: 5),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Text(
-                unit,
-                style: const TextStyle(
-                  color: AppColors.muted,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.1,
-                ),
+            const SizedBox(height: 1),
+            Text(
+              value,
+              style: const TextStyle(
+                color: AppColors.text,
+                fontSize: 13.5,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.1,
+                fontFeatures: <FontFeature>[FontFeature.tabularFigures()],
               ),
             ),
           ],
