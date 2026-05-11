@@ -80,18 +80,13 @@ class _ClozapineScreenState extends ConsumerState<ClozapineScreen>
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
         ),
-        bottom: TabBar(
-          controller: _tabCtl,
-          isScrollable: true,
-          tabAlignment: TabAlignment.start,
-          // Tab styling comes from the global TabBarTheme.
-          tabs: const <Tab>[
-            Tab(text: 'TITRATION'),
-            Tab(text: 'FBC'),
-            Tab(text: 'ANC CHECK'),
-            Tab(text: 'RECHALLENGE'),
-            Tab(text: 'COMMUNITY'),
-          ],
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(58),
+          // Custom tab strip — icon + Title-Case label per tab, accent-
+          // blue pill on the selected tab, subtle hairline below the
+          // strip to separate it from the body. Replaces the previous
+          // all-caps flat text tabs.
+          child: _ClozapineTabBar(controller: _tabCtl),
         ),
       ),
       body: SafeArea(
@@ -116,6 +111,182 @@ class _ClozapineScreenState extends ConsumerState<ClozapineScreen>
               if (_built[4]) _CommunityTab(data: cloz.getCommunityInitiation())
               else const SizedBox.shrink(),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Tab bar ────────────────────────────────────────────────────────────
+
+/// Top tab strip for the five module sections. Title-Case labels with
+/// an icon above the label per tab; the selected tab gets an accent-
+/// blue pill background and bolder text. Replaces the flat all-caps
+/// `TITRATION · FBC · ANC CHECK · RECHALLENGE · COMMUNITY` strip
+/// that read as terminal output rather than navigation.
+class _ClozapineTabBar extends StatefulWidget {
+  const _ClozapineTabBar({required this.controller});
+
+  final TabController controller;
+
+  @override
+  State<_ClozapineTabBar> createState() => _ClozapineTabBarState();
+}
+
+class _ClozapineTabBarState extends State<_ClozapineTabBar> {
+  static const List<_ClozapineTabSpec> _specs = <_ClozapineTabSpec>[
+    _ClozapineTabSpec(
+      icon: Icons.stairs_outlined,
+      label: 'Titration',
+    ),
+    _ClozapineTabSpec(
+      icon: Icons.bloodtype_outlined,
+      label: 'FBC',
+    ),
+    _ClozapineTabSpec(
+      icon: Icons.fact_check_outlined,
+      label: 'ANC check',
+    ),
+    _ClozapineTabSpec(
+      icon: Icons.restart_alt_rounded,
+      label: 'Rechallenge',
+    ),
+    _ClozapineTabSpec(
+      icon: Icons.groups_outlined,
+      label: 'Community',
+    ),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_onChanged);
+  }
+
+  void _onChanged() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_onChanged);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: AppColors.border.withValues(alpha: 0.6),
+            width: 0.5,
+          ),
+        ),
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.fromLTRB(
+          AppSpace.md,
+          AppSpace.sm,
+          AppSpace.md,
+          AppSpace.sm + 2,
+        ),
+        physics: const BouncingScrollPhysics(),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            for (var i = 0; i < _specs.length; i++) ...<Widget>[
+              if (i > 0) const SizedBox(width: 6),
+              _ClozapineTabChip(
+                spec: _specs[i],
+                isActive: widget.controller.index == i,
+                onTap: () {
+                  unawaited(hapticsTap());
+                  widget.controller.animateTo(i);
+                },
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ClozapineTabSpec {
+  const _ClozapineTabSpec({required this.icon, required this.label});
+  final IconData icon;
+  final String label;
+}
+
+class _ClozapineTabChip extends StatelessWidget {
+  const _ClozapineTabChip({
+    required this.spec,
+    required this.isActive,
+    required this.onTap,
+  });
+
+  final _ClozapineTabSpec spec;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final activeBg = AppColors.accent.withValues(alpha: 0.14);
+    const activeText = AppColors.accent;
+    const inactiveText = AppColors.muted;
+    return Semantics(
+      button: true,
+      selected: isActive,
+      label: spec.label,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(AppRadii.pill),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppRadii.pill),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOutCubic,
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpace.md + 2,
+              vertical: AppSpace.sm,
+            ),
+            decoration: BoxDecoration(
+              color: isActive ? activeBg : Colors.transparent,
+              borderRadius: BorderRadius.circular(AppRadii.pill),
+              border: Border.all(
+                color: isActive
+                    ? AppColors.accent.withValues(alpha: 0.35)
+                    : AppColors.border.withValues(alpha: 0.4),
+                width: 0.5,
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Icon(
+                  spec.icon,
+                  size: 16,
+                  color: isActive ? activeText : inactiveText,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  spec.label,
+                  style: TextStyle(
+                    color: isActive ? activeText : inactiveText,
+                    fontSize: 13,
+                    fontWeight:
+                        isActive ? FontWeight.w700 : FontWeight.w600,
+                    letterSpacing: -0.1,
+                    height: 1.2,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
