@@ -1875,10 +1875,19 @@ class _FixedProtocolNotice extends StatelessWidget {
   }
 }
 
-/// Day-by-day cross-taper schedule. Stripeless — hairline row dividers
-/// only, tabular figures for the dose columns, color-coded from/to so
-/// the schedule visually carries the same identity as the hero. No
-/// drop-shadow, no fill — the table sits inside [_Card]'s chrome.
+/// Day-by-day cross-taper schedule.
+///
+/// Each step is its own little narrative — a big "DAY N" anchor, two
+/// dose rows (FROM in blue, TO in green) each with a normalised
+/// progress bar so the eye reads the cross-titration as a shape: the
+/// from-bar shrinks step by step while the to-bar grows. The crossover
+/// chart that used to sit above the table is gone; this is the chart,
+/// embedded in the data rather than parallel to it.
+///
+/// Bars are normalised to the max dose either drug reaches across the
+/// schedule (not pharmacological max) — so the highest dose is always
+/// 100 % bar, and the rest land proportionally. That gives the visual
+/// rhythm without needing an external scale.
 class _ScheduleCard extends StatelessWidget {
   const _ScheduleCard({required this.schedule});
 
@@ -1886,18 +1895,30 @@ class _ScheduleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    num fromMax = 0;
+    num toMax = 0;
+    for (final s in schedule) {
+      if (s.fromDoseMg > fromMax) fromMax = s.fromDoseMg;
+      if (s.toDoseMg > toMax) toMax = s.toDoseMg;
+    }
     return _Card(
       title: 'Schedule',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          const _ScheduleHeaderRow(),
           for (var i = 0; i < schedule.length; i++) ...<Widget>[
-            Container(
-              height: 0.5,
-              color: AppColors.border.withValues(alpha: 0.6),
+            if (i > 0)
+              Container(
+                height: 0.5,
+                color: AppColors.border.withValues(alpha: 0.5),
+                margin: const EdgeInsets.symmetric(vertical: AppSpace.sm + 2),
+              ),
+            _ScheduleStepBlock(
+              step: schedule[i],
+              fromMax: fromMax,
+              toMax: toMax,
+              isFinal: i == schedule.length - 1,
             ),
-            _ScheduleRow(step: schedule[i]),
           ],
         ],
       ),
@@ -1905,106 +1926,184 @@ class _ScheduleCard extends StatelessWidget {
   }
 }
 
-/// Tiny eyebrow row that labels the four schedule columns.
-class _ScheduleHeaderRow extends StatelessWidget {
-  const _ScheduleHeaderRow();
+/// A single step in the cross-taper. Day label up top, two dose rows
+/// with normalised progress bars, optional clinical notes underneath.
+class _ScheduleStepBlock extends StatelessWidget {
+  const _ScheduleStepBlock({
+    required this.step,
+    required this.fromMax,
+    required this.toMax,
+    required this.isFinal,
+  });
+
+  final ScheduleStep step;
+  final num fromMax;
+  final num toMax;
+  final bool isFinal;
 
   @override
   Widget build(BuildContext context) {
-    const style = AppTextSizes.eyebrow;
-    return const Padding(
-      padding: EdgeInsets.fromLTRB(
-        0,
-        AppSpace.xs,
-        0,
-        AppSpace.sm + 2,
-      ),
-      child: Row(
-        children: <Widget>[
-          SizedBox(width: 32, child: Text('DAY', style: style)),
-          SizedBox(width: 64, child: Text('FROM', style: style)),
-          SizedBox(width: 64, child: Text('TO', style: style)),
-          Expanded(child: Text('NOTES', style: style)),
+    final notes = step.notes ?? '';
+    final showCompleteTag = isFinal && step.fromDoseMg == 0;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: <Widget>[
+            Text(
+              'DAY ${step.day}',
+              style: const TextStyle(
+                color: AppColors.text,
+                fontSize: 15,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.2,
+                height: 1.1,
+                fontFeatures: <FontFeature>[FontFeature.tabularFigures()],
+              ),
+            ),
+            const Spacer(),
+            if (showCompleteTag)
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpace.sm,
+                  vertical: 3,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.to.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(AppRadii.pill),
+                ),
+                child: Text(
+                  'SWITCH COMPLETE',
+                  style: AppTextSizes.eyebrow.copyWith(
+                    color: AppColors.to,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ),
+          ],
+        ),
+        const Gap.v(AppSpace.md),
+        _ScheduleDoseRow(
+          label: 'FROM',
+          dose: step.fromDoseMg,
+          max: fromMax,
+          tone: AppColors.from,
+        ),
+        const Gap.v(AppSpace.sm + 2),
+        _ScheduleDoseRow(
+          label: 'TO',
+          dose: step.toDoseMg,
+          max: toMax,
+          tone: AppColors.to,
+        ),
+        if (notes.isNotEmpty) ...<Widget>[
+          const Gap.v(AppSpace.md - 2),
+          Text(
+            notes,
+            style: const TextStyle(
+              color: AppColors.muted,
+              fontSize: 12.5,
+              height: 1.55,
+            ),
+          ),
         ],
-      ),
+      ],
     );
   }
 }
 
-/// Single schedule step. Day in muted-strong, dose figures in tabular
-/// from/to tones for instant visual scanning, notes in body grey.
-class _ScheduleRow extends StatelessWidget {
-  const _ScheduleRow({required this.step});
+/// One drug's dose at a step — dot + label + figure on top, progress
+/// bar below. The bar's fill width = dose / max (normalised across
+/// the schedule) so the visual shows where this step sits on the
+/// drug's own taper curve.
+class _ScheduleDoseRow extends StatelessWidget {
+  const _ScheduleDoseRow({
+    required this.label,
+    required this.dose,
+    required this.max,
+    required this.tone,
+  });
 
-  final ScheduleStep step;
-
-  /// Tabular figures so digits line up vertically across rows — turns
-  /// the schedule into a real table rather than a column of text.
-  static const _tabularFigures = <FontFeature>[FontFeature.tabularFigures()];
+  final String label;
+  final num dose;
+  final num max;
+  final Color tone;
 
   @override
   Widget build(BuildContext context) {
-    const dayStyle = TextStyle(
-      color: AppColors.mutedStrong,
-      fontSize: 13,
-      fontWeight: FontWeight.w600,
-      fontFeatures: _tabularFigures,
-      letterSpacing: -0.1,
-    );
-    final doseStyleFrom = TextStyle(
-      color: step.fromDoseMg == 0
-          ? AppColors.muted.withValues(alpha: 0.5)
-          : AppColors.from,
-      fontSize: 14,
-      fontWeight: FontWeight.w700,
-      fontFeatures: _tabularFigures,
-      letterSpacing: -0.1,
-    );
-    final doseStyleTo = TextStyle(
-      color: step.toDoseMg == 0
-          ? AppColors.muted.withValues(alpha: 0.5)
-          : AppColors.to,
-      fontSize: 14,
-      fontWeight: FontWeight.w700,
-      fontFeatures: _tabularFigures,
-      letterSpacing: -0.1,
-    );
-    const notesStyle = TextStyle(
-      color: AppColors.muted,
-      fontSize: 12,
-      height: 1.5,
-    );
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpace.sm + 2),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          SizedBox(
-            width: 32,
-            child: Text(step.day.toString(), style: dayStyle),
-          ),
-          SizedBox(
-            width: 64,
-            child: Text(
-              '${_formatDose(step.fromDoseMg)} mg',
-              style: doseStyleFrom,
+    final isZero = dose == 0;
+    final fraction = max > 0
+        ? (dose / max).clamp(0, 1).toDouble()
+        : 0.0;
+    final effectiveTone =
+        isZero ? AppColors.muted.withValues(alpha: 0.5) : tone;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: <Widget>[
+            Container(
+              width: 5,
+              height: 5,
+              margin: const EdgeInsets.only(bottom: 3),
+              decoration: BoxDecoration(
+                color: effectiveTone,
+                shape: BoxShape.circle,
+              ),
             ),
-          ),
-          SizedBox(
-            width: 64,
-            child: Text(
-              '${_formatDose(step.toDoseMg)} mg',
-              style: doseStyleTo,
+            const Gap.h(AppSpace.sm),
+            Text(
+              label,
+              style: AppTextSizes.eyebrow.copyWith(color: effectiveTone),
             ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 1),
-              child: Text(step.notes ?? '', style: notesStyle),
+            const Spacer(),
+            Text(
+              '${_formatDose(dose)} mg',
+              style: TextStyle(
+                color: isZero
+                    ? AppColors.muted.withValues(alpha: 0.5)
+                    : AppColors.text,
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.3,
+                height: 1.1,
+                fontFeatures: const <FontFeature>[
+                  FontFeature.tabularFigures(),
+                ],
+              ),
             ),
+          ],
+        ),
+        const Gap.v(AppSpace.xs + 2),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(2),
+          child: Stack(
+            children: <Widget>[
+              Container(
+                height: 4,
+                color: AppColors.border.withValues(alpha: 0.5),
+              ),
+              AnimatedFractionallySizedBox(
+                alignment: Alignment.centerLeft,
+                widthFactor: fraction,
+                duration: const Duration(milliseconds: 320),
+                curve: Curves.easeOutCubic,
+                child: Container(
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: effectiveTone,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
