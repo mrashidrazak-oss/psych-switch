@@ -729,13 +729,14 @@ class ClozapineModule {
 
   /// Resolve a titration protocol for [regimen] + [variant].
   ///
-  /// • `maudsley15` → uses the loaded JSON four-variant Maudsley-15
-  ///   protocols (sex × smoker).
-  /// • `maudsley14` → returns the historical 14th-edition schedule,
-  ///   single uniform protocol regardless of sex/smoking. Smoker
-  ///   adjustment lives in the post-titration plasma-level guidance.
-  /// • `community` → returns the slower outpatient pathway, also a
-  ///   single uniform protocol. Variant is ignored.
+  /// • `maudsley15` → loaded JSON four-variant protocols (sex × smoker).
+  /// • `maudsley14` → inline four-variant protocols; the 14th edition
+  ///   used a uniform 450 mg headline target, but real-world plasma-
+  ///   level data show the same CYP1A2 personalisation applies
+  ///   (Spina 2018) — schedules truncate at sex × smoker-appropriate
+  ///   maintenance targets following the historical fast curve.
+  /// • `community` → slower outpatient pathway, single uniform
+  ///   protocol. Variant is ignored.
   TitrationProtocol getTitrationFor({
     required TitrationRegimen regimen,
     required TitrationVariant variant,
@@ -744,7 +745,7 @@ class ClozapineModule {
       case TitrationRegimen.maudsley15:
         return getTitration(variant);
       case TitrationRegimen.maudsley14:
-        return _maudsley14Protocol;
+        return _maudsley14ForVariant(variant);
       case TitrationRegimen.community:
         return _communityProtocol;
     }
@@ -871,22 +872,32 @@ FbcClassification classifyFbc({
 // schedules but should be cross-checked against the original tables
 // before clinical release.
 
-/// Maudsley 14th-edition titration — historical reference schedule.
-/// Reaches 300 mg/day by Day 14, 450 mg/day by Day 18. No sex/smoking
-/// split; smoker adjustment lives in the plasma-level guidance below.
-final TitrationProtocol _maudsley14Protocol = TitrationProtocol(
-  id: 'clozapine-titration-maudsley14-standard',
-  variant: (sex: Sex.male, smoker: false),
-  targetDoseMg: 450,
-  rationale:
-      'Maudsley 14th edition (2018), Schizophrenia chapter. Uniform '
-      'titration to 450 mg/day before plasma-level optimisation '
-      '(target 350–600 ng/mL). Faster curve than the 15th edition '
-      '(no test-dose Day-2 hold). Confirm plasma level at 6 weeks '
-      "regardless of sex/smoking status — that's where the dose is "
-      'truly individualised. PENDING_CLINICAL_REVIEW.',
-  totalDays: 18,
-  steps: const <TitrationStep>[
+/// Pick the appropriate Maudsley-14 protocol for a sex × smoker
+/// variant. The escalation curve is shared (faster than M15, BD from
+/// Day 2); only the maintenance target and the truncation point on
+/// the curve differ — following CYP1A2 induction patterns
+/// (Spina & de Leon 2018, Kennedy 2019).
+TitrationProtocol _maudsley14ForVariant(TitrationVariant variant) {
+  if (variant.sex == Sex.female && !variant.smoker) {
+    return _maudsley14FemaleNonSmoker;
+  }
+  if (variant.sex == Sex.female && variant.smoker) {
+    return _maudsley14FemaleSmoker;
+  }
+  if (variant.sex == Sex.male && !variant.smoker) {
+    return _maudsley14MaleNonSmoker;
+  }
+  return _maudsley14MaleSmoker;
+}
+
+/// Maudsley 14th-edition canonical fast curve. Reaches:
+///   • 300 mg by Day 13 (female non-smoker target)
+///   • 400 mg by Day 16 (female smoker / male non-smoker target)
+///   • 450 mg by Day 18 (male smoker — the historical default)
+/// Each variant truncates this curve at its target. All Day-by-day
+/// steps below the truncation are identical across variants; the
+/// notes adjust at the final step.
+const List<TitrationStep> _maudsley14SharedCurve = <TitrationStep>[
     TitrationStep(
       day: 1,
       morningMg: 0,
@@ -1016,23 +1027,121 @@ final TitrationProtocol _maudsley14Protocol = TitrationProtocol(
       notes: 'Target reached. Take plasma level at 6 weeks '
           '(trough). Optimise to 350–600 ng/mL.',
     ),
-  ],
+  ];
+
+const String _maudsley14MissedDose =
+    'Doses missed for more than 48 hours mandate retitration. '
+    'Use the Interruption Restart Wizard.';
+
+const List<String> _maudsley14Citations = <String>[
+  'maudsley14_schizophrenia_clozapine_titration',
+  'bap2020_schizophrenia_clozapine',
+  'spina_deleon_2018_clozapine_cyp1a2',
+];
+
+/// Build one Maudsley-14 variant by truncating the shared curve at a
+/// given total-mg target (the variant's maintenance dose).
+TitrationProtocol _buildMaudsley14Variant({
+  required String id,
+  required TitrationVariant variant,
+  required num targetDoseMg,
+  required String variantLabel,
+  required String postTitrationGuidance,
+}) {
+  // Find the last step whose total reaches `targetDoseMg`. Variants
+  // truncate the curve there.
+  var endIdx = _maudsley14SharedCurve.length - 1;
+  for (var i = 0; i < _maudsley14SharedCurve.length; i++) {
+    if (_maudsley14SharedCurve[i].totalMg >= targetDoseMg) {
+      endIdx = i;
+      break;
+    }
+  }
+  final steps = _maudsley14SharedCurve.sublist(0, endIdx + 1);
+  // Replace the final step's notes with the variant-specific finish.
+  final last = steps.last;
+  final finalStep = TitrationStep(
+    day: last.day,
+    morningMg: last.morningMg,
+    eveningMg: last.eveningMg,
+    totalMg: last.totalMg,
+    notes:
+        'Maintenance target ${targetDoseMg.toInt()} mg/day reached '
+        '($variantLabel). Plasma level at 6 weeks (trough), optimise '
+        'to 350–600 ng/mL.',
+  );
+  final shapedSteps = <TitrationStep>[
+    ...steps.take(steps.length - 1),
+    finalStep,
+  ];
+  return TitrationProtocol(
+    id: id,
+    variant: variant,
+    targetDoseMg: targetDoseMg,
+    rationale:
+        'Maudsley 14th edition canonical fast curve (12.5 mg test '
+        'dose, BD from Day 2). Maintenance target individualised to '
+        '$variantLabel by CYP1A2 activity (Spina & de Leon 2018) — '
+        'the 14th edition itself headlined a uniform 450 mg pre-'
+        'plasma-level target but real-world plasma data follow the '
+        'same sex × smoking gradient as Maudsley 15. Plasma level '
+        'at 6 weeks remains the final arbiter. PENDING_CLINICAL_REVIEW.',
+    totalDays: shapedSteps.last.day,
+    steps: shapedSteps,
+    postTitrationGuidance: postTitrationGuidance,
+    missedDoseRule: _maudsley14MissedDose,
+    citations: _maudsley14Citations,
+    lastReviewedISO: '2026-05-11',
+    reviewedBy: 'PENDING - Rashid Razak (clinical author)',
+  );
+}
+
+final TitrationProtocol _maudsley14FemaleNonSmoker = _buildMaudsley14Variant(
+  id: 'clozapine-titration-maudsley14-female-non-smoker',
+  variant: (sex: Sex.female, smoker: false),
+  targetDoseMg: 300,
+  variantLabel: 'female non-smoker',
+  postTitrationGuidance:
+      'Hold at 300 mg/day pending plasma-level optimisation '
+      '(target 350–600 ng/mL trough). Lowest CYP1A2 activity of '
+      'the four variants — watch for early plasma-level overshoot '
+      'and lower the dose if levels exceed 600 ng/mL.',
+);
+
+final TitrationProtocol _maudsley14FemaleSmoker = _buildMaudsley14Variant(
+  id: 'clozapine-titration-maudsley14-female-smoker',
+  variant: (sex: Sex.female, smoker: true),
+  targetDoseMg: 400,
+  variantLabel: 'female smoker',
+  postTitrationGuidance:
+      'Hold at 400 mg/day pending plasma-level optimisation '
+      '(target 350–600 ng/mL). CRITICAL — smoking cessation post-'
+      'titration: plasma levels can rise by up to 2× within 4 weeks. '
+      'Recheck and reduce dose accordingly.',
+);
+
+final TitrationProtocol _maudsley14MaleNonSmoker = _buildMaudsley14Variant(
+  id: 'clozapine-titration-maudsley14-male-non-smoker',
+  variant: (sex: Sex.male, smoker: false),
+  targetDoseMg: 400,
+  variantLabel: 'male non-smoker',
+  postTitrationGuidance:
+      'Hold at 400 mg/day pending plasma-level optimisation '
+      '(target 350–600 ng/mL trough). Moderate CYP1A2 activity — '
+      'plasma sample at 6 weeks before further dose changes.',
+);
+
+final TitrationProtocol _maudsley14MaleSmoker = _buildMaudsley14Variant(
+  id: 'clozapine-titration-maudsley14-male-smoker',
+  variant: (sex: Sex.male, smoker: true),
+  targetDoseMg: 450,
+  variantLabel: 'male smoker — historical 14th-edition default',
   postTitrationGuidance:
       'Hold at 450 mg/day pending plasma-level optimisation '
-      '(target 350–600 ng/mL trough). Smokers metabolise '
-      'clozapine ~50 % faster — confirm with plasma level at '
-      '6 weeks; if the patient stops smoking later, plasma '
-      'levels can rise by up to 2× within 4 weeks, recheck and '
-      'reduce dose accordingly.',
-  missedDoseRule:
-      'Doses missed for more than 48 hours mandate retitration. '
-      'Use the Interruption Restart Wizard.',
-  citations: <String>[
-    'maudsley14_schizophrenia_clozapine_titration',
-    'bap2020_schizophrenia_clozapine',
-  ],
-  lastReviewedISO: '2026-05-11',
-  reviewedBy: 'PENDING - Rashid Razak (clinical author)',
+      '(target 350–600 ng/mL trough). Highest CYP1A2 activity; the '
+      '14th-edition canonical case. CRITICAL — if smoking ceases '
+      'later, plasma levels can rise by up to 2× within 4 weeks, '
+      'recheck and reduce dose accordingly.',
 );
 
 /// Community (outpatient) titration — slower 28-day curve adapted from

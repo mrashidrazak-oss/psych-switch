@@ -139,10 +139,10 @@ class _TitrationTabState extends State<_TitrationTab> {
   Sex _sex = Sex.male;
   bool _smoker = false;
 
-  /// Sex × smoker variant only matters for the Maudsley-15 four-
-  /// variant protocols. The 14th-edition and Community regimens have a
-  /// single uniform schedule, so the picker is hidden under those.
-  bool get _showVariantPickers => _regimen == TitrationRegimen.maudsley15;
+  /// Maudsley 14 + Maudsley 15 both ship sex × smoker variants
+  /// (CYP1A2 activity differs across them). Only Community uses a
+  /// single uniform schedule, so the picker self-hides there.
+  bool get _showVariantPickers => _regimen != TitrationRegimen.community;
 
   @override
   Widget build(BuildContext context) {
@@ -192,7 +192,7 @@ class _TitrationTabState extends State<_TitrationTab> {
         ],
 
         const SizedBox(height: 20),
-        _ProtocolHeaderCard(protocol: protocol),
+        _ProtocolHeaderCard(protocol: protocol, regimen: _regimen),
 
         const SizedBox(height: 16),
         const _SectionHeader(text: 'DAY-BY-DAY'),
@@ -409,53 +409,199 @@ class _RegimenReasoningCard extends StatelessWidget {
   }
 }
 
+/// Protocol header card — the hero of the titration tab.
+///
+/// Two large stat columns ("MAINTENANCE TARGET" + "TITRATION WINDOW")
+/// like an Apple Health dashboard, a context eyebrow naming the
+/// variant (e.g. "MAUDSLEY 15 · MALE SMOKER"), and the rule's
+/// rationale below. Replaces the tiny pill-style header that
+/// undersized one of the most important readings on the screen.
 class _ProtocolHeaderCard extends StatelessWidget {
-  const _ProtocolHeaderCard({required this.protocol});
+  const _ProtocolHeaderCard({
+    required this.protocol,
+    required this.regimen,
+  });
 
   final TitrationProtocol protocol;
+  final TitrationRegimen regimen;
+
+  String _regimenLabel() =>
+      regimenSummaries[regimen]?.label ?? 'Maudsley';
+
+  String _variantLabel() {
+    final v = protocol.variant;
+    if (regimen == TitrationRegimen.community) return 'OUTPATIENT PATHWAY';
+    final sexLabel = v.sex == Sex.male ? 'MALE' : 'FEMALE';
+    final smokerLabel = v.smoker ? 'SMOKER' : 'NON-SMOKER';
+    return '$sexLabel · $smokerLabel';
+  }
+
+  String _formatTarget() {
+    final n = protocol.targetDoseMg;
+    if (n == n.toInt()) return n.toInt().toString();
+    return n.toStringAsFixed(1);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final regimenLabel = _regimenLabel();
+    final variantLabel = _variantLabel();
     return Container(
-      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.accent.withValues(alpha: 0.08),
-        border: Border.all(color: AppColors.accent.withValues(alpha: 0.3)),
-        borderRadius: BorderRadius.circular(12),
+        color: AppColors.surface,
+        border: Border.all(
+          color: AppColors.border.withValues(alpha: 0.7),
+          width: 0.5,
+        ),
+        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
       ),
+      clipBehavior: Clip.antiAlias,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              const Icon(
-                Icons.flag_outlined,
-                size: 18,
-                color: AppColors.accent,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'Target ${protocol.targetDoseMg.toInt()} mg/day · '
-                '${protocol.totalDays} days',
-                style: const TextStyle(
-                  color: AppColors.accent,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
+          // ── Context eyebrow ─────────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
+            child: Row(
+              children: <Widget>[
+                Container(
+                  width: 6,
+                  height: 6,
+                  decoration: const BoxDecoration(
+                    color: AppColors.accent,
+                    shape: BoxShape.circle,
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    '${regimenLabel.toUpperCase()}  ·  $variantLabel',
+                    style: const TextStyle(
+                      color: AppColors.mutedStrong,
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.4,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            protocol.rationale,
-            style: const TextStyle(
-              color: AppColors.text,
-              fontSize: 12,
-              height: 1.5,
+          // ── Two-stat block ──────────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  child: _HeaderStat(
+                    eyebrow: 'MAINTENANCE TARGET',
+                    value: _formatTarget(),
+                    unit: 'mg/day',
+                    tone: AppColors.text,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Container(
+                  width: 0.5,
+                  height: 52,
+                  color: AppColors.border.withValues(alpha: 0.6),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: _HeaderStat(
+                    eyebrow: 'TITRATION WINDOW',
+                    value: protocol.totalDays.toString(),
+                    unit: protocol.totalDays == 1 ? 'day' : 'days',
+                    tone: AppColors.text,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // ── Rationale band ──────────────────────────────────────
+          Container(
+            color: AppColors.bg.withValues(alpha: 0.5),
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+            child: Text(
+              protocol.rationale,
+              style: const TextStyle(
+                color: AppColors.muted,
+                fontSize: 12.5,
+                height: 1.55,
+              ),
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+/// A single stat block within `_ProtocolHeaderCard`. Big tabular
+/// numeral, micro unit suffix, eyebrow above.
+class _HeaderStat extends StatelessWidget {
+  const _HeaderStat({
+    required this.eyebrow,
+    required this.value,
+    required this.unit,
+    required this.tone,
+  });
+
+  final String eyebrow;
+  final String value;
+  final String unit;
+  final Color tone;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          eyebrow,
+          style: const TextStyle(
+            color: AppColors.muted,
+            fontSize: 10,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.4,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: <Widget>[
+            Text(
+              value,
+              style: TextStyle(
+                color: tone,
+                fontSize: 28,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.8,
+                height: 1.05,
+                fontFeatures: const <FontFeature>[
+                  FontFeature.tabularFigures(),
+                ],
+              ),
+            ),
+            const SizedBox(width: 5),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Text(
+                unit,
+                style: const TextStyle(
+                  color: AppColors.muted,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.1,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }
