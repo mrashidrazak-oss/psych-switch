@@ -102,6 +102,17 @@ final _scheduleViewProvider =
 final _taperSpeedProvider =
     StateProvider.autoDispose<TaperSpeed>((_) => TaperSpeed.standard);
 
+/// "Soften Day 1" — when on, the engine reduces the from-drug's Day 1
+/// dose by ~25 % (rounded to formulation, clamped above Day 2 to keep
+/// the taper monotonic). Adapted from Maudsley 15th's "halve-and-add"
+/// strategy — a softer 25 % reduction (rather than a full 50 %) when
+/// the standard overlap looks concerning but a full halve would risk
+/// from-drug withdrawal. See `applyConservativeOverlap` in the engine.
+///
+/// `autoDispose` so leaving /result resets to OFF for the next case.
+final _conservativeProvider =
+    StateProvider.autoDispose<bool>((_) => false);
+
 class ResultScreen extends ConsumerWidget {
   const ResultScreen({super.key, this.args});
 
@@ -234,16 +245,19 @@ class _ShareMenu extends ConsumerWidget {
   final Drug? fromDrug;
   final Drug? toDrug;
 
-  /// Build the [SwitchPlanOk] payload for share/export. Two transforms:
-  ///   1. Adapted view: swap in the dose-scaled schedule and flip
-  ///      `dosesMatchReference` so the formatter doesn't print the
-  ///      "but you entered X mg" note (schedule already reflects the
-  ///      user's doses).
-  ///   2. Taper speed: compress / expand the day intervals to match
-  ///      whichever speed the clinician picked on screen.
-  ///
-  /// Applied in that order — scaling first (doses), then speed (timing).
-  SwitchPlanOk _payloadFor(_ScheduleView view, TaperSpeed speed) {
+  /// Build the [SwitchPlanOk] payload for share/export. Three transforms,
+  /// applied in clinical order:
+  ///   1. Adapted view (doses): swap in the dose-scaled schedule and
+  ///      flip `dosesMatchReference` so the formatter doesn't print
+  ///      the "but you entered X mg" note.
+  ///   2. Soften Day 1 (Conservative mode): reduce Day 1 from-dose by
+  ///      ~25 % when the clinician toggled it on.
+  ///   3. Taper speed (timing): compress / expand day intervals.
+  SwitchPlanOk _payloadFor(
+    _ScheduleView view,
+    TaperSpeed speed,
+    bool conservative,
+  ) {
     if (fromDrug == null || toDrug == null) return plan;
     var schedule = plan.schedule;
     var dosesMatchReference = plan.dosesMatchReference;
@@ -261,6 +275,9 @@ class _ShareMenu extends ConsumerWidget {
         // dose-mismatch note by claiming reference parity.
         dosesMatchReference = true;
       }
+    }
+    if (conservative) {
+      schedule = applyConservativeOverlap(schedule, fromDrug!).schedule;
     }
     if (speed != TaperSpeed.standard) {
       schedule = compressSchedule(schedule, speed);
@@ -284,6 +301,7 @@ class _ShareMenu extends ConsumerWidget {
     if (fromDrug == null || toDrug == null) return const SizedBox.shrink();
     final view = ref.watch(_scheduleViewProvider);
     final pickedSpeed = ref.watch(_taperSpeedProvider);
+    final conservative = ref.watch(_conservativeProvider);
     // Same speed-supported gate as the body: cross-taper / plateau /
     // overlap, ≥ 10-day span. Otherwise force standard for export.
     final s = plan.rule.strategy;
@@ -297,7 +315,7 @@ class _ShareMenu extends ConsumerWidget {
       icon: const Icon(Icons.ios_share),
       onSelected: (v) async {
         unawaited(hapticsTap());
-        final payload = _payloadFor(view, effectiveSpeed);
+        final payload = _payloadFor(view, effectiveSpeed, conservative);
         switch (v) {
           case 'text':
             final body = formatPlanForShare(
@@ -443,6 +461,7 @@ class _ResultBody extends ConsumerWidget {
     final ctx = ref.watch(patientContextProvider);
     final view = ref.watch(_scheduleViewProvider);
     final pickedSpeed = ref.watch(_taperSpeedProvider);
+    final conservative = ref.watch(_conservativeProvider);
     // Pull warnings for both ends of the switch — the from-drug warning
     // matters because the patient is still on it during cross-titration,
     // and the to-drug warning matters because they're starting it.
@@ -463,19 +482,22 @@ class _ResultBody extends ConsumerWidget {
     final speedSupported = _speedSupported(plan);
     final effectiveSpeed = speedSupported ? pickedSpeed : TaperSpeed.standard;
 
-    // Derive the on-screen duration from the COMPRESSED schedule's
-    // last day rather than `adjustedDurationDays(...)`. The two
-    // diverge by 1 day on certain speeds because per-step rounding
-    // and total-duration rounding are independent functions — the
-    // schedule's last day is the source of truth shown to the user.
+    // Derive the on-screen duration from the SHOWN schedule's last
+    // day — the same compressed list that the table renders. Conserv-
+    // ative softening doesn't change day numbers (only Day-1 dose),
+    // but threading it here keeps `_shownSchedule` the single source
+    // of truth for every reader.
     int? adjustedDuration;
     if (plan is SwitchPlanOk) {
       final pl = plan as SwitchPlanOk;
-      final base = _displaySchedule(pl, scaleResult, view);
-      final compressed = compressSchedule(base, effectiveSpeed);
-      adjustedDuration = compressed.isEmpty
-          ? pl.rule.durationDays
-          : compressed.last.day;
+      final shown = _shownSchedule(
+        pl,
+        scaleResult,
+        view,
+        effectiveSpeed,
+        conservative,
+      );
+      adjustedDuration = shown.isEmpty ? pl.rule.durationDays : shown.last.day;
     }
 
     final body = _planContent(
@@ -488,6 +510,7 @@ class _ResultBody extends ConsumerWidget {
       effectiveSpeed,
       pickedSpeed,
       speedSupported,
+      conservative,
     );
     final hero = <Widget>[
       EntranceFade(
@@ -586,6 +609,31 @@ class _ResultBody extends ConsumerWidget {
     return view == _ScheduleView.adapted ? scaleResult.schedule : ok.schedule;
   }
 
+  /// The schedule the UI actually shows — applies, in order:
+  ///   1. Adapted vs reviewed view (dose values)
+  ///   2. Conservative Day-1 softening (Day-1 from-dose × ~0.75)
+  ///   3. Taper-speed compression (day intervals)
+  ///
+  /// Single source of truth so every reader of "the shown schedule"
+  /// (table, overlap card, share/PDF, hero-eyebrow duration) sees the
+  /// same final list.
+  List<ScheduleStep> _shownSchedule(
+    SwitchPlanOk ok,
+    ScaleResult? scaleResult,
+    _ScheduleView view,
+    TaperSpeed speed,
+    bool conservative,
+  ) {
+    var schedule = _displaySchedule(ok, scaleResult, view);
+    if (conservative) {
+      final fromDrug = engine.getDrug(input.fromDrugId);
+      if (fromDrug != null) {
+        schedule = applyConservativeOverlap(schedule, fromDrug).schedule;
+      }
+    }
+    return compressSchedule(schedule, speed);
+  }
+
   /// Whether taper-speed compression makes sense for this plan. True
   /// only for cross-taper / plateau-cross-taper strategies whose
   /// schedule has enough headroom (≥ 3 steps, ≥ 10-day span). Direct
@@ -613,24 +661,79 @@ class _ResultBody extends ConsumerWidget {
     ScaleResult? scaleResult,
     _ScheduleView view,
     TaperSpeed effectiveSpeed,
+    bool conservative,
   ) {
     final fromDrug = engine.getDrug(input.fromDrugId);
     final toDrug = engine.getDrug(input.toDrugId);
     if (fromDrug == null || toDrug == null) return const <Widget>[];
-    final shownSchedule = compressSchedule(
-      _displaySchedule(ok, scaleResult, view),
+    final shown = _shownSchedule(
+      ok,
+      scaleResult,
+      view,
       effectiveSpeed,
+      conservative,
     );
     final assessment = assessOverlapIntensity(
       fromDrug: fromDrug,
       toDrug: toDrug,
-      schedule: shownSchedule,
+      schedule: shown,
     );
     if (assessment.label == 'No overlap' && assessment.score == 0) {
       return const <Widget>[];
     }
     return <Widget>[
       OverlapIntensityCard(assessment: assessment),
+      const Gap.v(AppSpace.lg),
+    ];
+  }
+
+  /// Soften-Day-1 (Conservative mode) section. Self-hides when:
+  ///   • The from-drug isn't in the registry (defensive).
+  ///   • The plan strategy doesn't include overlap (direct switch,
+  ///     washout — there's no Day 1 from-dose to soften).
+  ///   • The 25 % reduction would round to the same dose as Day 1
+  ///     already is (low-dose schedules where formulation rounding
+  ///     swallows the difference).
+  ///
+  /// When off but applicable: shows the offer card (toggle + reasoning).
+  /// When on: shows the confirmation card (delta + reasoning).
+  List<Widget> _softenDay1Section(
+    SwitchPlanOk ok,
+    ScaleResult? scaleResult,
+    _ScheduleView view,
+    bool conservative,
+    WidgetRef ref,
+  ) {
+    final fromDrug = engine.getDrug(input.fromDrugId);
+    if (fromDrug == null) return const <Widget>[];
+    // Preview what conservative WOULD do against the current (pre-
+    // compression) schedule — the toggle's reasoning card needs to
+    // know whether softening is meaningful for this rule before
+    // offering it.
+    final base = _displaySchedule(ok, scaleResult, view);
+    final preview = applyConservativeOverlap(base, fromDrug);
+    if (!preview.modified && !conservative) {
+      // Engine says softening wouldn't change anything (e.g. day 1
+      // already at 0, or rounding eats the 25 % delta). Don't tease
+      // the toggle in that case.
+      return const <Widget>[];
+    }
+    final day1Original = base.isEmpty ? 0 : base.first.fromDoseMg;
+    final day1Softened = preview.modified
+        ? day1Original - preview.deltaMg
+        : day1Original;
+    return <Widget>[
+      _SoftenDay1Card(
+        on: conservative,
+        fromDrugName: fromDrug.genericName,
+        day1Original: day1Original,
+        day1Softened: day1Softened,
+        deltaMg: preview.deltaMg,
+        onToggle: (v) {
+          unawaited(hapticsTap());
+          ref.read(_conservativeProvider.notifier).state = v;
+        },
+      ),
       const Gap.v(AppSpace.lg),
     ];
   }
@@ -729,6 +832,7 @@ class _ResultBody extends ConsumerWidget {
     TaperSpeed effectiveSpeed,
     TaperSpeed pickedSpeed,
     bool speedSupported,
+    bool conservative,
   ) {
     return switch (plan) {
       final SwitchPlanOk ok => <Widget>[
@@ -779,17 +883,16 @@ class _ResultBody extends ConsumerWidget {
           if (speedSupported) ...<Widget>[
             Builder(
               builder: (_) {
-                // Same single-source-of-truth as the hero: derive the
-                // displayed taper duration from the compressed schedule's
-                // last day, not from a parallel rounding function. Keeps
-                // the hero, the selector, and the table all in agreement.
-                final compressed = compressSchedule(
-                  _displaySchedule(ok, scaleResult, view),
+                final shown = _shownSchedule(
+                  ok,
+                  scaleResult,
+                  view,
                   effectiveSpeed,
+                  conservative,
                 );
-                final adjustedDays = compressed.isEmpty
+                final adjustedDays = shown.isEmpty
                     ? ok.rule.durationDays
-                    : compressed.last.day;
+                    : shown.last.day;
                 return _TaperSpeedSelector(
                   picked: pickedSpeed,
                   onPick: (s) {
@@ -803,15 +906,25 @@ class _ResultBody extends ConsumerWidget {
             ),
             const Gap.v(AppSpace.lg),
           ],
-          // Day-by-day cross-taper schedule. Schedule reflects both the
-          // adapted/reviewed view and the taper-speed selection. The
-          // CrossoverChart that used to sit above this is intentionally
-          // removed — the schedule table is the primary source of truth;
-          // a parallel curve added visual weight without adding signal.
+          // Soften-Day-1 toggle (Conservative mode) — adapted from
+          // Maudsley 15th's "halve-and-add" strategy. Reduces Day 1
+          // from-drug dose by ~25 %, rounded to formulation, clamped
+          // above Day 2 to keep the taper monotonic. Shows the
+          // actual delta when on, plus clinical reasoning either way.
+          ..._softenDay1Section(ok, scaleResult, view, conservative, ref),
+          // Day-by-day cross-taper schedule. Reflects every modifier
+          // above it: adapted/reviewed view, taper speed, and (when
+          // on) Day-1 softening. The CrossoverChart that used to sit
+          // above this is intentionally removed — the schedule table
+          // is the primary source of truth; a parallel curve added
+          // visual weight without adding signal.
           _ScheduleCard(
-            schedule: compressSchedule(
-              _displaySchedule(ok, scaleResult, view),
+            schedule: _shownSchedule(
+              ok,
+              scaleResult,
+              view,
               effectiveSpeed,
+              conservative,
             ),
           ),
           const Gap.v(AppSpace.lg),
@@ -828,6 +941,7 @@ class _ResultBody extends ConsumerWidget {
             scaleResult,
             view,
             effectiveSpeed,
+            conservative,
           ),
           // Why this strategy was chosen — sits with the schedule.
           RationalePanel(rationale: ok.rule.rationale),
@@ -1897,6 +2011,235 @@ class _TaperSpeedSegment extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Soften-Day-1 card (Conservative mode).
+///
+/// Adapted from Maudsley 15th's "halve-and-add" antipsychotic-switch
+/// strategy. The full halve-and-add halves the from-drug dose on the
+/// day the new drug is introduced; this card applies a softer ~25 %
+/// reduction by default, which is appropriate when:
+///   • The standard overlap intensity looks concerning but a full
+///     halve would risk from-drug withdrawal.
+///   • The patient is elderly, pharmacokinetically vulnerable, or
+///     has a history of intolerance to the receptor profile.
+///   • The clinician wants to step into the cross-taper rather than
+///     start at the full from-dose.
+///
+/// Three states:
+///   • OFF + applicable    — offer card (toggle + reasoning)
+///   • ON                  — confirmation card (delta + reasoning)
+///   • Not applicable      — section self-hides upstream in
+///                            `_softenDay1Section` (no Day-1 from-dose,
+///                            or 25 % rounds to the same dose).
+class _SoftenDay1Card extends StatelessWidget {
+  const _SoftenDay1Card({
+    required this.on,
+    required this.fromDrugName,
+    required this.day1Original,
+    required this.day1Softened,
+    required this.deltaMg,
+    required this.onToggle,
+  });
+
+  final bool on;
+  final String fromDrugName;
+  final num day1Original;
+  final num day1Softened;
+  final num deltaMg;
+  final ValueChanged<bool> onToggle;
+
+  @override
+  Widget build(BuildContext context) {
+    final tone = on ? AppColors.accent : AppColors.mutedStrong;
+    final pct = day1Original > 0
+        ? ((deltaMg / day1Original) * 100).round()
+        : 0;
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        border: Border.all(
+          color: AppColors.border.withValues(alpha: 0.7),
+          width: 0.5,
+        ),
+        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+      ),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpace.lg - 2,
+        AppSpace.md + 2,
+        AppSpace.lg - 2,
+        AppSpace.lg - 2,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          // ── Eyebrow + switch ────────────────────────────────────
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Text(
+                  on ? 'DAY 1 SOFTENED' : 'SOFTEN DAY 1 OVERLAP',
+                  style: AppTextSizes.eyebrow.copyWith(color: tone),
+                ),
+              ),
+              const Gap.h(AppSpace.sm),
+              Transform.scale(
+                scale: 0.85,
+                child: Switch.adaptive(
+                  value: on,
+                  onChanged: onToggle,
+                  activeThumbColor: AppColors.accent,
+                ),
+              ),
+            ],
+          ),
+          const Gap.v(AppSpace.sm + 2),
+          // ── State-dependent body ────────────────────────────────
+          if (on)
+            RichText(
+              text: TextSpan(
+                style: const TextStyle(
+                  color: AppColors.text,
+                  fontSize: 14,
+                  height: 1.45,
+                ),
+                children: <InlineSpan>[
+                  const TextSpan(text: 'Day 1 '),
+                  TextSpan(
+                    text: fromDrugName,
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                  const TextSpan(text: ': '),
+                  TextSpan(
+                    text:
+                        '${_formatDose(day1Original)} mg → ${_formatDose(day1Softened)} mg',
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                  TextSpan(text: ' (−$pct %).'),
+                ],
+              ),
+            )
+          else
+            const Text(
+              "Reduce the from-drug's Day 1 dose by ~25 % to lower the "
+              'simultaneous receptor occupancy during the highest-risk '
+              'day of the cross-taper.',
+              style: TextStyle(
+                color: AppColors.text,
+                fontSize: 13,
+                height: 1.5,
+              ),
+            ),
+          const Gap.v(AppSpace.lg - 2),
+          Container(
+            height: 0.5,
+            color: AppColors.border.withValues(alpha: 0.5),
+          ),
+          const Gap.v(AppSpace.md + 2),
+          // ── Clinical reasoning ──────────────────────────────────
+          Text(
+            'CLINICAL REASONING',
+            style: AppTextSizes.eyebrow.copyWith(color: tone),
+          ),
+          const Gap.v(AppSpace.sm + 2),
+          const _SoftenReasoningRow(
+            tone: AppColors.accent,
+            heading: 'Maudsley 15th halve-and-add, softer',
+            body:
+                'Adapted from the Maudsley 15th edition halve-and-add '
+                'antipsychotic-switch strategy — a softer 25 % reduction '
+                '(rather than a full 50 % halve) when the standard '
+                'overlap is concerning but a full halve would risk '
+                'from-drug withdrawal.',
+          ),
+          const Gap.v(AppSpace.md + 2),
+          const _SoftenReasoningRow(
+            tone: AppColors.accent,
+            heading: 'Lower simultaneous occupancy, lower stacking',
+            body:
+                'Cutting the from-drug on Day 1 directly reduces the '
+                'simultaneous receptor load — fewer milligrams of either '
+                'drug coexist on the highest-risk day. Lowers serotonergic, '
+                'QTc-additive, sedation-additive and EPS-additive risk '
+                'where the mechanisms stack.',
+          ),
+          const Gap.v(AppSpace.md + 2),
+          const _SoftenReasoningRow(
+            tone: AppColors.accent,
+            heading: 'Consider when',
+            body:
+                'Overlap intensity is moderate-to-severe · patient is '
+                'elderly or pharmacokinetically vulnerable · history of '
+                'intolerance to the receptor profile · baseline cardiac '
+                '(QTc), cognitive (anticholinergic) or sedation concern.',
+          ),
+          const Gap.v(AppSpace.md + 2),
+          const _SoftenReasoningRow(
+            tone: AppColors.warning,
+            heading: 'Trade-off',
+            body:
+                'Slightly higher chance of from-drug discontinuation '
+                'symptoms on Day 1. Reassess at Day 3 — step the from-dose '
+                'back up if withdrawal emerges.',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SoftenReasoningRow extends StatelessWidget {
+  const _SoftenReasoningRow({
+    required this.tone,
+    required this.heading,
+    required this.body,
+  });
+
+  final Color tone;
+  final String heading;
+  final String body;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          width: 6,
+          height: 6,
+          margin: const EdgeInsets.only(top: 6),
+          decoration: BoxDecoration(color: tone, shape: BoxShape.circle),
+        ),
+        const Gap.h(AppSpace.sm + 2),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                heading,
+                style: const TextStyle(
+                  color: AppColors.text,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.1,
+                  height: 1.3,
+                ),
+              ),
+              const Gap.v(AppSpace.xs),
+              Text(
+                body,
+                style: const TextStyle(
+                  color: AppColors.mutedStrong,
+                  fontSize: 12.5,
+                  height: 1.55,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
