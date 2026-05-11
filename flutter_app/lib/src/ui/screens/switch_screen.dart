@@ -63,6 +63,7 @@ import 'package:psychswitch_engine/scale_schedule.dart';
 import 'package:psychswitch_engine/smart_picker.dart';
 import 'package:psychswitch_engine/switching_engine.dart';
 import 'package:psychswitch_engine/types/drug.dart';
+import 'package:psychswitch_engine/types/enums.dart';
 import 'package:psychswitch_engine/types/switching_rule.dart';
 
 const double _maxFormWidth = 720;
@@ -241,7 +242,17 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
 
   @override
   Widget build(BuildContext context) {
-    final visibleDrugs = widget.engine.listDrugs();
+    // Pre-release catalogue: antidepressants + oral antipsychotics
+    // only. LAI (depot) injectables and mood-stabilisers are gated
+    // off the switch flow until their dedicated rules + monitoring
+    // surfaces are clinically reviewed. Filter applied to both the
+    // FROM and TO pickers AND the recents row so a stale saved case
+    // can't reintroduce a hidden category.
+    final visibleDrugs = widget.engine.listDrugs().where((d) {
+      if (d.formulation == Formulation.lai) return false;
+      if (d.category == DrugCategory.moodStabilizer) return false;
+      return true;
+    }).toList();
     final ctx = ref.watch(patientContextProvider);
     final ctxSummary = summarisePatientContext(ctx);
     final hasCtx = ctxSummary.isNotEmpty;
@@ -363,7 +374,13 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
         if (seen.contains(id)) continue;
         seen.add(id);
         final d = engine.getDrug(id);
-        if (d != null) out.add(d);
+        if (d == null) continue;
+        // Same gate as the pickers — a saved case for a hidden
+        // category (LAI / mood-stabiliser) shouldn't smuggle the
+        // drug back into the switch flow via recents.
+        if (d.formulation == Formulation.lai) continue;
+        if (d.category == DrugCategory.moodStabilizer) continue;
+        out.add(d);
         if (out.length >= 5) return out;
       }
     }
@@ -510,8 +527,25 @@ class _RecentChip extends StatelessWidget {
   final Drug drug;
   final VoidCallback onTap;
 
+  /// Category tone — at-a-glance scanning across the recents row.
+  /// Antidepressants pick up `from`-blue, antipsychotics `to`-green.
+  /// Mood-stabilisers stay muted (defensive — they're gated upstream).
+  Color _categoryTone() {
+    switch (drug.category) {
+      case DrugCategory.antidepressant:
+        return AppColors.from;
+      case DrugCategory.antipsychotic:
+        return AppColors.to;
+      case DrugCategory.moodStabilizer:
+        return AppColors.muted;
+      case null:
+        return AppColors.muted;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final tone = _categoryTone();
     return Material(
       color: AppColors.surface,
       borderRadius: BorderRadius.circular(AppRadii.pill),
@@ -520,7 +554,10 @@ class _RecentChip extends StatelessWidget {
         onTap: onTap,
         child: Ink(
           decoration: BoxDecoration(
-            border: Border.all(color: AppColors.border),
+            border: Border.all(
+              color: AppColors.border.withValues(alpha: 0.7),
+              width: 0.5,
+            ),
             borderRadius: BorderRadius.circular(AppRadii.pill),
           ),
           padding: const EdgeInsets.symmetric(
@@ -530,10 +567,13 @@ class _RecentChip extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              const Icon(
-                Icons.history,
-                size: 12,
-                color: AppColors.muted,
+              Container(
+                width: 6,
+                height: 6,
+                decoration: BoxDecoration(
+                  color: tone,
+                  shape: BoxShape.circle,
+                ),
               ),
               const Gap.h(AppSpace.xs + 2),
               Text(
@@ -747,8 +787,25 @@ class _DrugPickerTile extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onPick,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: AppSpace.xs),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOutCubic,
+          padding: EdgeInsets.symmetric(
+            horizontal: hasDrug ? 0 : AppSpace.md - 2,
+            vertical: hasDrug ? AppSpace.xs : AppSpace.sm + 2,
+          ),
+          decoration: BoxDecoration(
+            color: hasDrug
+                ? Colors.transparent
+                : AppColors.bg.withValues(alpha: 0.4),
+            border: hasDrug
+                ? null
+                : Border.all(
+                    color: AppColors.border.withValues(alpha: 0.6),
+                    width: 0.5,
+                  ),
+            borderRadius: BorderRadius.circular(AppRadii.lg),
+          ),
           child: Row(
             children: <Widget>[
               Expanded(
@@ -778,20 +835,33 @@ class _DrugPickerTile extends StatelessWidget {
                           ),
                         ],
                       )
-                    : const Text(
-                        'Pick a drug',
-                        style: TextStyle(
-                          color: AppColors.muted,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: -0.2,
-                        ),
+                    : const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Icon(
+                            Icons.add_rounded,
+                            color: AppColors.mutedStrong,
+                            size: 18,
+                          ),
+                          Gap.h(AppSpace.sm),
+                          Text(
+                            'Choose drug',
+                            style: TextStyle(
+                              color: AppColors.mutedStrong,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: -0.2,
+                            ),
+                          ),
+                        ],
                       ),
               ),
-              const Icon(
-                Icons.expand_more_rounded,
+              Icon(
+                hasDrug
+                    ? Icons.expand_more_rounded
+                    : Icons.chevron_right_rounded,
                 color: AppColors.muted,
-                size: 22,
+                size: hasDrug ? 22 : 20,
               ),
             ],
           ),
