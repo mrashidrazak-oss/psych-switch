@@ -30,6 +30,7 @@ import 'package:psychswitch/src/ui/widgets/ddi_warnings_card.dart';
 import 'package:psychswitch/src/ui/widgets/discontinuation_card.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
+import 'package:psychswitch/src/ui/widgets/overlap_intensity_card.dart';
 import 'package:psychswitch/src/ui/widgets/predicted_ae_card.dart';
 import 'package:psychswitch/src/ui/widgets/rationale_panel.dart';
 import 'package:psychswitch/src/ui/widgets/rule_provenance_card.dart';
@@ -43,6 +44,7 @@ import 'package:psychswitch_engine/citations.dart';
 import 'package:psychswitch_engine/ddi.dart';
 import 'package:psychswitch_engine/discontinuation.dart';
 import 'package:psychswitch_engine/monitoring.dart';
+import 'package:psychswitch_engine/overlap_intensity.dart';
 import 'package:psychswitch_engine/patient_context_pure.dart';
 import 'package:psychswitch_engine/predicted_ae_profile.dart';
 import 'package:psychswitch_engine/psych_switch_score.dart';
@@ -598,6 +600,41 @@ class _ResultBody extends ConsumerWidget {
     return speedToggleApplies(plan.schedule);
   }
 
+  /// Overlap-intensity section. Pure passthrough to the engine's
+  /// `assessOverlapIntensity` — running it here (rather than inside
+  /// the card widget) keeps the schedule input on the same path as
+  /// the table itself: adapted/reviewed view + taper speed both
+  /// applied, so the assessment reflects what's actually being
+  /// prescribed, not the rule's raw schedule. Self-hides when both
+  /// drugs aren't in the registry (defensive) or when there are no
+  /// overlap days (the card widget handles the latter too).
+  List<Widget> _overlapSection(
+    SwitchPlanOk ok,
+    ScaleResult? scaleResult,
+    _ScheduleView view,
+    TaperSpeed effectiveSpeed,
+  ) {
+    final fromDrug = engine.getDrug(input.fromDrugId);
+    final toDrug = engine.getDrug(input.toDrugId);
+    if (fromDrug == null || toDrug == null) return const <Widget>[];
+    final shownSchedule = compressSchedule(
+      _displaySchedule(ok, scaleResult, view),
+      effectiveSpeed,
+    );
+    final assessment = assessOverlapIntensity(
+      fromDrug: fromDrug,
+      toDrug: toDrug,
+      schedule: shownSchedule,
+    );
+    if (assessment.label == 'No overlap' && assessment.score == 0) {
+      return const <Widget>[];
+    }
+    return <Widget>[
+      OverlapIntensityCard(assessment: assessment),
+      const Gap.v(AppSpace.lg),
+    ];
+  }
+
   /// DDI checker output as a list of widgets — empty when no hits, so
   /// it spreads cleanly into the body via `...`.
   List<Widget> _ddiSection(SwitchInput input) {
@@ -778,6 +815,20 @@ class _ResultBody extends ConsumerWidget {
             ),
           ),
           const Gap.v(AppSpace.lg),
+          // Overlap-intensity assessment — quantifies the clinical
+          // concern about co-prescribing the two drugs during the
+          // overlap window. Engine derives tier + score from Day-1
+          // dose intensity, overlap duration, and mechanism stacking
+          // (serotonergic, QTc, sedation, EPS, anticholinergic). The
+          // card surfaces engine rationale + per-flag clinical
+          // reasoning (what to monitor, when, why). Self-hides when
+          // the schedule has no overlap days (direct switch path).
+          ..._overlapSection(
+            ok,
+            scaleResult,
+            view,
+            effectiveSpeed,
+          ),
           // Why this strategy was chosen — sits with the schedule.
           RationalePanel(rationale: ok.rule.rationale),
           const Gap.v(AppSpace.lg),
