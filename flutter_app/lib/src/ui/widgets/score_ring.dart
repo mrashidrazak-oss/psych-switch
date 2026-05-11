@@ -96,50 +96,45 @@ class _ScoreRingState extends State<ScoreRing>
   @override
   Widget build(BuildContext context) {
     final color = _bandColor();
+    // The arc COLOR carries the band signal. Inside the ring sits just
+    // the number — perfectly centred, in the band tone so the eye reads
+    // "this number is the score in THIS band" without a second
+    // overlapping text label that crowded the previous design (a 9-pt
+    // "EXCELLENT" letter-spaced inside a 64-pt ring barely fit and
+    // pushed the number off true centre).
     return Semantics(
       label: 'PsychSwitch score ${widget.score.total} of 100, '
           '${bandLabel(widget.score.band)}',
       excludeSemantics: true,
       child: RepaintBoundary(
         child: SizedBox(
-        width: widget.size,
-        height: widget.size,
-        child: CustomPaint(
-          painter: _RingPainter(
-            progress: _progressAnim.value,
-            color: color,
-            strokeWidth: widget.strokeWidth,
-            trackColor: AppColors.border,
-          ),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  _displayScore.toString(),
-                  style: TextStyle(
-                    color: AppColors.text,
-                    fontSize: widget.size * 0.32,
-                    fontWeight: FontWeight.w800,
-                    height: 1,
-                    letterSpacing: -1,
-                  ),
+          width: widget.size,
+          height: widget.size,
+          child: CustomPaint(
+            painter: _RingPainter(
+              progress: _progressAnim.value,
+              color: color,
+              strokeWidth: widget.strokeWidth,
+              trackColor: AppColors.border.withValues(alpha: 0.6),
+            ),
+            child: Center(
+              child: Text(
+                _displayScore.toString(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: color,
+                  fontSize: widget.size * 0.42,
+                  fontWeight: FontWeight.w700,
+                  height: 1,
+                  letterSpacing: -1,
+                  fontFeatures: const <FontFeature>[
+                    FontFeature.tabularFigures(),
+                  ],
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  bandLabel(widget.score.band).toUpperCase(),
-                  style: TextStyle(
-                    color: color,
-                    fontSize: 9,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1,
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),
-      ),
       ),
     );
   }

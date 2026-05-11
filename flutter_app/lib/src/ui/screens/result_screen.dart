@@ -1132,6 +1132,16 @@ class _OkVerdict extends StatelessWidget {
         Strategy.washout => 'WASHOUT',
       };
 
+  /// Map the engine's score band to the matching design-token colour.
+  /// Mirrors `ScoreRing._bandColor` so the dot + label in the verdict
+  /// text uses the same tone as the arc itself.
+  static Color _bandColor(ScoreBand band) => switch (band) {
+        ScoreBand.excellent => AppColors.to,
+        ScoreBand.good => AppColors.accent,
+        ScoreBand.caution => AppColors.warning,
+        ScoreBand.poor => AppColors.danger,
+      };
+
   String get _metaLine {
     final parts = <String>[];
     if (!plan.dosesMatchReference) parts.add('Doses adapted');
@@ -1200,15 +1210,47 @@ class _OkVerdict extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    const Text(
-                      'Reviewed schedule',
-                      style: TextStyle(
-                        color: AppColors.text,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        height: 1.25,
-                        letterSpacing: -0.1,
-                      ),
+                    // Status text + band name in one line — the band
+                    // now lives alongside the number's home rather than
+                    // crowded inside the ring. Tone-matched dot in band
+                    // colour echoes the arc so the eye reads it as one
+                    // composed unit: ring + label.
+                    Row(
+                      children: <Widget>[
+                        const Flexible(
+                          child: Text(
+                            'Reviewed schedule',
+                            style: TextStyle(
+                              color: AppColors.text,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              height: 1.25,
+                              letterSpacing: -0.1,
+                            ),
+                          ),
+                        ),
+                        if (score != null) ...<Widget>[
+                          const Gap.h(AppSpace.sm),
+                          Container(
+                            width: 4,
+                            height: 4,
+                            decoration: BoxDecoration(
+                              color: _bandColor(score.band),
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const Gap.h(AppSpace.xs + 1),
+                          Text(
+                            bandLabel(score.band),
+                            style: TextStyle(
+                              color: _bandColor(score.band),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.1,
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                     const Gap.v(AppSpace.xs),
                     Text(
