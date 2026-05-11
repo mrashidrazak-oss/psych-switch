@@ -135,36 +135,61 @@ class _TitrationTab extends StatefulWidget {
 }
 
 class _TitrationTabState extends State<_TitrationTab> {
+  TitrationRegimen _regimen = TitrationRegimen.maudsley15;
   Sex _sex = Sex.male;
   bool _smoker = false;
 
+  /// Sex × smoker variant only matters for the Maudsley-15 four-
+  /// variant protocols. The 14th-edition and Community regimens have a
+  /// single uniform schedule, so the picker is hidden under those.
+  bool get _showVariantPickers => _regimen == TitrationRegimen.maudsley15;
+
   @override
   Widget build(BuildContext context) {
-    final protocol = widget.module.getTitration((sex: _sex, smoker: _smoker));
+    final protocol = widget.module.getTitrationFor(
+      regimen: _regimen,
+      variant: (sex: _sex, smoker: _smoker),
+    );
+    final summary = regimenSummaries[_regimen]!;
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       children: <Widget>[
-        const _SectionHeader(text: 'PATIENT VARIANT'),
+        const _SectionHeader(text: 'REGIMEN'),
         const SizedBox(height: 8),
-        _SegmentedRow<Sex>(
-          label: 'Sex',
-          options: const <(Sex, String)>[
-            (Sex.male, 'Male'),
-            (Sex.female, 'Female'),
-          ],
-          selected: _sex,
-          onSelected: (v) => setState(() => _sex = v),
+        _RegimenSelector(
+          selected: _regimen,
+          onSelected: (r) {
+            unawaited(hapticsTap());
+            setState(() => _regimen = r);
+          },
         ),
         const SizedBox(height: 12),
-        _SegmentedRow<bool>(
-          label: 'Smoker',
-          options: const <(bool, String)>[
-            (false, 'Non-smoker'),
-            (true, 'Smoker'),
-          ],
-          selected: _smoker,
-          onSelected: (v) => setState(() => _smoker = v),
-        ),
+        _RegimenReasoningCard(regimen: _regimen, summary: summary),
+
+        if (_showVariantPickers) ...<Widget>[
+          const SizedBox(height: 20),
+          const _SectionHeader(text: 'PATIENT VARIANT'),
+          const SizedBox(height: 8),
+          _SegmentedRow<Sex>(
+            label: 'Sex',
+            options: const <(Sex, String)>[
+              (Sex.male, 'Male'),
+              (Sex.female, 'Female'),
+            ],
+            selected: _sex,
+            onSelected: (v) => setState(() => _sex = v),
+          ),
+          const SizedBox(height: 12),
+          _SegmentedRow<bool>(
+            label: 'Smoker',
+            options: const <(bool, String)>[
+              (false, 'Non-smoker'),
+              (true, 'Smoker'),
+            ],
+            selected: _smoker,
+            onSelected: (v) => setState(() => _smoker = v),
+          ),
+        ],
 
         const SizedBox(height: 20),
         _ProtocolHeaderCard(protocol: protocol),
@@ -189,6 +214,197 @@ class _TitrationTabState extends State<_TitrationTab> {
         const SizedBox(height: 20),
         _CitationsList(citations: protocol.citations),
       ],
+    );
+  }
+}
+
+/// Three-way segmented selector for the titration regimen. Active
+/// segment lifts to a tone-tinted fill; non-default regimens stay in
+/// `accent`-blue (informational), Community sits in `to`-green (the
+/// "safer / slower" option).
+class _RegimenSelector extends StatelessWidget {
+  const _RegimenSelector({
+    required this.selected,
+    required this.onSelected,
+  });
+
+  final TitrationRegimen selected;
+  final ValueChanged<TitrationRegimen> onSelected;
+
+  Color _activeTone(TitrationRegimen r) {
+    switch (r) {
+      case TitrationRegimen.maudsley15:
+        return AppColors.accent;
+      case TitrationRegimen.maudsley14:
+        return AppColors.mutedStrong;
+      case TitrationRegimen.community:
+        return AppColors.to;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.bg,
+        borderRadius: BorderRadius.circular(AppRadii.md + 2),
+        border: Border.all(
+          color: AppColors.border.withValues(alpha: 0.5),
+          width: 0.5,
+        ),
+      ),
+      padding: const EdgeInsets.all(3),
+      child: Row(
+        children: <Widget>[
+          for (final r in TitrationRegimen.values)
+            Expanded(
+              child: _RegimenSegment(
+                regimen: r,
+                isActive: r == selected,
+                activeTone: _activeTone(r),
+                onTap: () => onSelected(r),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RegimenSegment extends StatelessWidget {
+  const _RegimenSegment({
+    required this.regimen,
+    required this.isActive,
+    required this.activeTone,
+    required this.onTap,
+  });
+
+  final TitrationRegimen regimen;
+  final bool isActive;
+  final Color activeTone;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final summary = regimenSummaries[regimen]!;
+    final activeColor = isActive ? activeTone : AppColors.muted;
+    return Semantics(
+      button: true,
+      selected: isActive,
+      label: '${summary.label} regimen — ${summary.subtitle}',
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppRadii.md),
+          child: Container(
+            decoration: BoxDecoration(
+              color: isActive ? AppColors.surface : Colors.transparent,
+              borderRadius: BorderRadius.circular(AppRadii.md),
+              border: isActive
+                  ? Border.all(
+                      color: AppColors.border.withValues(alpha: 0.7),
+                      width: 0.5,
+                    )
+                  : null,
+            ),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 6,
+              vertical: 9,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  summary.label,
+                  style: TextStyle(
+                    color: isActive ? activeColor : AppColors.muted,
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.1,
+                    height: 1.2,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  summary.subtitle,
+                  style: TextStyle(
+                    color: isActive
+                        ? activeColor.withValues(alpha: 0.85)
+                        : AppColors.muted.withValues(alpha: 0.75),
+                    fontSize: 9.5,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.2,
+                    height: 1.25,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Surfaces the regimen's clinical reasoning so the picker isn't a
+/// blind toggle — same Maudsley-15-style note chrome the rest of the
+/// tab uses.
+class _RegimenReasoningCard extends StatelessWidget {
+  const _RegimenReasoningCard({
+    required this.regimen,
+    required this.summary,
+  });
+
+  final TitrationRegimen regimen;
+  final RegimenSummary summary;
+
+  @override
+  Widget build(BuildContext context) {
+    final tone = switch (regimen) {
+      TitrationRegimen.maudsley15 => AppColors.accent,
+      TitrationRegimen.maudsley14 => AppColors.mutedStrong,
+      TitrationRegimen.community => AppColors.to,
+    };
+    return Container(
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
+      decoration: BoxDecoration(
+        color: tone.withValues(alpha: 0.06),
+        border: Border(
+          left: BorderSide(color: tone, width: 3),
+        ),
+        borderRadius: const BorderRadius.only(
+          topRight: Radius.circular(8),
+          bottomRight: Radius.circular(8),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'WHY ${summary.label.toUpperCase()}',
+            style: TextStyle(
+              color: tone,
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.4,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            summary.reasoning,
+            style: const TextStyle(
+              color: AppColors.text,
+              fontSize: 12.5,
+              height: 1.55,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

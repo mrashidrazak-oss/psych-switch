@@ -23,6 +23,113 @@ import 'package:psychswitch_engine/patient_context_pure.dart' show Sex;
 
 // ── Titration ─────────────────────────────────────────────────────────
 
+/// Which published titration schedule to render.
+///
+/// The four built-in `Maudsley15` protocols (sex × smoker) are the
+/// current default — slower, CYP1A2-aware (Spina & de Leon 2018,
+/// Kennedy 2019). Older clinicians often want the 14th-edition
+/// schedule for comparison or for sites still using it, and many
+/// services run a slower COMMUNITY titration when an admission isn't
+/// feasible. This enum gates the picker.
+///
+/// Wire format mirrors the engine pattern (kebab/snake-case strings).
+enum TitrationRegimen {
+  maudsley15('maudsley15'),
+  maudsley14('maudsley14'),
+  community('community');
+
+  const TitrationRegimen(this.jsonValue);
+
+  final String jsonValue;
+
+  static TitrationRegimen fromJson(String value) {
+    for (final r in TitrationRegimen.values) {
+      if (r.jsonValue == value) return r;
+    }
+    throw ArgumentError.value(value, 'value', 'unknown TitrationRegimen');
+  }
+}
+
+/// Plain-English summary of each regimen — surfaced in the picker's
+/// reasoning card so the clinician can choose deliberately rather
+/// than copying the default.
+class RegimenSummary {
+  const RegimenSummary({
+    required this.label,
+    required this.subtitle,
+    required this.reasoning,
+    required this.citations,
+  });
+
+  final String label;
+  final String subtitle;
+  final String reasoning;
+  final List<String> citations;
+}
+
+const Map<TitrationRegimen, RegimenSummary> regimenSummaries =
+    <TitrationRegimen, RegimenSummary>{
+  TitrationRegimen.maudsley15: RegimenSummary(
+    label: 'Maudsley 15',
+    subtitle: 'CYP1A2-aware · sex × smoker targets',
+    reasoning:
+        'Maudsley Prescribing Guidelines 15th edition, Schizophrenia '
+        'chapter (p. 214–218). Slower start (6.25 mg test dose), '
+        'maintenance target personalised to CYP1A2 activity: '
+        '225 mg (female non-smoker) → 375 mg (male smoker). Default '
+        'in NHS / CPMS-aligned services because four-variant targeting '
+        'reduces both under-dosing in fast metabolisers and toxicity in '
+        'slow metabolisers. The "test-dose" Day-1 (6.25 mg) is intended '
+        'to catch hypersensitivity reactions early.',
+    citations: <String>[
+      'maudsley15_schizophrenia_p214_clozapine_dosing',
+      'maudsley15_schizophrenia_p217_clozapine_titration',
+      'spina_deleon_2018_clozapine_cyp1a2',
+    ],
+  ),
+  TitrationRegimen.maudsley14: RegimenSummary(
+    label: 'Maudsley 14',
+    subtitle: 'Historical · uniform target 450 mg',
+    reasoning:
+        'Maudsley Prescribing Guidelines 14th edition (2018), Schizophrenia '
+        'chapter. Faster escalation (12.5 mg Day 1, BD from Day 2), '
+        'uniform maintenance target ~450 mg/day before plasma-level '
+        'optimisation, no CYP1A2 personalisation. Reaches 300 mg by '
+        'Day 14, 450 mg by Day 18. Some services and older trial '
+        'protocols still reference this schedule. Useful when '
+        'comparing against historical inpatient pathways or when '
+        'plasma-level guidance will lead the final dose anyway. '
+        'Smokers: levels still drop ~50 % vs non-smokers — confirm '
+        'with plasma sample at 6 weeks before settling on a dose. '
+        'PENDING_CLINICAL_REVIEW.',
+    citations: <String>[
+      'maudsley14_schizophrenia_clozapine_titration',
+      'bap2020_schizophrenia_clozapine',
+    ],
+  ),
+  TitrationRegimen.community: RegimenSummary(
+    label: 'Community',
+    subtitle: 'Slower · outpatient-safe over 28 days',
+    reasoning:
+        'Outpatient / community initiation pathway. Adapted from BAP '
+        '2020 Schizophrenia guideline and the TREC (UK) community '
+        'clozapine protocol. Half-rate escalation vs Maudsley 15 — '
+        'reaches ~250 mg over ~28 days rather than ~20. The slower '
+        'curve allows monitoring at thrice-weekly clinic visits (BP '
+        'lying/standing, pulse, temperature) rather than continuous '
+        'inpatient observation. Use when the patient meets community '
+        'initiation criteria: stable accommodation, an informed carer, '
+        '< 30-min travel to the clinic, no syncopal history, baseline '
+        'ECG within normal limits, and FBC monitoring access. '
+        'PENDING_CLINICAL_REVIEW.',
+    citations: <String>[
+      'bap2020_schizophrenia_community_clozapine',
+      'trec_community_clozapine_protocol',
+      'nice_cg178_schizophrenia',
+    ],
+  ),
+};
+
 /// Sex variant for a clozapine titration protocol. Mirrors the TS
 /// `'female' | 'male'` literal — we reuse the existing [Sex] enum's
 /// `male` / `female` members.
@@ -605,7 +712,8 @@ class ClozapineModule {
 
   final ClozapineContent content;
 
-  /// Resolve the appropriate titration protocol for [variant].
+  /// Resolve the appropriate titration protocol for [variant]
+  /// (defaults to Maudsley 15th edition — the four-variant default).
   TitrationProtocol getTitration(TitrationVariant variant) {
     if (variant.sex == Sex.female && !variant.smoker) {
       return content.femaleNonSmoker;
@@ -617,6 +725,29 @@ class ClozapineModule {
       return content.maleNonSmoker;
     }
     return content.maleSmoker;
+  }
+
+  /// Resolve a titration protocol for [regimen] + [variant].
+  ///
+  /// • `maudsley15` → uses the loaded JSON four-variant Maudsley-15
+  ///   protocols (sex × smoker).
+  /// • `maudsley14` → returns the historical 14th-edition schedule,
+  ///   single uniform protocol regardless of sex/smoking. Smoker
+  ///   adjustment lives in the post-titration plasma-level guidance.
+  /// • `community` → returns the slower outpatient pathway, also a
+  ///   single uniform protocol. Variant is ignored.
+  TitrationProtocol getTitrationFor({
+    required TitrationRegimen regimen,
+    required TitrationVariant variant,
+  }) {
+    switch (regimen) {
+      case TitrationRegimen.maudsley15:
+        return getTitration(variant);
+      case TitrationRegimen.maudsley14:
+        return _maudsley14Protocol;
+      case TitrationRegimen.community:
+        return _communityProtocol;
+    }
   }
 
   /// All four titration variants (used by the picker UI).
@@ -723,3 +854,322 @@ FbcClassification classifyFbc({
     reason: 'Both ANC and WBC in green range.',
   );
 }
+
+// ── Hardcoded alternative regimens ─────────────────────────────────────
+//
+// The Maudsley-15 four-variant protocols are loaded from JSON in
+// `/content/clozapine/` (sex × smoking specific). The two alternative
+// regimens below — Maudsley 14 (historical, uniform 450 mg target)
+// and Community (outpatient slower-curve) — are encoded inline as
+// constants for now. They don't carry the sex/smoking split and are
+// small enough that inline storage is appropriate; if either becomes
+// site-tunable they can be promoted to JSON later without breaking
+// the public API.
+//
+// PENDING_CLINICAL_REVIEW on both. The step list, target dose and
+// monitoring touchpoints have been drawn from the cited published
+// schedules but should be cross-checked against the original tables
+// before clinical release.
+
+/// Maudsley 14th-edition titration — historical reference schedule.
+/// Reaches 300 mg/day by Day 14, 450 mg/day by Day 18. No sex/smoking
+/// split; smoker adjustment lives in the plasma-level guidance below.
+final TitrationProtocol _maudsley14Protocol = TitrationProtocol(
+  id: 'clozapine-titration-maudsley14-standard',
+  variant: (sex: Sex.male, smoker: false),
+  targetDoseMg: 450,
+  rationale:
+      'Maudsley 14th edition (2018), Schizophrenia chapter. Uniform '
+      'titration to 450 mg/day before plasma-level optimisation '
+      '(target 350–600 ng/mL). Faster curve than the 15th edition '
+      '(no test-dose Day-2 hold). Confirm plasma level at 6 weeks '
+      "regardless of sex/smoking status — that's where the dose is "
+      'truly individualised. PENDING_CLINICAL_REVIEW.',
+  totalDays: 18,
+  steps: const <TitrationStep>[
+    TitrationStep(
+      day: 1,
+      morningMg: 0,
+      eveningMg: 12.5,
+      totalMg: 12.5,
+      notes: 'Test dose 12.5 mg evening. Lying + standing BP at 1, '
+          '2, 4 h post-dose. Pulse and temperature 4-hourly.',
+    ),
+    TitrationStep(
+      day: 2,
+      morningMg: 12.5,
+      eveningMg: 12.5,
+      totalMg: 25,
+      notes: 'Begin BD. Continue BP / pulse / temp.',
+    ),
+    TitrationStep(
+      day: 3,
+      morningMg: 25,
+      eveningMg: 25,
+      totalMg: 50,
+      notes: 'Counsel on hypersalivation, constipation. Start '
+          'prophylactic laxative.',
+    ),
+    TitrationStep(
+      day: 4,
+      morningMg: 25,
+      eveningMg: 50,
+      totalMg: 75,
+      notes: 'Watch postural drop.',
+    ),
+    TitrationStep(
+      day: 5,
+      morningMg: 50,
+      eveningMg: 50,
+      totalMg: 100,
+      notes: 'Hypersalivation typically emerges.',
+    ),
+    TitrationStep(
+      day: 6,
+      morningMg: 50,
+      eveningMg: 75,
+      totalMg: 125,
+      notes: 'Daily BP, pulse, temperature.',
+    ),
+    TitrationStep(
+      day: 7,
+      morningMg: 75,
+      eveningMg: 75,
+      totalMg: 150,
+      notes: 'Reassess tolerability. Document bowel function.',
+    ),
+    TitrationStep(
+      day: 8,
+      morningMg: 75,
+      eveningMg: 100,
+      totalMg: 175,
+      notes: 'Continue.',
+    ),
+    TitrationStep(
+      day: 9,
+      morningMg: 100,
+      eveningMg: 100,
+      totalMg: 200,
+      notes: 'Tachycardia commonly persists.',
+    ),
+    TitrationStep(
+      day: 10,
+      morningMg: 100,
+      eveningMg: 125,
+      totalMg: 225,
+      notes: 'Continue.',
+    ),
+    TitrationStep(
+      day: 11,
+      morningMg: 125,
+      eveningMg: 125,
+      totalMg: 250,
+      notes: 'Halfway through dose escalation.',
+    ),
+    TitrationStep(
+      day: 12,
+      morningMg: 125,
+      eveningMg: 150,
+      totalMg: 275,
+      notes: 'Reassess myocarditis warning signs.',
+    ),
+    TitrationStep(
+      day: 13,
+      morningMg: 150,
+      eveningMg: 150,
+      totalMg: 300,
+      notes: 'Approaching mid-target.',
+    ),
+    TitrationStep(
+      day: 14,
+      morningMg: 150,
+      eveningMg: 150,
+      totalMg: 300,
+      notes: 'Hold at 300 mg. FBC due (week 2).',
+    ),
+    TitrationStep(
+      day: 15,
+      morningMg: 150,
+      eveningMg: 175,
+      totalMg: 325,
+      notes: 'Continue escalation toward 450 if no concerns.',
+    ),
+    TitrationStep(
+      day: 16,
+      morningMg: 175,
+      eveningMg: 200,
+      totalMg: 375,
+      notes: 'Continue.',
+    ),
+    TitrationStep(
+      day: 17,
+      morningMg: 200,
+      eveningMg: 200,
+      totalMg: 400,
+      notes: 'One step from target.',
+    ),
+    TitrationStep(
+      day: 18,
+      morningMg: 200,
+      eveningMg: 250,
+      totalMg: 450,
+      notes: 'Target reached. Take plasma level at 6 weeks '
+          '(trough). Optimise to 350–600 ng/mL.',
+    ),
+  ],
+  postTitrationGuidance:
+      'Hold at 450 mg/day pending plasma-level optimisation '
+      '(target 350–600 ng/mL trough). Smokers metabolise '
+      'clozapine ~50 % faster — confirm with plasma level at '
+      '6 weeks; if the patient stops smoking later, plasma '
+      'levels can rise by up to 2× within 4 weeks, recheck and '
+      'reduce dose accordingly.',
+  missedDoseRule:
+      'Doses missed for more than 48 hours mandate retitration. '
+      'Use the Interruption Restart Wizard.',
+  citations: <String>[
+    'maudsley14_schizophrenia_clozapine_titration',
+    'bap2020_schizophrenia_clozapine',
+  ],
+  lastReviewedISO: '2026-05-11',
+  reviewedBy: 'PENDING - Rashid Razak (clinical author)',
+);
+
+/// Community (outpatient) titration — slower 28-day curve adapted from
+/// BAP 2020 + TREC community clozapine protocol. Single uniform
+/// schedule; sex/smoking-specific final dose is set later via plasma
+/// level.
+final TitrationProtocol _communityProtocol = TitrationProtocol(
+  id: 'clozapine-titration-community',
+  variant: (sex: Sex.male, smoker: false),
+  targetDoseMg: 250,
+  rationale:
+      'Community / outpatient initiation pathway. Adapted from BAP '
+      '2020 Schizophrenia guideline and the TREC community clozapine '
+      'protocol. Half-rate escalation vs Maudsley 15 — reaches '
+      '~250 mg/day over ~28 days. Designed so each dose step '
+      'aligns with a thrice-weekly clinic visit (Mon/Wed/Fri or '
+      'equivalent) where BP lying/standing, pulse, temperature and '
+      'symptom check are performed. Final target individualised by '
+      'plasma level after 6 weeks at maintenance. PENDING_CLINICAL_REVIEW.',
+  totalDays: 28,
+  steps: const <TitrationStep>[
+    TitrationStep(
+      day: 1,
+      morningMg: 0,
+      eveningMg: 12.5,
+      totalMg: 12.5,
+      notes:
+          'Test dose 12.5 mg at clinic. Observe 4 h post-dose: BP '
+          'lying + standing at 1, 2, 4 h; pulse; temperature. '
+          'Discharge home with carer + emergency contact card.',
+    ),
+    TitrationStep(
+      day: 2,
+      morningMg: 0,
+      eveningMg: 12.5,
+      totalMg: 12.5,
+      notes: 'Carer monitors BP at home (cuff supplied). Call clinic '
+          'if symptomatic postural drop.',
+    ),
+    TitrationStep(
+      day: 3,
+      morningMg: 12.5,
+      eveningMg: 12.5,
+      totalMg: 25,
+      notes: 'Clinic visit (Day 3). BP / pulse / temp / symptom '
+          'check. Begin BD.',
+    ),
+    TitrationStep(
+      day: 5,
+      morningMg: 12.5,
+      eveningMg: 25,
+      totalMg: 37.5,
+      notes: 'Clinic visit. Counsel on hypersalivation, constipation. '
+          'Start prophylactic laxative.',
+    ),
+    TitrationStep(
+      day: 7,
+      morningMg: 25,
+      eveningMg: 25,
+      totalMg: 50,
+      notes: 'Clinic visit. FBC due (week 1 baseline).',
+    ),
+    TitrationStep(
+      day: 10,
+      morningMg: 25,
+      eveningMg: 50,
+      totalMg: 75,
+      notes: 'Clinic visit. Watch postural drop.',
+    ),
+    TitrationStep(
+      day: 12,
+      morningMg: 50,
+      eveningMg: 50,
+      totalMg: 100,
+      notes: 'Clinic visit. Hypersalivation typically emerging.',
+    ),
+    TitrationStep(
+      day: 14,
+      morningMg: 50,
+      eveningMg: 75,
+      totalMg: 125,
+      notes: 'Clinic visit. FBC due (week 2).',
+    ),
+    TitrationStep(
+      day: 17,
+      morningMg: 75,
+      eveningMg: 75,
+      totalMg: 150,
+      notes: 'Clinic visit. Reassess myocarditis warning signs '
+          '(fever, chest pain, dyspnoea, tachycardia).',
+    ),
+    TitrationStep(
+      day: 19,
+      morningMg: 75,
+      eveningMg: 100,
+      totalMg: 175,
+      notes: 'Clinic visit.',
+    ),
+    TitrationStep(
+      day: 21,
+      morningMg: 100,
+      eveningMg: 100,
+      totalMg: 200,
+      notes: 'Clinic visit. FBC due (week 3).',
+    ),
+    TitrationStep(
+      day: 24,
+      morningMg: 100,
+      eveningMg: 125,
+      totalMg: 225,
+      notes: 'Clinic visit. Approaching target.',
+    ),
+    TitrationStep(
+      day: 28,
+      morningMg: 125,
+      eveningMg: 125,
+      totalMg: 250,
+      notes: 'Maintenance target. Plasma level at week 6 — '
+          'optimise to 350–600 ng/mL.',
+    ),
+  ],
+  postTitrationGuidance:
+      'Hold at 250 mg/day. Plasma level at 6 weeks (trough), '
+      'optimise to 350–600 ng/mL. Maintain thrice-weekly clinic '
+      'visits for the first 4 weeks then taper monitoring per the '
+      'community schedule. Emphasise to patient + carer: any fever, '
+      'chest pain, severe drowsiness or new infection symptom is '
+      'a same-day call to the clinic.',
+  missedDoseRule:
+      'Doses missed for more than 48 hours mandate retitration. '
+      'Community patients should call the clinic same-day before '
+      'the next dose is due. Use the Interruption Restart Wizard.',
+  citations: <String>[
+    'bap2020_schizophrenia_community_clozapine',
+    'trec_community_clozapine_protocol',
+    'nice_cg178_schizophrenia',
+  ],
+  lastReviewedISO: '2026-05-11',
+  reviewedBy: 'PENDING - Rashid Razak (clinical author)',
+);
