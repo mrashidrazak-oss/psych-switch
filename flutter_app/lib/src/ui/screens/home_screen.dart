@@ -135,10 +135,21 @@ class _HomeBody extends StatelessWidget {
 
 // ── Hero ──────────────────────────────────────────────────────────────
 
-/// The brand mark — kept small and quiet. The product speaks louder
-/// than the logo on a working clinician's screen.
+/// Brand mark.
+///
+/// The product's own logo (the cross-titration X-mark in from-blue +
+/// to-green) sits at 54-pt with a soft dual-tone glow behind it — the
+/// blue glow leaning left, the green leaning right, mirroring the
+/// strokes in the icon. Pairs with a confident 24-pt w800 wordmark
+/// and a small caps tagline.
+///
+/// Materially honest: no gimmick, no decorative chrome. Just the
+/// product mark given the room it deserves, the way Apple gives a
+/// 60-pt icon room on App Store landing pages.
 class _Mark extends StatelessWidget {
   const _Mark();
+
+  static const double _markSize = 54;
 
   @override
   Widget build(BuildContext context) {
@@ -146,57 +157,96 @@ class _Mark extends StatelessWidget {
       label: 'PsychSwitch · Reviewed cross-titration',
       child: ExcludeSemantics(
         child: Row(
-          mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Container(
-              width: 28,
-              height: 28,
+            // ── Brand mark with dual-tone glow ──────────────────────
+            // The two shadows offset opposite directions so the glow
+            // mirrors the logo's X-strokes — from-blue trailing one
+            // way, to-green the other. Subtle, only visible when the
+            // surrounding bg is dark (which on this screen it always
+            // is).
+            DecoratedBox(
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: <Color>[AppColors.from, AppColors.to],
-                ),
-                borderRadius: BorderRadius.circular(AppRadii.sm + 2),
-              ),
-              child: const Center(
-                child: Text(
-                  'PS',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.3,
+                borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                    color: AppColors.from.withValues(alpha: 0.28),
+                    blurRadius: 30,
+                    spreadRadius: -8,
+                    offset: const Offset(-5, 6),
                   ),
+                  BoxShadow(
+                    color: AppColors.to.withValues(alpha: 0.28),
+                    blurRadius: 30,
+                    spreadRadius: -8,
+                    offset: const Offset(5, 6),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+                child: Image.asset(
+                  'assets/icon.png',
+                  width: _markSize,
+                  height: _markSize,
+                  fit: BoxFit.cover,
+                  filterQuality: FilterQuality.high,
                 ),
               ),
             ),
-            const Gap.h(AppSpace.sm + 2),
-            const Text(
-              'PsychSwitch',
-              style: TextStyle(
-                color: AppColors.text,
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                letterSpacing: -0.1,
-              ),
-            ),
-            const Gap.h(AppSpace.sm),
-            Container(
-              width: 3,
-              height: 3,
-              decoration: const BoxDecoration(
-                color: AppColors.muted,
-                shape: BoxShape.circle,
-              ),
-            ),
-            const Gap.h(AppSpace.sm),
-            const Text(
-              'Reviewed cross-titration',
-              style: TextStyle(
-                color: AppColors.muted,
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
+            const Gap.h(AppSpace.md + 2),
+            // ── Wordmark + tagline ─────────────────────────────────
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  const Text(
+                    'PsychSwitch',
+                    style: TextStyle(
+                      color: AppColors.text,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.6,
+                      height: 1.1,
+                    ),
+                  ),
+                  const Gap.v(AppSpace.xs + 1),
+                  Row(
+                    children: <Widget>[
+                      // Two tiny tone dots echoing the logo's palette
+                      // so the brand identity reads as a system, not
+                      // as an isolated icon.
+                      Container(
+                        width: 5,
+                        height: 5,
+                        decoration: const BoxDecoration(
+                          color: AppColors.from,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const Gap.h(3),
+                      Container(
+                        width: 5,
+                        height: 5,
+                        decoration: const BoxDecoration(
+                          color: AppColors.to,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const Gap.h(AppSpace.sm),
+                      const Text(
+                        'Reviewed cross-titration',
+                        style: TextStyle(
+                          color: AppColors.mutedStrong,
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.2,
+                          height: 1.2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ],
