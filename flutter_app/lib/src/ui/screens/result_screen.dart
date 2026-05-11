@@ -37,6 +37,7 @@ import 'package:psychswitch/src/ui/widgets/rule_provenance_card.dart';
 import 'package:psychswitch/src/ui/widgets/score_ring.dart';
 import 'package:psychswitch/src/ui/widgets/specialty_depth_card.dart';
 import 'package:psychswitch/src/ui/widgets/status_pill.dart' as ui;
+import 'package:psychswitch/src/util/export_ical.dart';
 import 'package:psychswitch/src/util/export_pdf.dart';
 import 'package:psychswitch/src/util/share_plan.dart';
 import 'package:psychswitch_engine/case_pulse.dart' show SavedCase;
@@ -340,6 +341,18 @@ class _ShareMenu extends ConsumerWidget {
               toDrug: toDrug!,
               plan: payload,
             );
+          case 'ical':
+            final ics = formatPlanForIcal(
+              fromDrug: fromDrug!,
+              toDrug: toDrug!,
+              plan: payload,
+              startDate: DateTime.now(),
+            );
+            await Share.share(
+              ics,
+              subject: 'PsychSwitch — ${fromDrug!.genericName} → '
+                  '${toDrug!.genericName} (.ics)',
+            );
         }
       },
       itemBuilder: (_) => <PopupMenuEntry<String>>[
@@ -367,6 +380,15 @@ class _ShareMenu extends ConsumerWidget {
             leading: Icon(Icons.assignment_ind_outlined),
             title: Text('Patient handout PDF'),
             subtitle: Text('Plain language · large print · sign-off block'),
+            contentPadding: EdgeInsets.zero,
+          ),
+        ),
+        const PopupMenuItem<String>(
+          value: 'ical',
+          child: ListTile(
+            leading: Icon(Icons.event_available_outlined),
+            title: Text('Calendar (.ics)'),
+            subtitle: Text('Schedule + monitoring as all-day events'),
             contentPadding: EdgeInsets.zero,
           ),
         ),

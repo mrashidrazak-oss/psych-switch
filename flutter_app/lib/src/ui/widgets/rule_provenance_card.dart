@@ -1,7 +1,12 @@
-// Rule-provenance card — surfaces the trust signals that make a rule
-// defensible at a CME: who reviewed it, when, when the next review is
-// due, and the rule id. RN parity:
-// `components/RuleProvenanceCard.tsx`. Review cadence: 90 days.
+// Rule-provenance card — credibility lift.
+//
+// The defensibility argument lives here: who reviewed this rule, when,
+// when the next review is due, the rule id (for grep), and any
+// recorded corrections. Designed to look like a stamp on a clinical
+// document — three bands inside a single card.
+//
+// RN parity: `components/RuleProvenanceCard.tsx`. Review cadence: 90
+// days from `lastReviewedISO`.
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -18,15 +23,19 @@ class RuleProvenanceCard extends StatelessWidget {
 
   static const _reviewCadenceDays = 90;
 
-  ({DateTime? nextReview, bool overdue}) _computeReviewStatus(
+  ({DateTime? nextReview, bool overdue, int daysToNext}) _computeReviewStatus(
     String lastReviewedISO,
   ) {
     final last = DateTime.tryParse(lastReviewedISO);
-    if (last == null) return (nextReview: null, overdue: false);
+    if (last == null) {
+      return (nextReview: null, overdue: false, daysToNext: 0);
+    }
     final next = last.add(const Duration(days: _reviewCadenceDays));
+    final delta = next.difference(DateTime.now()).inDays;
     return (
       nextReview: next,
       overdue: DateTime.now().isAfter(next),
+      daysToNext: delta,
     );
   }
 
@@ -34,123 +43,230 @@ class RuleProvenanceCard extends StatelessWidget {
       '${d.year}-${d.month.toString().padLeft(2, '0')}-'
       '${d.day.toString().padLeft(2, '0')}';
 
+  /// Strip the engine-internal "PENDING - " prefix from the reviewer
+  /// field for display. Keeps the audit trail clean while flagging
+  /// pre-review content with a chip.
+  ({String name, bool pending}) _parseReviewer(String raw) {
+    final pending = raw.toLowerCase().startsWith('pending');
+    final name = raw
+        .replaceFirst(RegExp(r'^PENDING\s*[-—]\s*', caseSensitive: false), '')
+        .trim();
+    return (name: name.isEmpty ? raw : name, pending: pending);
+  }
+
   @override
   Widget build(BuildContext context) {
     final status = _computeReviewStatus(rule.lastReviewedISO);
     final ruleErrata = errataForRule(rule.id);
-
+    final reviewer = _parseReviewer(rule.reviewedBy);
+    final tone = status.overdue
+        ? AppColors.warning
+        : (reviewer.pending ? AppColors.mutedStrong : AppColors.accent);
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(AppRadii.lg),
+        border: Border.all(
+          color: AppColors.border.withValues(alpha: 0.7),
+          width: 0.5,
+        ),
+        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
       ),
-      padding: const EdgeInsets.fromLTRB(
-        AppSpace.md + 2,
-        AppSpace.md - 2,
-        AppSpace.md + 2,
-        AppSpace.md - 2,
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          // ── Identity band: reviewer + status chip ──────────────
           Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: AppColors.accent.withValues(alpha: 0.15),
-              border: Border.all(
-                color: AppColors.accent.withValues(alpha: 0.3),
-              ),
-              borderRadius: BorderRadius.circular(AppRadii.sm + 2),
+            color: tone.withValues(alpha: 0.06),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpace.lg - 2,
+              AppSpace.md + 2,
+              AppSpace.md - 2,
+              AppSpace.md + 2,
             ),
-            child: const Icon(
-              Icons.verified_outlined,
-              size: 16,
-              color: AppColors.accent,
-            ),
-          ),
-          const Gap.h(AppSpace.md),
-          Expanded(
-            child: Column(
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Text('PROVENANCE', style: AppTextSizes.eyebrow),
-                const Gap.v(2),
-                Text(
-                  rule.reviewedBy,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: AppColors.text,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
+                // Verified-stamp tile.
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: tone.withValues(alpha: 0.12),
+                    border: Border.all(
+                      color: tone.withValues(alpha: 0.36),
+                      width: 0.5,
+                    ),
+                    borderRadius: BorderRadius.circular(AppRadii.md),
+                  ),
+                  child: Icon(
+                    Icons.verified_outlined,
+                    size: 19,
+                    color: tone,
                   ),
                 ),
-                const Gap.v(AppSpace.xs),
-                Wrap(
-                  spacing: AppSpace.sm,
-                  runSpacing: AppSpace.xs,
-                  children: <Widget>[
-                    _DotLine(
-                      tone: AppColors.muted,
-                      text: 'Reviewed ${rule.lastReviewedISO}',
-                    ),
-                    if (status.nextReview != null)
-                      _DotLine(
-                        tone: status.overdue
-                            ? AppColors.warning
-                            : AppColors.to,
-                        text: status.overdue
-                            ? 'Next review overdue'
-                            : 'Next review ${_humanDate(status.nextReview!)}',
-                        bold: status.overdue,
+                const Gap.h(AppSpace.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        'REVIEWED BY',
+                        style: AppTextSizes.eyebrow.copyWith(color: tone),
                       ),
-                  ],
-                ),
-                const Gap.v(AppSpace.xs),
-                Text(
-                  rule.id,
-                  style: AppTextSizes.eyebrow.copyWith(
-                    fontFamily: 'monospace',
+                      const Gap.v(2),
+                      Text(
+                        reviewer.name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: AppColors.text,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.3,
+                          height: 1.25,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                if (ruleErrata.isNotEmpty) ...<Widget>[
-                  const Gap.v(AppSpace.sm),
-                  GestureDetector(
-                    onTap: () => context.pushNamed(Routes.errata),
-                    behavior: HitTestBehavior.opaque,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Container(
-                          width: 6,
-                          height: 6,
-                          decoration: const BoxDecoration(
-                            color: AppColors.warning,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const Gap.h(AppSpace.xs + 2),
-                        Text(
-                          '${ruleErrata.length} correction'
-                          '${ruleErrata.length == 1 ? '' : 's'} recorded',
-                          style: const TextStyle(
-                            color: AppColors.warning,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                        const Gap.h(AppSpace.xs),
-                        const Icon(
-                          Icons.chevron_right_rounded,
-                          size: 14,
-                          color: AppColors.warning,
-                        ),
-                      ],
+                const Gap.h(AppSpace.sm),
+                if (reviewer.pending)
+                  const _StatusChip(
+                    tone: AppColors.mutedStrong,
+                    label: 'PENDING REVIEW',
+                  )
+                else if (status.overdue)
+                  const _StatusChip(
+                    tone: AppColors.warning,
+                    label: 'REVIEW OVERDUE',
+                  )
+                else
+                  const _StatusChip(
+                    tone: AppColors.to,
+                    label: 'IN REVIEW WINDOW',
+                  ),
+              ],
+            ),
+          ),
+          // ── Stat row: reviewed date + next review countdown ────
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpace.lg - 2,
+              AppSpace.md + 2,
+              AppSpace.lg - 2,
+              AppSpace.md,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  child: _ProvenanceStat(
+                    eyebrow: 'LAST REVIEWED',
+                    value: rule.lastReviewedISO,
+                  ),
+                ),
+                Container(
+                  width: 0.5,
+                  height: 36,
+                  color: AppColors.border.withValues(alpha: 0.6),
+                ),
+                Expanded(
+                  child: _ProvenanceStat(
+                    eyebrow: 'NEXT REVIEW',
+                    value: status.nextReview != null
+                        ? _humanDate(status.nextReview!)
+                        : '—',
+                    subtitle: status.nextReview != null
+                        ? (status.overdue
+                            ? '${-status.daysToNext} days overdue'
+                            : 'in ${status.daysToNext} days')
+                        : null,
+                    subtitleTone: status.overdue
+                        ? AppColors.warning
+                        : AppColors.muted,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // ── Footer: rule-id chip + errata link (when present) ──
+          Container(
+            color: AppColors.bg.withValues(alpha: 0.4),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpace.lg - 2,
+              AppSpace.sm + 2,
+              AppSpace.md - 2,
+              AppSpace.sm + 2,
+            ),
+            child: Row(
+              children: <Widget>[
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpace.sm,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.bg.withValues(alpha: 0.7),
+                    borderRadius: BorderRadius.circular(AppRadii.sm),
+                  ),
+                  child: Text(
+                    rule.id,
+                    style: const TextStyle(
+                      color: AppColors.muted,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'monospace',
+                      letterSpacing: 0.1,
                     ),
                   ),
-                ],
+                ),
+                const Spacer(),
+                if (ruleErrata.isNotEmpty)
+                  Material(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(AppRadii.pill),
+                    clipBehavior: Clip.antiAlias,
+                    child: InkWell(
+                      onTap: () => context.pushNamed(Routes.errata),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpace.sm + 2,
+                          vertical: 3,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            Container(
+                              width: 6,
+                              height: 6,
+                              decoration: const BoxDecoration(
+                                color: AppColors.warning,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const Gap.h(AppSpace.xs + 2),
+                            Text(
+                              '${ruleErrata.length} correction'
+                              '${ruleErrata.length == 1 ? '' : 's'}',
+                              style: const TextStyle(
+                                color: AppColors.warning,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 0.3,
+                              ),
+                            ),
+                            const Gap.h(AppSpace.xs),
+                            const Icon(
+                              Icons.chevron_right_rounded,
+                              size: 14,
+                              color: AppColors.warning,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -160,37 +276,89 @@ class RuleProvenanceCard extends StatelessWidget {
   }
 }
 
-class _DotLine extends StatelessWidget {
-  const _DotLine({
-    required this.tone,
-    required this.text,
-    this.bold = false,
+/// Single mini-stat inside the provenance card's middle band — eyebrow
+/// + value (+ optional coloured subtitle for countdowns).
+class _ProvenanceStat extends StatelessWidget {
+  const _ProvenanceStat({
+    required this.eyebrow,
+    required this.value,
+    this.subtitle,
+    this.subtitleTone,
   });
 
-  final Color tone;
-  final String text;
-  final bool bold;
+  final String eyebrow;
+  final String value;
+  final String? subtitle;
+  final Color? subtitleTone;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Container(
-          width: 6,
-          height: 6,
-          decoration: BoxDecoration(color: tone, shape: BoxShape.circle),
-        ),
-        const Gap.h(AppSpace.xs + 2),
-        Text(
-          text,
-          style: TextStyle(
-            color: tone == AppColors.muted ? AppColors.muted : tone,
-            fontSize: 11,
-            fontWeight: bold ? FontWeight.w800 : FontWeight.w500,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 2),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            eyebrow,
+            style: const TextStyle(
+              color: AppColors.muted,
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.3,
+            ),
           ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: const TextStyle(
+              color: AppColors.text,
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.1,
+              fontFeatures: <FontFeature>[FontFeature.tabularFigures()],
+            ),
+          ),
+          if (subtitle != null) ...<Widget>[
+            const SizedBox(height: 2),
+            Text(
+              subtitle!,
+              style: TextStyle(
+                color: subtitleTone ?? AppColors.muted,
+                fontSize: 11.5,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.1,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _StatusChip extends StatelessWidget {
+  const _StatusChip({required this.tone, required this.label});
+
+  final Color tone;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+      decoration: BoxDecoration(
+        color: tone.withValues(alpha: 0.16),
+        borderRadius: BorderRadius.circular(AppRadii.pill),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: tone,
+          fontSize: 10,
+          fontWeight: FontWeight.w800,
+          letterSpacing: 1.1,
         ),
-      ],
+      ),
     );
   }
 }
