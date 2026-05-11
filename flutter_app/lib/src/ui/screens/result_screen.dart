@@ -527,6 +527,25 @@ class _ResultBody extends ConsumerWidget {
       const Gap.v(AppSpace.xl - 4),
     ];
 
+    // Trailing footer — sits below every plan branch (OK, Maudsley
+    // guidance, MAOI washout, clozapine redirect, no-rule). Gives the
+    // clinician a clean send-off: a primary "Start another switch"
+    // CTA + a subtle "Back to home" link. Closes the journey rather
+    // than leaving the user to hunt for the back button.
+    final footer = EntranceFade(
+      index: 6,
+      child: _ResultFooter(
+        onStartAnother: () {
+          unawaited(hapticsTap());
+          context.goNamed(Routes.switch_);
+        },
+        onHome: () {
+          unawaited(hapticsTap());
+          context.goNamed(Routes.home);
+        },
+      ),
+    );
+
     if (context.isWide) {
       // Wide: hero band stays full width; the body splits into a
       // 2-up Wrap so each card fills half the row. Spacer gaps and
@@ -559,6 +578,7 @@ class _ResultBody extends ConsumerWidget {
               );
             },
           ),
+          footer,
         ],
       );
     }
@@ -572,6 +592,7 @@ class _ResultBody extends ConsumerWidget {
         // out past 700ms even when the plan has many cards.
         for (var i = 0; i < body.length; i++)
           EntranceFade(index: (2 + i).clamp(0, 6), child: body[i]),
+        footer,
       ],
     );
   }
@@ -2858,6 +2879,145 @@ class _CitationsCard extends StatelessWidget {
               ),
             )
             .toList(),
+      ),
+    );
+  }
+}
+
+/// Closes the result with a clean send-off. Sits below every plan
+/// branch — OK, guidance, washout, clozapine redirect, no-rule. The
+/// primary CTA navigates to a fresh switch screen (go_router `.go`
+/// replaces the stack so the form starts blank for the next case);
+/// the subtle text link below returns to home.
+///
+/// Composition: hairline · "PLAN COMPLETE" eyebrow · primary CTA ·
+/// home link. Tiny ceremony, lots of finality.
+class _ResultFooter extends StatelessWidget {
+  const _ResultFooter({
+    required this.onStartAnother,
+    required this.onHome,
+  });
+
+  final VoidCallback onStartAnother;
+  final VoidCallback onHome;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: AppSpace.xl,
+        bottom: AppSpace.xxl,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          // ── Centred hairline rule ────────────────────────────────
+          Center(
+            child: Container(
+              width: 36,
+              height: 1,
+              color: AppColors.border.withValues(alpha: 0.6),
+            ),
+          ),
+          const Gap.v(AppSpace.lg),
+          Center(
+            child: Text(
+              'PLAN COMPLETE',
+              style: AppTextSizes.eyebrow.copyWith(
+                color: AppColors.mutedStrong,
+                letterSpacing: 2,
+              ),
+            ),
+          ),
+          const Gap.v(AppSpace.md + 2),
+          Center(
+            child: Text(
+              'Save it, share it, or queue the next case.',
+              style: AppTextSizes.caption.copyWith(height: 1.5),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const Gap.v(AppSpace.xl - 2),
+          // ── Primary CTA ──────────────────────────────────────────
+          _StartAnotherButton(onPressed: onStartAnother),
+          const Gap.v(AppSpace.md),
+          // ── Subtle home link ─────────────────────────────────────
+          Center(
+            child: TextButton(
+              onPressed: onHome,
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.muted,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpace.lg,
+                  vertical: AppSpace.sm,
+                ),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                visualDensity: VisualDensity.compact,
+              ),
+              child: const Text(
+                'Back to home',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.1,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Primary "start another switch" button — accent-blue glow when
+/// enabled, full-width, leading restart-alt icon. Mirrors the visual
+/// weight of the SwitchScreen's "Generate plan" button so the journey
+/// loop reads as one continuous gesture.
+class _StartAnotherButton extends StatelessWidget {
+  const _StartAnotherButton({required this.onPressed});
+
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppRadii.xl),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: AppColors.accent.withValues(alpha: 0.22),
+            blurRadius: 22,
+            spreadRadius: -6,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: FilledButton(
+        onPressed: onPressed,
+        style: FilledButton.styleFrom(
+          backgroundColor: AppColors.accent,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppRadii.xl),
+          ),
+        ),
+        child: const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Icon(Icons.restart_alt_rounded, size: 19),
+            Gap.h(AppSpace.sm + 2),
+            Text(
+              'Start another switch',
+              style: TextStyle(
+                fontSize: 15.5,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.1,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
