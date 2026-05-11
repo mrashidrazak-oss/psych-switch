@@ -2057,45 +2057,62 @@ class _SoftenDay1Card extends StatelessWidget {
     final pct = day1Original > 0
         ? ((deltaMg / day1Original) * 100).round()
         : 0;
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
-          width: 0.5,
-        ),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => onToggle(!on),
         borderRadius: BorderRadius.circular(AppRadii.lg + 2),
-      ),
-      padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg - 2,
-        AppSpace.md + 2,
-        AppSpace.lg - 2,
-        AppSpace.lg - 2,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          // ── Eyebrow + switch ────────────────────────────────────
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: Text(
-                  on ? 'DAY 1 SOFTENED' : 'SOFTEN DAY 1 OVERLAP',
-                  style: AppTextSizes.eyebrow.copyWith(color: tone),
-                ),
-              ),
-              const Gap.h(AppSpace.sm),
-              Transform.scale(
-                scale: 0.85,
-                child: Switch.adaptive(
-                  value: on,
-                  onChanged: onToggle,
-                  activeThumbColor: AppColors.accent,
-                ),
-              ),
-            ],
+        child: Container(
+          decoration: BoxDecoration(
+            color: on
+                ? AppColors.accent.withValues(alpha: 0.06)
+                : AppColors.surface,
+            border: Border.all(
+              color: on
+                  ? AppColors.accent.withValues(alpha: 0.6)
+                  : AppColors.border.withValues(alpha: 0.7),
+              width: on ? 1 : 0.5,
+            ),
+            borderRadius: BorderRadius.circular(AppRadii.lg + 2),
           ),
-          const Gap.v(AppSpace.sm + 2),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpace.lg - 2,
+            AppSpace.md + 2,
+            AppSpace.lg - 2,
+            AppSpace.lg - 2,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              // ── Eyebrow + icon + switch ─────────────────────────
+              Row(
+                children: <Widget>[
+                  Icon(
+                    on ? Icons.spa_rounded : Icons.spa_outlined,
+                    size: 18,
+                    color: tone,
+                  ),
+                  const Gap.h(AppSpace.sm),
+                  Expanded(
+                    child: Text(
+                      on ? 'DAY 1 SOFTENED' : 'SOFTEN DAY 1 OVERLAP',
+                      style: AppTextSizes.eyebrow.copyWith(color: tone),
+                    ),
+                  ),
+                  const Gap.h(AppSpace.sm),
+                  IgnorePointer(
+                    child: Transform.scale(
+                      scale: 0.85,
+                      child: Switch.adaptive(
+                        value: on,
+                        onChanged: onToggle,
+                        activeThumbColor: AppColors.accent,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const Gap.v(AppSpace.sm + 2),
           // ── State-dependent body ────────────────────────────────
           if (on)
             RichText(
@@ -2175,16 +2192,18 @@ class _SoftenDay1Card extends StatelessWidget {
                 'intolerance to the receptor profile · baseline cardiac '
                 '(QTc), cognitive (anticholinergic) or sedation concern.',
           ),
-          const Gap.v(AppSpace.md + 2),
-          const _SoftenReasoningRow(
-            tone: AppColors.warning,
-            heading: 'Trade-off',
-            body:
-                'Slightly higher chance of from-drug discontinuation '
-                'symptoms on Day 1. Reassess at Day 3 — step the from-dose '
-                'back up if withdrawal emerges.',
+              const Gap.v(AppSpace.md + 2),
+              const _SoftenReasoningRow(
+                tone: AppColors.warning,
+                heading: 'Trade-off',
+                body:
+                    'Slightly higher chance of from-drug discontinuation '
+                    'symptoms on Day 1. Reassess at Day 3 — step the '
+                    'from-dose back up if withdrawal emerges.',
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
