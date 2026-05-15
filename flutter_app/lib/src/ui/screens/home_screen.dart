@@ -1018,7 +1018,7 @@ class _ReferenceRail extends StatelessWidget {
     const rows = <_RailRow>[
       _RailRow(
         label: 'Rating scales',
-        sub: 'PHQ-9 · GAD-7 · MADRS · AUDIT · AIMS · more',
+        sub: '13 scales — PHQ · GAD · MADRS · HAM · CIWA · COWS · CGI · more',
         icon: Icons.assignment_turned_in_outlined,
         route: Routes.scales,
       ),
@@ -1027,6 +1027,30 @@ class _ReferenceRail extends StatelessWidget {
         sub: 'Columbia severity + risk tier',
         icon: Icons.emergency_outlined,
         route: Routes.cssrs,
+      ),
+      _RailRow(
+        label: 'NMS screener',
+        sub: 'Levenson criteria — neuroleptic malignant syndrome',
+        icon: Icons.local_fire_department_outlined,
+        route: Routes.nms,
+      ),
+      _RailRow(
+        label: 'Serotonin syndrome',
+        sub: 'Hunter toxicity criteria',
+        icon: Icons.bolt_outlined,
+        route: Routes.serotonin,
+      ),
+      _RailRow(
+        label: 'TDM interpreter',
+        sub: 'Lithium · clozapine · valproate · lamotrigine',
+        icon: Icons.science_outlined,
+        route: Routes.tdm,
+      ),
+      _RailRow(
+        label: 'Capacity assessment',
+        sub: 'Four-limb ACE evaluation',
+        icon: Icons.balance,
+        route: Routes.capacity,
       ),
       _RailRow(
         label: 'MSE generator',

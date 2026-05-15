@@ -1169,6 +1169,640 @@ const _dast10 = ClinicalScale(
   ],
 );
 
+// ── HAM-A ────────────────────────────────────────────────────────────
+//
+// Hamilton Anxiety Rating Scale (Hamilton 1959). 14 items × 0-4,
+// total 0-56. Public domain.
+
+const _hamAnchors = <String>[
+  'Not present',
+  'Mild',
+  'Moderate',
+  'Severe',
+  'Very severe / incapacitating',
+];
+
+const _hama = ClinicalScale(
+  id: 'hama',
+  name: 'HAM-A',
+  fullName: 'Hamilton Anxiety Rating Scale',
+  tagline: 'Clinician-rated anxiety · 14 items · 0–56',
+  citation: 'Hamilton M. Br J Med Psychol 1959;32:50-5.',
+  headingPrompt: "Rate the patient's anxiety symptoms over the past week.",
+  items: <ScaleItem>[
+    ScaleItem(
+      id: 'hama_1',
+      prompt: 'Anxious mood',
+      subtitle: 'Worries, anticipation of the worst, irritability.',
+      anchors: _hamAnchors,
+    ),
+    ScaleItem(
+      id: 'hama_2',
+      prompt: 'Tension',
+      subtitle: 'Inability to relax, fatigability, startle, restlessness.',
+      anchors: _hamAnchors,
+    ),
+    ScaleItem(
+      id: 'hama_3',
+      prompt: 'Fears',
+      subtitle: 'Of the dark, of strangers, of being alone, of crowds.',
+      anchors: _hamAnchors,
+    ),
+    ScaleItem(
+      id: 'hama_4',
+      prompt: 'Insomnia',
+      subtitle: 'Difficulty falling asleep, broken sleep, fatigue on '
+          'waking.',
+      anchors: _hamAnchors,
+    ),
+    ScaleItem(
+      id: 'hama_5',
+      prompt: 'Intellectual / cognitive',
+      subtitle: 'Difficulty concentrating, poor memory.',
+      anchors: _hamAnchors,
+    ),
+    ScaleItem(
+      id: 'hama_6',
+      prompt: 'Depressed mood',
+      subtitle: 'Loss of interest, anhedonia, depression, diurnal swing.',
+      anchors: _hamAnchors,
+    ),
+    ScaleItem(
+      id: 'hama_7',
+      prompt: 'Somatic — muscular',
+      subtitle: 'Pains, twitching, stiffness, bruxism, voice.',
+      anchors: _hamAnchors,
+    ),
+    ScaleItem(
+      id: 'hama_8',
+      prompt: 'Somatic — sensory',
+      subtitle: 'Tinnitus, blurring, hot/cold flushes, prickling.',
+      anchors: _hamAnchors,
+    ),
+    ScaleItem(
+      id: 'hama_9',
+      prompt: 'Cardiovascular',
+      subtitle: 'Tachycardia, palpitations, chest pain, fainting.',
+      anchors: _hamAnchors,
+    ),
+    ScaleItem(
+      id: 'hama_10',
+      prompt: 'Respiratory',
+      subtitle: 'Pressure / constriction in chest, choking, '
+          'sighing, dyspnoea.',
+      anchors: _hamAnchors,
+    ),
+    ScaleItem(
+      id: 'hama_11',
+      prompt: 'Gastrointestinal',
+      subtitle: 'Dysphagia, wind, pain, fullness, weight loss.',
+      anchors: _hamAnchors,
+    ),
+    ScaleItem(
+      id: 'hama_12',
+      prompt: 'Genitourinary',
+      subtitle: 'Urinary frequency, amenorrhoea, impotence, '
+          'premature ejaculation.',
+      anchors: _hamAnchors,
+    ),
+    ScaleItem(
+      id: 'hama_13',
+      prompt: 'Autonomic',
+      subtitle: 'Dry mouth, flushing, pallor, sweating, dizziness.',
+      anchors: _hamAnchors,
+    ),
+    ScaleItem(
+      id: 'hama_14',
+      prompt: 'Behaviour at interview',
+      subtitle: 'Fidgeting, tremor, pacing, swallowing, sweating.',
+      anchors: _hamAnchors,
+    ),
+  ],
+  bands: <SeverityBand>[
+    SeverityBand(
+      min: 0,
+      max: 17,
+      label: 'Mild',
+      interpretation: 'Mild anxiety; consider monitoring + '
+          'psychoeducation.',
+      severity: 1,
+    ),
+    SeverityBand(
+      min: 18,
+      max: 24,
+      label: 'Mild–moderate',
+      interpretation: 'Mild to moderate; CBT and/or pharmacotherapy.',
+      severity: 2,
+    ),
+    SeverityBand(
+      min: 25,
+      max: 30,
+      label: 'Moderate–severe',
+      interpretation: 'Moderate to severe; active treatment indicated.',
+      severity: 3,
+    ),
+    SeverityBand(
+      min: 31,
+      max: 56,
+      label: 'Severe',
+      interpretation: 'Severe anxiety; specialist input + '
+          'pharmacotherapy.',
+      severity: 4,
+    ),
+  ],
+);
+
+// ── GDS-15 ───────────────────────────────────────────────────────────
+//
+// Geriatric Depression Scale, 15-item (Yesavage 1986). 15 yes/no
+// items. Some are reverse-scored — engine receives the already-mapped
+// 0 / 1 score per item.
+
+const _gds15 = ClinicalScale(
+  id: 'gds15',
+  name: 'GDS-15',
+  fullName: 'Geriatric Depression Scale (15-item)',
+  tagline: 'Depression screening in older adults · 15 items · 0–15',
+  citation: 'Sheikh JI, Yesavage JA. Clin Gerontol 1986;5:165-73.',
+  headingPrompt: 'Choose the best answer for how you have felt over '
+      'the past week.',
+  items: <ScaleItem>[
+    ScaleItem(
+      id: 'gds_1',
+      prompt: 'Are you basically satisfied with your life? '
+          '(reverse-scored)',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'gds_2',
+      prompt: 'Have you dropped many of your activities and interests?',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'gds_3',
+      prompt: 'Do you feel that your life is empty?',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'gds_4',
+      prompt: 'Do you often get bored?',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'gds_5',
+      prompt: 'Are you in good spirits most of the time? '
+          '(reverse-scored)',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'gds_6',
+      prompt: 'Are you afraid that something bad is going to '
+          'happen to you?',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'gds_7',
+      prompt: 'Do you feel happy most of the time? (reverse-scored)',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'gds_8',
+      prompt: 'Do you often feel helpless?',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'gds_9',
+      prompt: 'Do you prefer to stay at home, rather than going '
+          'out and doing new things?',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'gds_10',
+      prompt: 'Do you feel you have more problems with memory '
+          'than most?',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'gds_11',
+      prompt: 'Do you think it is wonderful to be alive now? '
+          '(reverse-scored)',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'gds_12',
+      prompt: 'Do you feel pretty worthless the way you are now?',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'gds_13',
+      prompt: 'Do you feel full of energy? (reverse-scored)',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'gds_14',
+      prompt: 'Do you feel that your situation is hopeless?',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'gds_15',
+      prompt: 'Do you think that most people are better off than '
+          'you are?',
+      anchors: _yesNoAnchors,
+    ),
+  ],
+  bands: <SeverityBand>[
+    SeverityBand(
+      min: 0,
+      max: 4,
+      label: 'Normal',
+      interpretation: 'Within normal range.',
+      severity: 0,
+    ),
+    SeverityBand(
+      min: 5,
+      max: 8,
+      label: 'Mild',
+      interpretation: 'Mild depression suggested; clinical assessment.',
+      severity: 1,
+    ),
+    SeverityBand(
+      min: 9,
+      max: 11,
+      label: 'Moderate',
+      interpretation: 'Moderate depression; intervention indicated.',
+      severity: 2,
+    ),
+    SeverityBand(
+      min: 12,
+      max: 15,
+      label: 'Severe',
+      interpretation: 'Severe depression; pharmacotherapy + close '
+          'follow-up.',
+      severity: 4,
+    ),
+  ],
+);
+
+// ── CIWA-Ar ──────────────────────────────────────────────────────────
+//
+// Clinical Institute Withdrawal Assessment for Alcohol — revised
+// (Sullivan 1989). 10 items: items 1-7 + 9-10 score 0-7 (8 anchors),
+// item 8 (orientation) scores 0-4. Total 0-67.
+
+const _ciwa7Anchors = <String>[
+  '0 — none',
+  '1 — very mild',
+  '2 — mild',
+  '3',
+  '4 — moderate',
+  '5',
+  '6',
+  '7 — severe',
+];
+
+const _ciwaOrientationAnchors = <String>[
+  '0 — oriented and can do serial additions',
+  '1 — cannot do serial additions or uncertain about date',
+  '2 — disoriented for date by no more than 2 days',
+  '3 — disoriented for date by more than 2 days',
+  '4 — disoriented for place and / or person',
+];
+
+const _ciwaAr = ClinicalScale(
+  id: 'ciwaar',
+  name: 'CIWA-Ar',
+  fullName: 'Clinical Institute Withdrawal Assessment for Alcohol – Revised',
+  tagline: 'Alcohol withdrawal severity · 10 items · 0–67',
+  citation: 'Sullivan JT, Sykora K, Schneiderman J, et al. Br J Addict '
+      '1989;84:1353-7.',
+  headingPrompt: 'Rate observed severity. Re-administer hourly until '
+      'CIWA-Ar < 8 for 8 consecutive hours.',
+  items: <ScaleItem>[
+    ScaleItem(
+      id: 'ciwa_1',
+      prompt: 'Nausea / vomiting',
+      subtitle: '"Do you feel sick to your stomach? Have you vomited?"',
+      anchors: _ciwa7Anchors,
+    ),
+    ScaleItem(
+      id: 'ciwa_2',
+      prompt: 'Tremor',
+      subtitle: 'Arms extended, fingers spread apart.',
+      anchors: _ciwa7Anchors,
+    ),
+    ScaleItem(
+      id: 'ciwa_3',
+      prompt: 'Paroxysmal sweats',
+      anchors: _ciwa7Anchors,
+    ),
+    ScaleItem(
+      id: 'ciwa_4',
+      prompt: 'Anxiety',
+      subtitle: '"Do you feel nervous?"',
+      anchors: _ciwa7Anchors,
+    ),
+    ScaleItem(
+      id: 'ciwa_5',
+      prompt: 'Agitation',
+      anchors: _ciwa7Anchors,
+    ),
+    ScaleItem(
+      id: 'ciwa_6',
+      prompt: 'Tactile disturbances',
+      subtitle: '"Itching, pins and needles, burning, numbness?"',
+      anchors: _ciwa7Anchors,
+    ),
+    ScaleItem(
+      id: 'ciwa_7',
+      prompt: 'Auditory disturbances',
+      subtitle: '"Sounds harsh, frightening; hearing things?"',
+      anchors: _ciwa7Anchors,
+    ),
+    ScaleItem(
+      id: 'ciwa_8',
+      prompt: 'Orientation and clouding of sensorium',
+      subtitle: '"What day is this? Where are you? Who am I?"',
+      anchors: _ciwaOrientationAnchors,
+    ),
+    ScaleItem(
+      id: 'ciwa_9',
+      prompt: 'Visual disturbances',
+      subtitle: '"Light too bright? Seeing things you know are not there?"',
+      anchors: _ciwa7Anchors,
+    ),
+    ScaleItem(
+      id: 'ciwa_10',
+      prompt: 'Headache, fullness in head',
+      anchors: _ciwa7Anchors,
+    ),
+  ],
+  bands: <SeverityBand>[
+    SeverityBand(
+      min: 0,
+      max: 7,
+      label: 'Minimal',
+      interpretation: 'Minimal / no withdrawal — supportive care, '
+          'reassess in 4 hours.',
+      severity: 0,
+    ),
+    SeverityBand(
+      min: 8,
+      max: 15,
+      label: 'Mild',
+      interpretation: 'Mild withdrawal — symptom-triggered '
+          'benzodiazepine (e.g. diazepam 10 mg PO); reassess hourly.',
+      severity: 2,
+    ),
+    SeverityBand(
+      min: 16,
+      max: 19,
+      label: 'Moderate',
+      interpretation: 'Moderate withdrawal — benzodiazepine and '
+          'consider thiamine 100 mg IV; reassess hourly.',
+      severity: 3,
+    ),
+    SeverityBand(
+      min: 20,
+      max: 67,
+      label: 'Severe',
+      interpretation: 'Severe withdrawal — high risk of delirium '
+          'tremens / seizure. IV benzodiazepine loading, monitored '
+          'setting, urgent senior review.',
+      severity: 4,
+    ),
+  ],
+);
+
+// ── COWS ─────────────────────────────────────────────────────────────
+//
+// Clinical Opiate Withdrawal Scale (Wesson & Ling 2003). 11 items
+// with varying anchors; total 0–48. Cuts: 5–12 mild, 13–24 moderate,
+// 25–36 moderately severe, ≥ 36 severe.
+
+const _cowsPulse = <String>[
+  '≤ 80 bpm',
+  '81–100 bpm',
+  '101–120 bpm',
+  '> 120 bpm',
+];
+const _cows0to4 = <String>[
+  '0 — none',
+  '1 — mild',
+  '2 — moderate',
+  '3',
+  '4 — severe',
+];
+const _cows0to5 = <String>[
+  '0 — none',
+  '1',
+  '2',
+  '3',
+  '4',
+  '5 — severe',
+];
+const _cowsGoose = <String>[
+  '0 — smooth',
+  '1 — piloerection',
+  '2 — prominent',
+  '3 — severe',
+  '4 — extreme',
+  '5 — very marked',
+];
+const _cowsRest = <String>[
+  'Sits still',
+  'Reports difficulty sitting still, able to do so',
+  'Occasional shifting / extraneous movements',
+  'Frequent shifting',
+  'Extreme restlessness',
+  'Unable to sit still for more than a few seconds',
+];
+
+const _cows = ClinicalScale(
+  id: 'cows',
+  name: 'COWS',
+  fullName: 'Clinical Opiate Withdrawal Scale',
+  tagline: 'Opioid withdrawal severity · 11 items · 0–48',
+  citation: 'Wesson DR, Ling W. J Psychoactive Drugs 2003;35:253-9.',
+  headingPrompt: 'Score each at the same time-point; total guides '
+      'buprenorphine induction (typically ≥ 12 before first dose).',
+  items: <ScaleItem>[
+    ScaleItem(
+      id: 'cows_1',
+      prompt: 'Resting pulse rate (bpm)',
+      anchors: _cowsPulse,
+    ),
+    ScaleItem(
+      id: 'cows_2',
+      prompt: 'Sweating',
+      anchors: _cows0to4,
+    ),
+    ScaleItem(
+      id: 'cows_3',
+      prompt: 'Restlessness',
+      anchors: _cowsRest,
+    ),
+    ScaleItem(
+      id: 'cows_4',
+      prompt: 'Pupil size',
+      anchors: <String>[
+        '0 — pinned / normal',
+        '1 — slightly enlarged',
+        '2 — moderately enlarged',
+        '3',
+        '4',
+        '5 — so dilated only the rim of iris is visible',
+      ],
+    ),
+    ScaleItem(
+      id: 'cows_5',
+      prompt: 'Bone or joint aches',
+      anchors: _cows0to4,
+    ),
+    ScaleItem(
+      id: 'cows_6',
+      prompt: 'Runny nose or tearing',
+      anchors: _cows0to4,
+    ),
+    ScaleItem(
+      id: 'cows_7',
+      prompt: 'GI upset',
+      anchors: _cows0to5,
+    ),
+    ScaleItem(
+      id: 'cows_8',
+      prompt: 'Tremor',
+      anchors: _cows0to4,
+    ),
+    ScaleItem(
+      id: 'cows_9',
+      prompt: 'Yawning',
+      anchors: _cows0to4,
+    ),
+    ScaleItem(
+      id: 'cows_10',
+      prompt: 'Anxiety or irritability',
+      anchors: _cows0to4,
+    ),
+    ScaleItem(
+      id: 'cows_11',
+      prompt: 'Gooseflesh skin',
+      anchors: _cowsGoose,
+    ),
+  ],
+  bands: <SeverityBand>[
+    SeverityBand(
+      min: 0,
+      max: 4,
+      label: 'None',
+      interpretation: 'No clinically significant withdrawal.',
+      severity: 0,
+    ),
+    SeverityBand(
+      min: 5,
+      max: 12,
+      label: 'Mild',
+      interpretation: 'Mild withdrawal — symptomatic management; '
+          'monitor.',
+      severity: 1,
+    ),
+    SeverityBand(
+      min: 13,
+      max: 24,
+      label: 'Moderate',
+      interpretation: 'Moderate withdrawal — appropriate for '
+          'buprenorphine induction (typical first dose 4 mg SL).',
+      severity: 2,
+    ),
+    SeverityBand(
+      min: 25,
+      max: 36,
+      label: 'Moderately severe',
+      interpretation: 'Moderately severe withdrawal — buprenorphine '
+          'induction; reassess after 1-2 hours.',
+      severity: 3,
+    ),
+    SeverityBand(
+      min: 37,
+      max: 48,
+      label: 'Severe',
+      interpretation: 'Severe withdrawal — escalate dosing per '
+          'protocol; supportive care.',
+      severity: 4,
+    ),
+  ],
+);
+
+// ── CGI ──────────────────────────────────────────────────────────────
+//
+// Clinical Global Impression — Severity (Guy 1976). Single-item scale,
+// 1-7. We represent as a one-item scale with a 7-anchor list; the
+// engine handles single-item totals correctly.
+//
+// Note: native scoring is 1-7 (not 0-6); we shift to 0-6 to match the
+// engine's index-based scoring. The interpretation labels match the
+// standard 1-7 wording offset by one.
+
+const _cgis = ClinicalScale(
+  id: 'cgis',
+  name: 'CGI-S',
+  fullName: 'Clinical Global Impression — Severity',
+  tagline: 'Single-item global severity · 0–6 (CGI 1–7)',
+  citation: 'Guy W. ECDEU Assessment Manual. NIMH 1976.',
+  items: <ScaleItem>[
+    ScaleItem(
+      id: 'cgis_1',
+      prompt: 'How mentally ill is the patient at this time?',
+      subtitle: 'Consider total clinical experience with the disorder.',
+      anchors: <String>[
+        'Normal · not at all ill',
+        'Borderline mentally ill',
+        'Mildly ill',
+        'Moderately ill',
+        'Markedly ill',
+        'Severely ill',
+        'Among the most extremely ill patients',
+      ],
+    ),
+  ],
+  bands: <SeverityBand>[
+    SeverityBand(
+      min: 0,
+      max: 1,
+      label: 'Normal–borderline',
+      interpretation: 'Within or near normal range.',
+      severity: 0,
+    ),
+    SeverityBand(
+      min: 2,
+      max: 2,
+      label: 'Mild',
+      interpretation: 'Mild illness.',
+      severity: 1,
+    ),
+    SeverityBand(
+      min: 3,
+      max: 3,
+      label: 'Moderate',
+      interpretation: 'Moderate illness.',
+      severity: 2,
+    ),
+    SeverityBand(
+      min: 4,
+      max: 4,
+      label: 'Marked',
+      interpretation: 'Marked illness.',
+      severity: 3,
+    ),
+    SeverityBand(
+      min: 5,
+      max: 6,
+      label: 'Severe',
+      interpretation: 'Severe to extremely severe illness.',
+      severity: 4,
+    ),
+  ],
+);
+
 // ── Registry ─────────────────────────────────────────────────────────
 
 /// All built-in scales in display order.
@@ -1177,9 +1811,14 @@ const List<ClinicalScale> kClinicalScales = <ClinicalScale>[
   _gad7,
   _madrs,
   _hamd17,
+  _hama,
   _epds,
+  _gds15,
   _audit,
   _dast10,
+  _ciwaAr,
+  _cows,
+  _cgis,
   _aims,
 ];
 

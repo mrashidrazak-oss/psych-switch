@@ -281,6 +281,46 @@ const List<_ToolItem> _allTools = <_ToolItem>[
     ],
   ),
   _ToolItem(
+    label: 'NMS screener',
+    tagline: 'Neuroleptic malignant syndrome',
+    icon: Icons.local_fire_department_outlined,
+    route: Routes.nms,
+    keywords: <String>[
+      'nms', 'neuroleptic', 'malignant', 'rigidity', 'fever', 'ck',
+      'levenson', 'rhabdomyolysis',
+    ],
+  ),
+  _ToolItem(
+    label: 'Serotonin syndrome',
+    tagline: 'Hunter toxicity criteria',
+    icon: Icons.bolt_outlined,
+    route: Routes.serotonin,
+    keywords: <String>[
+      'serotonin', 'hunter', 'clonus', 'cyproheptadine', 'tramadol',
+      'maoi', 'syndrome',
+    ],
+  ),
+  _ToolItem(
+    label: 'TDM interpreter',
+    tagline: 'Lithium · clozapine · valproate · lamotrigine',
+    icon: Icons.science_outlined,
+    route: Routes.tdm,
+    keywords: <String>[
+      'tdm', 'level', 'lithium', 'clozapine', 'valproate', 'lamotrigine',
+      'therapeutic', 'serum', 'monitoring', 'trough',
+    ],
+  ),
+  _ToolItem(
+    label: 'Capacity assessment',
+    tagline: 'Four-limb ACE evaluation',
+    icon: Icons.balance,
+    route: Routes.capacity,
+    keywords: <String>[
+      'capacity', 'ace', 'consent', 'mca', 'understand', 'retain',
+      'weigh', 'communicate',
+    ],
+  ),
+  _ToolItem(
     label: 'MSE generator',
     tagline: 'Mental State Exam narrative',
     icon: Icons.edit_note_rounded,

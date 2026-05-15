@@ -12,9 +12,14 @@ void main() {
       expect(scaleById('gad7')?.name, 'GAD-7');
       expect(scaleById('madrs')?.name, 'MADRS');
       expect(scaleById('hamd17')?.name, 'HAM-D-17');
+      expect(scaleById('hama')?.name, 'HAM-A');
       expect(scaleById('epds')?.name, 'EPDS');
+      expect(scaleById('gds15')?.name, 'GDS-15');
       expect(scaleById('audit')?.name, 'AUDIT');
       expect(scaleById('dast10')?.name, 'DAST-10');
+      expect(scaleById('ciwaar')?.name, 'CIWA-Ar');
+      expect(scaleById('cows')?.name, 'COWS');
+      expect(scaleById('cgis')?.name, 'CGI-S');
       expect(scaleById('aims')?.name, 'AIMS');
     });
 
@@ -202,6 +207,72 @@ void main() {
       expect(scoreScale(dast, <String, int>{
         for (var i = 1; i <= 9; i++) 'dast_$i': 1,
       }).band.label, 'Severe');
+    });
+  });
+
+  group('HAM-A', () {
+    test('max 56 · 17 → mild, 25 → moderate-severe, 31 → severe', () {
+      final h = scaleById('hama')!;
+      expect(h.maxScore, 56);
+      expect(scoreScale(h, <String, int>{'hama_1': 4, 'hama_2': 4, 'hama_3': 4,
+              'hama_4': 4, 'hama_5': 1}).band.label, 'Mild');
+      expect(scoreScale(h, <String, int>{
+        for (var i = 1; i <= 7; i++) 'hama_$i': 4,
+      }).band.label, 'Moderate–severe');
+      expect(scoreScale(h, <String, int>{
+        for (var i = 1; i <= 8; i++) 'hama_$i': 4,
+      }).band.label, 'Severe');
+    });
+  });
+
+  group('GDS-15', () {
+    test('5 → mild, 9 → moderate, 12 → severe', () {
+      final g = scaleById('gds15')!;
+      expect(scoreScale(g, <String, int>{
+        for (var i = 1; i <= 5; i++) 'gds_$i': 1,
+      }).band.label, 'Mild');
+      expect(scoreScale(g, <String, int>{
+        for (var i = 1; i <= 9; i++) 'gds_$i': 1,
+      }).band.label, 'Moderate');
+      expect(scoreScale(g, <String, int>{
+        for (var i = 1; i <= 12; i++) 'gds_$i': 1,
+      }).band.label, 'Severe');
+    });
+  });
+
+  group('CIWA-Ar bands', () {
+    test('8 → mild, 16 → moderate, 20 → severe', () {
+      final c = scaleById('ciwaar')!;
+      expect(scoreScale(c, <String, int>{
+        'ciwa_1': 4, 'ciwa_2': 4,
+      }).band.label, 'Mild');
+      expect(scoreScale(c, <String, int>{
+        'ciwa_1': 7, 'ciwa_2': 7, 'ciwa_3': 2,
+      }).band.label, 'Moderate');
+      expect(scoreScale(c, <String, int>{
+        'ciwa_1': 7, 'ciwa_2': 7, 'ciwa_3': 6,
+      }).band.label, 'Severe');
+    });
+  });
+
+  group('COWS bands', () {
+    test('13 → moderate (buprenorphine induction range)', () {
+      final c = scaleById('cows')!;
+      expect(scoreScale(c, <String, int>{
+        'cows_1': 3, 'cows_2': 4, 'cows_3': 5, 'cows_4': 1,
+      }).band.label, 'Moderate');
+    });
+  });
+
+  group('CGI-S', () {
+    test('single item · 0 = normal, 3 = moderate, 6 = severe', () {
+      final c = scaleById('cgis')!;
+      expect(scoreScale(c, <String, int>{'cgis_1': 0}).band.label,
+          'Normal–borderline');
+      expect(scoreScale(c, <String, int>{'cgis_1': 3}).band.label,
+          'Moderate');
+      expect(scoreScale(c, <String, int>{'cgis_1': 6}).band.label,
+          'Severe');
     });
   });
 

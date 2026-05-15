@@ -25,6 +25,7 @@ import 'package:go_router/go_router.dart';
 import 'package:psychswitch/src/ui/screens/about_screen.dart';
 import 'package:psychswitch/src/ui/screens/adverse_effects_screen.dart';
 import 'package:psychswitch/src/ui/screens/calculators_screen.dart';
+import 'package:psychswitch/src/ui/screens/capacity_screen.dart';
 import 'package:psychswitch/src/ui/screens/clozapine_screen.dart';
 import 'package:psychswitch/src/ui/screens/compare_screen.dart';
 import 'package:psychswitch/src/ui/screens/crisis_screen.dart';
@@ -43,6 +44,7 @@ import 'package:psychswitch/src/ui/screens/mha_screen.dart';
 import 'package:psychswitch/src/ui/screens/mood_stabilizer_detail_screen.dart';
 import 'package:psychswitch/src/ui/screens/mood_stabilizer_home_screen.dart';
 import 'package:psychswitch/src/ui/screens/mse_screen.dart';
+import 'package:psychswitch/src/ui/screens/nms_screen.dart';
 import 'package:psychswitch/src/ui/screens/perinatal_screen.dart';
 import 'package:psychswitch/src/ui/screens/polypharmacy_screen.dart';
 import 'package:psychswitch/src/ui/screens/qtc_stacker_screen.dart';
@@ -51,9 +53,11 @@ import 'package:psychswitch/src/ui/screens/result_screen.dart';
 import 'package:psychswitch/src/ui/screens/scale_runner_screen.dart';
 import 'package:psychswitch/src/ui/screens/scales_screen.dart';
 import 'package:psychswitch/src/ui/screens/search_screen.dart';
+import 'package:psychswitch/src/ui/screens/serotonin_screen.dart';
 import 'package:psychswitch/src/ui/screens/settings_screen.dart';
 import 'package:psychswitch/src/ui/screens/stopp_start_screen.dart';
 import 'package:psychswitch/src/ui/screens/switch_screen.dart';
+import 'package:psychswitch/src/ui/screens/tdm_screen.dart';
 
 /// Named route ids — kept in one place so screen code never hard-codes
 /// path strings.
@@ -91,6 +95,10 @@ abstract final class Routes {
   static const mse = 'mse';
   static const mha = 'mha';
   static const crisis = 'crisis';
+  static const nms = 'nms';
+  static const serotonin = 'serotonin';
+  static const tdm = 'tdm';
+  static const capacity = 'capacity';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -367,6 +375,38 @@ GoRouter buildRouter() => GoRouter(
           pageBuilder: (context, state) => _fadeThroughPage(
             state: state,
             child: const CrisisScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.nms,
+          path: '/nms',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const NmsScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.serotonin,
+          path: '/serotonin',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const SerotoninScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.tdm,
+          path: '/tdm',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const TdmScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.capacity,
+          path: '/capacity',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const CapacityScreen(),
           ),
         ),
         GoRoute(
