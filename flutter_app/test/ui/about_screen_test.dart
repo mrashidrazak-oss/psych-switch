@@ -1,5 +1,6 @@
 // About screen — pumps the screen with a real engine load and asserts
-// the hero, stat grid, and licensing block render.
+// the redesigned (Clinical Light) hero, stat tiles, and section cards
+// render.
 //
 // package_info_plus uses a platform channel that doesn't exist in
 // flutter_test; we stub it via setMockMethodCallHandler.
@@ -26,7 +27,9 @@ Widget _harness() {
   return ProviderScope(child: MaterialApp.router(routerConfig: router));
 }
 
-/// Pump until the engine FutureProvider resolves.
+/// Pump until the engine FutureProvider resolves. The new About uses
+/// "Clinical scope" (not the old uppercase eyebrow) as the section
+/// title.
 Future<void> _waitForEngine(WidgetTester tester) async {
   for (var attempt = 0; attempt < 100; attempt++) {
     await tester.runAsync(
@@ -63,29 +66,33 @@ void main() {
         .setMockMethodCallHandler(channel, null);
   });
 
-  testWidgets('About — hero, stat grid, and licensing render',
-      (tester) async {
-    await tester.pumpWidget(_harness());
-    await _waitForEngine(tester);
+  testWidgets(
+    'About — hero, stat grid, and section cards render',
+    (tester) async {
+      await tester.pumpWidget(_harness());
+      await _waitForEngine(tester);
 
-    // Hero wordmark + tagline. 'PS' monogram retired — the About
-    // hero now uses the real X-mark logo via Image.asset, matching
-    // home + disclaimer brand parity.
-    expect(find.text('PsychSwitch'), findsWidgets);
-    expect(find.text('Reviewed cross-titration'), findsOneWidget);
+      // Hero wordmark + tagline. Tagline is now concatenated with the
+      // version string, so we search by prefix.
+      expect(find.text('PsychSwitch'), findsWidgets);
+      expect(
+        find.textContaining('Reviewed cross-titration'),
+        findsOneWidget,
+      );
 
-    // Stat grid eyebrows.
-    expect(find.text('VERSION'), findsOneWidget);
-    expect(find.text('DRUGS'), findsOneWidget);
-    expect(find.text('REVIEWED RULES'), findsOneWidget);
-    expect(find.text('ERRATA LOGGED'), findsOneWidget);
+      // Stat tile eyebrows.
+      expect(find.text('DRUGS'), findsOneWidget);
+      expect(find.text('REVIEWED RULES'), findsOneWidget);
+      expect(find.text('ERRATA LOGGED'), findsOneWidget);
+      expect(find.text('BUILD'), findsOneWidget);
 
-    // Section headers visible at the top of the ListView.
-    expect(find.text('CLINICAL SCOPE'), findsOneWidget);
+      // Section eyebrows on the cards.
+      expect(find.text('CLINICAL SCOPE'), findsOneWidget);
 
-    // Below-the-fold sections become visible after scrolling.
-    await tester.drag(find.byType(ListView), const Offset(0, -400));
-    await tester.pumpAndSettle();
-    expect(find.text('LICENSING'), findsOneWidget);
-  });
+      // Below-the-fold sections appear after scrolling.
+      await tester.drag(find.byType(ListView), const Offset(0, -400));
+      await tester.pumpAndSettle();
+      expect(find.text('LICENSING'), findsOneWidget);
+    },
+  );
 }
