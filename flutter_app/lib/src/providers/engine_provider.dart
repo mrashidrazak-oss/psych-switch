@@ -15,6 +15,7 @@ import 'package:psychswitch/src/data/content_loader.dart';
 import 'package:psychswitch_engine/clozapine.dart';
 import 'package:psychswitch_engine/mood_stabilizer_tapering.dart';
 import 'package:psychswitch_engine/qtc_stacker.dart';
+import 'package:psychswitch_engine/ramadan.dart';
 import 'package:psychswitch_engine/switching_engine.dart';
 
 /// Loads the entire clinical content bundle exactly once, asynchronously.
@@ -59,4 +60,11 @@ final lithiumTaperingProvider =
 final qtcDataProvider = FutureProvider<QtcRiskData>((ref) async {
   final content = await ref.watch(loadedContentProvider.future);
   return content.qtcData;
+});
+
+/// Convenience: the Ramadan / fasting-aware dosing dataset. Used by
+/// the Tools → Halal & Ramadan screen.
+final ramadanDataProvider = FutureProvider<RamadanData>((ref) async {
+  final content = await ref.watch(loadedContentProvider.future);
+  return content.ramadan;
 });

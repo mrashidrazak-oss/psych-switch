@@ -539,6 +539,11 @@ class _ToolsSection extends StatelessWidget {
       route: Routes.adverseEffects,
     ),
     _ToolItem(
+      label: 'Halal & Ramadan',
+      icon: Icons.dark_mode_outlined,
+      route: Routes.ramadan,
+    ),
+    _ToolItem(
       label: 'Glossary',
       icon: Icons.menu_book_outlined,
       route: Routes.glossary,

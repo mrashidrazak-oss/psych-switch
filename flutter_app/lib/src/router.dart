@@ -36,6 +36,7 @@ import 'package:psychswitch/src/ui/screens/lithium_tapering_screen.dart';
 import 'package:psychswitch/src/ui/screens/mood_stabilizer_detail_screen.dart';
 import 'package:psychswitch/src/ui/screens/mood_stabilizer_home_screen.dart';
 import 'package:psychswitch/src/ui/screens/qtc_stacker_screen.dart';
+import 'package:psychswitch/src/ui/screens/ramadan_screen.dart';
 import 'package:psychswitch/src/ui/screens/result_screen.dart';
 import 'package:psychswitch/src/ui/screens/settings_screen.dart';
 import 'package:psychswitch/src/ui/screens/switch_screen.dart';
@@ -61,6 +62,7 @@ abstract final class Routes {
   static const adverseEffects = 'adverse_effects';
   static const equivalency = 'equivalency';
   static const drugProfile = 'drug_profile';
+  static const ramadan = 'ramadan';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -228,6 +230,14 @@ GoRouter buildRouter() => GoRouter(
               child: DrugProfileScreen(drugId: id),
             );
           },
+        ),
+        GoRoute(
+          name: Routes.ramadan,
+          path: '/ramadan',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const RamadanScreen(),
+          ),
         ),
         GoRoute(
           name: Routes.depotIndex,

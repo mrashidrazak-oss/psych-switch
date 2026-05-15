@@ -36,6 +36,7 @@ void main() {
       '$_contentDir/maudsley15/strategy-matrix.json',
     ),
     'qtc': _readJsonFile('$_contentDir/qtc/drug-qtc-risks.json'),
+    'ramadan': _readJsonFile('$_contentDir/ramadan/guidance.json'),
     'mood-stabilizers': <String, dynamic>{
       'lithium-tapering': _readJsonFile(
         '$_contentDir/mood-stabilizers/lithium-tapering.json',

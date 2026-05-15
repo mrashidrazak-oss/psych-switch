@@ -23,6 +23,7 @@ import 'package:psychswitch_engine/clozapine.dart';
 import 'package:psychswitch_engine/maudsley15.dart';
 import 'package:psychswitch_engine/mood_stabilizer_tapering.dart';
 import 'package:psychswitch_engine/qtc_stacker.dart';
+import 'package:psychswitch_engine/ramadan.dart';
 import 'package:psychswitch_engine/switching_engine.dart';
 import 'package:psychswitch_engine/types/drug.dart';
 import 'package:psychswitch_engine/types/switching_rule.dart';
@@ -51,12 +52,14 @@ class LoadedContent {
     required this.qtcData,
     required this.lithiumTapering,
     required this.clozapine,
+    required this.ramadan,
   });
 
   final SwitchingEngine engine;
   final QtcRiskData qtcData;
   final TaperingProtocol lithiumTapering;
   final ClozapineModule clozapine;
+  final RamadanData ramadan;
 }
 
 /// Decode a pre-loaded bundle string. Pure — useful for tests.
@@ -119,6 +122,10 @@ LoadedContent decodeContentBundle(String raw) {
     ),
   );
 
+  final ramadan = RamadanData.fromJson(
+    root['ramadan'] as Map<String, dynamic>,
+  );
+
   return LoadedContent(
     engine: SwitchingEngine(
       drugs: drugs,
@@ -128,6 +135,7 @@ LoadedContent decodeContentBundle(String raw) {
     qtcData: qtc,
     lithiumTapering: lithium,
     clozapine: clozapineModule,
+    ramadan: ramadan,
   );
 }
 
