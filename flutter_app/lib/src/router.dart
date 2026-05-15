@@ -24,6 +24,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:psychswitch/src/ui/screens/about_screen.dart';
 import 'package:psychswitch/src/ui/screens/adverse_effects_screen.dart';
+import 'package:psychswitch/src/ui/screens/agitation_screen.dart';
 import 'package:psychswitch/src/ui/screens/calculators_screen.dart';
 import 'package:psychswitch/src/ui/screens/capacity_screen.dart';
 import 'package:psychswitch/src/ui/screens/clozapine_screen.dart';
@@ -39,10 +40,12 @@ import 'package:psychswitch/src/ui/screens/errata_screen.dart';
 import 'package:psychswitch/src/ui/screens/glossary_screen.dart';
 import 'package:psychswitch/src/ui/screens/history_screen.dart';
 import 'package:psychswitch/src/ui/screens/home_screen.dart';
+import 'package:psychswitch/src/ui/screens/lab_screen.dart';
 import 'package:psychswitch/src/ui/screens/lithium_tapering_screen.dart';
 import 'package:psychswitch/src/ui/screens/mha_screen.dart';
 import 'package:psychswitch/src/ui/screens/mood_stabilizer_detail_screen.dart';
 import 'package:psychswitch/src/ui/screens/mood_stabilizer_home_screen.dart';
+import 'package:psychswitch/src/ui/screens/movement_disorder_screen.dart';
 import 'package:psychswitch/src/ui/screens/mse_screen.dart';
 import 'package:psychswitch/src/ui/screens/nms_screen.dart';
 import 'package:psychswitch/src/ui/screens/perinatal_screen.dart';
@@ -53,6 +56,7 @@ import 'package:psychswitch/src/ui/screens/result_screen.dart';
 import 'package:psychswitch/src/ui/screens/scale_runner_screen.dart';
 import 'package:psychswitch/src/ui/screens/scales_screen.dart';
 import 'package:psychswitch/src/ui/screens/search_screen.dart';
+import 'package:psychswitch/src/ui/screens/self_care_screen.dart';
 import 'package:psychswitch/src/ui/screens/serotonin_screen.dart';
 import 'package:psychswitch/src/ui/screens/settings_screen.dart';
 import 'package:psychswitch/src/ui/screens/stopp_start_screen.dart';
@@ -99,6 +103,10 @@ abstract final class Routes {
   static const serotonin = 'serotonin';
   static const tdm = 'tdm';
   static const capacity = 'capacity';
+  static const lab = 'lab';
+  static const movement = 'movement';
+  static const agitation = 'agitation';
+  static const selfCare = 'self_care';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -407,6 +415,38 @@ GoRouter buildRouter() => GoRouter(
           pageBuilder: (context, state) => _fadeThroughPage(
             state: state,
             child: const CapacityScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.lab,
+          path: '/lab',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const LabScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.movement,
+          path: '/movement',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const MovementDisorderScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.agitation,
+          path: '/agitation',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const AgitationScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.selfCare,
+          path: '/self-care',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const SelfCareScreen(),
           ),
         ),
         GoRoute(

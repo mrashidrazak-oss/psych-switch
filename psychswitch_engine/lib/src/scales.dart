@@ -1803,11 +1803,213 @@ const _cgis = ClinicalScale(
   ],
 );
 
+// ── PHQ-2 ────────────────────────────────────────────────────────────
+//
+// Ultra-brief depression screen (Kroenke 2003). Two items × 0–3,
+// score 0–6. Score ≥ 3 → administer PHQ-9.
+
+const _phq2 = ClinicalScale(
+  id: 'phq2',
+  name: 'PHQ-2',
+  fullName: 'Patient Health Questionnaire-2',
+  tagline: 'Ultra-brief depression screen · 2 items · 0–6',
+  citation:
+      'Kroenke K, Spitzer RL, Williams JBW. Med Care 2003;41:1284-92.',
+  headingPrompt: 'Over the last two weeks, how often have you been '
+      'bothered by:',
+  items: <ScaleItem>[
+    ScaleItem(
+      id: 'phq2_1',
+      prompt: 'Little interest or pleasure in doing things',
+      anchors: _phq9Anchors,
+    ),
+    ScaleItem(
+      id: 'phq2_2',
+      prompt: 'Feeling down, depressed, or hopeless',
+      anchors: _phq9Anchors,
+    ),
+  ],
+  bands: <SeverityBand>[
+    SeverityBand(
+      min: 0,
+      max: 2,
+      label: 'Negative screen',
+      interpretation: 'Likelihood of major depression is low.',
+      severity: 0,
+    ),
+    SeverityBand(
+      min: 3,
+      max: 6,
+      label: 'Positive — proceed to PHQ-9',
+      interpretation: 'Positive screen — administer the full PHQ-9 '
+          'for severity grading.',
+      severity: 2,
+    ),
+  ],
+);
+
+// ── GAD-2 ────────────────────────────────────────────────────────────
+//
+// Two items × 0–3, score 0–6. Score ≥ 3 → administer GAD-7.
+
+const _gad2 = ClinicalScale(
+  id: 'gad2',
+  name: 'GAD-2',
+  fullName: 'Generalized Anxiety Disorder-2',
+  tagline: 'Ultra-brief anxiety screen · 2 items · 0–6',
+  citation:
+      'Kroenke K, Spitzer RL, Williams JBW, et al. Ann Intern Med '
+      '2007;146:317-25.',
+  headingPrompt: 'Over the last two weeks, how often have you been '
+      'bothered by:',
+  items: <ScaleItem>[
+    ScaleItem(
+      id: 'gad2_1',
+      prompt: 'Feeling nervous, anxious, or on edge',
+      anchors: _phq9Anchors,
+    ),
+    ScaleItem(
+      id: 'gad2_2',
+      prompt: 'Not being able to stop or control worrying',
+      anchors: _phq9Anchors,
+    ),
+  ],
+  bands: <SeverityBand>[
+    SeverityBand(
+      min: 0,
+      max: 2,
+      label: 'Negative screen',
+      interpretation: 'Likelihood of anxiety disorder is low.',
+      severity: 0,
+    ),
+    SeverityBand(
+      min: 3,
+      max: 6,
+      label: 'Positive — proceed to GAD-7',
+      interpretation: 'Positive screen — administer the full GAD-7.',
+      severity: 2,
+    ),
+  ],
+);
+
+// ── CAGE-AID ─────────────────────────────────────────────────────────
+//
+// CAGE adapted to include drugs (Brown & Rounds 1995). 4 yes/no items.
+// Score ≥ 2 is clinically significant.
+
+const _cageAid = ClinicalScale(
+  id: 'cageaid',
+  name: 'CAGE-AID',
+  fullName: 'CAGE Adapted to Include Drugs',
+  tagline: 'Ultra-brief substance-use screen · 4 yes/no · 0–4',
+  citation:
+      'Brown RL, Rounds LA. Wis Med J 1995;94:135-40.',
+  headingPrompt: 'When thinking about drug use, include illegal drug '
+      'use and the use of prescription drug use other than prescribed:',
+  items: <ScaleItem>[
+    ScaleItem(
+      id: 'cageaid_c',
+      prompt: 'Have you ever felt you ought to Cut down on your '
+          'drinking or drug use?',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'cageaid_a',
+      prompt: 'Have people Annoyed you by criticising your drinking '
+          'or drug use?',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'cageaid_g',
+      prompt: 'Have you ever felt bad or Guilty about your drinking '
+          'or drug use?',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'cageaid_e',
+      prompt: 'Have you ever had a drink or used drugs first thing '
+          'in the morning (Eye-opener) to steady your nerves or '
+          'get rid of a hangover?',
+      anchors: _yesNoAnchors,
+    ),
+  ],
+  bands: <SeverityBand>[
+    SeverityBand(
+      min: 0,
+      max: 1,
+      label: 'Negative',
+      interpretation: 'Low likelihood of substance-use disorder.',
+      severity: 0,
+    ),
+    SeverityBand(
+      min: 2,
+      max: 4,
+      label: 'Positive',
+      interpretation: 'Clinically significant — proceed to full '
+          'substance-use assessment (AUDIT / DAST-10 + history).',
+      severity: 3,
+    ),
+  ],
+);
+
+// ── Mini-Cog ─────────────────────────────────────────────────────────
+//
+// Borson 2000. 3-item word recall (0-3) + clock-drawing (0 or 2).
+// Total 0–5. ≤ 2 = positive cognitive impairment screen.
+
+const _miniCog = ClinicalScale(
+  id: 'minicog',
+  name: 'Mini-Cog',
+  fullName: 'Mini-Cog cognitive screening test',
+  tagline: 'Brief cognitive screen · 3-word recall + clock · 0–5',
+  citation: 'Borson S, Scanlan J, Brush M, et al. Int J Geriatr '
+      'Psychiatry 2000;15:1021-7.',
+  headingPrompt: 'Step 1: read three unrelated words. Step 2: ask the '
+      'patient to draw a clock showing 10 past 11. Step 3: ask for '
+      'recall of the three words.',
+  items: <ScaleItem>[
+    ScaleItem(
+      id: 'minicog_recall',
+      prompt: 'Number of words recalled (0–3)',
+      subtitle: 'Score 1 point for each word correctly recalled.',
+      anchors: <String>['0 — none', '1', '2', '3'],
+    ),
+    ScaleItem(
+      id: 'minicog_clock',
+      prompt: 'Clock-drawing test',
+      subtitle: 'A normal clock — closed circle, all 12 numbers in '
+          'correct positions, hands showing the correct time — '
+          'scores 2. Anything less scores 0.',
+      anchors: <String>['Abnormal (0)', '', 'Normal (2)'],
+    ),
+  ],
+  bands: <SeverityBand>[
+    SeverityBand(
+      min: 0,
+      max: 2,
+      label: 'Positive — possible impairment',
+      interpretation: 'Possible cognitive impairment — proceed to '
+          'fuller cognitive assessment + dementia work-up.',
+      severity: 3,
+    ),
+    SeverityBand(
+      min: 3,
+      max: 5,
+      label: 'Negative',
+      interpretation: 'Cognitive impairment unlikely on this brief '
+          'screen.',
+      severity: 0,
+    ),
+  ],
+);
+
 // ── Registry ─────────────────────────────────────────────────────────
 
 /// All built-in scales in display order.
 const List<ClinicalScale> kClinicalScales = <ClinicalScale>[
+  _phq2,
   _phq9,
+  _gad2,
   _gad7,
   _madrs,
   _hamd17,
@@ -1816,9 +2018,11 @@ const List<ClinicalScale> kClinicalScales = <ClinicalScale>[
   _gds15,
   _audit,
   _dast10,
+  _cageAid,
   _ciwaAr,
   _cows,
   _cgis,
+  _miniCog,
   _aims,
 ];
 

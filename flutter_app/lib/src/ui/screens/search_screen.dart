@@ -311,6 +311,47 @@ const List<_ToolItem> _allTools = <_ToolItem>[
     ],
   ),
   _ToolItem(
+    label: 'Lab interpreter',
+    tagline: 'TSH · prolactin · ANC · sodium · HbA1c · more',
+    icon: Icons.biotech_outlined,
+    route: Routes.lab,
+    keywords: <String>[
+      'lab', 'tsh', 'prolactin', 'anc', 'sodium', 'na', 'ck', 'creatinine',
+      'hba1c', 'glucose', 'ldl', 'lipid', 'alt', 'thyroid', 'neutrophil',
+    ],
+  ),
+  _ToolItem(
+    label: 'Movement disorder',
+    tagline: 'EPS differentiator',
+    icon: Icons.accessibility_new,
+    route: Routes.movement,
+    keywords: <String>[
+      'eps', 'parkinsonism', 'akathisia', 'dystonia', 'tardive',
+      'tremor', 'movement', 'aimsdifferential',
+    ],
+  ),
+  _ToolItem(
+    label: 'Agitation management',
+    tagline: 'De-escalation + rapid tranquillisation',
+    icon: Icons.flash_on_outlined,
+    route: Routes.agitation,
+    keywords: <String>[
+      'agitation', 'rapid', 'tranquillisation', 'tranquilization',
+      'haloperidol', 'lorazepam', 'olanzapine', 'promethazine', 'rt',
+      'restraint',
+    ],
+  ),
+  _ToolItem(
+    label: 'Clinician self-care',
+    tagline: 'Weekly burnout check',
+    icon: Icons.favorite_border,
+    route: Routes.selfCare,
+    keywords: <String>[
+      'burnout', 'self-care', 'wellness', 'maslach', 'fatigue',
+      'recovery',
+    ],
+  ),
+  _ToolItem(
     label: 'Capacity assessment',
     tagline: 'Four-limb ACE evaluation',
     icon: Icons.balance,

@@ -8,7 +8,9 @@ import 'package:psychswitch_engine/scales.dart';
 void main() {
   group('scaleById', () {
     test('returns each registered scale', () {
+      expect(scaleById('phq2')?.name, 'PHQ-2');
       expect(scaleById('phq9')?.name, 'PHQ-9');
+      expect(scaleById('gad2')?.name, 'GAD-2');
       expect(scaleById('gad7')?.name, 'GAD-7');
       expect(scaleById('madrs')?.name, 'MADRS');
       expect(scaleById('hamd17')?.name, 'HAM-D-17');
@@ -17,9 +19,11 @@ void main() {
       expect(scaleById('gds15')?.name, 'GDS-15');
       expect(scaleById('audit')?.name, 'AUDIT');
       expect(scaleById('dast10')?.name, 'DAST-10');
+      expect(scaleById('cageaid')?.name, 'CAGE-AID');
       expect(scaleById('ciwaar')?.name, 'CIWA-Ar');
       expect(scaleById('cows')?.name, 'COWS');
       expect(scaleById('cgis')?.name, 'CGI-S');
+      expect(scaleById('minicog')?.name, 'Mini-Cog');
       expect(scaleById('aims')?.name, 'AIMS');
     });
 
@@ -273,6 +277,51 @@ void main() {
           'Moderate');
       expect(scoreScale(c, <String, int>{'cgis_1': 6}).band.label,
           'Severe');
+    });
+  });
+
+  group('Short screens', () {
+    test('PHQ-2: 0–2 negative, 3+ positive', () {
+      expect(scoreScale(scaleById('phq2')!, <String, int>{
+        'phq2_1': 1, 'phq2_2': 1,
+      }).band.label, 'Negative screen');
+      expect(scoreScale(scaleById('phq2')!, <String, int>{
+        'phq2_1': 2, 'phq2_2': 1,
+      }).band.label, contains('Positive'));
+    });
+
+    test('GAD-2: 0–2 negative, 3+ positive', () {
+      expect(scoreScale(scaleById('gad2')!, <String, int>{
+        'gad2_1': 1, 'gad2_2': 1,
+      }).band.label, 'Negative screen');
+      expect(scoreScale(scaleById('gad2')!, <String, int>{
+        'gad2_1': 2, 'gad2_2': 1,
+      }).band.label, contains('Positive'));
+    });
+
+    test('CAGE-AID: 1 negative, 2+ positive', () {
+      expect(scoreScale(scaleById('cageaid')!, <String, int>{
+        'cageaid_c': 1,
+      }).band.label, 'Negative');
+      expect(scoreScale(scaleById('cageaid')!, <String, int>{
+        'cageaid_c': 1, 'cageaid_e': 1,
+      }).band.label, 'Positive');
+    });
+
+    test('Mini-Cog: clock 0 + recall 2 → positive', () {
+      final r = scoreScale(scaleById('minicog')!, <String, int>{
+        'minicog_recall': 2, 'minicog_clock': 0,
+      });
+      expect(r.total, 2);
+      expect(r.band.label, contains('Positive'));
+    });
+
+    test('Mini-Cog: clock 2 + recall 3 → negative', () {
+      final r = scoreScale(scaleById('minicog')!, <String, int>{
+        'minicog_recall': 3, 'minicog_clock': 2,
+      });
+      expect(r.total, 5);
+      expect(r.band.label, 'Negative');
     });
   });
 

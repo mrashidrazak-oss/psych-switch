@@ -1018,9 +1018,27 @@ class _ReferenceRail extends StatelessWidget {
     const rows = <_RailRow>[
       _RailRow(
         label: 'Rating scales',
-        sub: '13 scales — PHQ · GAD · MADRS · HAM · CIWA · COWS · CGI · more',
+        sub: '17 scales — PHQ-2/9 · GAD-2/7 · MADRS · HAM · CIWA · COWS · CAGE-AID · Mini-Cog · more',
         icon: Icons.assignment_turned_in_outlined,
         route: Routes.scales,
+      ),
+      _RailRow(
+        label: 'Lab interpreter',
+        sub: 'TSH · prolactin · ANC · sodium · CK · HbA1c · more',
+        icon: Icons.biotech_outlined,
+        route: Routes.lab,
+      ),
+      _RailRow(
+        label: 'Movement disorder',
+        sub: 'EPS differentiator — parkinsonism · dystonia · akathisia · TD',
+        icon: Icons.accessibility_new,
+        route: Routes.movement,
+      ),
+      _RailRow(
+        label: 'Agitation management',
+        sub: 'De-escalation · oral PRN · IM rapid tranquillisation',
+        icon: Icons.flash_on_outlined,
+        route: Routes.agitation,
       ),
       _RailRow(
         label: 'C-SSRS suicide screen',
@@ -1051,6 +1069,12 @@ class _ReferenceRail extends StatelessWidget {
         sub: 'Four-limb ACE evaluation',
         icon: Icons.balance,
         route: Routes.capacity,
+      ),
+      _RailRow(
+        label: 'Clinician self-care',
+        sub: 'Weekly burnout check · for you',
+        icon: Icons.favorite_border,
+        route: Routes.selfCare,
       ),
       _RailRow(
         label: 'MSE generator',
