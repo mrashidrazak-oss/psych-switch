@@ -14,6 +14,7 @@
 
 import 'package:flutter/material.dart';
 
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch_engine/types/schedule_step.dart';
 
@@ -67,15 +68,15 @@ class _CrossoverChartState extends State<CrossoverChart>
           'from-drug tapering down, to-drug titrating up.',
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.surface,
-          border: Border.all(color: AppColors.border),
-          borderRadius: BorderRadius.circular(AppRadii.lg),
+          color: ClinicalPalette.surface,
+          border: Border.all(color: ClinicalPalette.border),
+          borderRadius: BorderRadius.circular(ClinicalRadii.tile),
         ),
         padding: const EdgeInsets.fromLTRB(
-          AppSpace.md,
-          AppSpace.md - 2,
-          AppSpace.md,
-          AppSpace.md - 2,
+          ClinicalSpace.md,
+          ClinicalSpace.md - 2,
+          ClinicalSpace.md,
+          ClinicalSpace.md - 2,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,19 +88,19 @@ class _CrossoverChartState extends State<CrossoverChart>
                 const Text(
                   'Crossover shape',
                   style: TextStyle(
-                    color: AppColors.text,
+                    color: ClinicalPalette.text,
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const Gap.h(AppSpace.sm),
+                const Gap.h(ClinicalSpace.sm),
                 Text(
                   'relative dose curves over $span days',
-                  style: AppTextSizes.micro,
+                  style: ClinicalText.caption,
                 ),
               ],
             ),
-            const Gap.v(AppSpace.sm),
+            const Gap.v(ClinicalSpace.sm),
             RepaintBoundary(
               child: SizedBox(
                 width: double.infinity,
@@ -116,12 +117,12 @@ class _CrossoverChartState extends State<CrossoverChart>
                 ),
               ),
             ),
-            const Gap.v(AppSpace.sm - 2),
+            const Gap.v(ClinicalSpace.sm - 2),
             const Row(
               children: <Widget>[
-                _LegendDot(color: AppColors.from, label: 'From drug (taper)'),
-                Gap.h(AppSpace.md),
-                _LegendDot(color: AppColors.to, label: 'To drug (titration)'),
+                _LegendDot(color: ClinicalPalette.toneLavenderInk, label: 'From drug (taper)'),
+                Gap.h(ClinicalSpace.md),
+                _LegendDot(color: ClinicalPalette.toneMintInk, label: 'To drug (titration)'),
               ],
             ),
           ],
@@ -149,8 +150,8 @@ class _LegendDot extends StatelessWidget {
             borderRadius: BorderRadius.circular(2),
           ),
         ),
-        const Gap.h(AppSpace.xs + 2),
-        Text(label, style: AppTextSizes.micro),
+        const Gap.h(ClinicalSpace.xs + 2),
+        Text(label, style: ClinicalText.caption),
       ],
     );
   }
@@ -196,7 +197,7 @@ class _CrossoverPainter extends CustomPainter {
       Offset(_padX, baselineY),
       Offset(size.width - _padX, baselineY),
       Paint()
-        ..color = AppColors.border
+        ..color = ClinicalPalette.border
         ..strokeWidth = 1,
     );
 
@@ -231,8 +232,8 @@ class _CrossoverPainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: <Color>[
-          AppColors.from.withValues(alpha: 0.55),
-          AppColors.from.withValues(alpha: 0.08),
+          ClinicalPalette.toneLavenderInk.withValues(alpha: 0.55),
+          ClinicalPalette.toneLavenderInk.withValues(alpha: 0.08),
         ],
       ).createShader(Rect.fromLTRB(0, _padTop, size.width, baselineY));
     canvas
@@ -240,7 +241,7 @@ class _CrossoverPainter extends CustomPainter {
       ..drawPath(
         _stripBottomEdge(fromArea),
         Paint()
-          ..color = AppColors.from
+          ..color = ClinicalPalette.toneLavenderInk
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2
           ..strokeCap = StrokeCap.round
@@ -254,8 +255,8 @@ class _CrossoverPainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: <Color>[
-          AppColors.to.withValues(alpha: 0.55),
-          AppColors.to.withValues(alpha: 0.08),
+          ClinicalPalette.toneMintInk.withValues(alpha: 0.55),
+          ClinicalPalette.toneMintInk.withValues(alpha: 0.08),
         ],
       ).createShader(Rect.fromLTRB(0, _padTop, size.width, baselineY));
     canvas
@@ -263,7 +264,7 @@ class _CrossoverPainter extends CustomPainter {
       ..drawPath(
         _stripBottomEdge(toArea),
         Paint()
-          ..color = AppColors.to
+          ..color = ClinicalPalette.toneMintInk
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2
           ..strokeCap = StrokeCap.round
@@ -288,7 +289,7 @@ class _CrossoverPainter extends CustomPainter {
         text: TextSpan(
           text: 'D${ticks[i]}',
           style: const TextStyle(
-            color: AppColors.muted,
+            color: ClinicalPalette.muted,
             fontSize: 11,
           ),
         ),

@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:psychswitch/src/ui/theme/breakpoints.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch_engine/dose_equivalents.dart';
 
@@ -74,9 +75,9 @@ class _EquivalencyScreenState extends State<EquivalencyScreen> {
             // Family tabs.
             Container(
               decoration: BoxDecoration(
-                color: AppColors.surface,
-                border: Border.all(color: AppColors.border.withValues(alpha: 0.7), width: 0.5),
-                borderRadius: BorderRadius.circular(AppRadii.lg),
+                color: ClinicalPalette.surface,
+                border: Border.all(color: ClinicalPalette.border.withValues(alpha: 0.7), width: 0.5),
+                borderRadius: BorderRadius.circular(ClinicalRadii.tile),
               ),
               padding: const EdgeInsets.all(4),
               child: Row(
@@ -88,14 +89,14 @@ class _EquivalencyScreenState extends State<EquivalencyScreen> {
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 160),
                           padding: const EdgeInsets.symmetric(
-                            vertical: AppSpace.sm + 2,
+                            vertical: ClinicalSpace.sm + 2,
                           ),
                           decoration: BoxDecoration(
                             color: f == _family
-                                ? AppColors.accent
+                                ? ClinicalPalette.accent
                                 : Colors.transparent,
                             borderRadius:
-                                BorderRadius.circular(AppRadii.md),
+                                BorderRadius.circular(ClinicalRadii.chip),
                           ),
                           child: Column(
                             children: <Widget>[
@@ -104,7 +105,7 @@ class _EquivalencyScreenState extends State<EquivalencyScreen> {
                                 style: TextStyle(
                                   color: f == _family
                                       ? Colors.white
-                                      : AppColors.text,
+                                      : ClinicalPalette.text,
                                   fontSize: 11,
                                   fontWeight: FontWeight.w800,
                                 ),
@@ -115,7 +116,7 @@ class _EquivalencyScreenState extends State<EquivalencyScreen> {
                                 style: TextStyle(
                                   color: f == _family
                                       ? Colors.white.withValues(alpha: 0.85)
-                                      : AppColors.muted,
+                                      : ClinicalPalette.muted,
                                   fontSize: 10,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 0.4,
@@ -129,27 +130,27 @@ class _EquivalencyScreenState extends State<EquivalencyScreen> {
                 ],
               ),
             ),
-            const Gap.v(AppSpace.md),
+            const Gap.v(ClinicalSpace.md),
 
             // Family meta.
-            Text(meta.title, style: AppTextSizes.eyebrow),
+            Text(meta.title, style: ClinicalText.eyebrow),
             const Gap.v(2),
             Text(
               'Reference: ${meta.reference.name} ${_fmt(meta.reference.mg)} mg = '
               '1 ${meta.shortLabel}',
-              style: AppTextSizes.micro.copyWith(height: 1.5),
+              style: ClinicalText.caption.copyWith(height: 1.5),
             ),
-            const Gap.v(AppSpace.md),
+            const Gap.v(ClinicalSpace.md),
 
             // From picker + dose.
-            const Text('FROM DRUG', style: AppTextSizes.eyebrow),
-            const Gap.v(AppSpace.sm),
+            const Text('FROM DRUG', style: ClinicalText.eyebrow),
+            const Gap.v(ClinicalSpace.sm),
             _DrugPicker(
               entries: meta.entries,
               selectedId: _fromId,
               onChanged: (id) => setState(() => _fromId = id),
             ),
-            const Gap.v(AppSpace.md),
+            const Gap.v(ClinicalSpace.md),
             TextField(
               controller: _doseCtl,
               keyboardType: const TextInputType.numberWithOptions(
@@ -164,14 +165,14 @@ class _EquivalencyScreenState extends State<EquivalencyScreen> {
               ),
               onChanged: (_) => setState(() {}),
             ),
-            const Gap.v(AppSpace.lg),
+            const Gap.v(ClinicalSpace.lg),
 
             // To picker (optional).
             const Text(
               'CONVERT TO (OPTIONAL)',
-              style: AppTextSizes.eyebrow,
+              style: ClinicalText.eyebrow,
             ),
-            const Gap.v(AppSpace.sm),
+            const Gap.v(ClinicalSpace.sm),
             _DrugPicker(
               entries: meta.entries.where((e) => e.id != _fromId).toList(),
               selectedId: _toId,
@@ -203,41 +204,41 @@ class _EquivalencyScreenState extends State<EquivalencyScreen> {
                 fmt: _fmt,
               ),
 
-            const Gap.v(AppSpace.lg),
+            const Gap.v(ClinicalSpace.lg),
 
             // Limitations + sources.
             Container(
               decoration: BoxDecoration(
-                color: AppColors.surface,
-                border: Border.all(color: AppColors.border.withValues(alpha: 0.7), width: 0.5),
-                borderRadius: BorderRadius.circular(AppRadii.lg),
+                color: ClinicalPalette.surface,
+                border: Border.all(color: ClinicalPalette.border.withValues(alpha: 0.7), width: 0.5),
+                borderRadius: BorderRadius.circular(ClinicalRadii.tile),
               ),
               padding: const EdgeInsets.fromLTRB(
-                AppSpace.md + 2,
-                AppSpace.md,
-                AppSpace.md + 2,
-                AppSpace.md,
+                ClinicalSpace.md + 2,
+                ClinicalSpace.md,
+                ClinicalSpace.md + 2,
+                ClinicalSpace.md,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  const Text('LIMITATIONS', style: AppTextSizes.eyebrow),
-                  const Gap.v(AppSpace.xs),
+                  const Text('LIMITATIONS', style: ClinicalText.eyebrow),
+                  const Gap.v(ClinicalSpace.xs),
                   for (final l in meta.limitations)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 2),
                       child: Text(
                         '• $l',
-                        style: AppTextSizes.micro.copyWith(height: 1.5),
+                        style: ClinicalText.caption.copyWith(height: 1.5),
                       ),
                     ),
-                  const Gap.v(AppSpace.sm),
-                  const Text('SOURCES', style: AppTextSizes.eyebrow),
-                  const Gap.v(AppSpace.xs),
+                  const Gap.v(ClinicalSpace.sm),
+                  const Text('SOURCES', style: ClinicalText.eyebrow),
+                  const Gap.v(ClinicalSpace.xs),
                   for (final c in meta.citations)
                     Text(
                       '· $c',
-                      style: AppTextSizes.micro
+                      style: ClinicalText.caption
                           .copyWith(fontFamily: 'monospace'),
                     ),
                 ],
@@ -257,10 +258,10 @@ class _EquivalencyScreenState extends State<EquivalencyScreen> {
         child: context.isWide
             ? Padding(
                 padding: const EdgeInsets.fromLTRB(
-                  AppSpace.lg + 4,
-                  AppSpace.lg,
-                  AppSpace.lg + 4,
-                  AppSpace.xl,
+                  ClinicalSpace.lg + 4,
+                  ClinicalSpace.lg,
+                  ClinicalSpace.lg + 4,
+                  ClinicalSpace.xl,
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -274,7 +275,7 @@ class _EquivalencyScreenState extends State<EquivalencyScreen> {
                         ),
                       ),
                     ),
-                    const Gap.h(AppSpace.xl),
+                    const Gap.h(ClinicalSpace.xl),
                     Expanded(
                       child: SingleChildScrollView(
                         physics: const BouncingScrollPhysics(),
@@ -289,14 +290,14 @@ class _EquivalencyScreenState extends State<EquivalencyScreen> {
               )
             : ListView(
                 padding: const EdgeInsets.fromLTRB(
-                  AppSpace.lg + 4,
-                  AppSpace.lg,
-                  AppSpace.lg + 4,
-                  AppSpace.xl,
+                  ClinicalSpace.lg + 4,
+                  ClinicalSpace.lg,
+                  ClinicalSpace.lg + 4,
+                  ClinicalSpace.xl,
                 ),
                 children: <Widget>[
                   ...form,
-                  const Gap.v(AppSpace.lg),
+                  const Gap.v(ClinicalSpace.lg),
                   ...output,
                 ],
               ),
@@ -322,9 +323,9 @@ class _DrugPicker extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border.withValues(alpha: 0.7), width: 0.5),
-        borderRadius: BorderRadius.circular(AppRadii.lg),
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border.withValues(alpha: 0.7), width: 0.5),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       child: DropdownButtonHideUnderline(
         child: ButtonTheme(
@@ -332,16 +333,16 @@ class _DrugPicker extends StatelessWidget {
           child: DropdownButton<String?>(
             value: selectedId,
             isExpanded: true,
-            dropdownColor: AppColors.surface,
-            iconEnabledColor: AppColors.muted,
+            dropdownColor: ClinicalPalette.surface,
+            iconEnabledColor: ClinicalPalette.muted,
             hint: Padding(
               padding: const EdgeInsets.symmetric(
-                horizontal: AppSpace.md,
+                horizontal: ClinicalSpace.md,
               ),
               child: Text(
                 hint,
                 style: const TextStyle(
-                  color: AppColors.muted,
+                  color: ClinicalPalette.muted,
                   fontSize: 14,
                 ),
               ),
@@ -349,11 +350,11 @@ class _DrugPicker extends StatelessWidget {
             items: <DropdownMenuItem<String?>>[
               const DropdownMenuItem<String?>(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: AppSpace.md),
+                  padding: EdgeInsets.symmetric(horizontal: ClinicalSpace.md),
                   child: Text(
                     '— none —',
                     style:
-                        TextStyle(color: AppColors.muted, fontSize: 14),
+                        TextStyle(color: ClinicalPalette.muted, fontSize: 14),
                   ),
                 ),
               ),
@@ -362,12 +363,12 @@ class _DrugPicker extends StatelessWidget {
                   value: e.id,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpace.md,
+                      horizontal: ClinicalSpace.md,
                     ),
                     child: Text(
                       e.genericName,
                       style: const TextStyle(
-                        color: AppColors.text,
+                        color: ClinicalPalette.text,
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
@@ -406,54 +407,54 @@ class _ResultPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.accent.withValues(alpha: 0.06),
-        border: Border.all(color: AppColors.accent.withValues(alpha: 0.4)),
-        borderRadius: BorderRadius.circular(AppRadii.lg),
+        color: ClinicalPalette.accent.withValues(alpha: 0.06),
+        border: Border.all(color: ClinicalPalette.accent.withValues(alpha: 0.4)),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.md + 2,
-        AppSpace.md,
-        AppSpace.md + 2,
-        AppSpace.md,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.md,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.md,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           const Text(
             'EQUIVALENT DOSE',
-            style: AppTextSizes.eyebrow,
+            style: ClinicalText.eyebrow,
           ),
-          const Gap.v(AppSpace.xs + 2),
+          const Gap.v(ClinicalSpace.xs + 2),
           Text(
             '$fromName ${fmt(fromDoseMg)} mg',
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 17,
               fontWeight: FontWeight.w800,
               letterSpacing: -0.2,
             ),
           ),
-          const Gap.v(AppSpace.xs),
+          const Gap.v(ClinicalSpace.xs),
           Text(
             '≈ ${fmt(refUnits)} ${meta.shortLabel} '
             '(${fmt(referenceDoseMg)} mg ${meta.reference.name})',
             style: const TextStyle(
-              color: AppColors.accent,
+              color: ClinicalPalette.accent,
               fontSize: 13,
               fontWeight: FontWeight.w700,
               fontFeatures: <FontFeature>[FontFeature.tabularFigures()],
             ),
           ),
           if (conv != null) ...<Widget>[
-            const Gap.v(AppSpace.md),
+            const Gap.v(ClinicalSpace.md),
             const Divider(height: 1),
-            const Gap.v(AppSpace.md),
-            const Text('CONVERTS TO', style: AppTextSizes.eyebrow),
-            const Gap.v(AppSpace.xs + 2),
+            const Gap.v(ClinicalSpace.md),
+            const Text('CONVERTS TO', style: ClinicalText.eyebrow),
+            const Gap.v(ClinicalSpace.xs + 2),
             Text(
               '${conv!.toName} ${fmt(conv!.toDoseMg)} mg',
               style: const TextStyle(
-                color: AppColors.to,
+                color: ClinicalPalette.toneMintInk,
                 fontSize: 17,
                 fontWeight: FontWeight.w800,
                 letterSpacing: -0.2,

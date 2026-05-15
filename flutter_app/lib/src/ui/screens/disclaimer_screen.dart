@@ -23,6 +23,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:psychswitch/src/providers/disclaimer_provider.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
 
@@ -40,26 +41,26 @@ class DisclaimerScreen extends ConsumerWidget {
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               padding: const EdgeInsets.symmetric(
-                horizontal: AppSpace.xl,
-                vertical: AppSpace.xxl,
+                horizontal: ClinicalSpace.xl,
+                vertical: ClinicalSpace.xxl,
               ),
               child: ConstrainedBox(
                 constraints: BoxConstraints(
                   minHeight: MediaQuery.of(context).size.height -
                       MediaQuery.of(context).padding.top -
                       MediaQuery.of(context).padding.bottom -
-                      AppSpace.xxl * 2,
+                      ClinicalSpace.xxl * 2,
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     const EntranceFade(child: _BrandHero()),
-                    const Gap.v(AppSpace.xl),
+                    const Gap.v(ClinicalSpace.xl),
                     const EntranceFade(index: 1, child: _Headline()),
-                    const Gap.v(AppSpace.lg),
+                    const Gap.v(ClinicalSpace.lg),
                     const EntranceFade(index: 2, child: _BulletBlock()),
-                    const Gap.v(AppSpace.lg),
+                    const Gap.v(ClinicalSpace.lg),
                     EntranceFade(
                       index: 3,
                       child: _AcknowledgeButton(
@@ -71,14 +72,14 @@ class DisclaimerScreen extends ConsumerWidget {
                         },
                       ),
                     ),
-                    const Gap.v(AppSpace.md),
+                    const Gap.v(ClinicalSpace.md),
                     EntranceFade(
                       index: 4,
                       child: Text(
                         'By tapping above you confirm you understand '
                         'the limitations.',
-                        style: AppTextSizes.micro.copyWith(
-                          color: AppColors.muted,
+                        style: ClinicalText.caption.copyWith(
+                          color: ClinicalPalette.muted,
                           height: 1.5,
                         ),
                         textAlign: TextAlign.center,
@@ -107,8 +108,8 @@ class _AmbientBackdrop extends StatelessWidget {
             center: const Alignment(-0.4, -0.7),
             radius: 1.2,
             colors: <Color>[
-              AppColors.from.withValues(alpha: 0.1),
-              AppColors.to.withValues(alpha: 0.05),
+              ClinicalPalette.toneLavenderInk.withValues(alpha: 0.1),
+              ClinicalPalette.toneMintInk.withValues(alpha: 0.05),
               Colors.transparent,
             ],
             stops: const <double>[0, 0.45, 1],
@@ -140,16 +141,16 @@ class _BrandHero extends StatelessWidget {
             // ── Brand mark with dual-tone glow ──────────────────────
             DecoratedBox(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+                borderRadius: BorderRadius.circular(ClinicalRadii.tile),
                 boxShadow: <BoxShadow>[
                   BoxShadow(
-                    color: AppColors.from.withValues(alpha: 0.28),
+                    color: ClinicalPalette.toneLavenderInk.withValues(alpha: 0.28),
                     blurRadius: 30,
                     spreadRadius: -8,
                     offset: const Offset(-5, 6),
                   ),
                   BoxShadow(
-                    color: AppColors.to.withValues(alpha: 0.28),
+                    color: ClinicalPalette.toneMintInk.withValues(alpha: 0.28),
                     blurRadius: 30,
                     spreadRadius: -8,
                     offset: const Offset(5, 6),
@@ -157,7 +158,7 @@ class _BrandHero extends StatelessWidget {
                 ],
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+                borderRadius: BorderRadius.circular(ClinicalRadii.tile),
                 child: Image.asset(
                   'assets/icon.png',
                   width: _markSize,
@@ -167,7 +168,7 @@ class _BrandHero extends StatelessWidget {
                 ),
               ),
             ),
-            const Gap.h(AppSpace.md + 2),
+            const Gap.h(ClinicalSpace.md + 2),
             // ── Wordmark + tagline ─────────────────────────────────
             Expanded(
               child: Column(
@@ -177,21 +178,21 @@ class _BrandHero extends StatelessWidget {
                   const Text(
                     'PsychSwitch',
                     style: TextStyle(
-                      color: AppColors.text,
+                      color: ClinicalPalette.text,
                       fontSize: 24,
                       fontWeight: FontWeight.w800,
                       letterSpacing: -0.6,
                       height: 1.1,
                     ),
                   ),
-                  const Gap.v(AppSpace.xs + 1),
+                  const Gap.v(ClinicalSpace.xs + 1),
                   Row(
                     children: <Widget>[
                       Container(
                         width: 5,
                         height: 5,
                         decoration: const BoxDecoration(
-                          color: AppColors.from,
+                          color: ClinicalPalette.toneLavenderInk,
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -200,15 +201,15 @@ class _BrandHero extends StatelessWidget {
                         width: 5,
                         height: 5,
                         decoration: const BoxDecoration(
-                          color: AppColors.to,
+                          color: ClinicalPalette.toneMintInk,
                           shape: BoxShape.circle,
                         ),
                       ),
-                      const Gap.h(AppSpace.sm),
+                      const Gap.h(ClinicalSpace.sm),
                       const Text(
                         'Reviewed cross-titration',
                         style: TextStyle(
-                          color: AppColors.mutedStrong,
+                          color: ClinicalPalette.mutedStrong,
                           fontSize: 12.5,
                           fontWeight: FontWeight.w500,
                           letterSpacing: 0.2,
@@ -238,7 +239,7 @@ class _Headline extends StatelessWidget {
         Text(
           'Decision support,',
           style: TextStyle(
-            color: AppColors.text,
+            color: ClinicalPalette.text,
             fontSize: 26,
             fontWeight: FontWeight.w800,
             height: 1.2,
@@ -248,7 +249,7 @@ class _Headline extends StatelessWidget {
         Text(
           'not medical advice.',
           style: TextStyle(
-            color: AppColors.muted,
+            color: ClinicalPalette.muted,
             fontSize: 26,
             fontWeight: FontWeight.w800,
             height: 1.2,
@@ -286,15 +287,15 @@ class _BulletBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(AppRadii.xl),
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
+        borderRadius: BorderRadius.circular(ClinicalRadii.card),
       ),
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg,
-        AppSpace.md,
-        AppSpace.lg,
-        AppSpace.md,
+        ClinicalSpace.lg,
+        ClinicalSpace.md,
+        ClinicalSpace.lg,
+        ClinicalSpace.md,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -302,9 +303,9 @@ class _BulletBlock extends StatelessWidget {
           for (var i = 0; i < _bullets.length; i++) ...<Widget>[
             _Bullet(title: _bullets[i].$1, body: _bullets[i].$2),
             if (i < _bullets.length - 1) ...<Widget>[
-              const Gap.v(AppSpace.md),
+              const Gap.v(ClinicalSpace.md),
               const Divider(height: 1),
-              const Gap.v(AppSpace.md),
+              const Gap.v(ClinicalSpace.md),
             ],
           ],
         ],
@@ -333,11 +334,11 @@ class _Bullet extends StatelessWidget {
               height: 6,
               margin: const EdgeInsets.only(top: 7),
               decoration: const BoxDecoration(
-                color: AppColors.accent,
+                color: ClinicalPalette.accent,
                 shape: BoxShape.circle,
               ),
             ),
-            const Gap.h(AppSpace.md),
+            const Gap.h(ClinicalSpace.md),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -345,16 +346,16 @@ class _Bullet extends StatelessWidget {
                   Text(
                     title,
                     style: const TextStyle(
-                      color: AppColors.text,
+                      color: ClinicalPalette.text,
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
                       height: 1.3,
                     ),
                   ),
-                  const Gap.v(AppSpace.xs),
+                  const Gap.v(ClinicalSpace.xs),
                   Text(
                     body,
-                    style: AppTextSizes.caption.copyWith(height: 1.5),
+                    style: ClinicalText.caption.copyWith(height: 1.5),
                   ),
                 ],
               ),
@@ -377,10 +378,10 @@ class _AcknowledgeButton extends StatelessWidget {
       width: double.infinity,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppRadii.xl),
+          borderRadius: BorderRadius.circular(ClinicalRadii.card),
           boxShadow: <BoxShadow>[
             BoxShadow(
-              color: AppColors.accent.withValues(alpha: 0.28),
+              color: ClinicalPalette.accent.withValues(alpha: 0.28),
               blurRadius: 20,
               spreadRadius: -4,
               offset: const Offset(0, 6),
@@ -392,16 +393,16 @@ class _AcknowledgeButton extends StatelessWidget {
           icon: const Icon(Icons.check_rounded, size: 18),
           label: const Text('I am a healthcare professional'),
           style: FilledButton.styleFrom(
-            backgroundColor: AppColors.accent,
+            backgroundColor: ClinicalPalette.accent,
             foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: AppSpace.lg),
+            padding: const EdgeInsets.symmetric(vertical: ClinicalSpace.lg),
             textStyle: const TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w700,
               letterSpacing: 0.2,
             ),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppRadii.xl),
+              borderRadius: BorderRadius.circular(ClinicalRadii.card),
             ),
           ),
         ),

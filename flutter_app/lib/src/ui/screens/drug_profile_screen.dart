@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:psychswitch/src/providers/engine_provider.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch_engine/types/drug.dart';
@@ -59,10 +60,10 @@ class _NotFoundView extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Center(
       child: Padding(
-        padding: EdgeInsets.all(AppSpace.xxl),
+        padding: EdgeInsets.all(ClinicalSpace.xxl),
         child: Text(
           'Drug not in the registry.',
-          style: TextStyle(color: AppColors.muted, fontSize: 14),
+          style: TextStyle(color: ClinicalPalette.muted, fontSize: 14),
         ),
       ),
     );
@@ -77,13 +78,13 @@ class _DrugProfileBody extends StatelessWidget {
   Color _categoryTone() {
     switch (drug.category) {
       case DrugCategory.antidepressant:
-        return AppColors.from;
+        return ClinicalPalette.toneLavenderInk;
       case DrugCategory.antipsychotic:
-        return AppColors.to;
+        return ClinicalPalette.toneMintInk;
       case DrugCategory.moodStabilizer:
-        return AppColors.warning;
+        return ClinicalPalette.warning;
       case null:
-        return AppColors.muted;
+        return ClinicalPalette.muted;
     }
   }
 
@@ -107,42 +108,42 @@ class _DrugProfileBody extends StatelessWidget {
     final tone = _categoryTone();
     return ListView(
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg + 4,
-        AppSpace.lg,
-        AppSpace.lg + 4,
-        AppSpace.xl,
+        ClinicalSpace.lg + 4,
+        ClinicalSpace.lg,
+        ClinicalSpace.lg + 4,
+        ClinicalSpace.xl,
       ),
       children: <Widget>[
         _IdentityCard(drug: drug, tone: tone, categoryLabel: _categoryLabel()),
-        const Gap.v(AppSpace.lg),
+        const Gap.v(ClinicalSpace.lg),
         _PharmacokineticsCard(drug: drug),
-        const Gap.v(AppSpace.lg),
+        const Gap.v(ClinicalSpace.lg),
         _DosingCard(drug: drug, tone: tone),
-        const Gap.v(AppSpace.lg),
+        const Gap.v(ClinicalSpace.lg),
         _RiskProfileCard(drug: drug),
-        const Gap.v(AppSpace.lg),
+        const Gap.v(ClinicalSpace.lg),
         if (drug.maoiClearanceDays != null ||
             (drug.isMAOI ?? false) ||
             drug.maoiWashout != null) ...<Widget>[
           _MaoiCard(drug: drug),
-          const Gap.v(AppSpace.lg),
+          const Gap.v(ClinicalSpace.lg),
         ],
         _CypInteractionsCard(drug: drug),
-        const Gap.v(AppSpace.lg),
+        const Gap.v(ClinicalSpace.lg),
         if (drug.malaysianBrandNames.isNotEmpty) ...<Widget>[
           _BrandsCard(brands: drug.malaysianBrandNames),
-          const Gap.v(AppSpace.lg),
+          const Gap.v(ClinicalSpace.lg),
         ],
         if (drug.formulationNotes.isNotEmpty) ...<Widget>[
           _NoteCard(
             eyebrow: 'FORMULATION NOTES',
             body: drug.formulationNotes,
           ),
-          const Gap.v(AppSpace.lg),
+          const Gap.v(ClinicalSpace.lg),
         ],
         if (drug.citations.isNotEmpty) ...<Widget>[
           _CitationsCard(citations: drug.citations),
-          const Gap.v(AppSpace.lg),
+          const Gap.v(ClinicalSpace.lg),
         ],
         _ProvenanceFooter(drug: drug),
       ],
@@ -169,12 +170,12 @@ class _IdentityCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.xl),
+        borderRadius: BorderRadius.circular(ClinicalRadii.card),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -184,10 +185,10 @@ class _IdentityCard extends StatelessWidget {
           Container(
             color: tone.withValues(alpha: 0.08),
             padding: const EdgeInsets.fromLTRB(
-              AppSpace.lg,
-              AppSpace.md + 2,
-              AppSpace.md - 2,
-              AppSpace.md + 2,
+              ClinicalSpace.lg,
+              ClinicalSpace.md + 2,
+              ClinicalSpace.md - 2,
+              ClinicalSpace.md + 2,
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -206,12 +207,12 @@ class _IdentityCard extends StatelessWidget {
                               shape: BoxShape.circle,
                             ),
                           ),
-                          const Gap.h(AppSpace.sm + 2),
+                          const Gap.h(ClinicalSpace.sm + 2),
                           Flexible(
                             child: Text(
                               drug.genericName,
                               style: const TextStyle(
-                                color: AppColors.text,
+                                color: ClinicalPalette.text,
                                 fontSize: 22,
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: -0.5,
@@ -222,13 +223,13 @@ class _IdentityCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const Gap.v(AppSpace.xs - 1),
+                      const Gap.v(ClinicalSpace.xs - 1),
                       Padding(
                         padding: const EdgeInsets.only(left: 15),
                         child: Text(
                           drug.drugClass,
                           style: const TextStyle(
-                            color: AppColors.muted,
+                            color: ClinicalPalette.muted,
                             fontSize: 12.5,
                             fontWeight: FontWeight.w500,
                             letterSpacing: 0.1,
@@ -239,7 +240,7 @@ class _IdentityCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                const Gap.h(AppSpace.sm),
+                const Gap.h(ClinicalSpace.sm),
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 9,
@@ -247,7 +248,7 @@ class _IdentityCard extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: tone.withValues(alpha: 0.18),
-                    borderRadius: BorderRadius.circular(AppRadii.pill),
+                    borderRadius: BorderRadius.circular(ClinicalRadii.pill),
                   ),
                   child: Text(
                     categoryLabel,
@@ -305,7 +306,7 @@ class _PharmacokineticsCard extends StatelessWidget {
               Container(
                 width: 0.5,
                 height: 36,
-                color: AppColors.border.withValues(alpha: 0.6),
+                color: ClinicalPalette.border.withValues(alpha: 0.6),
               ),
               Expanded(
                 child: _MiniStat(
@@ -323,19 +324,19 @@ class _PharmacokineticsCard extends StatelessWidget {
             ],
           ),
           if (h.notes != null && h.notes!.isNotEmpty) ...<Widget>[
-            const Gap.v(AppSpace.md),
+            const Gap.v(ClinicalSpace.md),
             Text(
               h.notes!,
-              style: AppTextSizes.caption.copyWith(height: 1.55),
+              style: ClinicalText.caption.copyWith(height: 1.55),
             ),
           ],
           if (metabolitePresent &&
               m.notes != null &&
               m.notes!.isNotEmpty) ...<Widget>[
-            const Gap.v(AppSpace.sm),
+            const Gap.v(ClinicalSpace.sm),
             Text(
               m.notes!,
-              style: AppTextSizes.caption.copyWith(height: 1.55),
+              style: ClinicalText.caption.copyWith(height: 1.55),
             ),
           ],
         ],
@@ -379,7 +380,7 @@ class _DosingCard extends StatelessWidget {
               Container(
                 width: 0.5,
                 height: 36,
-                color: AppColors.border.withValues(alpha: 0.6),
+                color: ClinicalPalette.border.withValues(alpha: 0.6),
               ),
               Expanded(
                 child: _MiniStat(
@@ -389,17 +390,17 @@ class _DosingCard extends StatelessWidget {
               ),
             ],
           ),
-          const Gap.v(AppSpace.md),
+          const Gap.v(ClinicalSpace.md),
           const Text(
             'AVAILABLE INCREMENTS',
             style: TextStyle(
-              color: AppColors.muted,
+              color: ClinicalPalette.muted,
               fontSize: 10,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.4,
             ),
           ),
-          const Gap.v(AppSpace.xs + 2),
+          const Gap.v(ClinicalSpace.xs + 2),
           Wrap(
             spacing: 6,
             runSpacing: 6,
@@ -416,7 +417,7 @@ class _DosingCard extends StatelessWidget {
                       color: tone.withValues(alpha: 0.32),
                       width: 0.5,
                     ),
-                    borderRadius: BorderRadius.circular(AppRadii.pill),
+                    borderRadius: BorderRadius.circular(ClinicalRadii.pill),
                   ),
                   child: Text(
                     '${_fmt(inc)} mg',
@@ -434,23 +435,23 @@ class _DosingCard extends StatelessWidget {
             ],
           ),
           if (d.formulationsAvailableMy.isNotEmpty) ...<Widget>[
-            const Gap.v(AppSpace.md),
+            const Gap.v(ClinicalSpace.md),
             const Text(
               'AVAILABLE IN MALAYSIA',
               style: TextStyle(
-                color: AppColors.muted,
+                color: ClinicalPalette.muted,
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.4,
               ),
             ),
-            const Gap.v(AppSpace.xs + 2),
+            const Gap.v(ClinicalSpace.xs + 2),
             for (final f in d.formulationsAvailableMy)
               Padding(
                 padding: const EdgeInsets.only(bottom: 2),
                 child: Text(
                   '• $f',
-                  style: AppTextSizes.caption.copyWith(height: 1.55),
+                  style: ClinicalText.caption.copyWith(height: 1.55),
                 ),
               ),
           ],
@@ -491,7 +492,7 @@ class _RiskProfileCard extends StatelessWidget {
         eyebrow: 'RISK PROFILE',
         child: Text(
           'No quantitative risk profile in the registry yet.',
-          style: AppTextSizes.caption.copyWith(height: 1.55),
+          style: ClinicalText.caption.copyWith(height: 1.55),
         ),
       );
     }
@@ -504,8 +505,8 @@ class _RiskProfileCard extends StatelessWidget {
             if (i > 0)
               Container(
                 height: 0.5,
-                color: AppColors.border.withValues(alpha: 0.5),
-                margin: const EdgeInsets.symmetric(vertical: AppSpace.sm),
+                color: ClinicalPalette.border.withValues(alpha: 0.5),
+                margin: const EdgeInsets.symmetric(vertical: ClinicalSpace.sm),
               ),
             _RiskRow(label: rows[i].label, level: rows[i].level!),
           ],
@@ -524,14 +525,14 @@ class _RiskRow extends StatelessWidget {
   Color _toneFor(RiskLevel l) {
     switch (l) {
       case RiskLevel.low:
-        return AppColors.to;
+        return ClinicalPalette.toneMintInk;
       case RiskLevel.lowModerate:
       case RiskLevel.moderate:
-        return AppColors.accent;
+        return ClinicalPalette.accent;
       case RiskLevel.high:
-        return AppColors.warning;
+        return ClinicalPalette.warning;
       case RiskLevel.veryHigh:
-        return AppColors.danger;
+        return ClinicalPalette.danger;
     }
   }
 
@@ -578,7 +579,7 @@ class _RiskRow extends StatelessWidget {
               child: Text(
                 label,
                 style: const TextStyle(
-                  color: AppColors.text,
+                  color: ClinicalPalette.text,
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                   letterSpacing: -0.1,
@@ -596,14 +597,14 @@ class _RiskRow extends StatelessWidget {
             ),
           ],
         ),
-        const Gap.v(AppSpace.xs + 1),
+        const Gap.v(ClinicalSpace.xs + 1),
         ClipRRect(
           borderRadius: BorderRadius.circular(2),
           child: Stack(
             children: <Widget>[
               Container(
                 height: 4,
-                color: AppColors.border.withValues(alpha: 0.5),
+                color: ClinicalPalette.border.withValues(alpha: 0.5),
               ),
               AnimatedFractionallySizedBox(
                 alignment: Alignment.centerLeft,
@@ -663,7 +664,7 @@ class _MaoiCard extends StatelessWidget {
     }
     return _Card(
       eyebrow: 'MAOI / WASHOUT',
-      tone: AppColors.warning,
+      tone: ClinicalPalette.warning,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -676,16 +677,16 @@ class _MaoiCard extends StatelessWidget {
                   const Text(
                     '•',
                     style: TextStyle(
-                      color: AppColors.warning,
+                      color: ClinicalPalette.warning,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
-                  const Gap.h(AppSpace.sm),
+                  const Gap.h(ClinicalSpace.sm),
                   Expanded(
                     child: Text(
                       l,
                       style: const TextStyle(
-                        color: AppColors.text,
+                        color: ClinicalPalette.text,
                         fontSize: 13,
                         height: 1.55,
                       ),
@@ -718,7 +719,7 @@ class _CypInteractionsCard extends StatelessWidget {
         eyebrow: 'CYP INTERACTIONS',
         child: Text(
           'No documented CYP interactions in the registry.',
-          style: AppTextSizes.caption.copyWith(height: 1.55),
+          style: ClinicalText.caption.copyWith(height: 1.55),
         ),
       );
     }
@@ -732,8 +733,8 @@ class _CypInteractionsCard extends StatelessWidget {
               if (i > 0 && entries[i - 1].$2.isNotEmpty)
                 Container(
                   height: 0.5,
-                  color: AppColors.border.withValues(alpha: 0.5),
-                  margin: const EdgeInsets.symmetric(vertical: AppSpace.sm),
+                  color: ClinicalPalette.border.withValues(alpha: 0.5),
+                  margin: const EdgeInsets.symmetric(vertical: ClinicalSpace.sm),
                 ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -743,7 +744,7 @@ class _CypInteractionsCard extends StatelessWidget {
                     child: Text(
                       entries[i].$1.toUpperCase(),
                       style: const TextStyle(
-                        color: AppColors.muted,
+                        color: ClinicalPalette.muted,
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.3,
@@ -762,17 +763,17 @@ class _CypInteractionsCard extends StatelessWidget {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.bg.withValues(alpha: 0.6),
-                              borderRadius: BorderRadius.circular(AppRadii.sm),
+                              color: ClinicalPalette.bg.withValues(alpha: 0.6),
+                              borderRadius: BorderRadius.circular(ClinicalRadii.chip),
                               border: Border.all(
-                                color: AppColors.border.withValues(alpha: 0.6),
+                                color: ClinicalPalette.border.withValues(alpha: 0.6),
                                 width: 0.5,
                               ),
                             ),
                             child: Text(
                               cyp,
                               style: const TextStyle(
-                                color: AppColors.mutedStrong,
+                                color: ClinicalPalette.mutedStrong,
                                 fontSize: 11.5,
                                 fontWeight: FontWeight.w600,
                                 fontFamily: 'monospace',
@@ -812,17 +813,17 @@ class _BrandsCard extends StatelessWidget {
                 vertical: 3,
               ),
               decoration: BoxDecoration(
-                color: AppColors.bg.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(AppRadii.pill),
+                color: ClinicalPalette.bg.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(ClinicalRadii.pill),
                 border: Border.all(
-                  color: AppColors.border.withValues(alpha: 0.7),
+                  color: ClinicalPalette.border.withValues(alpha: 0.7),
                   width: 0.5,
                 ),
               ),
               child: Text(
                 b,
                 style: const TextStyle(
-                  color: AppColors.text,
+                  color: ClinicalPalette.text,
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.1,
@@ -853,7 +854,7 @@ class _CitationsCard extends StatelessWidget {
               child: Text(
                 '• $c',
                 style: const TextStyle(
-                  color: AppColors.muted,
+                  color: ClinicalPalette.muted,
                   fontSize: 12,
                   height: 1.55,
                   fontFamily: 'monospace',
@@ -876,7 +877,7 @@ class _ProvenanceFooter extends StatelessWidget {
     return Center(
       child: Text(
         'Reviewed ${drug.lastReviewedISO} · ${drug.reviewedBy}',
-        style: AppTextSizes.micro.copyWith(height: 1.5),
+        style: ClinicalText.caption.copyWith(height: 1.5),
         textAlign: TextAlign.center,
       ),
     );
@@ -896,7 +897,7 @@ class _NoteCard extends StatelessWidget {
       child: Text(
         body,
         style: const TextStyle(
-          color: AppColors.text,
+          color: ClinicalPalette.text,
           fontSize: 13,
           height: 1.6,
         ),
@@ -907,7 +908,7 @@ class _NoteCard extends StatelessWidget {
 
 // ── Shared chrome ─────────────────────────────────────────────────────
 
-/// Plain card with eyebrow + child. Hairline border + AppRadii.lg+2.
+/// Plain card with eyebrow + child. Hairline border + ClinicalRadii.tile+2.
 class _Card extends StatelessWidget {
   const _Card({required this.eyebrow, required this.child, this.tone});
 
@@ -917,23 +918,23 @@ class _Card extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final eyebrowColor = tone ?? AppColors.muted;
+    final eyebrowColor = tone ?? ClinicalPalette.muted;
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: (tone ?? AppColors.border).withValues(
+          color: (tone ?? ClinicalPalette.border).withValues(
             alpha: tone == null ? 0.7 : 0.36,
           ),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg - 2,
-        AppSpace.md + 2,
-        AppSpace.lg - 2,
-        AppSpace.md + 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.md + 2,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -947,7 +948,7 @@ class _Card extends StatelessWidget {
               letterSpacing: 1.4,
             ),
           ),
-          const Gap.v(AppSpace.sm + 2),
+          const Gap.v(ClinicalSpace.sm + 2),
           child,
         ],
       ),
@@ -976,7 +977,7 @@ class _MiniStat extends StatelessWidget {
           Text(
             eyebrow,
             style: const TextStyle(
-              color: AppColors.muted,
+              color: ClinicalPalette.muted,
               fontSize: 10,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.3,
@@ -986,7 +987,7 @@ class _MiniStat extends StatelessWidget {
           Text(
             value,
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 14,
               fontWeight: FontWeight.w700,
               letterSpacing: -0.1,
@@ -999,7 +1000,7 @@ class _MiniStat extends StatelessWidget {
             Text(
               subtitle!,
               style: const TextStyle(
-                color: AppColors.muted,
+                color: ClinicalPalette.muted,
                 fontSize: 11.5,
                 fontWeight: FontWeight.w500,
                 height: 1.4,

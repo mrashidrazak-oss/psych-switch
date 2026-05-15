@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:psychswitch/src/ui/theme/breakpoints.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch_engine/glossary.dart';
 
@@ -57,26 +58,26 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                AppSpace.lg,
-                AppSpace.md,
-                AppSpace.lg,
-                AppSpace.xs,
+                ClinicalSpace.lg,
+                ClinicalSpace.md,
+                ClinicalSpace.lg,
+                ClinicalSpace.xs,
               ),
               child: TextField(
                 controller: _searchCtl,
-                style: const TextStyle(color: AppColors.text, fontSize: 15),
+                style: const TextStyle(color: ClinicalPalette.text, fontSize: 15),
                 decoration: InputDecoration(
                   hintText: 'Search QTc, EPS, MAOI, FBC…',
                   prefixIcon: const Icon(
                     Icons.search,
-                    color: AppColors.muted,
+                    color: ClinicalPalette.muted,
                     size: 20,
                   ),
                   suffixIcon: hasQuery
                       ? IconButton(
                           icon: const Icon(
                             Icons.close_rounded,
-                            color: AppColors.muted,
+                            color: ClinicalPalette.muted,
                             size: 18,
                           ),
                           onPressed: () {
@@ -92,10 +93,10 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
             // Results meta — count + clear-all hint.
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                AppSpace.lg,
-                AppSpace.sm,
-                AppSpace.lg,
-                AppSpace.sm,
+                ClinicalSpace.lg,
+                ClinicalSpace.sm,
+                ClinicalSpace.lg,
+                ClinicalSpace.sm,
               ),
               child: Row(
                 children: <Widget>[
@@ -104,7 +105,7 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                         ? '${entries.length} of ${all.length} match'
                             '${entries.length == 1 ? '' : 'es'}'
                         : '${all.length} term${all.length == 1 ? '' : 's'}',
-                    style: AppTextSizes.micro,
+                    style: ClinicalText.caption,
                   ),
                 ],
               ),
@@ -117,16 +118,16 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
               Expanded(
                 child: GridView.builder(
                   padding: const EdgeInsets.fromLTRB(
-                    AppSpace.lg,
-                    AppSpace.xs,
-                    AppSpace.lg,
-                    AppSpace.xl,
+                    ClinicalSpace.lg,
+                    ClinicalSpace.xs,
+                    ClinicalSpace.lg,
+                    ClinicalSpace.xl,
                   ),
                   gridDelegate:
                       const SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 480,
-                    crossAxisSpacing: AppSpace.sm,
-                    mainAxisSpacing: AppSpace.sm,
+                    crossAxisSpacing: ClinicalSpace.sm,
+                    mainAxisSpacing: ClinicalSpace.sm,
                     childAspectRatio: 2.6,
                   ),
                   itemCount: entries.length,
@@ -137,13 +138,13 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
               Expanded(
                 child: ListView.separated(
                   padding: const EdgeInsets.fromLTRB(
-                    AppSpace.lg,
-                    AppSpace.xs,
-                    AppSpace.lg,
-                    AppSpace.xl,
+                    ClinicalSpace.lg,
+                    ClinicalSpace.xs,
+                    ClinicalSpace.lg,
+                    ClinicalSpace.xl,
                   ),
                   itemCount: entries.length,
-                  separatorBuilder: (_, __) => const Gap.v(AppSpace.sm),
+                  separatorBuilder: (_, __) => const Gap.v(ClinicalSpace.sm),
                   itemBuilder: (_, i) => _GlossaryTile(entry: entries[i]),
                 ),
               ),
@@ -167,22 +168,22 @@ class _GlossaryEmpty extends StatelessWidget {
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: AppColors.surface,
-              border: Border.all(color: AppColors.border),
-              borderRadius: BorderRadius.circular(AppRadii.xl),
+              color: ClinicalPalette.surface,
+              border: Border.all(color: ClinicalPalette.border),
+              borderRadius: BorderRadius.circular(ClinicalRadii.card),
             ),
             child: const Icon(
               Icons.search_off_rounded,
-              color: AppColors.muted,
+              color: ClinicalPalette.muted,
               size: 24,
             ),
           ),
-          const Gap.v(AppSpace.md),
-          const Text('No matching terms', style: AppTextSizes.subtitle),
-          const Gap.v(AppSpace.xs),
+          const Gap.v(ClinicalSpace.md),
+          const Text('No matching terms', style: ClinicalText.subtitle),
+          const Gap.v(ClinicalSpace.xs),
           Text(
             'Try a shorter query or another acronym.',
-            style: AppTextSizes.caption.copyWith(height: 1.5),
+            style: ClinicalText.caption.copyWith(height: 1.5),
             textAlign: TextAlign.center,
           ),
         ],
@@ -200,15 +201,15 @@ class _GlossaryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(AppRadii.lg),
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.md + 2,
-        AppSpace.md,
-        AppSpace.md + 2,
-        AppSpace.md + 2,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.md,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.md + 2,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,39 +217,39 @@ class _GlossaryTile extends StatelessWidget {
           Text(
             entry.term.toUpperCase(),
             style: const TextStyle(
-              color: AppColors.accent,
+              color: ClinicalPalette.accent,
               fontSize: 12,
               fontWeight: FontWeight.w700,
               letterSpacing: 1,
             ),
           ),
-          const Gap.v(AppSpace.xs + 2),
+          const Gap.v(ClinicalSpace.xs + 2),
           Text(
             entry.definition,
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 13,
               height: 1.5,
             ),
           ),
           if (entry.relevance != null) ...<Widget>[
-            const Gap.v(AppSpace.sm),
+            const Gap.v(ClinicalSpace.sm),
             Container(
               decoration: BoxDecoration(
-                color: AppColors.warning.withValues(alpha: 0.06),
-                borderRadius: BorderRadius.circular(AppRadii.sm),
+                color: ClinicalPalette.warning.withValues(alpha: 0.06),
+                borderRadius: BorderRadius.circular(ClinicalRadii.chip),
                 border: Border(
                   left: BorderSide(
-                    color: AppColors.warning.withValues(alpha: 0.6),
+                    color: ClinicalPalette.warning.withValues(alpha: 0.6),
                     width: 2,
                   ),
                 ),
               ),
               padding: const EdgeInsets.fromLTRB(
-                AppSpace.md,
-                AppSpace.sm,
-                AppSpace.md,
-                AppSpace.sm + 2,
+                ClinicalSpace.md,
+                ClinicalSpace.sm,
+                ClinicalSpace.md,
+                ClinicalSpace.sm + 2,
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -256,14 +257,14 @@ class _GlossaryTile extends StatelessWidget {
                   Icon(
                     Icons.info_outline,
                     size: 13,
-                    color: AppColors.warning.withValues(alpha: 0.9),
+                    color: ClinicalPalette.warning.withValues(alpha: 0.9),
                   ),
-                  const Gap.h(AppSpace.sm),
+                  const Gap.h(ClinicalSpace.sm),
                   Expanded(
                     child: Text(
                       entry.relevance!,
                       style: TextStyle(
-                        color: AppColors.warning.withValues(alpha: 0.9),
+                        color: ClinicalPalette.warning.withValues(alpha: 0.9),
                         fontSize: 12,
                         height: 1.5,
                       ),

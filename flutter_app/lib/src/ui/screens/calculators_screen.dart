@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 
 class CalculatorsScreen extends StatelessWidget {
@@ -36,20 +37,20 @@ class CalculatorsScreen extends StatelessWidget {
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(
-            AppSpace.lg + 4,
-            AppSpace.lg,
-            AppSpace.lg + 4,
-            AppSpace.xl,
+            ClinicalSpace.lg + 4,
+            ClinicalSpace.lg,
+            ClinicalSpace.lg + 4,
+            ClinicalSpace.xl,
           ),
           children: const <Widget>[
             _CalculatorsHero(),
-            Gap.v(AppSpace.lg),
+            Gap.v(ClinicalSpace.lg),
             _CrClCalculator(),
-            Gap.v(AppSpace.lg),
+            Gap.v(ClinicalSpace.lg),
             _QtcCalculator(),
-            Gap.v(AppSpace.lg),
+            Gap.v(ClinicalSpace.lg),
             _BmiCalculator(),
-            Gap.v(AppSpace.lg),
+            Gap.v(ClinicalSpace.lg),
             _FooterNote(),
           ],
         ),
@@ -65,15 +66,15 @@ class _CalculatorsHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const tone = AppColors.accent;
+    const tone = ClinicalPalette.accent;
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.xl),
+        borderRadius: BorderRadius.circular(ClinicalRadii.card),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -82,10 +83,10 @@ class _CalculatorsHero extends StatelessWidget {
           Container(
             color: tone.withValues(alpha: 0.08),
             padding: const EdgeInsets.fromLTRB(
-              AppSpace.lg,
-              AppSpace.md + 2,
-              AppSpace.md,
-              AppSpace.md + 2,
+              ClinicalSpace.lg,
+              ClinicalSpace.md + 2,
+              ClinicalSpace.md,
+              ClinicalSpace.md + 2,
             ),
             child: Row(
               children: <Widget>[
@@ -98,7 +99,7 @@ class _CalculatorsHero extends StatelessWidget {
                       color: tone.withValues(alpha: 0.36),
                       width: 0.5,
                     ),
-                    borderRadius: BorderRadius.circular(AppRadii.md),
+                    borderRadius: BorderRadius.circular(ClinicalRadii.chip),
                   ),
                   child: const Icon(
                     Icons.calculate_outlined,
@@ -106,7 +107,7 @@ class _CalculatorsHero extends StatelessWidget {
                     color: tone,
                   ),
                 ),
-                const Gap.h(AppSpace.md),
+                const Gap.h(ClinicalSpace.md),
                 const Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,18 +115,18 @@ class _CalculatorsHero extends StatelessWidget {
                       Text(
                         'Calculators',
                         style: TextStyle(
-                          color: AppColors.text,
+                          color: ClinicalPalette.text,
                           fontSize: 19,
                           fontWeight: FontWeight.w800,
                           letterSpacing: -0.4,
                           height: 1.15,
                         ),
                       ),
-                      Gap.v(AppSpace.xs - 1),
+                      Gap.v(ClinicalSpace.xs - 1),
                       Text(
                         'CrCl · QTc · BMI — bedside quick maths',
                         style: TextStyle(
-                          color: AppColors.muted,
+                          color: ClinicalPalette.muted,
                           fontSize: 12.5,
                           fontWeight: FontWeight.w500,
                           letterSpacing: 0.1,
@@ -139,18 +140,18 @@ class _CalculatorsHero extends StatelessWidget {
             ),
           ),
           Container(
-            color: AppColors.bg.withValues(alpha: 0.4),
+            color: ClinicalPalette.bg.withValues(alpha: 0.4),
             padding: const EdgeInsets.fromLTRB(
-              AppSpace.lg,
-              AppSpace.sm + 2,
-              AppSpace.lg,
-              AppSpace.sm + 2,
+              ClinicalSpace.lg,
+              ClinicalSpace.sm + 2,
+              ClinicalSpace.lg,
+              ClinicalSpace.sm + 2,
             ),
             child: Text(
               'Every formula here is the standard equation — always '
               'sanity-check against the lab range and your local '
               'pathology service. Lithium dose calculator coming next.',
-              style: AppTextSizes.caption.copyWith(height: 1.55),
+              style: ClinicalText.caption.copyWith(height: 1.55),
             ),
           ),
         ],
@@ -180,50 +181,50 @@ class _CalcCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg - 2,
-        AppSpace.md + 2,
-        AppSpace.lg - 2,
-        AppSpace.md + 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.md + 2,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(eyebrow, style: AppTextSizes.eyebrow),
-          const Gap.v(AppSpace.xs),
+          Text(eyebrow, style: ClinicalText.eyebrow),
+          const Gap.v(ClinicalSpace.xs),
           Text(
             title,
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 17,
               fontWeight: FontWeight.w800,
               letterSpacing: -0.3,
               height: 1.15,
             ),
           ),
-          const Gap.v(AppSpace.xs),
+          const Gap.v(ClinicalSpace.xs),
           Text(
             formula,
-            style: AppTextSizes.micro.copyWith(
+            style: ClinicalText.caption.copyWith(
               fontFamily: 'monospace',
               height: 1.4,
             ),
           ),
-          const Gap.v(AppSpace.md + 2),
+          const Gap.v(ClinicalSpace.md + 2),
           ...fields,
-          const Gap.v(AppSpace.md),
+          const Gap.v(ClinicalSpace.md),
           Container(
             height: 0.5,
-            color: AppColors.border.withValues(alpha: 0.5),
+            color: ClinicalPalette.border.withValues(alpha: 0.5),
           ),
-          const Gap.v(AppSpace.md),
+          const Gap.v(ClinicalSpace.md),
           result,
         ],
       ),
@@ -256,7 +257,7 @@ class _NumField extends StatelessWidget {
       ],
       onChanged: (_) => onChanged(),
       style: const TextStyle(
-        color: AppColors.text,
+        color: ClinicalPalette.text,
         fontSize: 15,
         fontWeight: FontWeight.w600,
         fontFeatures: <FontFeature>[FontFeature.tabularFigures()],
@@ -264,7 +265,7 @@ class _NumField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         suffixText: suffix,
-        suffixStyle: AppTextSizes.micro.copyWith(
+        suffixStyle: ClinicalText.caption.copyWith(
           fontWeight: FontWeight.w700,
         ),
       ),
@@ -292,15 +293,15 @@ class _Segmented<T> extends StatelessWidget {
       children: <Widget>[
         Text(
           label.toUpperCase(),
-          style: AppTextSizes.eyebrow,
+          style: ClinicalText.eyebrow,
         ),
-        const Gap.v(AppSpace.xs + 2),
+        const Gap.v(ClinicalSpace.xs + 2),
         Container(
           decoration: BoxDecoration(
-            color: AppColors.bg,
-            borderRadius: BorderRadius.circular(AppRadii.md + 2),
+            color: ClinicalPalette.bg,
+            borderRadius: BorderRadius.circular(ClinicalRadii.chip + 2),
             border: Border.all(
-              color: AppColors.border.withValues(alpha: 0.5),
+              color: ClinicalPalette.border.withValues(alpha: 0.5),
               width: 0.5,
             ),
           ),
@@ -340,19 +341,19 @@ class _SegmentButton extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadii.md),
+        borderRadius: BorderRadius.circular(ClinicalRadii.chip),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeOutCubic,
           padding: const EdgeInsets.symmetric(
-            vertical: AppSpace.sm + 1,
+            vertical: ClinicalSpace.sm + 1,
           ),
           decoration: BoxDecoration(
-            color: isActive ? AppColors.surface : Colors.transparent,
-            borderRadius: BorderRadius.circular(AppRadii.md),
+            color: isActive ? ClinicalPalette.surface : Colors.transparent,
+            borderRadius: BorderRadius.circular(ClinicalRadii.chip),
             border: isActive
                 ? Border.all(
-                    color: AppColors.border.withValues(alpha: 0.7),
+                    color: ClinicalPalette.border.withValues(alpha: 0.7),
                     width: 0.5,
                   )
                 : null,
@@ -361,7 +362,7 @@ class _SegmentButton extends StatelessWidget {
             child: Text(
               label,
               style: TextStyle(
-                color: isActive ? AppColors.text : AppColors.muted,
+                color: isActive ? ClinicalPalette.text : ClinicalPalette.muted,
                 fontSize: 13,
                 fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
                 letterSpacing: -0.1,
@@ -397,13 +398,13 @@ class _ResultStat extends StatelessWidget {
         Text(
           eyebrow,
           style: const TextStyle(
-            color: AppColors.muted,
+            color: ClinicalPalette.muted,
             fontSize: 10,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.4,
           ),
         ),
-        const Gap.v(AppSpace.xs),
+        const Gap.v(ClinicalSpace.xs),
         Row(
           crossAxisAlignment: CrossAxisAlignment.baseline,
           textBaseline: TextBaseline.alphabetic,
@@ -411,7 +412,7 @@ class _ResultStat extends StatelessWidget {
             Text(
               value,
               style: TextStyle(
-                color: tone ?? AppColors.text,
+                color: tone ?? ClinicalPalette.text,
                 fontSize: 34,
                 fontWeight: FontWeight.w800,
                 letterSpacing: -1,
@@ -421,13 +422,13 @@ class _ResultStat extends StatelessWidget {
                 ],
               ),
             ),
-            const Gap.h(AppSpace.xs + 2),
+            const Gap.h(ClinicalSpace.xs + 2),
             Padding(
               padding: const EdgeInsets.only(bottom: 5),
               child: Text(
                 unit,
                 style: const TextStyle(
-                  color: AppColors.mutedStrong,
+                  color: ClinicalPalette.mutedStrong,
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.1,
@@ -437,11 +438,11 @@ class _ResultStat extends StatelessWidget {
           ],
         ),
         if (subtitle != null) ...<Widget>[
-          const Gap.v(AppSpace.xs),
+          const Gap.v(ClinicalSpace.xs),
           Text(
             subtitle!,
             style: TextStyle(
-              color: tone ?? AppColors.mutedStrong,
+              color: tone ?? ClinicalPalette.mutedStrong,
               fontSize: 12.5,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.1,
@@ -494,17 +495,17 @@ class _CrClCalculatorState extends State<_CrClCalculator> {
   }
 
   ({String label, Color tone})? _categorise(double crcl) {
-    if (crcl >= 90) return (label: 'Normal renal function', tone: AppColors.to);
+    if (crcl >= 90) return (label: 'Normal renal function', tone: ClinicalPalette.toneMintInk);
     if (crcl >= 60) {
-      return (label: 'Mild impairment (CKD 2)', tone: AppColors.accent);
+      return (label: 'Mild impairment (CKD 2)', tone: ClinicalPalette.accent);
     }
     if (crcl >= 30) {
-      return (label: 'Moderate impairment (CKD 3)', tone: AppColors.warning);
+      return (label: 'Moderate impairment (CKD 3)', tone: ClinicalPalette.warning);
     }
     if (crcl >= 15) {
-      return (label: 'Severe impairment (CKD 4) — dose-reduce', tone: AppColors.danger);
+      return (label: 'Severe impairment (CKD 4) — dose-reduce', tone: ClinicalPalette.danger);
     }
-    return (label: 'Kidney failure (CKD 5) — specialist input', tone: AppColors.danger);
+    return (label: 'Kidney failure (CKD 5) — specialist input', tone: ClinicalPalette.danger);
   }
 
   @override
@@ -526,7 +527,7 @@ class _CrClCalculatorState extends State<_CrClCalculator> {
                 onChanged: () => setState(() {}),
               ),
             ),
-            const Gap.h(AppSpace.md),
+            const Gap.h(ClinicalSpace.md),
             Expanded(
               child: _NumField(
                 label: 'Weight',
@@ -537,14 +538,14 @@ class _CrClCalculatorState extends State<_CrClCalculator> {
             ),
           ],
         ),
-        const Gap.v(AppSpace.md),
+        const Gap.v(ClinicalSpace.md),
         _NumField(
           label: 'Serum creatinine',
           suffix: 'µmol/L',
           controller: _creatCtl,
           onChanged: () => setState(() {}),
         ),
-        const Gap.v(AppSpace.md),
+        const Gap.v(ClinicalSpace.md),
         _Segmented<_Sex>(
           label: 'Sex',
           options: const <(_Sex, String)>[
@@ -558,7 +559,7 @@ class _CrClCalculatorState extends State<_CrClCalculator> {
       result: crcl == null
           ? Text(
               'Enter age, weight, and serum creatinine to compute.',
-              style: AppTextSizes.caption.copyWith(height: 1.55),
+              style: ClinicalText.caption.copyWith(height: 1.55),
             )
           : _ResultStat(
               eyebrow: 'CREATININE CLEARANCE',
@@ -612,17 +613,17 @@ class _QtcCalculatorState extends State<_QtcCalculator> {
 
   ({String label, Color tone})? _categorise(double qtc) {
     if (qtc < 440) {
-      return (label: 'Normal', tone: AppColors.to);
+      return (label: 'Normal', tone: ClinicalPalette.toneMintInk);
     }
     if (qtc < 460) {
-      return (label: 'Borderline (men) · upper-normal (women)', tone: AppColors.accent);
+      return (label: 'Borderline (men) · upper-normal (women)', tone: ClinicalPalette.accent);
     }
     if (qtc < 500) {
-      return (label: 'Prolonged — reassess QTc-prolonging meds', tone: AppColors.warning);
+      return (label: 'Prolonged — reassess QTc-prolonging meds', tone: ClinicalPalette.warning);
     }
     return (
       label: 'Severely prolonged — torsades risk',
-      tone: AppColors.danger,
+      tone: ClinicalPalette.danger,
     );
   }
 
@@ -647,7 +648,7 @@ class _QtcCalculatorState extends State<_QtcCalculator> {
                 onChanged: () => setState(() {}),
               ),
             ),
-            const Gap.h(AppSpace.md),
+            const Gap.h(ClinicalSpace.md),
             Expanded(
               child: _NumField(
                 label: 'Heart rate',
@@ -658,7 +659,7 @@ class _QtcCalculatorState extends State<_QtcCalculator> {
             ),
           ],
         ),
-        const Gap.v(AppSpace.md),
+        const Gap.v(ClinicalSpace.md),
         _Segmented<_QtcMethod>(
           label: 'Correction',
           options: const <(_QtcMethod, String)>[
@@ -673,7 +674,7 @@ class _QtcCalculatorState extends State<_QtcCalculator> {
           ? Text(
               'Enter the measured QT (ms) and heart rate (bpm) to '
               'compute the rate-corrected QTc.',
-              style: AppTextSizes.caption.copyWith(height: 1.55),
+              style: ClinicalText.caption.copyWith(height: 1.55),
             )
           : _ResultStat(
               eyebrow: _method == _QtcMethod.bazett ? 'QTcB' : 'QTcF',
@@ -716,17 +717,17 @@ class _BmiCalculatorState extends State<_BmiCalculator> {
 
   ({String label, Color tone})? _categorise(double bmi) {
     if (bmi < 18.5) {
-      return (label: 'Underweight', tone: AppColors.accent);
+      return (label: 'Underweight', tone: ClinicalPalette.accent);
     }
     if (bmi < 25) {
-      return (label: 'Normal weight', tone: AppColors.to);
+      return (label: 'Normal weight', tone: ClinicalPalette.toneMintInk);
     }
     if (bmi < 30) {
-      return (label: 'Overweight', tone: AppColors.warning);
+      return (label: 'Overweight', tone: ClinicalPalette.warning);
     }
-    if (bmi < 35) return (label: 'Obesity class I', tone: AppColors.warning);
-    if (bmi < 40) return (label: 'Obesity class II', tone: AppColors.danger);
-    return (label: 'Obesity class III', tone: AppColors.danger);
+    if (bmi < 35) return (label: 'Obesity class I', tone: ClinicalPalette.warning);
+    if (bmi < 40) return (label: 'Obesity class II', tone: ClinicalPalette.danger);
+    return (label: 'Obesity class III', tone: ClinicalPalette.danger);
   }
 
   @override
@@ -748,7 +749,7 @@ class _BmiCalculatorState extends State<_BmiCalculator> {
                 onChanged: () => setState(() {}),
               ),
             ),
-            const Gap.h(AppSpace.md),
+            const Gap.h(ClinicalSpace.md),
             Expanded(
               child: _NumField(
                 label: 'Height',
@@ -763,7 +764,7 @@ class _BmiCalculatorState extends State<_BmiCalculator> {
       result: bmi == null
           ? Text(
               'Enter weight (kg) and height (cm) to compute.',
-              style: AppTextSizes.caption.copyWith(height: 1.55),
+              style: ClinicalText.caption.copyWith(height: 1.55),
             )
           : _ResultStat(
               eyebrow: 'BMI',
@@ -785,12 +786,12 @@ class _FooterNote extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpace.lg),
+        padding: const EdgeInsets.symmetric(horizontal: ClinicalSpace.lg),
         child: Text(
           "Bedside heuristics. Always confirm against the lab's "
           'reference range and re-check on a second sample before '
           'making prescribing decisions.',
-          style: AppTextSizes.micro.copyWith(height: 1.6),
+          style: ClinicalText.caption.copyWith(height: 1.6),
           textAlign: TextAlign.center,
         ),
       ),

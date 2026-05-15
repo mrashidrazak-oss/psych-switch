@@ -18,6 +18,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:psychswitch/src/providers/onboarding_provider.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -34,7 +35,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   static const _pages = <_OnboardingPage>[
     _OnboardingPage(
       icon: Icons.swap_horiz_rounded,
-      tone: AppColors.accent,
+      tone: ClinicalPalette.accent,
       title: 'Plan a cross-titration',
       body:
           'PsychSwitch carries reviewed cross-taper rules from Maudsley 15, '
@@ -45,7 +46,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     ),
     _OnboardingPage(
       icon: Icons.person_outline_rounded,
-      tone: AppColors.to,
+      tone: ClinicalPalette.toneMintInk,
       title: 'Your patient, your taper',
       body:
           'Set patient context once — age, sex, pregnancy, hepatic/renal '
@@ -56,7 +57,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     ),
     _OnboardingPage(
       icon: Icons.menu_book_rounded,
-      tone: AppColors.from,
+      tone: ClinicalPalette.toneLavenderInk,
       title: 'Always the source',
       body:
           'Every rule traces back to a citable paragraph. Tap any citation '
@@ -97,7 +98,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bg,
+      backgroundColor: ClinicalPalette.bg,
       body: Stack(
         children: <Widget>[
           // Ambient backdrop — same family as home / disclaimer.
@@ -110,15 +111,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   alignment: Alignment.centerRight,
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(
-                      AppSpace.lg,
-                      AppSpace.sm,
-                      AppSpace.lg,
+                      ClinicalSpace.lg,
+                      ClinicalSpace.sm,
+                      ClinicalSpace.lg,
                       0,
                     ),
                     child: TextButton(
                       onPressed: _skip,
                       style: TextButton.styleFrom(
-                        foregroundColor: AppColors.muted,
+                        foregroundColor: ClinicalPalette.muted,
                       ),
                       child: const Text(
                         'Skip',
@@ -143,23 +144,23 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                 ),
                 // ── Dots ────────────────────────────────────────────
                 _PageDots(count: _pages.length, active: _page),
-                const Gap.v(AppSpace.lg),
+                const Gap.v(ClinicalSpace.lg),
                 // ── Next / Get started CTA ──────────────────────────
                 Padding(
                   padding: const EdgeInsets.fromLTRB(
-                    AppSpace.xl,
+                    ClinicalSpace.xl,
                     0,
-                    AppSpace.xl,
-                    AppSpace.xl,
+                    ClinicalSpace.xl,
+                    ClinicalSpace.xl,
                   ),
                   child: SizedBox(
                     width: double.infinity,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(AppRadii.xl),
+                        borderRadius: BorderRadius.circular(ClinicalRadii.card),
                         boxShadow: <BoxShadow>[
                           BoxShadow(
-                            color: AppColors.accent.withValues(alpha: 0.28),
+                            color: ClinicalPalette.accent.withValues(alpha: 0.28),
                             blurRadius: 22,
                             spreadRadius: -6,
                             offset: const Offset(0, 8),
@@ -169,11 +170,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       child: FilledButton(
                         onPressed: _next,
                         style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.accent,
+                          backgroundColor: ClinicalPalette.accent,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 18),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppRadii.xl),
+                            borderRadius: BorderRadius.circular(ClinicalRadii.card),
                           ),
                         ),
                         child: Row(
@@ -189,7 +190,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                 letterSpacing: 0.1,
                               ),
                             ),
-                            const Gap.h(AppSpace.sm + 2),
+                            const Gap.h(ClinicalSpace.sm + 2),
                             const Icon(
                               Icons.arrow_forward_rounded,
                               size: 18,
@@ -232,10 +233,10 @@ class _OnboardingPageView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.xl,
-        AppSpace.xl,
-        AppSpace.xl,
-        AppSpace.lg,
+        ClinicalSpace.xl,
+        ClinicalSpace.xl,
+        ClinicalSpace.xl,
+        ClinicalSpace.lg,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -245,7 +246,7 @@ class _OnboardingPageView extends StatelessWidget {
           // dual-tone glow matching the brand mark on home / disclaimer.
           DecoratedBox(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(AppRadii.xl),
+              borderRadius: BorderRadius.circular(ClinicalRadii.card),
               boxShadow: <BoxShadow>[
                 BoxShadow(
                   color: page.tone.withValues(alpha: 0.32),
@@ -264,7 +265,7 @@ class _OnboardingPageView extends StatelessWidget {
                   color: page.tone.withValues(alpha: 0.36),
                   width: 0.5,
                 ),
-                borderRadius: BorderRadius.circular(AppRadii.xl),
+                borderRadius: BorderRadius.circular(ClinicalRadii.card),
               ),
               child: Center(
                 child: Icon(
@@ -275,22 +276,22 @@ class _OnboardingPageView extends StatelessWidget {
               ),
             ),
           ),
-          const Gap.v(AppSpace.xl),
+          const Gap.v(ClinicalSpace.xl),
           Text(
             page.title,
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 30,
               fontWeight: FontWeight.w800,
               letterSpacing: -0.8,
               height: 1.15,
             ),
           ),
-          const Gap.v(AppSpace.md + 2),
+          const Gap.v(ClinicalSpace.md + 2),
           Text(
             page.body,
             style: const TextStyle(
-              color: AppColors.mutedStrong,
+              color: ClinicalPalette.mutedStrong,
               fontSize: 15,
               fontWeight: FontWeight.w400,
               height: 1.6,
@@ -324,9 +325,9 @@ class _PageDots extends StatelessWidget {
             height: 7,
             decoration: BoxDecoration(
               color: i == active
-                  ? AppColors.accent
-                  : AppColors.muted.withValues(alpha: 0.4),
-              borderRadius: BorderRadius.circular(AppRadii.pill),
+                  ? ClinicalPalette.accent
+                  : ClinicalPalette.muted.withValues(alpha: 0.4),
+              borderRadius: BorderRadius.circular(ClinicalRadii.pill),
             ),
           ),
         ],
@@ -347,8 +348,8 @@ class _AmbientBackdrop extends StatelessWidget {
             center: const Alignment(-0.3, -0.7),
             radius: 1.2,
             colors: <Color>[
-              AppColors.from.withValues(alpha: 0.1),
-              AppColors.to.withValues(alpha: 0.05),
+              ClinicalPalette.toneLavenderInk.withValues(alpha: 0.1),
+              ClinicalPalette.toneMintInk.withValues(alpha: 0.05),
               Colors.transparent,
             ],
             stops: const <double>[0, 0.45, 1],

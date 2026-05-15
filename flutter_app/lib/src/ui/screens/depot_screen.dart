@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:psychswitch/src/router.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch_engine/depot_lai.dart';
 
@@ -56,70 +57,70 @@ class DepotIndexScreen extends StatelessWidget {
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(
-            AppSpace.xl,
-            AppSpace.xl - 4,
-            AppSpace.xl,
-            AppSpace.xl,
+            ClinicalSpace.xl,
+            ClinicalSpace.xl - 4,
+            ClinicalSpace.xl,
+            ClinicalSpace.xl,
           ),
           children: <Widget>[
             // ── Section eyebrow + hero blurb ──────────────────────
             const Text(
               'LONG-ACTING INJECTABLES',
               style: TextStyle(
-                color: AppColors.muted,
+                color: ClinicalPalette.muted,
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.6,
               ),
             ),
-            const Gap.v(AppSpace.sm),
+            const Gap.v(ClinicalSpace.sm),
             const Text(
               'Three reviewed depot protocols.',
               style: TextStyle(
-                color: AppColors.text,
+                color: ClinicalPalette.text,
                 fontSize: 22,
                 fontWeight: FontWeight.w800,
                 letterSpacing: -0.5,
                 height: 1.2,
               ),
             ),
-            const Gap.v(AppSpace.sm + 2),
+            const Gap.v(ClinicalSpace.sm + 2),
             Text(
               'Once-monthly and quarterly antipsychotics, reviewed '
               'against FDA labelling and Maudsley 15. Each protocol has '
               'its own initiation, missed-dose flows, and needle guide '
               '— read the agent before mixing them up.',
-              style: AppTextSizes.caption.copyWith(height: 1.6),
+              style: ClinicalText.caption.copyWith(height: 1.6),
             ),
-            const Gap.v(AppSpace.xl - 2),
+            const Gap.v(ClinicalSpace.xl - 2),
             _DepotIndexCard(
               brandName: sustenna.brandName,
               genericName: sustenna.genericName,
               indication: sustenna.indication,
               injectionInterval: sustenna.injectionInterval,
-              tone: AppColors.from,
+              tone: ClinicalPalette.toneLavenderInk,
               cadenceLabel: 'MONTHLY',
               codeLabel: 'PP1M',
               onTap: () => _open(context, DepotKind.sustenna),
             ),
-            const Gap.v(AppSpace.md),
+            const Gap.v(ClinicalSpace.md),
             _DepotIndexCard(
               brandName: trinza.brandName,
               genericName: trinza.genericName,
               indication: trinza.indication,
               injectionInterval: trinza.injectionInterval,
-              tone: AppColors.to,
+              tone: ClinicalPalette.toneMintInk,
               cadenceLabel: 'QUARTERLY',
               codeLabel: 'PP3M',
               onTap: () => _open(context, DepotKind.trinza),
             ),
-            const Gap.v(AppSpace.md),
+            const Gap.v(ClinicalSpace.md),
             _DepotIndexCard(
               brandName: maintena.brandName,
               genericName: maintena.genericName,
               indication: maintena.indication,
               injectionInterval: maintena.injectionInterval,
-              tone: AppColors.accent,
+              tone: ClinicalPalette.accent,
               cadenceLabel: 'MONTHLY',
               codeLabel: 'AOM',
               onTap: () => _open(context, DepotKind.maintena),
@@ -171,18 +172,18 @@ class _DepotIndexCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.surface,
-      borderRadius: BorderRadius.circular(AppRadii.xl),
+      color: ClinicalPalette.surface,
+      borderRadius: BorderRadius.circular(ClinicalRadii.card),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: Ink(
           decoration: BoxDecoration(
             border: Border.all(
-              color: AppColors.border.withValues(alpha: 0.7),
+              color: ClinicalPalette.border.withValues(alpha: 0.7),
               width: 0.5,
             ),
-            borderRadius: BorderRadius.circular(AppRadii.xl),
+            borderRadius: BorderRadius.circular(ClinicalRadii.card),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -191,10 +192,10 @@ class _DepotIndexCard extends StatelessWidget {
               Container(
                 color: tone.withValues(alpha: 0.08),
                 padding: const EdgeInsets.fromLTRB(
-                  AppSpace.lg,
-                  AppSpace.md + 2,
-                  AppSpace.md - 2,
-                  AppSpace.md + 2,
+                  ClinicalSpace.lg,
+                  ClinicalSpace.md + 2,
+                  ClinicalSpace.md - 2,
+                  ClinicalSpace.md + 2,
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -213,12 +214,12 @@ class _DepotIndexCard extends StatelessWidget {
                                   shape: BoxShape.circle,
                                 ),
                               ),
-                              const Gap.h(AppSpace.sm + 2),
+                              const Gap.h(ClinicalSpace.sm + 2),
                               Flexible(
                                 child: Text(
                                   brandName,
                                   style: const TextStyle(
-                                    color: AppColors.text,
+                                    color: ClinicalPalette.text,
                                     fontSize: 19,
                                     fontWeight: FontWeight.w800,
                                     letterSpacing: -0.4,
@@ -229,13 +230,13 @@ class _DepotIndexCard extends StatelessWidget {
                               ),
                             ],
                           ),
-                          const Gap.v(AppSpace.xs - 1),
+                          const Gap.v(ClinicalSpace.xs - 1),
                           Padding(
                             padding: const EdgeInsets.only(left: 15),
                             child: Text(
                               genericName,
                               style: const TextStyle(
-                                color: AppColors.muted,
+                                color: ClinicalPalette.muted,
                                 fontSize: 12.5,
                                 fontWeight: FontWeight.w500,
                                 letterSpacing: 0.1,
@@ -247,7 +248,7 @@ class _DepotIndexCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const Gap.h(AppSpace.sm),
+                    const Gap.h(ClinicalSpace.sm),
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 9,
@@ -255,7 +256,7 @@ class _DepotIndexCard extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: tone.withValues(alpha: 0.18),
-                        borderRadius: BorderRadius.circular(AppRadii.pill),
+                        borderRadius: BorderRadius.circular(ClinicalRadii.pill),
                       ),
                       child: Text(
                         cadenceLabel,
@@ -273,15 +274,15 @@ class _DepotIndexCard extends StatelessWidget {
               // ── Indication body ─────────────────────────────────
               Padding(
                 padding: const EdgeInsets.fromLTRB(
-                  AppSpace.lg,
-                  AppSpace.md + 2,
-                  AppSpace.lg,
-                  AppSpace.md - 2,
+                  ClinicalSpace.lg,
+                  ClinicalSpace.md + 2,
+                  ClinicalSpace.lg,
+                  ClinicalSpace.md - 2,
                 ),
                 child: Text(
                   indication,
                   style: const TextStyle(
-                    color: AppColors.text,
+                    color: ClinicalPalette.text,
                     fontSize: 13,
                     height: 1.55,
                   ),
@@ -289,12 +290,12 @@ class _DepotIndexCard extends StatelessWidget {
               ),
               // ── Footer meta row ─────────────────────────────────
               Container(
-                color: AppColors.bg.withValues(alpha: 0.4),
+                color: ClinicalPalette.bg.withValues(alpha: 0.4),
                 padding: const EdgeInsets.fromLTRB(
-                  AppSpace.lg,
-                  AppSpace.sm + 2,
-                  AppSpace.md - 2,
-                  AppSpace.sm + 2,
+                  ClinicalSpace.lg,
+                  ClinicalSpace.sm + 2,
+                  ClinicalSpace.md - 2,
+                  ClinicalSpace.sm + 2,
                 ),
                 child: Row(
                   children: <Widget>[
@@ -307,26 +308,26 @@ class _DepotIndexCard extends StatelessWidget {
                         letterSpacing: 1.5,
                       ),
                     ),
-                    const Gap.h(AppSpace.sm + 2),
+                    const Gap.h(ClinicalSpace.sm + 2),
                     const Text(
                       '·',
-                      style: TextStyle(color: AppColors.muted),
+                      style: TextStyle(color: ClinicalPalette.muted),
                     ),
-                    const Gap.h(AppSpace.sm + 2),
+                    const Gap.h(ClinicalSpace.sm + 2),
                     Expanded(
                       child: Row(
                         children: <Widget>[
                           const Icon(
                             Icons.schedule_rounded,
                             size: 13,
-                            color: AppColors.muted,
+                            color: ClinicalPalette.muted,
                           ),
-                          const Gap.h(AppSpace.xs + 1),
+                          const Gap.h(ClinicalSpace.xs + 1),
                           Flexible(
                             child: Text(
                               injectionInterval,
                               style: const TextStyle(
-                                color: AppColors.mutedStrong,
+                                color: ClinicalPalette.mutedStrong,
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 0.1,
@@ -339,7 +340,7 @@ class _DepotIndexCard extends StatelessWidget {
                     ),
                     const Icon(
                       Icons.chevron_right_rounded,
-                      color: AppColors.muted,
+                      color: ClinicalPalette.muted,
                       size: 20,
                     ),
                   ],
@@ -399,7 +400,7 @@ class DepotProtocolScreen extends StatelessWidget {
         active: sustenna.activeSubstance,
         indication: sustenna.indication,
         interval: sustenna.injectionInterval,
-        tone: AppColors.from,
+        tone: ClinicalPalette.toneLavenderInk,
         cadenceLabel: 'MONTHLY',
         codeLabel: 'PP1M',
       ),
@@ -452,7 +453,7 @@ class DepotProtocolScreen extends StatelessWidget {
       const SizedBox(height: 20),
       const _SectionHeader('KEY WARNINGS'),
       const SizedBox(height: 8),
-      _BulletCard(items: sustenna.keyWarnings, tone: AppColors.warning),
+      _BulletCard(items: sustenna.keyWarnings, tone: ClinicalPalette.warning),
 
       const SizedBox(height: 20),
       _CitationsList(citations: sustenna.citations),
@@ -469,7 +470,7 @@ class DepotProtocolScreen extends StatelessWidget {
         active: trinza.activeSubstance,
         indication: trinza.indication,
         interval: trinza.injectionInterval,
-        tone: AppColors.to,
+        tone: ClinicalPalette.toneMintInk,
         cadenceLabel: 'QUARTERLY',
         codeLabel: 'PP3M',
       ),
@@ -481,7 +482,7 @@ class DepotProtocolScreen extends StatelessWidget {
       const SizedBox(height: 20),
       const _SectionHeader('ELIGIBILITY'),
       const SizedBox(height: 8),
-      _BulletCard(items: trinza.eligibilityCriteria, tone: AppColors.danger),
+      _BulletCard(items: trinza.eligibilityCriteria, tone: ClinicalPalette.danger),
 
       const SizedBox(height: 20),
       const _SectionHeader('PP1M → PP3M CONVERSION'),
@@ -545,12 +546,12 @@ class DepotProtocolScreen extends StatelessWidget {
       const SizedBox(height: 12),
       const _SectionHeader('PK NOTES'),
       const SizedBox(height: 8),
-      _BulletCard(items: trinza.pkNotes, tone: AppColors.muted),
+      _BulletCard(items: trinza.pkNotes, tone: ClinicalPalette.muted),
 
       const SizedBox(height: 20),
       const _SectionHeader('KEY WARNINGS'),
       const SizedBox(height: 8),
-      _BulletCard(items: trinza.keyWarnings, tone: AppColors.warning),
+      _BulletCard(items: trinza.keyWarnings, tone: ClinicalPalette.warning),
 
       const SizedBox(height: 20),
       _CitationsList(citations: trinza.citations),
@@ -567,7 +568,7 @@ class DepotProtocolScreen extends StatelessWidget {
         active: maintena.activeSubstance,
         indication: maintena.indication,
         interval: maintena.injectionInterval,
-        tone: AppColors.accent,
+        tone: ClinicalPalette.accent,
         cadenceLabel: 'MONTHLY',
         codeLabel: 'AOM',
       ),
@@ -644,12 +645,12 @@ class DepotProtocolScreen extends StatelessWidget {
       const SizedBox(height: 16),
       const _SectionHeader('PK NOTES'),
       const SizedBox(height: 8),
-      _BulletCard(items: maintena.pkNotes, tone: AppColors.muted),
+      _BulletCard(items: maintena.pkNotes, tone: ClinicalPalette.muted),
 
       const SizedBox(height: 20),
       const _SectionHeader('KEY WARNINGS'),
       const SizedBox(height: 8),
-      _BulletCard(items: maintena.keyWarnings, tone: AppColors.warning),
+      _BulletCard(items: maintena.keyWarnings, tone: ClinicalPalette.warning),
 
       const SizedBox(height: 20),
       _CitationsList(citations: maintena.citations),
@@ -666,7 +667,7 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(text, style: AppTextSizes.eyebrow);
+    return Text(text, style: ClinicalText.eyebrow);
   }
 }
 
@@ -697,15 +698,15 @@ class _OverviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = tone ?? AppColors.accent;
+    final t = tone ?? ClinicalPalette.accent;
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.xl),
+        borderRadius: BorderRadius.circular(ClinicalRadii.card),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -715,10 +716,10 @@ class _OverviewCard extends StatelessWidget {
           Container(
             color: t.withValues(alpha: 0.08),
             padding: const EdgeInsets.fromLTRB(
-              AppSpace.lg,
-              AppSpace.md + 2,
-              AppSpace.md - 2,
-              AppSpace.md + 2,
+              ClinicalSpace.lg,
+              ClinicalSpace.md + 2,
+              ClinicalSpace.md - 2,
+              ClinicalSpace.md + 2,
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -737,12 +738,12 @@ class _OverviewCard extends StatelessWidget {
                               shape: BoxShape.circle,
                             ),
                           ),
-                          const Gap.h(AppSpace.sm + 2),
+                          const Gap.h(ClinicalSpace.sm + 2),
                           Flexible(
                             child: Text(
                               brandName ?? generic,
                               style: const TextStyle(
-                                color: AppColors.text,
+                                color: ClinicalPalette.text,
                                 fontSize: 19,
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: -0.4,
@@ -753,13 +754,13 @@ class _OverviewCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const Gap.v(AppSpace.xs - 1),
+                      const Gap.v(ClinicalSpace.xs - 1),
                       Padding(
                         padding: const EdgeInsets.only(left: 15),
                         child: Text(
                           generic,
                           style: const TextStyle(
-                            color: AppColors.muted,
+                            color: ClinicalPalette.muted,
                             fontSize: 12.5,
                             fontWeight: FontWeight.w500,
                             letterSpacing: 0.1,
@@ -771,7 +772,7 @@ class _OverviewCard extends StatelessWidget {
                   ),
                 ),
                 if (cadenceLabel != null) ...<Widget>[
-                  const Gap.h(AppSpace.sm),
+                  const Gap.h(ClinicalSpace.sm),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 9,
@@ -779,7 +780,7 @@ class _OverviewCard extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: t.withValues(alpha: 0.18),
-                      borderRadius: BorderRadius.circular(AppRadii.pill),
+                      borderRadius: BorderRadius.circular(ClinicalRadii.pill),
                     ),
                     child: Text(
                       cadenceLabel!,
@@ -798,15 +799,15 @@ class _OverviewCard extends StatelessWidget {
           // ── Body: indication ────────────────────────────────────
           Padding(
             padding: const EdgeInsets.fromLTRB(
-              AppSpace.lg,
-              AppSpace.md + 2,
-              AppSpace.lg,
-              AppSpace.md - 2,
+              ClinicalSpace.lg,
+              ClinicalSpace.md + 2,
+              ClinicalSpace.lg,
+              ClinicalSpace.md - 2,
             ),
             child: Text(
               indication,
               style: const TextStyle(
-                color: AppColors.text,
+                color: ClinicalPalette.text,
                 fontSize: 13.5,
                 height: 1.55,
               ),
@@ -815,10 +816,10 @@ class _OverviewCard extends StatelessWidget {
           // ── Key-fact stat row ───────────────────────────────────
           Padding(
             padding: const EdgeInsets.fromLTRB(
-              AppSpace.lg,
+              ClinicalSpace.lg,
               0,
-              AppSpace.lg,
-              AppSpace.md - 2,
+              ClinicalSpace.lg,
+              ClinicalSpace.md - 2,
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -833,7 +834,7 @@ class _OverviewCard extends StatelessWidget {
                   Container(
                     width: 0.5,
                     height: 32,
-                    color: AppColors.border.withValues(alpha: 0.6),
+                    color: ClinicalPalette.border.withValues(alpha: 0.6),
                   ),
                   Expanded(
                     child: _OverviewMiniStat(
@@ -848,12 +849,12 @@ class _OverviewCard extends StatelessWidget {
           ),
           // ── Footer: interval band ───────────────────────────────
           Container(
-            color: AppColors.bg.withValues(alpha: 0.4),
+            color: ClinicalPalette.bg.withValues(alpha: 0.4),
             padding: const EdgeInsets.fromLTRB(
-              AppSpace.lg,
-              AppSpace.sm + 2,
-              AppSpace.lg,
-              AppSpace.sm + 2,
+              ClinicalSpace.lg,
+              ClinicalSpace.sm + 2,
+              ClinicalSpace.lg,
+              ClinicalSpace.sm + 2,
             ),
             child: Row(
               children: <Widget>[
@@ -862,12 +863,12 @@ class _OverviewCard extends StatelessWidget {
                   size: 14,
                   color: t,
                 ),
-                const Gap.h(AppSpace.sm),
+                const Gap.h(ClinicalSpace.sm),
                 Expanded(
                   child: Text(
                     interval,
                     style: const TextStyle(
-                      color: AppColors.mutedStrong,
+                      color: ClinicalPalette.mutedStrong,
                       fontSize: 12.5,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 0.1,
@@ -906,7 +907,7 @@ class _OverviewMiniStat extends StatelessWidget {
           Text(
             eyebrow,
             style: const TextStyle(
-              color: AppColors.muted,
+              color: ClinicalPalette.muted,
               fontSize: 9.5,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.3,
@@ -916,7 +917,7 @@ class _OverviewMiniStat extends StatelessWidget {
           Text(
             value,
             style: TextStyle(
-              color: tone ?? AppColors.text,
+              color: tone ?? ClinicalPalette.text,
               fontSize: 13.5,
               fontWeight: FontWeight.w700,
               letterSpacing: tone != null ? 1.2 : -0.1,
@@ -939,14 +940,14 @@ class _BodyCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
         text,
         style: const TextStyle(
-          color: AppColors.text,
+          color: ClinicalPalette.text,
           fontSize: 13,
           height: 1.55,
         ),
@@ -964,8 +965,8 @@ class _StrengthsTable extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -976,7 +977,7 @@ class _StrengthsTable extends StatelessWidget {
             volume: 'mL',
             isHeader: true,
           ),
-          const Divider(height: 1, color: AppColors.border),
+          const Divider(height: 1, color: ClinicalPalette.border),
           ...strengths.map(
             (s) => Column(
               children: <Widget>[
@@ -985,7 +986,7 @@ class _StrengthsTable extends StatelessWidget {
                   mgPP: s.mgPP.toString(),
                   volume: s.volumeMl.toString(),
                 ),
-                const Divider(height: 1, color: AppColors.border),
+                const Divider(height: 1, color: ClinicalPalette.border),
               ],
             ),
           ),
@@ -1011,7 +1012,7 @@ class _StrengthRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = TextStyle(
-      color: isHeader ? AppColors.muted : AppColors.text,
+      color: isHeader ? ClinicalPalette.muted : ClinicalPalette.text,
       fontSize: isHeader ? 11 : 13,
       fontWeight: isHeader ? FontWeight.w600 : FontWeight.w500,
       letterSpacing: isHeader ? 1.3 : 0,
@@ -1040,8 +1041,8 @@ class _MaintenaStrengthsCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -1057,7 +1058,7 @@ class _MaintenaStrengthsCard extends StatelessWidget {
                   child: Text(
                     '${s.mgAripiprazole.toInt()} mg',
                     style: const TextStyle(
-                      color: AppColors.text,
+                      color: ClinicalPalette.text,
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                     ),
@@ -1067,7 +1068,7 @@ class _MaintenaStrengthsCard extends StatelessWidget {
                   child: Text(
                     s.formulation,
                     style: const TextStyle(
-                      color: AppColors.muted,
+                      color: ClinicalPalette.muted,
                       fontSize: 12,
                       height: 1.45,
                     ),
@@ -1096,8 +1097,8 @@ class _InitiationStepsCard extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: AppColors.surface,
-              border: Border.all(color: AppColors.border),
+              color: ClinicalPalette.surface,
+              border: Border.all(color: ClinicalPalette.border),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
@@ -1108,7 +1109,7 @@ class _InitiationStepsCard extends StatelessWidget {
                     Text(
                       s.label.toUpperCase(),
                       style: const TextStyle(
-                        color: AppColors.accent,
+                        color: ClinicalPalette.accent,
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.3,
@@ -1118,7 +1119,7 @@ class _InitiationStepsCard extends StatelessWidget {
                     Text(
                       '${s.doseMgEq} mg',
                       style: const TextStyle(
-                        color: AppColors.text,
+                        color: ClinicalPalette.text,
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                       ),
@@ -1129,7 +1130,7 @@ class _InitiationStepsCard extends StatelessWidget {
                 Text(
                   'Site: ${s.site}',
                   style: const TextStyle(
-                    color: AppColors.text,
+                    color: ClinicalPalette.text,
                     fontSize: 12.5,
                     fontWeight: FontWeight.w600,
                   ),
@@ -1139,7 +1140,7 @@ class _InitiationStepsCard extends StatelessWidget {
                   Text(
                     s.notes!,
                     style: const TextStyle(
-                      color: AppColors.muted,
+                      color: ClinicalPalette.muted,
                       fontSize: 12,
                       height: 1.5,
                     ),
@@ -1171,8 +1172,8 @@ class _MaintenanceCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -1185,7 +1186,7 @@ class _MaintenanceCard extends StatelessWidget {
               Text(
                 '${range.min}–${range.max}',
                 style: const TextStyle(
-                  color: AppColors.text,
+                  color: ClinicalPalette.text,
                   fontSize: 22,
                   fontWeight: FontWeight.w800,
                 ),
@@ -1194,7 +1195,7 @@ class _MaintenanceCard extends StatelessWidget {
               Text(
                 unit,
                 style: const TextStyle(
-                  color: AppColors.muted,
+                  color: ClinicalPalette.muted,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                 ),
@@ -1206,7 +1207,7 @@ class _MaintenanceCard extends StatelessWidget {
             Text(
               'Recommended: $recommended $unit',
               style: const TextStyle(
-                color: AppColors.accent,
+                color: ClinicalPalette.accent,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),
@@ -1216,7 +1217,7 @@ class _MaintenanceCard extends StatelessWidget {
           Text(
             'Window: $window',
             style: const TextStyle(
-              color: AppColors.muted,
+              color: ClinicalPalette.muted,
               fontSize: 12,
               height: 1.5,
             ),
@@ -1236,8 +1237,8 @@ class _NeedleGuideTable extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -1249,7 +1250,7 @@ class _NeedleGuideTable extends StatelessWidget {
             length: 'Length',
             isHeader: true,
           ),
-          const Divider(height: 1, color: AppColors.border),
+          const Divider(height: 1, color: ClinicalPalette.border),
           ...guides.map(
             (g) => Column(
               children: <Widget>[
@@ -1259,7 +1260,7 @@ class _NeedleGuideTable extends StatelessWidget {
                   gauge: g.gauge,
                   length: g.lengthInch,
                 ),
-                const Divider(height: 1, color: AppColors.border),
+                const Divider(height: 1, color: ClinicalPalette.border),
               ],
             ),
           ),
@@ -1287,7 +1288,7 @@ class _NeedleRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = TextStyle(
-      color: isHeader ? AppColors.muted : AppColors.text,
+      color: isHeader ? ClinicalPalette.muted : ClinicalPalette.text,
       fontSize: isHeader ? 11 : 12.5,
       fontWeight: isHeader ? FontWeight.w600 : FontWeight.w500,
       letterSpacing: isHeader ? 1.3 : 0,
@@ -1333,9 +1334,9 @@ class _MissedDoseList extends StatelessWidget {
   final List<MissedDoseScenario> scenarios;
 
   Color _color(DepotSeverity s) => switch (s) {
-        DepotSeverity.info => AppColors.to,
-        DepotSeverity.warning => AppColors.warning,
-        DepotSeverity.danger => AppColors.danger,
+        DepotSeverity.info => ClinicalPalette.toneMintInk,
+        DepotSeverity.warning => ClinicalPalette.warning,
+        DepotSeverity.danger => ClinicalPalette.danger,
       };
 
   @override
@@ -1372,7 +1373,7 @@ class _MissedDoseList extends StatelessWidget {
                 Text(
                   s.action,
                   style: const TextStyle(
-                    color: AppColors.text,
+                    color: ClinicalPalette.text,
                     fontSize: 12.5,
                     height: 1.55,
                   ),
@@ -1396,17 +1397,17 @@ class _PaliperidoneRenalTable extends StatelessWidget {
     return Column(
       children: rows.map((r) {
         final isContra = r.day1 == 'CONTRAINDICATED';
-        final tone = isContra ? AppColors.danger : AppColors.text;
+        final tone = isContra ? ClinicalPalette.danger : ClinicalPalette.text;
         return Padding(
           padding: const EdgeInsets.only(bottom: 8),
           child: Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: ClinicalPalette.surface,
               border: Border.all(
                 color: isContra
-                    ? AppColors.danger.withValues(alpha: 0.4)
-                    : AppColors.border,
+                    ? ClinicalPalette.danger.withValues(alpha: 0.4)
+                    : ClinicalPalette.border,
               ),
               borderRadius: BorderRadius.circular(10),
             ),
@@ -1428,7 +1429,7 @@ class _PaliperidoneRenalTable extends StatelessWidget {
                     Text(
                       r.crcl,
                       style: const TextStyle(
-                        color: AppColors.muted,
+                        color: ClinicalPalette.muted,
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),
@@ -1472,7 +1473,7 @@ class _RenalLine extends StatelessWidget {
             child: Text(
               label,
               style: const TextStyle(
-                color: AppColors.muted,
+                color: ClinicalPalette.muted,
                 fontSize: 12,
               ),
             ),
@@ -1481,7 +1482,7 @@ class _RenalLine extends StatelessWidget {
             child: Text(
               value,
               style: TextStyle(
-                color: isContra ? AppColors.danger : AppColors.text,
+                color: isContra ? ClinicalPalette.danger : ClinicalPalette.text,
                 fontSize: 12.5,
                 fontWeight:
                     isContra ? FontWeight.w700 : FontWeight.w500,
@@ -1510,8 +1511,8 @@ class _LabelledNoteCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -1522,7 +1523,7 @@ class _LabelledNoteCard extends StatelessWidget {
               Text(
                 label,
                 style: const TextStyle(
-                  color: AppColors.text,
+                  color: ClinicalPalette.text,
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                 ),
@@ -1532,7 +1533,7 @@ class _LabelledNoteCard extends StatelessWidget {
                 Text(
                   sublabel,
                   style: const TextStyle(
-                    color: AppColors.muted,
+                    color: ClinicalPalette.muted,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
@@ -1544,7 +1545,7 @@ class _LabelledNoteCard extends StatelessWidget {
           Text(
             body,
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 12.5,
               height: 1.5,
             ),
@@ -1570,8 +1571,8 @@ class _ConversionTable extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -1584,7 +1585,7 @@ class _ConversionTable extends StatelessWidget {
                   child: Text(
                     leftHeader.toUpperCase(),
                     style: const TextStyle(
-                      color: AppColors.muted,
+                      color: ClinicalPalette.muted,
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1.3,
@@ -1595,7 +1596,7 @@ class _ConversionTable extends StatelessWidget {
                   child: Text(
                     rightHeader.toUpperCase(),
                     style: const TextStyle(
-                      color: AppColors.muted,
+                      color: ClinicalPalette.muted,
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1.3,
@@ -1605,7 +1606,7 @@ class _ConversionTable extends StatelessWidget {
               ],
             ),
           ),
-          const Divider(height: 1, color: AppColors.border),
+          const Divider(height: 1, color: ClinicalPalette.border),
           ...rows.map(
             (r) => Column(
               children: <Widget>[
@@ -1620,7 +1621,7 @@ class _ConversionTable extends StatelessWidget {
                         child: Text(
                           r.$1.toString(),
                           style: const TextStyle(
-                            color: AppColors.text,
+                            color: ClinicalPalette.text,
                             fontSize: 13,
                             fontFamily: 'monospace',
                             fontWeight: FontWeight.w600,
@@ -1631,7 +1632,7 @@ class _ConversionTable extends StatelessWidget {
                         child: Text(
                           r.$2.toString(),
                           style: const TextStyle(
-                            color: AppColors.text,
+                            color: ClinicalPalette.text,
                             fontSize: 13,
                             fontFamily: 'monospace',
                             fontWeight: FontWeight.w600,
@@ -1641,7 +1642,7 @@ class _ConversionTable extends StatelessWidget {
                     ],
                   ),
                 ),
-                const Divider(height: 1, color: AppColors.border),
+                const Divider(height: 1, color: ClinicalPalette.border),
               ],
             ),
           ),
@@ -1661,8 +1662,8 @@ class _MaintenaMethodCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -1671,7 +1672,7 @@ class _MaintenaMethodCard extends StatelessWidget {
           Text(
             method.label,
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 13,
               fontWeight: FontWeight.w700,
               height: 1.35,
@@ -1685,7 +1686,7 @@ class _MaintenaMethodCard extends StatelessWidget {
           Text(
             method.notes,
             style: const TextStyle(
-              color: AppColors.muted,
+              color: ClinicalPalette.muted,
               fontSize: 12,
               height: 1.5,
             ),
@@ -1710,7 +1711,7 @@ class _LabelLine extends StatelessWidget {
         Text(
           label.toUpperCase(),
           style: const TextStyle(
-            color: AppColors.muted,
+            color: ClinicalPalette.muted,
             fontSize: 10,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.3,
@@ -1720,7 +1721,7 @@ class _LabelLine extends StatelessWidget {
         Text(
           body,
           style: const TextStyle(
-            color: AppColors.text,
+            color: ClinicalPalette.text,
             fontSize: 12.5,
             height: 1.45,
           ),
@@ -1736,9 +1737,9 @@ class _DepotInteractionCard extends StatelessWidget {
   final DrugInteractionAdjustment adjustment;
 
   Color _color(DepotSeverity s) => switch (s) {
-        DepotSeverity.info => AppColors.to,
-        DepotSeverity.warning => AppColors.warning,
-        DepotSeverity.danger => AppColors.danger,
+        DepotSeverity.info => ClinicalPalette.toneMintInk,
+        DepotSeverity.warning => ClinicalPalette.warning,
+        DepotSeverity.danger => ClinicalPalette.danger,
       };
 
   @override
@@ -1770,7 +1771,7 @@ class _DepotInteractionCard extends StatelessWidget {
           Text(
             adjustment.action,
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 12.5,
               height: 1.5,
             ),
@@ -1818,7 +1819,7 @@ class _BulletCard extends StatelessWidget {
                       child: Text(
                         s,
                         style: const TextStyle(
-                          color: AppColors.text,
+                          color: ClinicalPalette.text,
                           fontSize: 12.5,
                           height: 1.5,
                         ),
@@ -1853,7 +1854,7 @@ class _CitationsList extends StatelessWidget {
             child: Text(
               '• $c',
               style: const TextStyle(
-                color: AppColors.muted,
+                color: ClinicalPalette.muted,
                 fontSize: 11.5,
                 height: 1.4,
               ),

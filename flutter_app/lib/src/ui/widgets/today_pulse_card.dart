@@ -13,6 +13,7 @@ import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/providers/saved_cases_provider.dart';
 import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/screens/result_screen.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch_engine/case_pulse.dart';
 import 'package:psychswitch_engine/switching_engine.dart' as engine;
@@ -53,19 +54,19 @@ class _PulseList extends StatelessWidget {
     final overdue = counts[PulseTier.overdue] ?? 0;
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
           color: overdue > 0
-              ? AppColors.danger.withValues(alpha: 0.35)
-              : AppColors.border,
+              ? ClinicalPalette.danger.withValues(alpha: 0.35)
+              : ClinicalPalette.border,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.lg),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.md + 2,
-        AppSpace.md,
-        AppSpace.md + 2,
-        AppSpace.md + 2,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.md,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.md + 2,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -75,42 +76,42 @@ class _PulseList extends StatelessWidget {
               const Icon(
                 Icons.monitor_heart_outlined,
                 size: 14,
-                color: AppColors.muted,
+                color: ClinicalPalette.muted,
               ),
-              const Gap.h(AppSpace.xs + 2),
-              const Text("TODAY'S PULSE", style: AppTextSizes.eyebrow),
+              const Gap.h(ClinicalSpace.xs + 2),
+              const Text("TODAY'S PULSE", style: ClinicalText.eyebrow),
               const Spacer(),
               _CountChip(
                 count: overdue,
-                color: AppColors.danger,
+                color: ClinicalPalette.danger,
                 label: 'overdue',
               ),
               if (overdue > 0 &&
                   ((counts[PulseTier.today] ?? 0) > 0 ||
                       (counts[PulseTier.soon] ?? 0) > 0))
-                const Gap.h(AppSpace.xs + 2),
+                const Gap.h(ClinicalSpace.xs + 2),
               _CountChip(
                 count: counts[PulseTier.today] ?? 0,
-                color: AppColors.warning,
+                color: ClinicalPalette.warning,
                 label: 'today',
               ),
               if ((counts[PulseTier.today] ?? 0) > 0 &&
                   (counts[PulseTier.soon] ?? 0) > 0)
-                const Gap.h(AppSpace.xs + 2),
+                const Gap.h(ClinicalSpace.xs + 2),
               _CountChip(
                 count: counts[PulseTier.soon] ?? 0,
-                color: AppColors.accent,
+                color: ClinicalPalette.accent,
                 label: 'this week',
               ),
             ],
           ),
-          const Gap.v(AppSpace.sm + 2),
+          const Gap.v(ClinicalSpace.sm + 2),
           ...preview.map((p) => _PulseRow(pulse: p)),
           if (pulses.length > preview.length) ...<Widget>[
-            const Gap.v(AppSpace.xs),
+            const Gap.v(ClinicalSpace.xs),
             Text(
               '+${pulses.length - preview.length} more',
-              style: AppTextSizes.micro.copyWith(
+              style: ClinicalText.caption.copyWith(
                 fontStyle: FontStyle.italic,
               ),
             ),
@@ -142,7 +143,7 @@ class _CountChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.14),
           border: Border.all(color: color.withValues(alpha: 0.3)),
-          borderRadius: BorderRadius.circular(AppRadii.pill),
+          borderRadius: BorderRadius.circular(ClinicalRadii.pill),
         ),
         child: Text(
           '$count',
@@ -166,11 +167,11 @@ class _PulseRow extends StatelessWidget {
   Color _tierColor() {
     switch (pulse.tier) {
       case PulseTier.overdue:
-        return AppColors.danger;
+        return ClinicalPalette.danger;
       case PulseTier.today:
-        return AppColors.warning;
+        return ClinicalPalette.warning;
       case PulseTier.soon:
-        return AppColors.accent;
+        return ClinicalPalette.accent;
     }
   }
 
@@ -193,7 +194,7 @@ class _PulseRow extends StatelessWidget {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            borderRadius: BorderRadius.circular(AppRadii.sm),
+            borderRadius: BorderRadius.circular(ClinicalRadii.chip),
             onTap: () => context.pushNamed(
               Routes.result,
               extra: ResultScreenArgs(
@@ -208,8 +209,8 @@ class _PulseRow extends StatelessWidget {
             ),
             child: Padding(
           padding: const EdgeInsets.symmetric(
-            vertical: AppSpace.xs + 2,
-            horizontal: AppSpace.xs,
+            vertical: ClinicalSpace.xs + 2,
+            horizontal: ClinicalSpace.xs,
           ),
           child: Row(
             children: <Widget>[
@@ -221,7 +222,7 @@ class _PulseRow extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
               ),
-              const Gap.h(AppSpace.sm + 2),
+              const Gap.h(ClinicalSpace.sm + 2),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -229,7 +230,7 @@ class _PulseRow extends StatelessWidget {
                     Text(
                       pulse.entry.label,
                       style: const TextStyle(
-                        color: AppColors.text,
+                        color: ClinicalPalette.text,
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                       ),
@@ -237,13 +238,13 @@ class _PulseRow extends StatelessWidget {
                     const Gap.v(1),
                     Text(
                       pulse.caseLabel,
-                      style: AppTextSizes.micro,
+                      style: ClinicalText.caption,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
                 ),
               ),
-              const Gap.h(AppSpace.sm),
+              const Gap.h(ClinicalSpace.sm),
               Text(
                 _whenText(),
                 style: TextStyle(

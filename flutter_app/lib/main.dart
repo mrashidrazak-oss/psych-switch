@@ -21,19 +21,20 @@ import 'package:psychswitch/src/providers/onboarding_provider.dart';
 import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/screens/disclaimer_screen.dart';
 import 'package:psychswitch/src/ui/screens/onboarding_screen.dart';
-import 'package:psychswitch/src/ui/theme/app_theme.dart';
-import 'package:psychswitch/src/ui/theme/tokens.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Translucent system bars so our scaffold colour shows through.
+  // Translucent system bars on a light scaffold — dark glyphs on both
+  // the status bar and the navigation bar to match the Clinical Light
+  // theme.
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: AppColors.bg,
-      systemNavigationBarIconBrightness: Brightness.light,
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: ClinicalPalette.bg,
+      systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
 
@@ -58,7 +59,9 @@ class _PsychSwitchAppState extends State<PsychSwitchApp> {
   // on every rebuild would lose navigation state.
   late final _router = buildRouter();
   // Build the theme once — it's a hot allocation and never changes.
-  late final _theme = buildAppTheme();
+  // Clinical Light is the app's root theme; legacy `buildAppTheme()`
+  // (dark) is retained for any subtree that opts in explicitly.
+  late final _theme = buildClinicalTheme();
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +111,7 @@ class _DisclaimerGate extends ConsumerWidget {
     return asyncAck.when(
       // Bridge the brief async-prefs read with a dark surface — never
       // a white frame.
-      loading: () => const ColoredBox(color: AppColors.bg),
+      loading: () => const ColoredBox(color: ClinicalPalette.bg),
       // If prefs is genuinely broken we still render the gate; safer
       // to over-prompt than to slip past the disclaimer.
       error: (_, __) => const DisclaimerScreen(),
@@ -133,7 +136,7 @@ class _OnboardingGate extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncDone = ref.watch(onboardingCompleteProvider);
     return asyncDone.when(
-      loading: () => const ColoredBox(color: AppColors.bg),
+      loading: () => const ColoredBox(color: ClinicalPalette.bg),
       error: (_, __) => child,
       data: (done) => done ? child : const OnboardingScreen(),
     );

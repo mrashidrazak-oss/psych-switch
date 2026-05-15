@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:psychswitch/src/ui/theme/breakpoints.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/status_pill.dart';
 import 'package:psychswitch_engine/adverse_effects.dart';
@@ -50,31 +51,31 @@ class _AdverseEffectsScreenState extends State<AdverseEffectsScreen> {
     final intro = Text(
       'Find the cause and a candidate switch target for common '
       'problems.',
-      style: AppTextSizes.caption.copyWith(height: 1.55),
+      style: ClinicalText.caption.copyWith(height: 1.55),
     );
 
     final categorisedList = <Widget>[
       for (final cat
           in _categoryOrder.where((c) => grouped[c] != null))
         Padding(
-          padding: const EdgeInsets.only(bottom: AppSpace.lg),
+          padding: const EdgeInsets.only(bottom: ClinicalSpace.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(left: AppSpace.xs),
+                padding: const EdgeInsets.only(left: ClinicalSpace.xs),
                 child: Text(
                   categoryLabels[cat]?.toUpperCase() ??
                       cat.jsonValue.toUpperCase(),
-                  style: AppTextSizes.eyebrow,
+                  style: ClinicalText.eyebrow,
                 ),
               ),
-              const Gap.v(AppSpace.sm),
+              const Gap.v(ClinicalSpace.sm),
               Container(
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  border: Border.all(color: AppColors.border.withValues(alpha: 0.7), width: 0.5),
-                  borderRadius: BorderRadius.circular(AppRadii.lg),
+                  color: ClinicalPalette.surface,
+                  border: Border.all(color: ClinicalPalette.border.withValues(alpha: 0.7), width: 0.5),
+                  borderRadius: BorderRadius.circular(ClinicalRadii.tile),
                 ),
                 clipBehavior: Clip.antiAlias,
                 child: Column(
@@ -112,10 +113,10 @@ class _AdverseEffectsScreenState extends State<AdverseEffectsScreen> {
             // (or a soft "pick a problem" prompt when nothing's selected).
             ? Padding(
                 padding: const EdgeInsets.fromLTRB(
-                  AppSpace.lg + 4,
-                  AppSpace.lg,
-                  AppSpace.lg + 4,
-                  AppSpace.xl,
+                  ClinicalSpace.lg + 4,
+                  ClinicalSpace.lg,
+                  ClinicalSpace.lg + 4,
+                  ClinicalSpace.xl,
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,13 +128,13 @@ class _AdverseEffectsScreenState extends State<AdverseEffectsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             intro,
-                            const Gap.v(AppSpace.md),
+                            const Gap.v(ClinicalSpace.md),
                             ...categorisedList,
                           ],
                         ),
                       ),
                     ),
-                    const Gap.h(AppSpace.xl),
+                    const Gap.h(ClinicalSpace.xl),
                     Expanded(
                       child: SingleChildScrollView(
                         physics: const BouncingScrollPhysics(),
@@ -154,14 +155,14 @@ class _AdverseEffectsScreenState extends State<AdverseEffectsScreen> {
             // for the smooth reveal.
             : ListView(
                 padding: const EdgeInsets.fromLTRB(
-                  AppSpace.lg + 4,
-                  AppSpace.lg,
-                  AppSpace.lg + 4,
-                  AppSpace.xl,
+                  ClinicalSpace.lg + 4,
+                  ClinicalSpace.lg,
+                  ClinicalSpace.lg + 4,
+                  ClinicalSpace.xl,
                 ),
                 children: <Widget>[
                   intro,
-                  const Gap.v(AppSpace.md),
+                  const Gap.v(ClinicalSpace.md),
                   AnimatedSize(
                     duration: const Duration(milliseconds: 240),
                     curve: Curves.easeOutCubic,
@@ -170,7 +171,7 @@ class _AdverseEffectsScreenState extends State<AdverseEffectsScreen> {
                         ? const SizedBox.shrink()
                         : Padding(
                             padding:
-                                const EdgeInsets.only(bottom: AppSpace.lg),
+                                const EdgeInsets.only(bottom: ClinicalSpace.lg),
                             child: _DetailPanel(
                               ae: _selected!,
                               capitalize: _capitalize,
@@ -191,34 +192,34 @@ class _PickPrompt extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(AppSpace.xl),
+      padding: const EdgeInsets.all(ClinicalSpace.xl),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border.withValues(alpha: 0.7), width: 0.5),
-        borderRadius: BorderRadius.circular(AppRadii.lg),
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border.withValues(alpha: 0.7), width: 0.5),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           const Icon(
             Icons.touch_app_outlined,
-            color: AppColors.muted,
+            color: ClinicalPalette.muted,
             size: 28,
           ),
-          const Gap.v(AppSpace.md),
+          const Gap.v(ClinicalSpace.md),
           const Text(
             'Pick a problem',
             style: TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 15,
               fontWeight: FontWeight.w700,
             ),
           ),
-          const Gap.v(AppSpace.xs),
+          const Gap.v(ClinicalSpace.xs),
           Text(
             'Tap any adverse-effect on the left to see its common '
             'causes, candidate switch targets, and management note.',
-            style: AppTextSizes.caption.copyWith(height: 1.5),
+            style: ClinicalText.caption.copyWith(height: 1.5),
           ),
         ],
       ),
@@ -243,7 +244,7 @@ class _AeRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: isActive
-          ? AppColors.accent.withValues(alpha: 0.1)
+          ? ClinicalPalette.accent.withValues(alpha: 0.1)
           : Colors.transparent,
       child: InkWell(
         onTap: onTap,
@@ -252,13 +253,13 @@ class _AeRow extends StatelessWidget {
             border: isLast
                 ? null
                 : const Border(
-                    bottom: BorderSide(color: AppColors.border),
+                    bottom: BorderSide(color: ClinicalPalette.border),
                   ),
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: AppSpace.md + 2,
-              vertical: AppSpace.md - 2,
+              horizontal: ClinicalSpace.md + 2,
+              vertical: ClinicalSpace.md - 2,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -269,7 +270,7 @@ class _AeRow extends StatelessWidget {
                       child: Text(
                         ae.label,
                         style: const TextStyle(
-                          color: AppColors.text,
+                          color: ClinicalPalette.text,
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                         ),
@@ -277,7 +278,7 @@ class _AeRow extends StatelessWidget {
                     ),
                     const Icon(
                       Icons.chevron_right_rounded,
-                      color: AppColors.muted,
+                      color: ClinicalPalette.muted,
                       size: 18,
                     ),
                   ],
@@ -285,7 +286,7 @@ class _AeRow extends StatelessWidget {
                 const Gap.v(2),
                 Text(
                   ae.summary,
-                  style: AppTextSizes.micro,
+                  style: ClinicalText.caption,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -312,17 +313,17 @@ class _DetailPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: AppColors.accent.withValues(alpha: 0.4),
+          color: ClinicalPalette.accent.withValues(alpha: 0.4),
         ),
-        borderRadius: BorderRadius.circular(AppRadii.lg),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.md + 2,
-        AppSpace.md,
-        AppSpace.md + 2,
-        AppSpace.md,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.md,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.md,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -336,13 +337,13 @@ class _DetailPanel extends StatelessWidget {
                     Text(
                       categoryLabels[ae.category]?.toUpperCase() ??
                           ae.category.jsonValue.toUpperCase(),
-                      style: AppTextSizes.eyebrow,
+                      style: ClinicalText.eyebrow,
                     ),
                     const Gap.v(2),
                     Text(
                       ae.label,
                       style: const TextStyle(
-                        color: AppColors.text,
+                        color: ClinicalPalette.text,
                         fontSize: 17,
                         fontWeight: FontWeight.w800,
                         letterSpacing: -0.2,
@@ -356,64 +357,64 @@ class _DetailPanel extends StatelessWidget {
                 icon: const Icon(
                   Icons.close_rounded,
                   size: 18,
-                  color: AppColors.muted,
+                  color: ClinicalPalette.muted,
                 ),
                 tooltip: 'Close',
               ),
             ],
           ),
-          const Gap.v(AppSpace.sm),
+          const Gap.v(ClinicalSpace.sm),
           Text(
             ae.summary,
-            style: AppTextSizes.micro.copyWith(height: 1.5),
+            style: ClinicalText.caption.copyWith(height: 1.5),
           ),
-          const Gap.v(AppSpace.md),
+          const Gap.v(ClinicalSpace.md),
 
           Text(
             'COMMON CAUSES',
-            style: AppTextSizes.eyebrow.copyWith(color: AppColors.warning),
+            style: ClinicalText.eyebrow.copyWith(color: ClinicalPalette.warning),
           ),
-          const Gap.v(AppSpace.xs + 2),
+          const Gap.v(ClinicalSpace.xs + 2),
           Wrap(
-            spacing: AppSpace.xs + 2,
-            runSpacing: AppSpace.xs + 2,
+            spacing: ClinicalSpace.xs + 2,
+            runSpacing: ClinicalSpace.xs + 2,
             children: <Widget>[
               for (final id in ae.causedBy)
-                StatusPill(label: capitalize(id), tone: AppColors.warning),
+                StatusPill(label: capitalize(id), tone: ClinicalPalette.warning),
             ],
           ),
-          const Gap.v(AppSpace.md),
+          const Gap.v(ClinicalSpace.md),
 
           Text(
             'CANDIDATE SWITCH TARGETS',
-            style: AppTextSizes.eyebrow.copyWith(color: AppColors.to),
+            style: ClinicalText.eyebrow.copyWith(color: ClinicalPalette.toneMintInk),
           ),
-          const Gap.v(AppSpace.xs + 2),
+          const Gap.v(ClinicalSpace.xs + 2),
           Wrap(
-            spacing: AppSpace.xs + 2,
-            runSpacing: AppSpace.xs + 2,
+            spacing: ClinicalSpace.xs + 2,
+            runSpacing: ClinicalSpace.xs + 2,
             children: <Widget>[
               for (final id in ae.switchCandidates)
-                StatusPill(label: capitalize(id), tone: AppColors.to),
+                StatusPill(label: capitalize(id), tone: ClinicalPalette.toneMintInk),
             ],
           ),
-          const Gap.v(AppSpace.md),
+          const Gap.v(ClinicalSpace.md),
 
-          const Text('MANAGEMENT', style: AppTextSizes.eyebrow),
-          const Gap.v(AppSpace.xs),
+          const Text('MANAGEMENT', style: ClinicalText.eyebrow),
+          const Gap.v(ClinicalSpace.xs),
           Text(
             ae.management,
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 13,
               height: 1.55,
             ),
           ),
           if (ae.citations.isNotEmpty) ...<Widget>[
-            const Gap.v(AppSpace.sm),
+            const Gap.v(ClinicalSpace.sm),
             Text(
               ae.citations.first,
-              style: AppTextSizes.eyebrow.copyWith(fontSize: 9),
+              style: ClinicalText.eyebrow.copyWith(fontSize: 9),
             ),
           ],
         ],

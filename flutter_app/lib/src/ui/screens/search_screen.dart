@@ -23,6 +23,7 @@ import 'package:go_router/go_router.dart';
 import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch_engine/glossary.dart';
@@ -65,20 +66,20 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.fromLTRB(
-                  AppSpace.lg + 4,
-                  AppSpace.md,
-                  AppSpace.lg + 4,
-                  AppSpace.sm,
+                  ClinicalSpace.lg + 4,
+                  ClinicalSpace.md,
+                  ClinicalSpace.lg + 4,
+                  ClinicalSpace.sm,
                 ),
                 child: TextField(
                   controller: _ctrl,
                   autofocus: true,
-                  style: AppTextSizes.body,
+                  style: ClinicalText.body,
                   onChanged: (v) => setState(() => _q = v),
                   decoration: InputDecoration(
                     hintText: 'Search drugs, brands, terms, tools',
-                    hintStyle: AppTextSizes.body
-                        .copyWith(color: AppColors.muted),
+                    hintStyle: ClinicalText.body
+                        .copyWith(color: ClinicalPalette.muted),
                     prefixIcon: const Icon(Icons.search, size: 18),
                     suffixIcon: _q.isEmpty
                         ? null
@@ -91,9 +92,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                             },
                           ),
                     filled: true,
-                    fillColor: AppColors.surfaceHigh,
+                    fillColor: ClinicalPalette.surfaceMuted,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(AppRadii.lg),
+                      borderRadius: BorderRadius.circular(ClinicalRadii.tile),
                       borderSide: BorderSide.none,
                     ),
                   ),
@@ -130,10 +131,10 @@ class _Results extends StatelessWidget {
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg + 4,
-        AppSpace.sm,
-        AppSpace.lg + 4,
-        AppSpace.xl,
+        ClinicalSpace.lg + 4,
+        ClinicalSpace.sm,
+        ClinicalSpace.lg + 4,
+        ClinicalSpace.xl,
       ),
       children: <Widget>[
         if (tools.isNotEmpty) ...<Widget>[
@@ -144,7 +145,7 @@ class _Results extends StatelessWidget {
               _ToolRow(item: tools[i]),
             ],
           ])),
-          const Gap.v(AppSpace.lg),
+          const Gap.v(ClinicalSpace.lg),
         ],
         if (drugs.isNotEmpty) ...<Widget>[
           _GroupHeader(label: 'Drugs', count: drugs.length),
@@ -154,7 +155,7 @@ class _Results extends StatelessWidget {
               _DrugRow(drug: drugs[i], query: query),
             ],
           ])),
-          const Gap.v(AppSpace.lg),
+          const Gap.v(ClinicalSpace.lg),
         ],
         if (terms.isNotEmpty) ...<Widget>[
           _GroupHeader(label: 'Glossary', count: terms.length),
@@ -172,7 +173,7 @@ class _Results extends StatelessWidget {
   static Widget _hairline() => Divider(
         height: 0.5,
         thickness: 0.5,
-        color: AppColors.border.withValues(alpha: 0.7),
+        color: ClinicalPalette.border.withValues(alpha: 0.7),
       );
 }
 
@@ -379,25 +380,25 @@ class _GroupHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(
-        left: AppSpace.xs,
-        bottom: AppSpace.sm,
+        left: ClinicalSpace.xs,
+        bottom: ClinicalSpace.sm,
       ),
       child: Row(
         children: <Widget>[
-          Text(label.toUpperCase(), style: AppTextSizes.eyebrow),
-          const Gap.h(AppSpace.sm),
+          Text(label.toUpperCase(), style: ClinicalText.eyebrow),
+          const Gap.h(ClinicalSpace.sm),
           Container(
             padding: const EdgeInsets.symmetric(
-              horizontal: AppSpace.sm,
+              horizontal: ClinicalSpace.sm,
               vertical: 1,
             ),
             decoration: BoxDecoration(
-              color: AppColors.surfaceHigh,
-              borderRadius: BorderRadius.circular(AppRadii.pill),
+              color: ClinicalPalette.surfaceMuted,
+              borderRadius: BorderRadius.circular(ClinicalRadii.pill),
             ),
             child: Text(
               '$count',
-              style: AppTextSizes.eyebrow.copyWith(color: AppColors.muted),
+              style: ClinicalText.eyebrow.copyWith(color: ClinicalPalette.muted),
             ),
           ),
         ],
@@ -414,12 +415,12 @@ class _Card extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       child: child,
     );
@@ -447,22 +448,22 @@ class _DrugRow extends StatelessWidget {
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSpace.md + 2,
-          vertical: AppSpace.md,
+          horizontal: ClinicalSpace.md + 2,
+          vertical: ClinicalSpace.md,
         ),
         child: Row(
           children: <Widget>[
             const Icon(Icons.medication_outlined,
-                size: 18, color: AppColors.muted),
-            const Gap.h(AppSpace.md),
+                size: 18, color: ClinicalPalette.muted),
+            const Gap.h(ClinicalSpace.md),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
                     drug.genericName,
-                    style: AppTextSizes.body.copyWith(
-                      color: AppColors.text,
+                    style: ClinicalText.body.copyWith(
+                      color: ClinicalPalette.text,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -470,13 +471,13 @@ class _DrugRow extends StatelessWidget {
                     brandHit.isNotEmpty
                         ? '${drug.drugClass} · $brandHit'
                         : drug.drugClass,
-                    style: AppTextSizes.caption,
+                    style: ClinicalText.caption,
                   ),
                 ],
               ),
             ),
             const Icon(Icons.chevron_right,
-                size: 18, color: AppColors.muted),
+                size: 18, color: ClinicalPalette.muted),
           ],
         ),
       ),
@@ -497,30 +498,30 @@ class _TermRow extends StatelessWidget {
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSpace.md + 2,
-          vertical: AppSpace.md,
+          horizontal: ClinicalSpace.md + 2,
+          vertical: ClinicalSpace.md,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             const Icon(Icons.menu_book_outlined,
-                size: 18, color: AppColors.muted),
-            const Gap.h(AppSpace.md),
+                size: 18, color: ClinicalPalette.muted),
+            const Gap.h(ClinicalSpace.md),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
                     entry.term.toUpperCase(),
-                    style: AppTextSizes.body.copyWith(
-                      color: AppColors.text,
+                    style: ClinicalText.body.copyWith(
+                      color: ClinicalPalette.text,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  const Gap.v(AppSpace.xs - 1),
+                  const Gap.v(ClinicalSpace.xs - 1),
                   Text(
                     entry.definition,
-                    style: AppTextSizes.caption,
+                    style: ClinicalText.caption,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -547,30 +548,30 @@ class _ToolRow extends StatelessWidget {
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSpace.md + 2,
-          vertical: AppSpace.md,
+          horizontal: ClinicalSpace.md + 2,
+          vertical: ClinicalSpace.md,
         ),
         child: Row(
           children: <Widget>[
-            Icon(item.icon, size: 18, color: AppColors.accent),
-            const Gap.h(AppSpace.md),
+            Icon(item.icon, size: 18, color: ClinicalPalette.accent),
+            const Gap.h(ClinicalSpace.md),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
                     item.label,
-                    style: AppTextSizes.body.copyWith(
-                      color: AppColors.text,
+                    style: ClinicalText.body.copyWith(
+                      color: ClinicalPalette.text,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  Text(item.tagline, style: AppTextSizes.caption),
+                  Text(item.tagline, style: ClinicalText.caption),
                 ],
               ),
             ),
             const Icon(Icons.chevron_right,
-                size: 18, color: AppColors.muted),
+                size: 18, color: ClinicalPalette.muted),
           ],
         ),
       ),
@@ -591,37 +592,37 @@ class _EmptyHint extends StatelessWidget {
     ];
     return ListView(
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg + 4,
-        AppSpace.md,
-        AppSpace.lg + 4,
-        AppSpace.xl,
+        ClinicalSpace.lg + 4,
+        ClinicalSpace.md,
+        ClinicalSpace.lg + 4,
+        ClinicalSpace.xl,
       ),
       children: <Widget>[
-        const Text('Search anything', style: AppTextSizes.title),
-        const Gap.v(AppSpace.sm),
+        const Text('Search anything', style: ClinicalText.title),
+        const Gap.v(ClinicalSpace.sm),
         const Text(
           'One box for drugs, glossary terms, and every tool.',
-          style: AppTextSizes.caption,
+          style: ClinicalText.caption,
         ),
-        const Gap.v(AppSpace.lg),
+        const Gap.v(ClinicalSpace.lg),
         for (final h in hints) ...<Widget>[
           Container(
-            margin: const EdgeInsets.only(bottom: AppSpace.sm),
-            padding: const EdgeInsets.all(AppSpace.md),
+            margin: const EdgeInsets.only(bottom: ClinicalSpace.sm),
+            padding: const EdgeInsets.all(ClinicalSpace.md),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: ClinicalPalette.surface,
               border: Border.all(
-                color: AppColors.border.withValues(alpha: 0.7),
+                color: ClinicalPalette.border.withValues(alpha: 0.7),
                 width: 0.5,
               ),
-              borderRadius: BorderRadius.circular(AppRadii.md),
+              borderRadius: BorderRadius.circular(ClinicalRadii.chip),
             ),
             child: Row(
               children: <Widget>[
                 const Icon(Icons.lightbulb_outline,
-                    size: 16, color: AppColors.muted),
-                const Gap.h(AppSpace.sm),
-                Expanded(child: Text(h, style: AppTextSizes.caption)),
+                    size: 16, color: ClinicalPalette.muted),
+                const Gap.h(ClinicalSpace.sm),
+                Expanded(child: Text(h, style: ClinicalText.caption)),
               ],
             ),
           ),
@@ -638,21 +639,21 @@ class _NoResults extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(AppSpace.xl),
+        padding: const EdgeInsets.all(ClinicalSpace.xl),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             const Icon(Icons.search_off,
-                size: 36, color: AppColors.muted),
-            const Gap.v(AppSpace.md),
+                size: 36, color: ClinicalPalette.muted),
+            const Gap.v(ClinicalSpace.md),
             Text(
               'No matches',
-              style: AppTextSizes.subtitle.copyWith(color: AppColors.text),
+              style: ClinicalText.subtitle.copyWith(color: ClinicalPalette.text),
             ),
-            const Gap.v(AppSpace.xs),
+            const Gap.v(ClinicalSpace.xs),
             const Text(
               'Try a different spelling or shorter prefix.',
-              style: AppTextSizes.caption,
+              style: ClinicalText.caption,
               textAlign: TextAlign.center,
             ),
           ],

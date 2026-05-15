@@ -16,6 +16,7 @@ import 'package:psychswitch/src/providers/preferences_provider.dart';
 import 'package:psychswitch/src/providers/saved_cases_provider.dart';
 import 'package:psychswitch/src/services/notification_service.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 
 final _versionProvider = FutureProvider<PackageInfo>(
@@ -63,16 +64,16 @@ class SettingsScreen extends ConsumerWidget {
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(
-            AppSpace.lg,
-            AppSpace.md,
-            AppSpace.lg,
-            AppSpace.xl,
+            ClinicalSpace.lg,
+            ClinicalSpace.md,
+            ClinicalSpace.lg,
+            ClinicalSpace.xl,
           ),
           children: <Widget>[
             const _SectionHeader(text: 'PROFILE'),
             const _ClinicianNameField(),
 
-            const Gap.v(AppSpace.xl),
+            const Gap.v(ClinicalSpace.xl),
             const _SectionHeader(text: 'DISPLAY'),
             _ToggleTile(
               label: 'Show citation chips',
@@ -85,7 +86,7 @@ class SettingsScreen extends ConsumerWidget {
                   ref.read(showCitationsProvider.notifier).set(value: v),
             ),
 
-            const Gap.v(AppSpace.xl),
+            const Gap.v(ClinicalSpace.xl),
             const _SectionHeader(text: 'REMINDERS'),
             _ToggleTile(
               label: 'Monitoring reminders',
@@ -99,7 +100,7 @@ class SettingsScreen extends ConsumerWidget {
               onChanged: (v) => _onRemindersToggled(ref, v),
             ),
 
-            const Gap.v(AppSpace.xl),
+            const Gap.v(ClinicalSpace.xl),
             const _SectionHeader(text: 'WELCOME'),
             _ActionTile(
               icon: Icons.replay_circle_filled_rounded,
@@ -112,7 +113,7 @@ class SettingsScreen extends ConsumerWidget {
               onPressed: () => _onReplayTour(context, ref),
             ),
 
-            const Gap.v(AppSpace.xl),
+            const Gap.v(ClinicalSpace.xl),
             const _SectionHeader(text: 'DATA'),
             _DangerTile(
               label: 'Delete all saved cases',
@@ -122,7 +123,7 @@ class SettingsScreen extends ConsumerWidget {
               onPressed: () => _confirmDeleteAll(context, ref),
             ),
 
-            const Gap.v(AppSpace.xxl),
+            const Gap.v(ClinicalSpace.xxl),
             // ── Version footer ────────────────────────────────────
             Center(
               child: Text(
@@ -131,18 +132,18 @@ class SettingsScreen extends ConsumerWidget {
                   loading: () => 'PsychSwitch',
                   error: (_, __) => 'PsychSwitch',
                 ),
-                style: AppTextSizes.micro.copyWith(
+                style: ClinicalText.caption.copyWith(
                   letterSpacing: 0.3,
-                  color: AppColors.muted,
+                  color: ClinicalPalette.muted,
                 ),
               ),
             ),
-            const Gap.v(AppSpace.xs),
+            const Gap.v(ClinicalSpace.xs),
             Center(
               child: Text(
                 'On-device · never transmits patient data',
-                style: AppTextSizes.micro.copyWith(
-                  color: AppColors.muted.withValues(alpha: 0.65),
+                style: ClinicalText.caption.copyWith(
+                  color: ClinicalPalette.muted.withValues(alpha: 0.65),
                 ),
               ),
             ),
@@ -168,7 +169,7 @@ class SettingsScreen extends ConsumerWidget {
           ),
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: AppColors.danger,
+              backgroundColor: ClinicalPalette.danger,
               foregroundColor: Colors.white,
             ),
             onPressed: () => Navigator.of(context).pop(true),
@@ -206,12 +207,12 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.xs,
-        AppSpace.sm,
-        AppSpace.xs,
-        AppSpace.sm,
+        ClinicalSpace.xs,
+        ClinicalSpace.sm,
+        ClinicalSpace.xs,
+        ClinicalSpace.sm,
       ),
-      child: Text(text, style: AppTextSizes.eyebrow),
+      child: Text(text, style: ClinicalText.eyebrow),
     );
   }
 }
@@ -235,18 +236,18 @@ class _ToggleTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg - 2,
-        AppSpace.md + 2,
-        AppSpace.sm,
-        AppSpace.md + 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.sm,
+        ClinicalSpace.md + 2,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -258,16 +259,16 @@ class _ToggleTile extends StatelessWidget {
                 Text(
                   label,
                   style: const TextStyle(
-                    color: AppColors.text,
+                    color: ClinicalPalette.text,
                     fontSize: 14.5,
                     fontWeight: FontWeight.w700,
                     letterSpacing: -0.1,
                   ),
                 ),
-                const Gap.v(AppSpace.xs),
+                const Gap.v(ClinicalSpace.xs),
                 Text(
                   description,
-                  style: AppTextSizes.caption.copyWith(height: 1.55),
+                  style: ClinicalText.caption.copyWith(height: 1.55),
                 ),
               ],
             ),
@@ -303,31 +304,31 @@ class _ActionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg - 2,
-        AppSpace.md + 2,
-        AppSpace.lg - 2,
-        AppSpace.md + 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.md + 2,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Row(
             children: <Widget>[
-              Icon(icon, size: 18, color: AppColors.accent),
-              const Gap.h(AppSpace.sm + 2),
+              Icon(icon, size: 18, color: ClinicalPalette.accent),
+              const Gap.h(ClinicalSpace.sm + 2),
               Expanded(
                 child: Text(
                   label,
                   style: const TextStyle(
-                    color: AppColors.text,
+                    color: ClinicalPalette.text,
                     fontSize: 14.5,
                     fontWeight: FontWeight.w700,
                     letterSpacing: -0.1,
@@ -336,27 +337,27 @@ class _ActionTile extends StatelessWidget {
               ),
             ],
           ),
-          const Gap.v(AppSpace.xs + 1),
+          const Gap.v(ClinicalSpace.xs + 1),
           Text(
             description,
-            style: AppTextSizes.caption.copyWith(height: 1.55),
+            style: ClinicalText.caption.copyWith(height: 1.55),
           ),
-          const Gap.v(AppSpace.md),
+          const Gap.v(ClinicalSpace.md),
           Align(
             alignment: Alignment.centerLeft,
             child: OutlinedButton(
               onPressed: onPressed,
               style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.accent,
+                foregroundColor: ClinicalPalette.accent,
                 side: BorderSide(
-                  color: AppColors.accent.withValues(alpha: 0.5),
+                  color: ClinicalPalette.accent.withValues(alpha: 0.5),
                 ),
                 padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpace.lg - 2,
-                  vertical: AppSpace.xs + 2,
+                  horizontal: ClinicalSpace.lg - 2,
+                  vertical: ClinicalSpace.xs + 2,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppRadii.md),
+                  borderRadius: BorderRadius.circular(ClinicalRadii.chip),
                 ),
               ),
               child: Text(
@@ -390,18 +391,18 @@ class _DangerTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.danger.withValues(alpha: 0.05),
+        color: ClinicalPalette.danger.withValues(alpha: 0.05),
         border: Border.all(
-          color: AppColors.danger.withValues(alpha: 0.35),
+          color: ClinicalPalette.danger.withValues(alpha: 0.35),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg - 2,
-        AppSpace.md + 2,
-        AppSpace.lg - 2,
-        AppSpace.md + 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.md + 2,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -410,34 +411,34 @@ class _DangerTile extends StatelessWidget {
             children: <Widget>[
               const Icon(
                 Icons.warning_amber_rounded,
-                color: AppColors.danger,
+                color: ClinicalPalette.danger,
                 size: 16,
               ),
-              const Gap.h(AppSpace.sm),
+              const Gap.h(ClinicalSpace.sm),
               Text(
                 label,
                 style: const TextStyle(
-                  color: AppColors.danger,
+                  color: ClinicalPalette.danger,
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                 ),
               ),
             ],
           ),
-          const Gap.v(AppSpace.xs),
+          const Gap.v(ClinicalSpace.xs),
           Text(
             description,
-            style: AppTextSizes.caption.copyWith(height: 1.5),
+            style: ClinicalText.caption.copyWith(height: 1.5),
           ),
-          const Gap.v(AppSpace.md),
+          const Gap.v(ClinicalSpace.md),
           Align(
             alignment: Alignment.centerLeft,
             child: OutlinedButton(
               onPressed: onPressed,
               style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.danger,
+                foregroundColor: ClinicalPalette.danger,
                 side: BorderSide(
-                  color: AppColors.danger.withValues(alpha: 0.5),
+                  color: ClinicalPalette.danger.withValues(alpha: 0.5),
                 ),
               ),
               child: Text(label),
@@ -489,31 +490,31 @@ class _ClinicianNameFieldState extends ConsumerState<_ClinicianNameField> {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg - 2,
-        AppSpace.md + 2,
-        AppSpace.lg - 2,
-        AppSpace.md + 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.md + 2,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           const Row(
             children: <Widget>[
-              Icon(Icons.person_outline, size: 18, color: AppColors.accent),
-              Gap.h(AppSpace.sm + 2),
+              Icon(Icons.person_outline, size: 18, color: ClinicalPalette.accent),
+              Gap.h(ClinicalSpace.sm + 2),
               Expanded(
                 child: Text(
                   'Your name',
                   style: TextStyle(
-                    color: AppColors.text,
+                    color: ClinicalPalette.text,
                     fontSize: 14.5,
                     fontWeight: FontWeight.w700,
                     letterSpacing: -0.1,
@@ -522,13 +523,13 @@ class _ClinicianNameFieldState extends ConsumerState<_ClinicianNameField> {
               ),
             ],
           ),
-          const Gap.v(AppSpace.xs + 1),
+          const Gap.v(ClinicalSpace.xs + 1),
           Text(
             'Personalises the Home greeting and (later) exported '
             'switch-plan PDFs. Stays on this device.',
-            style: AppTextSizes.caption.copyWith(height: 1.55),
+            style: ClinicalText.caption.copyWith(height: 1.55),
           ),
-          const Gap.v(AppSpace.md),
+          const Gap.v(ClinicalSpace.md),
           TextField(
             controller: _ctrl,
             textCapitalization: TextCapitalization.words,

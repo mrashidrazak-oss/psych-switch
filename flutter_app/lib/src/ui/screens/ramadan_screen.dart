@@ -26,6 +26,7 @@ import 'package:go_router/go_router.dart';
 import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch_engine/ramadan.dart';
@@ -72,10 +73,10 @@ class _RamadanScreenState extends ConsumerState<RamadanScreen> {
                   }).toList();
             return ListView(
               padding: const EdgeInsets.fromLTRB(
-                AppSpace.lg + 4,
-                AppSpace.lg,
-                AppSpace.lg + 4,
-                AppSpace.xl,
+                ClinicalSpace.lg + 4,
+                ClinicalSpace.lg,
+                ClinicalSpace.lg + 4,
+                ClinicalSpace.xl,
               ),
               children: <Widget>[
                 _RamadanHero(
@@ -83,29 +84,29 @@ class _RamadanScreenState extends ConsumerState<RamadanScreen> {
                   principles: data.generalPrinciples.length,
                   rationale: data.rationale,
                 ),
-                const Gap.v(AppSpace.lg),
+                const Gap.v(ClinicalSpace.lg),
                 _PrinciplesCard(principles: data.generalPrinciples),
-                const Gap.v(AppSpace.lg),
+                const Gap.v(ClinicalSpace.lg),
                 // ── Search bar ───────────────────────────────────────
                 _SearchField(
                   controller: _searchCtl,
                   onChanged: (v) => setState(() => _query = v),
                 ),
-                const Gap.v(AppSpace.md),
+                const Gap.v(ClinicalSpace.md),
                 // ── Drug rows ────────────────────────────────────────
                 const Text(
                   'DRUG-SPECIFIC GUIDANCE',
-                  style: AppTextSizes.eyebrow,
+                  style: ClinicalText.eyebrow,
                 ),
-                const Gap.v(AppSpace.sm),
+                const Gap.v(ClinicalSpace.sm),
                 if (filtered.isEmpty)
                   _EmptyResults(query: _query.trim())
                 else
                   for (final d in filtered) ...<Widget>[
                     _RamadanDrugCard(drug: d),
-                    const Gap.v(AppSpace.sm),
+                    const Gap.v(ClinicalSpace.sm),
                   ],
-                const Gap.v(AppSpace.lg),
+                const Gap.v(ClinicalSpace.lg),
                 const _FooterNote(),
               ],
             );
@@ -135,15 +136,15 @@ class _RamadanHero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const tone = AppColors.to; // calm green for Ramadan
+    const tone = ClinicalPalette.toneMintInk; // calm green for Ramadan
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.xl),
+        borderRadius: BorderRadius.circular(ClinicalRadii.card),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -153,10 +154,10 @@ class _RamadanHero extends StatelessWidget {
           Container(
             color: tone.withValues(alpha: 0.08),
             padding: const EdgeInsets.fromLTRB(
-              AppSpace.lg,
-              AppSpace.md + 2,
-              AppSpace.md - 2,
-              AppSpace.md + 2,
+              ClinicalSpace.lg,
+              ClinicalSpace.md + 2,
+              ClinicalSpace.md - 2,
+              ClinicalSpace.md + 2,
             ),
             child: Row(
               children: <Widget>[
@@ -169,7 +170,7 @@ class _RamadanHero extends StatelessWidget {
                       color: tone.withValues(alpha: 0.36),
                       width: 0.5,
                     ),
-                    borderRadius: BorderRadius.circular(AppRadii.md),
+                    borderRadius: BorderRadius.circular(ClinicalRadii.chip),
                   ),
                   child: const Icon(
                     Icons.dark_mode_outlined,
@@ -177,7 +178,7 @@ class _RamadanHero extends StatelessWidget {
                     color: tone,
                   ),
                 ),
-                const Gap.h(AppSpace.md),
+                const Gap.h(ClinicalSpace.md),
                 const Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,18 +186,18 @@ class _RamadanHero extends StatelessWidget {
                       Text(
                         'Halal & Ramadan',
                         style: TextStyle(
-                          color: AppColors.text,
+                          color: ClinicalPalette.text,
                           fontSize: 19,
                           fontWeight: FontWeight.w800,
                           letterSpacing: -0.4,
                           height: 1.15,
                         ),
                       ),
-                      Gap.v(AppSpace.xs - 1),
+                      Gap.v(ClinicalSpace.xs - 1),
                       Text(
                         'Suhoor · Iftar dose-timing guidance',
                         style: TextStyle(
-                          color: AppColors.muted,
+                          color: ClinicalPalette.muted,
                           fontSize: 12.5,
                           fontWeight: FontWeight.w500,
                           letterSpacing: 0.1,
@@ -212,10 +213,10 @@ class _RamadanHero extends StatelessWidget {
           // Stats.
           Padding(
             padding: const EdgeInsets.fromLTRB(
-              AppSpace.lg,
-              AppSpace.md + 2,
-              AppSpace.lg,
-              AppSpace.md,
+              ClinicalSpace.lg,
+              ClinicalSpace.md + 2,
+              ClinicalSpace.lg,
+              ClinicalSpace.md,
             ),
             child: Row(
               children: <Widget>[
@@ -229,7 +230,7 @@ class _RamadanHero extends StatelessWidget {
                 Container(
                   width: 0.5,
                   height: 36,
-                  color: AppColors.border.withValues(alpha: 0.6),
+                  color: ClinicalPalette.border.withValues(alpha: 0.6),
                 ),
                 Expanded(
                   child: _MiniStat(
@@ -243,16 +244,16 @@ class _RamadanHero extends StatelessWidget {
           ),
           // Rationale band.
           Container(
-            color: AppColors.bg.withValues(alpha: 0.4),
+            color: ClinicalPalette.bg.withValues(alpha: 0.4),
             padding: const EdgeInsets.fromLTRB(
-              AppSpace.lg,
-              AppSpace.sm + 2,
-              AppSpace.lg,
-              AppSpace.sm + 2,
+              ClinicalSpace.lg,
+              ClinicalSpace.sm + 2,
+              ClinicalSpace.lg,
+              ClinicalSpace.sm + 2,
             ),
             child: Text(
               _cleanRationale(rationale),
-              style: AppTextSizes.caption.copyWith(height: 1.55),
+              style: ClinicalText.caption.copyWith(height: 1.55),
             ),
           ),
         ],
@@ -282,7 +283,7 @@ class _MiniStat extends StatelessWidget {
           Text(
             eyebrow,
             style: const TextStyle(
-              color: AppColors.muted,
+              color: ClinicalPalette.muted,
               fontSize: 10,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.4,
@@ -296,7 +297,7 @@ class _MiniStat extends StatelessWidget {
               Text(
                 value,
                 style: const TextStyle(
-                  color: AppColors.text,
+                  color: ClinicalPalette.text,
                   fontSize: 28,
                   fontWeight: FontWeight.w800,
                   letterSpacing: -0.8,
@@ -312,7 +313,7 @@ class _MiniStat extends StatelessWidget {
                 child: Text(
                   unit,
                   style: const TextStyle(
-                    color: AppColors.muted,
+                    color: ClinicalPalette.muted,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.1,
@@ -338,33 +339,33 @@ class _PrinciplesCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg - 2,
-        AppSpace.md + 2,
-        AppSpace.lg - 2,
-        AppSpace.md + 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.md + 2,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
             'GENERAL PRINCIPLES',
-            style: AppTextSizes.eyebrow.copyWith(color: AppColors.to),
+            style: ClinicalText.eyebrow.copyWith(color: ClinicalPalette.toneMintInk),
           ),
-          const Gap.v(AppSpace.sm + 2),
+          const Gap.v(ClinicalSpace.sm + 2),
           for (var i = 0; i < principles.length; i++) ...<Widget>[
             if (i > 0)
               Container(
                 height: 0.5,
-                color: AppColors.border.withValues(alpha: 0.5),
-                margin: const EdgeInsets.symmetric(vertical: AppSpace.sm),
+                color: ClinicalPalette.border.withValues(alpha: 0.5),
+                margin: const EdgeInsets.symmetric(vertical: ClinicalSpace.sm),
               ),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -374,16 +375,16 @@ class _PrinciplesCard extends StatelessWidget {
                   height: 5,
                   margin: const EdgeInsets.only(top: 7),
                   decoration: const BoxDecoration(
-                    color: AppColors.to,
+                    color: ClinicalPalette.toneMintInk,
                     shape: BoxShape.circle,
                   ),
                 ),
-                const Gap.h(AppSpace.sm + 2),
+                const Gap.h(ClinicalSpace.sm + 2),
                 Expanded(
                   child: Text(
                     principles[i],
                     style: const TextStyle(
-                      color: AppColors.text,
+                      color: ClinicalPalette.text,
                       fontSize: 13,
                       height: 1.55,
                     ),
@@ -416,13 +417,13 @@ class _SearchField extends StatelessWidget {
         prefixIcon: const Icon(
           Icons.search,
           size: 18,
-          color: AppColors.muted,
+          color: ClinicalPalette.muted,
         ),
         suffixIcon: controller.text.isEmpty
             ? null
             : IconButton(
                 icon: const Icon(Icons.clear, size: 18),
-                color: AppColors.muted,
+                color: ClinicalPalette.muted,
                 onPressed: () {
                   controller.clear();
                   onChanged('');
@@ -441,13 +442,13 @@ class _EmptyResults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpace.xl),
+      padding: const EdgeInsets.symmetric(vertical: ClinicalSpace.xl),
       child: Center(
         child: Text(
           query.isEmpty
               ? 'No drugs in the Ramadan registry yet.'
               : 'No matches for "$query".',
-          style: AppTextSizes.caption.copyWith(height: 1.55),
+          style: ClinicalText.caption.copyWith(height: 1.55),
         ),
       ),
     );
@@ -464,17 +465,17 @@ class _RamadanDrugCard extends StatelessWidget {
   Color _recoTone(RamadanRecommendation r) {
     switch (r) {
       case RamadanRecommendation.suhoor:
-        return AppColors.from;
+        return ClinicalPalette.toneLavenderInk;
       case RamadanRecommendation.iftar:
-        return AppColors.accent;
+        return ClinicalPalette.accent;
       case RamadanRecommendation.suhoorOrIftar:
-        return AppColors.mutedStrong;
+        return ClinicalPalette.mutedStrong;
       case RamadanRecommendation.suhoorAndIftar:
       case RamadanRecommendation.iftarOrSuhoorAndIftar:
       case RamadanRecommendation.suhoorAndIftarOrIftar:
-        return AppColors.accent;
+        return ClinicalPalette.accent;
       case RamadanRecommendation.discussWithTeam:
-        return AppColors.warning;
+        return ClinicalPalette.warning;
     }
   }
 
@@ -499,8 +500,8 @@ class _RamadanDrugCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final tone = _recoTone(drug.recommendation);
     return Material(
-      color: AppColors.surface,
-      borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+      color: ClinicalPalette.surface,
+      borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {
@@ -513,16 +514,16 @@ class _RamadanDrugCard extends StatelessWidget {
         child: Ink(
           decoration: BoxDecoration(
             border: Border.all(
-              color: AppColors.border.withValues(alpha: 0.7),
+              color: ClinicalPalette.border.withValues(alpha: 0.7),
               width: 0.5,
             ),
-            borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+            borderRadius: BorderRadius.circular(ClinicalRadii.tile),
           ),
           padding: const EdgeInsets.fromLTRB(
-            AppSpace.lg - 2,
-            AppSpace.md + 2,
-            AppSpace.lg - 2,
-            AppSpace.md + 2,
+            ClinicalSpace.lg - 2,
+            ClinicalSpace.md + 2,
+            ClinicalSpace.lg - 2,
+            ClinicalSpace.md + 2,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -534,23 +535,23 @@ class _RamadanDrugCard extends StatelessWidget {
                     child: Text(
                       drug.name,
                       style: const TextStyle(
-                        color: AppColors.text,
+                        color: ClinicalPalette.text,
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.2,
                       ),
                     ),
                   ),
-                  const Gap.h(AppSpace.sm),
+                  const Gap.h(ClinicalSpace.sm),
                   _DosingChip(text: prettifyDosing(drug.dosing)),
                 ],
               ),
-              const Gap.v(AppSpace.sm + 2),
+              const Gap.v(ClinicalSpace.sm + 2),
               // Row 2: recommendation chip (full-width-ish).
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpace.sm + 2,
-                  vertical: AppSpace.xs + 2,
+                  horizontal: ClinicalSpace.sm + 2,
+                  vertical: ClinicalSpace.xs + 2,
                 ),
                 decoration: BoxDecoration(
                   color: tone.withValues(alpha: 0.12),
@@ -558,13 +559,13 @@ class _RamadanDrugCard extends StatelessWidget {
                     color: tone.withValues(alpha: 0.32),
                     width: 0.5,
                   ),
-                  borderRadius: BorderRadius.circular(AppRadii.pill),
+                  borderRadius: BorderRadius.circular(ClinicalRadii.pill),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Icon(_recoIcon(drug.recommendation), size: 13, color: tone),
-                    const Gap.h(AppSpace.xs + 2),
+                    const Gap.h(ClinicalSpace.xs + 2),
                     Text(
                       drug.recommendation.label.toUpperCase(),
                       style: TextStyle(
@@ -577,24 +578,24 @@ class _RamadanDrugCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const Gap.v(AppSpace.sm + 2),
+              const Gap.v(ClinicalSpace.sm + 2),
               // Rationale body.
               Text(
                 drug.rationale,
-                style: AppTextSizes.caption.copyWith(height: 1.55),
+                style: ClinicalText.caption.copyWith(height: 1.55),
               ),
               if (drug.specialNote.isNotEmpty) ...<Widget>[
-                const Gap.v(AppSpace.sm),
+                const Gap.v(ClinicalSpace.sm),
                 Container(
                   padding: const EdgeInsets.fromLTRB(
-                    AppSpace.sm + 2,
-                    AppSpace.xs + 2,
-                    AppSpace.sm + 2,
-                    AppSpace.xs + 2,
+                    ClinicalSpace.sm + 2,
+                    ClinicalSpace.xs + 2,
+                    ClinicalSpace.sm + 2,
+                    ClinicalSpace.xs + 2,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.bg.withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(AppRadii.sm),
+                    color: ClinicalPalette.bg.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(ClinicalRadii.chip),
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -602,14 +603,14 @@ class _RamadanDrugCard extends StatelessWidget {
                       const Icon(
                         Icons.info_outline_rounded,
                         size: 13,
-                        color: AppColors.mutedStrong,
+                        color: ClinicalPalette.mutedStrong,
                       ),
-                      const Gap.h(AppSpace.xs + 2),
+                      const Gap.h(ClinicalSpace.xs + 2),
                       Expanded(
                         child: Text(
                           drug.specialNote,
                           style: const TextStyle(
-                            color: AppColors.mutedStrong,
+                            color: ClinicalPalette.mutedStrong,
                             fontSize: 12,
                             height: 1.5,
                           ),
@@ -636,17 +637,17 @@ class _DosingChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: AppColors.bg.withValues(alpha: 0.6),
+        color: ClinicalPalette.bg.withValues(alpha: 0.6),
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.sm),
+        borderRadius: BorderRadius.circular(ClinicalRadii.chip),
       ),
       child: Text(
         text,
         style: const TextStyle(
-          color: AppColors.mutedStrong,
+          color: ClinicalPalette.mutedStrong,
           fontSize: 11,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.2,
@@ -663,12 +664,12 @@ class _FooterNote extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpace.lg),
+        padding: const EdgeInsets.symmetric(horizontal: ClinicalSpace.lg),
         child: Text(
           'Guidance is general. Always individualise: clinical state, '
           'religious practice, local fast duration, and patient preference '
           'shape the final plan.',
-          style: AppTextSizes.micro.copyWith(height: 1.6),
+          style: ClinicalText.caption.copyWith(height: 1.6),
           textAlign: TextAlign.center,
         ),
       ),

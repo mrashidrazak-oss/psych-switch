@@ -25,6 +25,7 @@ import 'package:go_router/go_router.dart';
 import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch_engine/anticholinergic.dart';
@@ -133,14 +134,14 @@ class _Body extends StatelessWidget {
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg + 4,
-        AppSpace.lg,
-        AppSpace.lg + 4,
-        AppSpace.xl,
+        ClinicalSpace.lg + 4,
+        ClinicalSpace.lg,
+        ClinicalSpace.lg + 4,
+        ClinicalSpace.xl,
       ),
       children: <Widget>[
         _Hero(left: left, right: right),
-        const Gap.v(AppSpace.lg),
+        const Gap.v(ClinicalSpace.lg),
         _PickerRow(
           engine: engine,
           left: left,
@@ -149,10 +150,10 @@ class _Body extends StatelessWidget {
           onSwap: onSwap,
         ),
         if (left != null && right != null) ...<Widget>[
-          const Gap.v(AppSpace.lg),
+          const Gap.v(ClinicalSpace.lg),
           _Matrix(left: left, right: right),
         ],
-        const Gap.v(AppSpace.lg),
+        const Gap.v(ClinicalSpace.lg),
         const _FooterNote(),
       ],
     );
@@ -170,31 +171,31 @@ class _Hero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ready = left != null && right != null;
-    final tone = ready ? AppColors.accent : AppColors.muted;
+    final tone = ready ? ClinicalPalette.accent : ClinicalPalette.muted;
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.xl),
+        borderRadius: BorderRadius.circular(ClinicalRadii.card),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Container(
             padding: const EdgeInsets.fromLTRB(
-              AppSpace.lg,
-              AppSpace.md + 2,
-              AppSpace.md,
-              AppSpace.md + 2,
+              ClinicalSpace.lg,
+              ClinicalSpace.md + 2,
+              ClinicalSpace.md,
+              ClinicalSpace.md + 2,
             ),
             decoration: BoxDecoration(
               color: tone.withValues(alpha: 0.10),
               borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(AppRadii.xl),
+                top: Radius.circular(ClinicalRadii.card),
               ),
             ),
             child: Row(
@@ -204,29 +205,29 @@ class _Hero extends StatelessWidget {
                   height: 38,
                   decoration: BoxDecoration(
                     color: tone.withValues(alpha: 0.18),
-                    borderRadius: BorderRadius.circular(AppRadii.md),
+                    borderRadius: BorderRadius.circular(ClinicalRadii.chip),
                   ),
                   child: Icon(Icons.compare_arrows, color: tone, size: 20),
                 ),
-                const Gap.h(AppSpace.md),
+                const Gap.h(ClinicalSpace.md),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
                         'Compare two drugs',
-                        style: AppTextSizes.subtitle.copyWith(
-                          color: AppColors.text,
+                        style: ClinicalText.subtitle.copyWith(
+                          color: ClinicalPalette.text,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
-                      const Gap.v(AppSpace.xs - 1),
+                      const Gap.v(ClinicalSpace.xs - 1),
                       Text(
                         ready
                             ? 'Half-life · sedation · EPS · metabolic · QTc · ACB'
                             : 'Pick two drugs to compare side-by-side',
-                        style: AppTextSizes.caption.copyWith(
-                          color: AppColors.mutedStrong,
+                        style: ClinicalText.caption.copyWith(
+                          color: ClinicalPalette.mutedStrong,
                         ),
                       ),
                     ],
@@ -268,18 +269,18 @@ class _PickerRow extends StatelessWidget {
       children: <Widget>[
         Expanded(
           child: _DrugSlot(
-            tone: AppColors.from,
+            tone: ClinicalPalette.toneLavenderInk,
             label: 'Drug A',
             drug: left,
             onTap: () => _openPicker(context, isLeft: true),
           ),
         ),
-        const Gap.h(AppSpace.sm),
+        const Gap.h(ClinicalSpace.sm),
         _SwapButton(enabled: left != null && right != null, onPressed: onSwap),
-        const Gap.h(AppSpace.sm),
+        const Gap.h(ClinicalSpace.sm),
         Expanded(
           child: _DrugSlot(
-            tone: AppColors.to,
+            tone: ClinicalPalette.toneMintInk,
             label: 'Drug B',
             drug: right,
             onTap: () => _openPicker(context, isLeft: false),
@@ -293,10 +294,10 @@ class _PickerRow extends StatelessWidget {
     unawaited(hapticsTap());
     final picked = await showModalBottomSheet<String>(
       context: context,
-      backgroundColor: AppColors.surface,
+      backgroundColor: ClinicalPalette.surface,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadii.xl)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(ClinicalRadii.card)),
       ),
       builder: (_) => _DrugPickerSheet(engine: engine),
     );
@@ -321,42 +322,42 @@ class _DrugSlot extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+      borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       child: Container(
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSpace.md,
-          vertical: AppSpace.md + 2,
+          horizontal: ClinicalSpace.md,
+          vertical: ClinicalSpace.md + 2,
         ),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: ClinicalPalette.surface,
           border: Border.all(
             color: tone.withValues(alpha: 0.45),
             width: 0.5,
           ),
-          borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+          borderRadius: BorderRadius.circular(ClinicalRadii.tile),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
               label.toUpperCase(),
-              style: AppTextSizes.eyebrow.copyWith(color: tone),
+              style: ClinicalText.eyebrow.copyWith(color: tone),
             ),
-            const Gap.v(AppSpace.xs),
+            const Gap.v(ClinicalSpace.xs),
             Text(
               drug?.genericName ?? 'Tap to pick',
-              style: AppTextSizes.subtitle.copyWith(
-                color: drug == null ? AppColors.muted : AppColors.text,
+              style: ClinicalText.subtitle.copyWith(
+                color: drug == null ? ClinicalPalette.muted : ClinicalPalette.text,
                 fontWeight: FontWeight.w700,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
             if (drug != null) ...<Widget>[
-              const Gap.v(AppSpace.xs - 1),
+              const Gap.v(ClinicalSpace.xs - 1),
               Text(
                 drug!.drugClass,
-                style: AppTextSizes.caption,
+                style: ClinicalText.caption,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -377,22 +378,22 @@ class _SwapButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.surface,
+      color: ClinicalPalette.surface,
       shape: RoundedRectangleBorder(
         side: BorderSide(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       child: InkWell(
         onTap: enabled ? onPressed : null,
-        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
         child: SizedBox(
           width: 44,
           child: Icon(
             Icons.swap_horiz_rounded,
-            color: enabled ? AppColors.accent : AppColors.muted,
+            color: enabled ? ClinicalPalette.accent : ClinicalPalette.muted,
             size: 22,
           ),
         ),
@@ -476,12 +477,12 @@ class _Matrix extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       child: Column(
         children: <Widget>[
@@ -490,7 +491,7 @@ class _Matrix extends StatelessWidget {
               Divider(
                 height: 0.5,
                 thickness: 0.5,
-                color: AppColors.border.withValues(alpha: 0.7),
+                color: ClinicalPalette.border.withValues(alpha: 0.7),
               ),
             _MatrixRowView(row: rows[i]),
           ],
@@ -570,8 +571,8 @@ class _MatrixRowView extends StatelessWidget {
         row.rightValue != '—';
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSpace.md + 2,
-        vertical: AppSpace.md,
+        horizontal: ClinicalSpace.md + 2,
+        vertical: ClinicalSpace.md,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -580,39 +581,39 @@ class _MatrixRowView extends StatelessWidget {
             children: <Widget>[
               Text(
                 row.label.toUpperCase(),
-                style: AppTextSizes.eyebrow,
+                style: ClinicalText.eyebrow,
               ),
               const Spacer(),
               if (differ)
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpace.sm,
+                    horizontal: ClinicalSpace.sm,
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.warning.withValues(alpha: 0.14),
-                    borderRadius: BorderRadius.circular(AppRadii.pill),
+                    color: ClinicalPalette.warning.withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(ClinicalRadii.pill),
                   ),
                   child: Text(
                     'DIFFERS',
-                    style: AppTextSizes.eyebrow.copyWith(
-                      color: AppColors.warning,
+                    style: ClinicalText.eyebrow.copyWith(
+                      color: ClinicalPalette.warning,
                       fontSize: 9,
                     ),
                   ),
                 ),
             ],
           ),
-          const Gap.v(AppSpace.xs + 1),
+          const Gap.v(ClinicalSpace.xs + 1),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Expanded(
-                child: _Cell(text: row.leftValue, tone: AppColors.from),
+                child: _Cell(text: row.leftValue, tone: ClinicalPalette.toneLavenderInk),
               ),
-              const Gap.h(AppSpace.md),
+              const Gap.h(ClinicalSpace.md),
               Expanded(
-                child: _Cell(text: row.rightValue, tone: AppColors.to),
+                child: _Cell(text: row.rightValue, tone: ClinicalPalette.toneMintInk),
               ),
             ],
           ),
@@ -632,8 +633,8 @@ class _Cell extends StatelessWidget {
     final dimmed = text == '—';
     return Text(
       text,
-      style: AppTextSizes.body.copyWith(
-        color: dimmed ? AppColors.muted : AppColors.text,
+      style: ClinicalText.body.copyWith(
+        color: dimmed ? ClinicalPalette.muted : ClinicalPalette.text,
         fontWeight: FontWeight.w600,
         fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],
       ),
@@ -681,52 +682,52 @@ class _DrugPickerSheetState extends State<_DrugPickerSheet> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            const Gap.v(AppSpace.sm),
+            const Gap.v(ClinicalSpace.sm),
             Container(
               height: 4,
               width: 36,
               decoration: BoxDecoration(
-                color: AppColors.border,
-                borderRadius: BorderRadius.circular(AppRadii.pill),
+                color: ClinicalPalette.border,
+                borderRadius: BorderRadius.circular(ClinicalRadii.pill),
               ),
             ),
-            const Gap.v(AppSpace.md),
+            const Gap.v(ClinicalSpace.md),
             Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: AppSpace.lg),
+                  const EdgeInsets.symmetric(horizontal: ClinicalSpace.lg),
               child: TextField(
                 autofocus: true,
                 onChanged: (v) => setState(() => _q = v),
-                style: AppTextSizes.body,
+                style: ClinicalText.body,
                 decoration: InputDecoration(
                   hintText: 'Search drugs, class, brand',
-                  hintStyle: AppTextSizes.body
-                      .copyWith(color: AppColors.muted),
+                  hintStyle: ClinicalText.body
+                      .copyWith(color: ClinicalPalette.muted),
                   prefixIcon: const Icon(Icons.search, size: 18),
                   filled: true,
-                  fillColor: AppColors.surfaceHigh,
+                  fillColor: ClinicalPalette.surfaceMuted,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(AppRadii.lg),
+                    borderRadius: BorderRadius.circular(ClinicalRadii.tile),
                     borderSide: BorderSide.none,
                   ),
                 ),
               ),
             ),
-            const Gap.v(AppSpace.sm),
+            const Gap.v(ClinicalSpace.sm),
             Flexible(
               child: ListView.separated(
                 shrinkWrap: true,
                 padding: const EdgeInsets.fromLTRB(
-                  AppSpace.lg,
-                  AppSpace.sm,
-                  AppSpace.lg,
-                  AppSpace.lg,
+                  ClinicalSpace.lg,
+                  ClinicalSpace.sm,
+                  ClinicalSpace.lg,
+                  ClinicalSpace.lg,
                 ),
                 itemCount: filtered.length,
                 separatorBuilder: (_, __) => Divider(
                   height: 0.5,
                   thickness: 0.5,
-                  color: AppColors.border.withValues(alpha: 0.7),
+                  color: ClinicalPalette.border.withValues(alpha: 0.7),
                 ),
                 itemBuilder: (context, i) {
                   final d = filtered[i];
@@ -734,7 +735,7 @@ class _DrugPickerSheetState extends State<_DrugPickerSheet> {
                     onTap: () => Navigator.of(context).pop(d.id),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                        vertical: AppSpace.md,
+                        vertical: ClinicalSpace.md,
                       ),
                       child: Row(
                         children: <Widget>[
@@ -744,13 +745,13 @@ class _DrugPickerSheetState extends State<_DrugPickerSheet> {
                               children: <Widget>[
                                 Text(
                                   d.genericName,
-                                  style: AppTextSizes.body.copyWith(
-                                    color: AppColors.text,
+                                  style: ClinicalText.body.copyWith(
+                                    color: ClinicalPalette.text,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
                                 Text(d.drugClass,
-                                    style: AppTextSizes.caption),
+                                    style: ClinicalText.caption),
                               ],
                             ),
                           ),
@@ -786,20 +787,20 @@ class _FooterNote extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(AppSpace.md),
+      padding: const EdgeInsets.all(ClinicalSpace.md),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.lg),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       child: Text(
         'Comparator surfaces structured registry data only. For a full '
         "clinical picture, open each drug's profile via the picker info "
         'button.',
-        style: AppTextSizes.caption.copyWith(color: AppColors.mutedStrong),
+        style: ClinicalText.caption.copyWith(color: ClinicalPalette.mutedStrong),
       ),
     );
   }

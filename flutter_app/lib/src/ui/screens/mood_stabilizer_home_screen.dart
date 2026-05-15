@@ -17,6 +17,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/router.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
@@ -38,19 +39,19 @@ class _KeyFlag {
 const Map<String, _KeyFlag> _keyFlag = <String, _KeyFlag>{
   'lithium': _KeyFlag(
     'Narrow therapeutic index — level monitoring mandatory',
-    AppColors.warning,
+    ClinicalPalette.warning,
   ),
   'valproate': _KeyFlag(
     'High teratogenicity — contraindicated in WoCBP without EURAP',
-    AppColors.danger,
+    ClinicalPalette.danger,
   ),
   'lamotrigine': _KeyFlag(
     'SJS risk — SLOW titration mandatory, stop on rash',
-    AppColors.danger,
+    ClinicalPalette.danger,
   ),
   'carbamazepine': _KeyFlag(
     'HLA-B*1502 screen MANDATORY in Asians before prescribing',
-    AppColors.danger,
+    ClinicalPalette.danger,
   ),
 };
 
@@ -75,10 +76,10 @@ class MoodStabilizerHomeScreen extends ConsumerWidget {
           data: (engine) {
             return ListView(
               padding: const EdgeInsets.fromLTRB(
-                AppSpace.lg + 4,
-                AppSpace.lg,
-                AppSpace.lg + 4,
-                AppSpace.xl,
+                ClinicalSpace.lg + 4,
+                ClinicalSpace.lg,
+                ClinicalSpace.lg + 4,
+                ClinicalSpace.xl,
               ),
               children: <Widget>[
                 EntranceFade(
@@ -86,10 +87,10 @@ class MoodStabilizerHomeScreen extends ConsumerWidget {
                     'Lithium, valproate, lamotrigine, carbamazepine. '
                     'Includes switching guidance for the critical LTG '
                     'pharmacokinetic interactions.',
-                    style: AppTextSizes.caption.copyWith(height: 1.55),
+                    style: ClinicalText.caption.copyWith(height: 1.55),
                   ),
                 ),
-                const Gap.v(AppSpace.lg),
+                const Gap.v(ClinicalSpace.lg),
 
                 for (var i = 0; i < _moodStabilizerIds.length; i++) ...<Widget>[
                   EntranceFade(
@@ -99,7 +100,7 @@ class MoodStabilizerHomeScreen extends ConsumerWidget {
                       engine: engine,
                     ),
                   ),
-                  const Gap.v(AppSpace.md - 2),
+                  const Gap.v(ClinicalSpace.md - 2),
                 ],
 
                 EntranceFade(
@@ -108,7 +109,7 @@ class MoodStabilizerHomeScreen extends ConsumerWidget {
                     onTap: () => context.pushNamed(Routes.lithiumTapering),
                   ),
                 ),
-                const Gap.v(AppSpace.lg),
+                const Gap.v(ClinicalSpace.lg),
 
                 const EntranceFade(
                   index: 6,
@@ -134,11 +135,11 @@ class _DrugTile extends StatelessWidget {
     final drug = engine.getDrug(drugId);
     if (drug == null) return const SizedBox.shrink();
     final flag = _keyFlag[drugId];
-    final tone = flag?.tone ?? AppColors.border;
+    final tone = flag?.tone ?? ClinicalPalette.border;
 
     return Material(
-      color: AppColors.surface,
-      borderRadius: BorderRadius.circular(AppRadii.lg),
+      color: ClinicalPalette.surface,
+      borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => context.pushNamed(
@@ -147,8 +148,8 @@ class _DrugTile extends StatelessWidget {
         ),
         child: DecoratedBox(
           decoration: BoxDecoration(
-            border: Border.all(color: AppColors.border),
-            borderRadius: BorderRadius.circular(AppRadii.lg),
+            border: Border.all(color: ClinicalPalette.border),
+            borderRadius: BorderRadius.circular(ClinicalRadii.tile),
           ),
           child: IntrinsicHeight(
             child: Row(
@@ -158,10 +159,10 @@ class _DrugTile extends StatelessWidget {
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(
-                      AppSpace.md + 2,
-                      AppSpace.md,
-                      AppSpace.md + 2,
-                      AppSpace.md,
+                      ClinicalSpace.md + 2,
+                      ClinicalSpace.md,
+                      ClinicalSpace.md + 2,
+                      ClinicalSpace.md,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -174,7 +175,7 @@ class _DrugTile extends StatelessWidget {
                               child: Text(
                                 drug.genericName,
                                 style: const TextStyle(
-                                  color: AppColors.text,
+                                  color: ClinicalPalette.text,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: -0.2,
@@ -183,26 +184,26 @@ class _DrugTile extends StatelessWidget {
                             ),
                             Text(
                               drug.drugClass,
-                              style: AppTextSizes.micro,
+                              style: ClinicalText.caption,
                             ),
                           ],
                         ),
                         const Gap.v(2),
                         Text(
                           drug.malaysianBrandNames.join(' · '),
-                          style: AppTextSizes.micro,
+                          style: ClinicalText.caption,
                         ),
                         if (flag != null) ...<Widget>[
-                          const Gap.v(AppSpace.sm),
+                          const Gap.v(ClinicalSpace.sm),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: AppSpace.sm + 2,
-                              vertical: AppSpace.xs + 2,
+                              horizontal: ClinicalSpace.sm + 2,
+                              vertical: ClinicalSpace.xs + 2,
                             ),
                             decoration: BoxDecoration(
                               color: tone.withValues(alpha: 0.1),
                               borderRadius:
-                                  BorderRadius.circular(AppRadii.sm),
+                                  BorderRadius.circular(ClinicalRadii.chip),
                             ),
                             child: Text(
                               flag.label,
@@ -220,10 +221,10 @@ class _DrugTile extends StatelessWidget {
                   ),
                 ),
                 const Padding(
-                  padding: EdgeInsets.only(right: AppSpace.sm),
+                  padding: EdgeInsets.only(right: ClinicalSpace.sm),
                   child: Icon(
                     Icons.chevron_right_rounded,
-                    color: AppColors.muted,
+                    color: ClinicalPalette.muted,
                     size: 22,
                   ),
                 ),
@@ -243,23 +244,23 @@ class _LithiumTaperTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.warning.withValues(alpha: 0.08),
-      borderRadius: BorderRadius.circular(AppRadii.lg),
+      color: ClinicalPalette.warning.withValues(alpha: 0.08),
+      borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: Ink(
           decoration: BoxDecoration(
             border: Border.all(
-              color: AppColors.warning.withValues(alpha: 0.35),
+              color: ClinicalPalette.warning.withValues(alpha: 0.35),
             ),
-            borderRadius: BorderRadius.circular(AppRadii.lg),
+            borderRadius: BorderRadius.circular(ClinicalRadii.tile),
           ),
           padding: const EdgeInsets.fromLTRB(
-            AppSpace.md + 2,
-            AppSpace.md,
-            AppSpace.md + 2,
-            AppSpace.md,
+            ClinicalSpace.md + 2,
+            ClinicalSpace.md,
+            ClinicalSpace.md + 2,
+            ClinicalSpace.md,
           ),
           child: Row(
             children: <Widget>[
@@ -267,32 +268,32 @@ class _LithiumTaperTile extends StatelessWidget {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: AppColors.warning.withValues(alpha: 0.18),
-                  borderRadius: BorderRadius.circular(AppRadii.sm + 2),
+                  color: ClinicalPalette.warning.withValues(alpha: 0.18),
+                  borderRadius: BorderRadius.circular(ClinicalRadii.chip + 2),
                 ),
                 child: const Icon(
                   Icons.trending_down_rounded,
-                  color: AppColors.warning,
+                  color: ClinicalPalette.warning,
                   size: 18,
                 ),
               ),
-              const Gap.h(AppSpace.md),
+              const Gap.h(ClinicalSpace.md),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
                       'STOPPING LITHIUM — SLOW TAPER',
-                      style: AppTextSizes.eyebrow
-                          .copyWith(color: AppColors.warning),
+                      style: ClinicalText.eyebrow
+                          .copyWith(color: ClinicalPalette.warning),
                     ),
-                    const Gap.v(AppSpace.xs),
+                    const Gap.v(ClinicalSpace.xs),
                     const Text(
                       'Maudsley 15 Box 2.3 reduction regimen. '
                       'Manic rebound risk is 7× the untreated rate '
                       'after rapid cessation.',
                       style: TextStyle(
-                        color: AppColors.text,
+                        color: ClinicalPalette.text,
                         fontSize: 12,
                         height: 1.5,
                       ),
@@ -300,10 +301,10 @@ class _LithiumTaperTile extends StatelessWidget {
                   ],
                 ),
               ),
-              const Gap.h(AppSpace.sm),
+              const Gap.h(ClinicalSpace.sm),
               const Icon(
                 Icons.chevron_right_rounded,
-                color: AppColors.warning,
+                color: ClinicalPalette.warning,
                 size: 22,
               ),
             ],
@@ -321,44 +322,44 @@ class _SwitchingCallout extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.md + 2,
-        AppSpace.md,
-        AppSpace.md + 2,
-        AppSpace.md + 2,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.md,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.md + 2,
       ),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(AppRadii.lg),
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           const Text(
             'SWITCHING RULES — KEY INTERACTIONS',
-            style: AppTextSizes.eyebrow,
+            style: ClinicalText.eyebrow,
           ),
-          const Gap.v(AppSpace.sm),
+          const Gap.v(ClinicalSpace.sm),
           const _InteractionRow(
             label: 'CBZ → LTG',
             detail:
                 'As CBZ is withdrawn, LTG levels RISE (CYP induction lost). '
                 'Reduce LTG dose in step.',
-            tone: AppColors.danger,
+            tone: ClinicalPalette.danger,
           ),
-          const Gap.v(AppSpace.sm),
+          const Gap.v(ClinicalSpace.sm),
           const _InteractionRow(
             label: 'VPA → LTG',
             detail:
                 'As VPA is withdrawn, LTG levels FALL (UGT inhibition '
                 'relieved). Increase LTG dose in step.',
-            tone: AppColors.danger,
+            tone: ClinicalPalette.danger,
           ),
-          const Gap.v(AppSpace.md),
+          const Gap.v(ClinicalSpace.md),
           Text(
             'Use Home → Start a switch with these drug pairs to see the '
             'full step-by-step schedule.',
-            style: AppTextSizes.micro.copyWith(height: 1.5),
+            style: ClinicalText.caption.copyWith(height: 1.5),
           ),
         ],
       ),
@@ -391,7 +392,7 @@ class _InteractionRow extends StatelessWidget {
             borderRadius: BorderRadius.circular(2),
           ),
         ),
-        const Gap.h(AppSpace.md - 2),
+        const Gap.h(ClinicalSpace.md - 2),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -399,7 +400,7 @@ class _InteractionRow extends StatelessWidget {
               Text(
                 label,
                 style: const TextStyle(
-                  color: AppColors.text,
+                  color: ClinicalPalette.text,
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                 ),
@@ -407,7 +408,7 @@ class _InteractionRow extends StatelessWidget {
               const Gap.v(2),
               Text(
                 detail,
-                style: AppTextSizes.micro.copyWith(height: 1.5),
+                style: ClinicalText.caption.copyWith(height: 1.5),
               ),
             ],
           ),

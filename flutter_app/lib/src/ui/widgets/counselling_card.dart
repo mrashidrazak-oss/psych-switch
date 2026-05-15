@@ -11,6 +11,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -47,9 +48,9 @@ class _CounsellingCardState extends State<CounsellingCard> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(AppRadii.lg),
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -61,10 +62,10 @@ class _CounsellingCardState extends State<CounsellingCard> {
               onTap: () => setState(() => _expanded = !_expanded),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(
-                  AppSpace.md + 2,
-                  AppSpace.md - 2,
-                  AppSpace.md + 2,
-                  AppSpace.md - 2,
+                  ClinicalSpace.md + 2,
+                  ClinicalSpace.md - 2,
+                  ClinicalSpace.md + 2,
+                  ClinicalSpace.md - 2,
                 ),
                 child: Row(
                   children: <Widget>[
@@ -72,20 +73,20 @@ class _CounsellingCardState extends State<CounsellingCard> {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: AppColors.to.withValues(alpha: 0.15),
+                        color: ClinicalPalette.toneMintInk.withValues(alpha: 0.15),
                         border: Border.all(
-                          color: AppColors.to.withValues(alpha: 0.3),
+                          color: ClinicalPalette.toneMintInk.withValues(alpha: 0.3),
                         ),
                         borderRadius:
-                            BorderRadius.circular(AppRadii.sm + 2),
+                            BorderRadius.circular(ClinicalRadii.chip + 2),
                       ),
                       child: const Icon(
                         Icons.person_outline,
                         size: 16,
-                        color: AppColors.to,
+                        color: ClinicalPalette.toneMintInk,
                       ),
                     ),
-                    const Gap.h(AppSpace.md),
+                    const Gap.h(ClinicalSpace.md),
                     const Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,7 +94,7 @@ class _CounsellingCardState extends State<CounsellingCard> {
                           Text(
                             'Patient counselling card',
                             style: TextStyle(
-                              color: AppColors.text,
+                              color: ClinicalPalette.text,
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
                             ),
@@ -101,7 +102,7 @@ class _CounsellingCardState extends State<CounsellingCard> {
                           Gap.v(2),
                           Text(
                             'Plain-language handout · review before sharing',
-                            style: AppTextSizes.micro,
+                            style: ClinicalText.caption,
                           ),
                         ],
                       ),
@@ -113,7 +114,7 @@ class _CounsellingCardState extends State<CounsellingCard> {
                       child: const Icon(
                         Icons.chevron_right_rounded,
                         size: 22,
-                        color: AppColors.muted,
+                        color: ClinicalPalette.muted,
                       ),
                     ),
                   ],
@@ -132,15 +133,15 @@ class _CounsellingCardState extends State<CounsellingCard> {
                       const Divider(height: 1),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(
-                          AppSpace.md + 2,
-                          AppSpace.md,
-                          AppSpace.md + 2,
-                          AppSpace.md,
+                          ClinicalSpace.md + 2,
+                          ClinicalSpace.md,
+                          ClinicalSpace.md + 2,
+                          ClinicalSpace.md,
                         ),
                         child: SelectableText(
                           widget.text,
                           style: const TextStyle(
-                            color: AppColors.text,
+                            color: ClinicalPalette.text,
                             fontSize: 13,
                             height: 1.55,
                           ),
@@ -149,8 +150,8 @@ class _CounsellingCardState extends State<CounsellingCard> {
                       const Divider(height: 1),
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpace.md,
-                          vertical: AppSpace.sm + 2,
+                          horizontal: ClinicalSpace.md,
+                          vertical: ClinicalSpace.sm + 2,
                         ),
                         child: Row(
                           children: <Widget>[
@@ -166,7 +167,7 @@ class _CounsellingCardState extends State<CounsellingCard> {
                                 ),
                               ),
                             ),
-                            const Gap.h(AppSpace.sm),
+                            const Gap.h(ClinicalSpace.sm),
                             Expanded(
                               child: OutlinedButton.icon(
                                 onPressed: _onShare,

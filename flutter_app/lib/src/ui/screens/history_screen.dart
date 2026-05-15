@@ -19,6 +19,7 @@ import 'package:psychswitch/src/services/notification_service.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/screens/result_screen.dart';
 import 'package:psychswitch/src/ui/theme/breakpoints.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
@@ -66,10 +67,10 @@ class _EmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.xxl,
-        AppSpace.xl,
-        AppSpace.xxl,
-        AppSpace.xxl,
+        ClinicalSpace.xxl,
+        ClinicalSpace.xl,
+        ClinicalSpace.xxl,
+        ClinicalSpace.xxl,
       ),
       child: Center(
         child: Column(
@@ -82,13 +83,13 @@ class _EmptyState extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: <BoxShadow>[
                   BoxShadow(
-                    color: AppColors.from.withValues(alpha: 0.22),
+                    color: ClinicalPalette.toneLavenderInk.withValues(alpha: 0.22),
                     blurRadius: 36,
                     spreadRadius: -10,
                     offset: const Offset(-6, 8),
                   ),
                   BoxShadow(
-                    color: AppColors.to.withValues(alpha: 0.22),
+                    color: ClinicalPalette.toneMintInk.withValues(alpha: 0.22),
                     blurRadius: 36,
                     spreadRadius: -10,
                     offset: const Offset(6, 8),
@@ -103,8 +104,8 @@ class _EmptyState extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: <Color>[
-                      AppColors.from,
-                      AppColors.to,
+                      ClinicalPalette.toneLavenderInk,
+                      ClinicalPalette.toneMintInk,
                     ],
                   ),
                   shape: BoxShape.circle,
@@ -118,25 +119,25 @@ class _EmptyState extends StatelessWidget {
                 ),
               ),
             ),
-            const Gap.v(AppSpace.xl),
+            const Gap.v(ClinicalSpace.xl),
             const Text(
               'No saved cases yet',
               style: TextStyle(
-                color: AppColors.text,
+                color: ClinicalPalette.text,
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
                 letterSpacing: -0.4,
               ),
             ),
-            const Gap.v(AppSpace.sm + 2),
+            const Gap.v(ClinicalSpace.sm + 2),
             Text(
               "Save a case from the result screen — it'll appear here "
               'with a day counter so you can pick the patient back up '
               'at the next visit.',
-              style: AppTextSizes.caption.copyWith(height: 1.55),
+              style: ClinicalText.caption.copyWith(height: 1.55),
               textAlign: TextAlign.center,
             ),
-            const Gap.v(AppSpace.xl),
+            const Gap.v(ClinicalSpace.xl),
             FilledButton.icon(
               onPressed: () {
                 unawaited(hapticsTap());
@@ -145,14 +146,14 @@ class _EmptyState extends StatelessWidget {
               icon: const Icon(Icons.arrow_forward_rounded, size: 18),
               label: const Text('Start a switch'),
               style: FilledButton.styleFrom(
-                backgroundColor: AppColors.accent,
+                backgroundColor: ClinicalPalette.accent,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpace.xl,
-                  vertical: AppSpace.md + 2,
+                  horizontal: ClinicalSpace.xl,
+                  vertical: ClinicalSpace.md + 2,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppRadii.xl),
+                  borderRadius: BorderRadius.circular(ClinicalRadii.card),
                 ),
                 textStyle: const TextStyle(
                   fontSize: 14.5,
@@ -197,19 +198,19 @@ class _CaseList extends ConsumerWidget {
     final now = DateTime.now();
     final elapsed = now.difference(start.toLocal()).inDays + 1;
     final total = plan.rule.durationDays;
-    if (elapsed <= 0) return (label: 'Starts today', tone: AppColors.accent);
+    if (elapsed <= 0) return (label: 'Starts today', tone: ClinicalPalette.accent);
     if (elapsed < total) {
-      return (label: 'Day $elapsed of $total', tone: AppColors.accent);
+      return (label: 'Day $elapsed of $total', tone: ClinicalPalette.accent);
     }
     if (elapsed == total) {
-      return (label: 'Day $total · final', tone: AppColors.to);
+      return (label: 'Day $total · final', tone: ClinicalPalette.toneMintInk);
     }
     final overshoot = elapsed - total;
     return (
       label: overshoot == 1
           ? 'Complete · yesterday'
           : 'Complete · $overshoot days ago',
-      tone: AppColors.mutedStrong,
+      tone: ClinicalPalette.mutedStrong,
     );
   }
 
@@ -221,14 +222,14 @@ class _CaseList extends ConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor: AppColors.surface,
+        backgroundColor: ClinicalPalette.surface,
         title: const Text(
           'Delete case?',
-          style: TextStyle(color: AppColors.text),
+          style: TextStyle(color: ClinicalPalette.text),
         ),
         content: Text(
           'Removes "${c.label}". This cannot be undone.',
-          style: const TextStyle(color: AppColors.muted),
+          style: const TextStyle(color: ClinicalPalette.muted),
         ),
         actions: <Widget>[
           TextButton(
@@ -237,7 +238,7 @@ class _CaseList extends ConsumerWidget {
           ),
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: AppColors.danger,
+              backgroundColor: ClinicalPalette.danger,
               foregroundColor: Colors.white,
             ),
             onPressed: () => Navigator.of(context).pop(true),
@@ -284,17 +285,17 @@ class _CaseList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final header = Padding(
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg,
-        AppSpace.md,
-        AppSpace.lg,
-        AppSpace.md - 2,
+        ClinicalSpace.lg,
+        ClinicalSpace.md,
+        ClinicalSpace.lg,
+        ClinicalSpace.md - 2,
       ),
       child: Row(
         children: <Widget>[
           const Text(
             'SAVED CASES',
             style: TextStyle(
-              color: AppColors.muted,
+              color: ClinicalPalette.muted,
               fontSize: 10,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.6,
@@ -304,7 +305,7 @@ class _CaseList extends ConsumerWidget {
           Text(
             '${cases.length} ${cases.length == 1 ? 'case' : 'cases'}',
             style: const TextStyle(
-              color: AppColors.mutedStrong,
+              color: ClinicalPalette.mutedStrong,
               fontSize: 11.5,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.2,
@@ -320,16 +321,16 @@ class _CaseList extends ConsumerWidget {
           SliverToBoxAdapter(child: header),
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(
-              AppSpace.lg,
+              ClinicalSpace.lg,
               0,
-              AppSpace.lg,
-              AppSpace.xl,
+              ClinicalSpace.lg,
+              ClinicalSpace.xl,
             ),
             sliver: SliverGrid(
               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                 maxCrossAxisExtent: 460,
-                crossAxisSpacing: AppSpace.md,
-                mainAxisSpacing: AppSpace.md,
+                crossAxisSpacing: ClinicalSpace.md,
+                mainAxisSpacing: ClinicalSpace.md,
                 childAspectRatio: 3.4,
               ),
               delegate: SliverChildBuilderDelegate(
@@ -343,13 +344,13 @@ class _CaseList extends ConsumerWidget {
     }
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg,
+        ClinicalSpace.lg,
         0,
-        AppSpace.lg,
-        AppSpace.xl,
+        ClinicalSpace.lg,
+        ClinicalSpace.xl,
       ),
       itemCount: cases.length + 1,
-      separatorBuilder: (_, __) => const Gap.v(AppSpace.sm + 2),
+      separatorBuilder: (_, __) => const Gap.v(ClinicalSpace.sm + 2),
       itemBuilder: (_, i) {
         if (i == 0) return header;
         return _buildTile(context, ref, i - 1);
@@ -387,24 +388,24 @@ class _CaseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.surface,
-      borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+      color: ClinicalPalette.surface,
+      borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: Ink(
           decoration: BoxDecoration(
             border: Border.all(
-              color: AppColors.border.withValues(alpha: 0.7),
+              color: ClinicalPalette.border.withValues(alpha: 0.7),
               width: 0.5,
             ),
-            borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+            borderRadius: BorderRadius.circular(ClinicalRadii.tile),
           ),
           padding: const EdgeInsets.fromLTRB(
-            AppSpace.lg - 2,
-            AppSpace.md + 2,
-            AppSpace.sm,
-            AppSpace.md,
+            ClinicalSpace.lg - 2,
+            ClinicalSpace.md + 2,
+            ClinicalSpace.sm,
+            ClinicalSpace.md,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -418,7 +419,7 @@ class _CaseCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       text: TextSpan(
                         style: const TextStyle(
-                          color: AppColors.text,
+                          color: ClinicalPalette.text,
                           fontSize: 14.5,
                           fontWeight: FontWeight.w700,
                           letterSpacing: -0.1,
@@ -427,31 +428,31 @@ class _CaseCard extends StatelessWidget {
                         children: <InlineSpan>[
                           const WidgetSpan(
                             alignment: PlaceholderAlignment.middle,
-                            child: _Dot(color: AppColors.from),
+                            child: _Dot(color: ClinicalPalette.toneLavenderInk),
                           ),
                           const WidgetSpan(child: SizedBox(width: 5)),
                           TextSpan(text: fromName),
                           TextSpan(
                             text: '  ${_formatDose(caseRow.fromDoseMg)} mg',
                             style: const TextStyle(
-                              color: AppColors.muted,
+                              color: ClinicalPalette.muted,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
                           const TextSpan(
                             text: '   →   ',
-                            style: TextStyle(color: AppColors.muted),
+                            style: TextStyle(color: ClinicalPalette.muted),
                           ),
                           const WidgetSpan(
                             alignment: PlaceholderAlignment.middle,
-                            child: _Dot(color: AppColors.to),
+                            child: _Dot(color: ClinicalPalette.toneMintInk),
                           ),
                           const WidgetSpan(child: SizedBox(width: 5)),
                           TextSpan(text: toName),
                           TextSpan(
                             text: '  ${_formatDose(caseRow.toDoseMg)} mg',
                             style: const TextStyle(
-                              color: AppColors.muted,
+                              color: ClinicalPalette.muted,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -460,7 +461,7 @@ class _CaseCard extends StatelessWidget {
                     ),
                   ),
                   if (status != null) ...<Widget>[
-                    const Gap.h(AppSpace.sm),
+                    const Gap.h(ClinicalSpace.sm),
                     _StatusPill(
                       label: status!.label,
                       tone: status!.tone,
@@ -468,7 +469,7 @@ class _CaseCard extends StatelessWidget {
                   ],
                 ],
               ),
-              const Gap.v(AppSpace.sm + 2),
+              const Gap.v(ClinicalSpace.sm + 2),
               // ── Row 2: label + date + delete ────────────────────
               Row(
                 children: <Widget>[
@@ -478,27 +479,27 @@ class _CaseCard extends StatelessWidget {
                           ? 'Saved case'
                           : caseRow.label,
                       style: const TextStyle(
-                        color: AppColors.mutedStrong,
+                        color: ClinicalPalette.mutedStrong,
                         fontSize: 12.5,
                         fontWeight: FontWeight.w500,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const Gap.h(AppSpace.sm),
+                  const Gap.h(ClinicalSpace.sm),
                   Text(
                     _formatDate(caseRow.updatedISO),
                     style: const TextStyle(
-                      color: AppColors.muted,
+                      color: ClinicalPalette.muted,
                       fontSize: 11.5,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const Gap.h(AppSpace.xs),
+                  const Gap.h(ClinicalSpace.xs),
                   IconButton(
                     icon: const Icon(
                       Icons.delete_outline_rounded,
-                      color: AppColors.muted,
+                      color: ClinicalPalette.muted,
                       size: 18,
                     ),
                     onPressed: onDelete,
@@ -530,12 +531,12 @@ class _StatusPill extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSpace.sm + 1,
+        horizontal: ClinicalSpace.sm + 1,
         vertical: 3,
       ),
       decoration: BoxDecoration(
         color: tone.withValues(alpha: 0.14),
-        borderRadius: BorderRadius.circular(AppRadii.pill),
+        borderRadius: BorderRadius.circular(ClinicalRadii.pill),
         border: Border.all(
           color: tone.withValues(alpha: 0.32),
           width: 0.5,

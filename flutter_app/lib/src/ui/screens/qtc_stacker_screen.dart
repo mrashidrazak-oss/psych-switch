@@ -14,6 +14,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch_engine/qtc_stacker.dart';
@@ -37,13 +38,13 @@ const Map<String, String> _categoryLabel = <String, String>{
 Color _toneFor(QtcCategory c) {
   switch (c) {
     case QtcCategory.known:
-      return AppColors.danger;
+      return ClinicalPalette.danger;
     case QtcCategory.conditional:
-      return AppColors.warning;
+      return ClinicalPalette.warning;
     case QtcCategory.possible:
-      return AppColors.accent;
+      return ClinicalPalette.accent;
     case QtcCategory.low:
-      return AppColors.muted;
+      return ClinicalPalette.muted;
   }
 }
 
@@ -51,12 +52,12 @@ Color _riskTone(OverallRisk r) {
   switch (r) {
     case OverallRisk.none:
     case OverallRisk.low:
-      return AppColors.to;
+      return ClinicalPalette.toneMintInk;
     case OverallRisk.moderate:
-      return AppColors.warning;
+      return ClinicalPalette.warning;
     case OverallRisk.high:
     case OverallRisk.veryHigh:
-      return AppColors.danger;
+      return ClinicalPalette.danger;
   }
 }
 
@@ -132,10 +133,10 @@ class _QtcStackerScreenState extends ConsumerState<QtcStackerScreen> {
               children: <Widget>[
                 ListView(
                   padding: const EdgeInsets.fromLTRB(
-                    AppSpace.lg + 4,
-                    AppSpace.lg,
-                    AppSpace.lg + 4,
-                    AppSpace.xxxl + AppSpace.lg, // room for FAB
+                    ClinicalSpace.lg + 4,
+                    ClinicalSpace.lg,
+                    ClinicalSpace.lg + 4,
+                    ClinicalSpace.xxxl + ClinicalSpace.lg, // room for FAB
                   ),
                   children: <Widget>[
                     // ── Hero header — same clinical-poster chrome as
@@ -144,67 +145,67 @@ class _QtcStackerScreenState extends ConsumerState<QtcStackerScreen> {
                       totalDrugs: totalDrugs,
                       selectedCount: _selected.length,
                     ),
-                    const Gap.v(AppSpace.lg),
+                    const Gap.v(ClinicalSpace.lg),
 
                     // Risk legend.
                     const _RiskLegend(),
-                    const Gap.v(AppSpace.lg),
+                    const Gap.v(ClinicalSpace.lg),
 
                     for (final cat in _categoryOrder) ...<Widget>[
                       if (grouped[cat]?.isNotEmpty ?? false) ...<Widget>[
                         Text(
                           _categoryLabel[cat] ?? cat.toUpperCase(),
-                          style: AppTextSizes.eyebrow,
+                          style: ClinicalText.eyebrow,
                         ),
-                        const Gap.v(AppSpace.sm),
+                        const Gap.v(ClinicalSpace.sm),
                         _DrugGroup(
                           drugs: grouped[cat]!,
                           selected: _selected,
                           onToggle: _toggle,
                         ),
-                        const Gap.v(AppSpace.lg),
+                        const Gap.v(ClinicalSpace.lg),
                       ],
                     ],
 
                     if (_showResult && _selected.isNotEmpty) ...<Widget>[
                       _AssessmentCard(assessment: assessment),
-                      const Gap.v(AppSpace.md),
+                      const Gap.v(ClinicalSpace.md),
                       // Per-drug notes for selected drugs with non-low risk.
                       for (final d in assessment.selectedDrugs
                           .where((d) => d.qtcCategory != QtcCategory.low))
                         Padding(
                           padding: const EdgeInsets.only(
-                            bottom: AppSpace.sm,
+                            bottom: ClinicalSpace.sm,
                           ),
                           child: _DrugNoteCard(drug: d),
                         ),
-                      const Gap.v(AppSpace.md),
+                      const Gap.v(ClinicalSpace.md),
                     ],
 
                     // Source.
                     Container(
                       padding: const EdgeInsets.fromLTRB(
-                        AppSpace.lg - 2,
-                        AppSpace.md + 2,
-                        AppSpace.lg - 2,
-                        AppSpace.md + 2,
+                        ClinicalSpace.lg - 2,
+                        ClinicalSpace.md + 2,
+                        ClinicalSpace.lg - 2,
+                        ClinicalSpace.md + 2,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.surface,
+                        color: ClinicalPalette.surface,
                         border: Border.all(
-                          color: AppColors.border.withValues(alpha: 0.7),
+                          color: ClinicalPalette.border.withValues(alpha: 0.7),
                           width: 0.5,
                         ),
-                        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+                        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           const Text(
                             'DATA SOURCE',
-                            style: AppTextSizes.eyebrow,
+                            style: ClinicalText.eyebrow,
                           ),
-                          const Gap.v(AppSpace.sm),
+                          const Gap.v(ClinicalSpace.sm),
                           for (var i = 0;
                               i < data.citations.take(2).length;
                               i++)
@@ -213,16 +214,16 @@ class _QtcStackerScreenState extends ConsumerState<QtcStackerScreen> {
                               child: Text(
                                 '[${i + 1}] ${data.citations[i]}',
                                 style: const TextStyle(
-                                  color: AppColors.text,
+                                  color: ClinicalPalette.text,
                                   fontSize: 12.5,
                                   height: 1.55,
                                 ),
                               ),
                             ),
-                          const Gap.v(AppSpace.xs),
+                          const Gap.v(ClinicalSpace.xs),
                           Text(
                             'Reviewed by: ${data.reviewedBy}',
-                            style: AppTextSizes.micro,
+                            style: ClinicalText.caption,
                           ),
                         ],
                       ),
@@ -232,9 +233,9 @@ class _QtcStackerScreenState extends ConsumerState<QtcStackerScreen> {
 
                 // Floating Assess button.
                 Positioned(
-                  left: AppSpace.lg,
-                  right: AppSpace.lg,
-                  bottom: AppSpace.lg,
+                  left: ClinicalSpace.lg,
+                  right: ClinicalSpace.lg,
+                  bottom: ClinicalSpace.lg,
                   child: SizedBox(
                     width: double.infinity,
                     child: FilledButton.icon(
@@ -279,8 +280,8 @@ class _RiskLegend extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Wrap(
-      spacing: AppSpace.md,
-      runSpacing: AppSpace.xs + 2,
+      spacing: ClinicalSpace.md,
+      runSpacing: ClinicalSpace.xs + 2,
       children: <Widget>[
         for (final (cat, label) in _entries)
           Row(
@@ -294,7 +295,7 @@ class _RiskLegend extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
               ),
-              const Gap.h(AppSpace.xs + 2),
+              const Gap.h(ClinicalSpace.xs + 2),
               Text(
                 label,
                 style: TextStyle(
@@ -325,12 +326,12 @@ class _DrugGroup extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -366,7 +367,7 @@ class _DrugRow extends StatelessWidget {
     final tone = _toneFor(drug.qtcCategory);
     return Material(
       color: isSelected
-          ? AppColors.accent.withValues(alpha: 0.1)
+          ? ClinicalPalette.accent.withValues(alpha: 0.1)
           : Colors.transparent,
       child: InkWell(
         onTap: onTap,
@@ -376,15 +377,15 @@ class _DrugRow extends StatelessWidget {
                 ? null
                 : Border(
                     bottom: BorderSide(
-                      color: AppColors.border.withValues(alpha: 0.5),
+                      color: ClinicalPalette.border.withValues(alpha: 0.5),
                       width: 0.5,
                     ),
                   ),
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: AppSpace.md + 2,
-              vertical: AppSpace.md - 2,
+              horizontal: ClinicalSpace.md + 2,
+              vertical: ClinicalSpace.md - 2,
             ),
             child: Row(
               children: <Widget>[
@@ -394,15 +395,15 @@ class _DrugRow extends StatelessWidget {
                   height: 22,
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? AppColors.accent
+                        ? ClinicalPalette.accent
                         : Colors.transparent,
                     border: Border.all(
                       color: isSelected
-                          ? AppColors.accent
-                          : AppColors.border,
+                          ? ClinicalPalette.accent
+                          : ClinicalPalette.border,
                       width: 1.5,
                     ),
-                    borderRadius: BorderRadius.circular(AppRadii.sm - 2),
+                    borderRadius: BorderRadius.circular(ClinicalRadii.chip - 2),
                   ),
                   child: isSelected
                       ? const Icon(
@@ -412,12 +413,12 @@ class _DrugRow extends StatelessWidget {
                         )
                       : null,
                 ),
-                const Gap.h(AppSpace.md - 2),
+                const Gap.h(ClinicalSpace.md - 2),
                 Expanded(
                   child: Text(
                     drug.name,
                     style: const TextStyle(
-                      color: AppColors.text,
+                      color: ClinicalPalette.text,
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
@@ -425,13 +426,13 @@ class _DrugRow extends StatelessWidget {
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpace.sm,
+                    horizontal: ClinicalSpace.sm,
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
                     color: tone.withValues(alpha: 0.16),
                     border: Border.all(color: tone.withValues(alpha: 0.3)),
-                    borderRadius: BorderRadius.circular(AppRadii.pill),
+                    borderRadius: BorderRadius.circular(ClinicalRadii.pill),
                   ),
                   child: Text(
                     drug.qtcCategory.jsonValue.toUpperCase(),
@@ -460,15 +461,15 @@ class _AssessmentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final tone = _riskTone(assessment.overallRisk);
     return ClipRRect(
-      borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+      borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: ClinicalPalette.surface,
           border: Border.all(
-            color: AppColors.border.withValues(alpha: 0.7),
+            color: ClinicalPalette.border.withValues(alpha: 0.7),
             width: 0.5,
           ),
-          borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+          borderRadius: BorderRadius.circular(ClinicalRadii.tile),
         ),
         child: IntrinsicHeight(
           child: Row(
@@ -478,10 +479,10 @@ class _AssessmentCard extends StatelessWidget {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(
-                    AppSpace.md + 2,
-                    AppSpace.md,
-                    AppSpace.md + 2,
-                    AppSpace.md,
+                    ClinicalSpace.md + 2,
+                    ClinicalSpace.md,
+                    ClinicalSpace.md + 2,
+                    ClinicalSpace.md,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -495,24 +496,24 @@ class _AssessmentCard extends StatelessWidget {
                           letterSpacing: -0.2,
                         ),
                       ),
-                      const Gap.v(AppSpace.xs),
+                      const Gap.v(ClinicalSpace.xs),
                       Text(
                         assessment.summary,
-                        style: AppTextSizes.micro.copyWith(height: 1.5),
+                        style: ClinicalText.caption.copyWith(height: 1.5),
                       ),
-                      const Gap.v(AppSpace.md),
+                      const Gap.v(ClinicalSpace.md),
                       const Text(
                         'RECOMMENDATIONS',
-                        style: AppTextSizes.eyebrow,
+                        style: ClinicalText.eyebrow,
                       ),
-                      const Gap.v(AppSpace.xs + 2),
+                      const Gap.v(ClinicalSpace.xs + 2),
                       for (final r in assessment.recommendations)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 4),
                           child: Text(
                             '• $r',
                             style: const TextStyle(
-                              color: AppColors.text,
+                              color: ClinicalPalette.text,
                               fontSize: 13,
                               height: 1.5,
                             ),
@@ -538,15 +539,15 @@ class _DrugNoteCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final tone = _toneFor(drug.qtcCategory);
     return ClipRRect(
-      borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+      borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: ClinicalPalette.surface,
           border: Border.all(
-            color: AppColors.border.withValues(alpha: 0.7),
+            color: ClinicalPalette.border.withValues(alpha: 0.7),
             width: 0.5,
           ),
-          borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+          borderRadius: BorderRadius.circular(ClinicalRadii.tile),
         ),
         child: IntrinsicHeight(
           child: Row(
@@ -556,10 +557,10 @@ class _DrugNoteCard extends StatelessWidget {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(
-                    AppSpace.md + 2,
-                    AppSpace.md - 2,
-                    AppSpace.md + 2,
-                    AppSpace.md - 2,
+                    ClinicalSpace.md + 2,
+                    ClinicalSpace.md - 2,
+                    ClinicalSpace.md + 2,
+                    ClinicalSpace.md - 2,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -571,12 +572,12 @@ class _DrugNoteCard extends StatelessWidget {
                           Text(
                             drug.name,
                             style: const TextStyle(
-                              color: AppColors.text,
+                              color: ClinicalPalette.text,
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                          const Gap.h(AppSpace.xs),
+                          const Gap.h(ClinicalSpace.xs),
                           Text(
                             '(${drug.qtcCategory.jsonValue})',
                             style: TextStyle(
@@ -587,10 +588,10 @@ class _DrugNoteCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const Gap.v(AppSpace.xs),
+                      const Gap.v(ClinicalSpace.xs),
                       Text(
                         drug.notes,
-                        style: AppTextSizes.micro.copyWith(height: 1.5),
+                        style: ClinicalText.caption.copyWith(height: 1.5),
                       ),
                     ],
                   ),
@@ -619,15 +620,15 @@ class _QtcHeroHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const tone = AppColors.warning;
+    const tone = ClinicalPalette.warning;
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.xl),
+        borderRadius: BorderRadius.circular(ClinicalRadii.card),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -637,10 +638,10 @@ class _QtcHeroHeader extends StatelessWidget {
           Container(
             color: tone.withValues(alpha: 0.08),
             padding: const EdgeInsets.fromLTRB(
-              AppSpace.lg,
-              AppSpace.md + 2,
-              AppSpace.md - 2,
-              AppSpace.md + 2,
+              ClinicalSpace.lg,
+              ClinicalSpace.md + 2,
+              ClinicalSpace.md - 2,
+              ClinicalSpace.md + 2,
             ),
             child: Row(
               children: <Widget>[
@@ -653,7 +654,7 @@ class _QtcHeroHeader extends StatelessWidget {
                       color: tone.withValues(alpha: 0.36),
                       width: 0.5,
                     ),
-                    borderRadius: BorderRadius.circular(AppRadii.md),
+                    borderRadius: BorderRadius.circular(ClinicalRadii.chip),
                   ),
                   child: const Icon(
                     Icons.monitor_heart_outlined,
@@ -661,7 +662,7 @@ class _QtcHeroHeader extends StatelessWidget {
                     color: tone,
                   ),
                 ),
-                const Gap.h(AppSpace.md),
+                const Gap.h(ClinicalSpace.md),
                 const Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -669,18 +670,18 @@ class _QtcHeroHeader extends StatelessWidget {
                       Text(
                         'QTc stacker',
                         style: TextStyle(
-                          color: AppColors.text,
+                          color: ClinicalPalette.text,
                           fontSize: 19,
                           fontWeight: FontWeight.w800,
                           letterSpacing: -0.4,
                           height: 1.15,
                         ),
                       ),
-                      Gap.v(AppSpace.xs - 1),
+                      Gap.v(ClinicalSpace.xs - 1),
                       Text(
                         'Cumulative QTc-prolongation risk',
                         style: TextStyle(
-                          color: AppColors.muted,
+                          color: ClinicalPalette.muted,
                           fontSize: 12.5,
                           fontWeight: FontWeight.w500,
                           letterSpacing: 0.1,
@@ -696,10 +697,10 @@ class _QtcHeroHeader extends StatelessWidget {
           // ── Stats row ─────────────────────────────────────────
           Padding(
             padding: const EdgeInsets.fromLTRB(
-              AppSpace.lg,
-              AppSpace.md + 2,
-              AppSpace.lg,
-              AppSpace.md,
+              ClinicalSpace.lg,
+              ClinicalSpace.md + 2,
+              ClinicalSpace.lg,
+              ClinicalSpace.md,
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -714,7 +715,7 @@ class _QtcHeroHeader extends StatelessWidget {
                 Container(
                   width: 0.5,
                   height: 36,
-                  color: AppColors.border.withValues(alpha: 0.6),
+                  color: ClinicalPalette.border.withValues(alpha: 0.6),
                 ),
                 Expanded(
                   child: _QtcMiniStat(
@@ -722,8 +723,8 @@ class _QtcHeroHeader extends StatelessWidget {
                     value: '$selectedCount',
                     unit: selectedCount == 1 ? 'drug' : 'drugs',
                     tone: selectedCount == 0
-                        ? AppColors.muted
-                        : AppColors.accent,
+                        ? ClinicalPalette.muted
+                        : ClinicalPalette.accent,
                   ),
                 ),
               ],
@@ -731,18 +732,18 @@ class _QtcHeroHeader extends StatelessWidget {
           ),
           // ── Rationale band ────────────────────────────────────
           Container(
-            color: AppColors.bg.withValues(alpha: 0.4),
+            color: ClinicalPalette.bg.withValues(alpha: 0.4),
             padding: const EdgeInsets.fromLTRB(
-              AppSpace.lg,
-              AppSpace.sm + 2,
-              AppSpace.lg,
-              AppSpace.sm + 2,
+              ClinicalSpace.lg,
+              ClinicalSpace.sm + 2,
+              ClinicalSpace.lg,
+              ClinicalSpace.sm + 2,
             ),
             child: Text(
               'Tap every drug the patient is on. CredibleMeds-tiered '
               'risk × dose-additive scoring → aggregate ECG / cardiology '
               'recommendation. Tap Assess once selections are complete.',
-              style: AppTextSizes.caption.copyWith(height: 1.55),
+              style: ClinicalText.caption.copyWith(height: 1.55),
             ),
           ),
         ],
@@ -774,7 +775,7 @@ class _QtcMiniStat extends StatelessWidget {
           Text(
             eyebrow,
             style: const TextStyle(
-              color: AppColors.muted,
+              color: ClinicalPalette.muted,
               fontSize: 10,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.4,
@@ -788,7 +789,7 @@ class _QtcMiniStat extends StatelessWidget {
               Text(
                 value,
                 style: TextStyle(
-                  color: tone ?? AppColors.text,
+                  color: tone ?? ClinicalPalette.text,
                   fontSize: 28,
                   fontWeight: FontWeight.w800,
                   letterSpacing: -0.8,
@@ -804,7 +805,7 @@ class _QtcMiniStat extends StatelessWidget {
                 child: Text(
                   unit,
                   style: const TextStyle(
-                    color: AppColors.muted,
+                    color: ClinicalPalette.muted,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.1,

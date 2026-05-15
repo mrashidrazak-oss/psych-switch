@@ -28,6 +28,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch_engine/clozapine.dart';
@@ -180,7 +181,7 @@ class _ClozapineTabBarState extends State<_ClozapineTabBar> {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: AppColors.border.withValues(alpha: 0.6),
+            color: ClinicalPalette.border.withValues(alpha: 0.6),
             width: 0.5,
           ),
         ),
@@ -188,10 +189,10 @@ class _ClozapineTabBarState extends State<_ClozapineTabBar> {
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.fromLTRB(
-          AppSpace.md,
-          AppSpace.sm,
-          AppSpace.md,
-          AppSpace.sm + 2,
+          ClinicalSpace.md,
+          ClinicalSpace.sm,
+          ClinicalSpace.md,
+          ClinicalSpace.sm + 2,
         ),
         physics: const BouncingScrollPhysics(),
         child: Row(
@@ -234,34 +235,34 @@ class _ClozapineTabChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final activeBg = AppColors.accent.withValues(alpha: 0.14);
-    const activeText = AppColors.accent;
-    const inactiveText = AppColors.muted;
+    final activeBg = ClinicalPalette.accent.withValues(alpha: 0.14);
+    const activeText = ClinicalPalette.accent;
+    const inactiveText = ClinicalPalette.muted;
     return Semantics(
       button: true,
       selected: isActive,
       label: spec.label,
       child: Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(AppRadii.pill),
+        borderRadius: BorderRadius.circular(ClinicalRadii.pill),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(AppRadii.pill),
+          borderRadius: BorderRadius.circular(ClinicalRadii.pill),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeOutCubic,
             padding: const EdgeInsets.symmetric(
-              horizontal: AppSpace.md + 2,
-              vertical: AppSpace.sm,
+              horizontal: ClinicalSpace.md + 2,
+              vertical: ClinicalSpace.sm,
             ),
             decoration: BoxDecoration(
               color: isActive ? activeBg : Colors.transparent,
-              borderRadius: BorderRadius.circular(AppRadii.pill),
+              borderRadius: BorderRadius.circular(ClinicalRadii.pill),
               border: Border.all(
                 color: isActive
-                    ? AppColors.accent.withValues(alpha: 0.35)
-                    : AppColors.border.withValues(alpha: 0.4),
+                    ? ClinicalPalette.accent.withValues(alpha: 0.35)
+                    : ClinicalPalette.border.withValues(alpha: 0.4),
                 width: 0.5,
               ),
             ),
@@ -379,7 +380,7 @@ class _TitrationTabState extends State<_TitrationTab> {
         _NoteCard(
           eyebrow: 'MISSED DOSE',
           body: protocol.missedDoseRule,
-          tone: AppColors.warning,
+          tone: ClinicalPalette.warning,
         ),
 
         const SizedBox(height: 20),
@@ -405,11 +406,11 @@ class _RegimenSelector extends StatelessWidget {
   Color _activeTone(TitrationRegimen r) {
     switch (r) {
       case TitrationRegimen.maudsley15:
-        return AppColors.accent;
+        return ClinicalPalette.accent;
       case TitrationRegimen.maudsley14:
-        return AppColors.mutedStrong;
+        return ClinicalPalette.mutedStrong;
       case TitrationRegimen.community:
-        return AppColors.to;
+        return ClinicalPalette.toneMintInk;
     }
   }
 
@@ -417,10 +418,10 @@ class _RegimenSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.bg,
-        borderRadius: BorderRadius.circular(AppRadii.md + 2),
+        color: ClinicalPalette.bg,
+        borderRadius: BorderRadius.circular(ClinicalRadii.chip + 2),
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.5),
+          color: ClinicalPalette.border.withValues(alpha: 0.5),
           width: 0.5,
         ),
       ),
@@ -458,7 +459,7 @@ class _RegimenSegment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final summary = regimenSummaries[regimen]!;
-    final activeColor = isActive ? activeTone : AppColors.muted;
+    final activeColor = isActive ? activeTone : ClinicalPalette.muted;
     return Semantics(
       button: true,
       selected: isActive,
@@ -467,14 +468,14 @@ class _RegimenSegment extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(AppRadii.md),
+          borderRadius: BorderRadius.circular(ClinicalRadii.chip),
           child: Container(
             decoration: BoxDecoration(
-              color: isActive ? AppColors.surface : Colors.transparent,
-              borderRadius: BorderRadius.circular(AppRadii.md),
+              color: isActive ? ClinicalPalette.surface : Colors.transparent,
+              borderRadius: BorderRadius.circular(ClinicalRadii.chip),
               border: isActive
                   ? Border.all(
-                      color: AppColors.border.withValues(alpha: 0.7),
+                      color: ClinicalPalette.border.withValues(alpha: 0.7),
                       width: 0.5,
                     )
                   : null,
@@ -489,7 +490,7 @@ class _RegimenSegment extends StatelessWidget {
                 Text(
                   summary.label,
                   style: TextStyle(
-                    color: isActive ? activeColor : AppColors.muted,
+                    color: isActive ? activeColor : ClinicalPalette.muted,
                     fontSize: 12.5,
                     fontWeight: FontWeight.w700,
                     letterSpacing: -0.1,
@@ -503,7 +504,7 @@ class _RegimenSegment extends StatelessWidget {
                   style: TextStyle(
                     color: isActive
                         ? activeColor.withValues(alpha: 0.85)
-                        : AppColors.muted.withValues(alpha: 0.75),
+                        : ClinicalPalette.muted.withValues(alpha: 0.75),
                     fontSize: 9.5,
                     fontWeight: FontWeight.w500,
                     letterSpacing: 0.2,
@@ -537,9 +538,9 @@ class _RegimenReasoningCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tone = switch (regimen) {
-      TitrationRegimen.maudsley15 => AppColors.accent,
-      TitrationRegimen.maudsley14 => AppColors.mutedStrong,
-      TitrationRegimen.community => AppColors.to,
+      TitrationRegimen.maudsley15 => ClinicalPalette.accent,
+      TitrationRegimen.maudsley14 => ClinicalPalette.mutedStrong,
+      TitrationRegimen.community => ClinicalPalette.toneMintInk,
     };
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
@@ -569,7 +570,7 @@ class _RegimenReasoningCard extends StatelessWidget {
           Text(
             summary.reasoning,
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 12.5,
               height: 1.55,
             ),
@@ -630,9 +631,9 @@ class _ProtocolHeaderCard extends StatelessWidget {
   }
 
   Color _tone() => switch (regimen) {
-        TitrationRegimen.maudsley15 => AppColors.accent,
-        TitrationRegimen.maudsley14 => AppColors.mutedStrong,
-        TitrationRegimen.community => AppColors.to,
+        TitrationRegimen.maudsley15 => ClinicalPalette.accent,
+        TitrationRegimen.maudsley14 => ClinicalPalette.mutedStrong,
+        TitrationRegimen.community => ClinicalPalette.toneMintInk,
       };
 
   String _formatNum(num n) {
@@ -647,12 +648,12 @@ class _ProtocolHeaderCard extends StatelessWidget {
         protocol.steps.isNotEmpty ? protocol.steps.first.totalMg : 0;
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.xl),
+        borderRadius: BorderRadius.circular(ClinicalRadii.card),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -684,7 +685,7 @@ class _ProtocolHeaderCard extends StatelessWidget {
                             child: Text(
                               _regimenTitle(),
                               style: const TextStyle(
-                                color: AppColors.text,
+                                color: ClinicalPalette.text,
                                 fontSize: 17,
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: -0.3,
@@ -701,7 +702,7 @@ class _ProtocolHeaderCard extends StatelessWidget {
                         child: Text(
                           _regimenTagline(),
                           style: const TextStyle(
-                            color: AppColors.muted,
+                            color: ClinicalPalette.muted,
                             fontSize: 12.5,
                             fontWeight: FontWeight.w500,
                             letterSpacing: 0.1,
@@ -720,7 +721,7 @@ class _ProtocolHeaderCard extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: tone.withValues(alpha: 0.16),
-                    borderRadius: BorderRadius.circular(AppRadii.pill),
+                    borderRadius: BorderRadius.circular(ClinicalRadii.pill),
                   ),
                   child: Text(
                     _variantChip(),
@@ -744,7 +745,7 @@ class _ProtocolHeaderCard extends StatelessWidget {
                 const Text(
                   'TARGET MAINTENANCE',
                   style: TextStyle(
-                    color: AppColors.muted,
+                    color: ClinicalPalette.muted,
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.6,
@@ -757,7 +758,7 @@ class _ProtocolHeaderCard extends StatelessWidget {
                       TextSpan(
                         text: _formatNum(protocol.targetDoseMg),
                         style: const TextStyle(
-                          color: AppColors.text,
+                          color: ClinicalPalette.text,
                           fontSize: 44,
                           fontWeight: FontWeight.w800,
                           letterSpacing: -1.4,
@@ -771,7 +772,7 @@ class _ProtocolHeaderCard extends StatelessWidget {
                       const TextSpan(
                         text: 'mg',
                         style: TextStyle(
-                          color: AppColors.text,
+                          color: ClinicalPalette.text,
                           fontSize: 17,
                           fontWeight: FontWeight.w700,
                           height: 1,
@@ -781,7 +782,7 @@ class _ProtocolHeaderCard extends StatelessWidget {
                       const TextSpan(
                         text: ' / day',
                         style: TextStyle(
-                          color: AppColors.muted,
+                          color: ClinicalPalette.muted,
                           fontSize: 15,
                           fontWeight: FontWeight.w500,
                           height: 1,
@@ -809,7 +810,7 @@ class _ProtocolHeaderCard extends StatelessWidget {
                 Container(
                   width: 0.5,
                   height: 32,
-                  color: AppColors.border.withValues(alpha: 0.6),
+                  color: ClinicalPalette.border.withValues(alpha: 0.6),
                 ),
                 Expanded(
                   child: _HeaderMiniStat(
@@ -823,12 +824,12 @@ class _ProtocolHeaderCard extends StatelessWidget {
           ),
           // ─── 4. Rationale band ──────────────────────────────────
           Container(
-            color: AppColors.bg.withValues(alpha: 0.4),
+            color: ClinicalPalette.bg.withValues(alpha: 0.4),
             padding: const EdgeInsets.fromLTRB(18, 13, 18, 15),
             child: Text(
               protocol.rationale,
               style: const TextStyle(
-                color: AppColors.muted,
+                color: ClinicalPalette.muted,
                 fontSize: 12.5,
                 height: 1.55,
               ),
@@ -859,7 +860,7 @@ class _HeaderMiniStat extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Icon(icon, size: 14, color: AppColors.mutedStrong),
+        Icon(icon, size: 14, color: ClinicalPalette.mutedStrong),
         const SizedBox(width: 8),
         Column(
           mainAxisSize: MainAxisSize.min,
@@ -868,7 +869,7 @@ class _HeaderMiniStat extends StatelessWidget {
             Text(
               label,
               style: const TextStyle(
-                color: AppColors.muted,
+                color: ClinicalPalette.muted,
                 fontSize: 10.5,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.3,
@@ -878,7 +879,7 @@ class _HeaderMiniStat extends StatelessWidget {
             Text(
               value,
               style: const TextStyle(
-                color: AppColors.text,
+                color: ClinicalPalette.text,
                 fontSize: 13.5,
                 fontWeight: FontWeight.w700,
                 letterSpacing: -0.1,
@@ -901,8 +902,8 @@ class _TitrationTable extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -915,7 +916,7 @@ class _TitrationTable extends StatelessWidget {
             total: 'Total',
             notes: 'Notes',
           ),
-          const Divider(height: 1, color: AppColors.border),
+          const Divider(height: 1, color: ClinicalPalette.border),
           ...steps.map(
             (s) => Column(
               children: <Widget>[
@@ -926,7 +927,7 @@ class _TitrationTable extends StatelessWidget {
                   total: _doseLabel(s.totalMg),
                   notes: s.notes ?? '',
                 ),
-                const Divider(height: 1, color: AppColors.border),
+                const Divider(height: 1, color: ClinicalPalette.border),
               ],
             ),
           ),
@@ -961,7 +962,7 @@ class _TitrationRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isHeader ? AppColors.muted : AppColors.text;
+    final color = isHeader ? ClinicalPalette.muted : ClinicalPalette.text;
     final weight = isHeader ? FontWeight.w600 : FontWeight.w500;
     final size = isHeader ? 11.0 : 13.0;
     final letterSpacing = isHeader ? 1.5 : 0.0;
@@ -989,7 +990,7 @@ class _TitrationRow extends StatelessWidget {
             child: Text(
               isHeader ? notes.toUpperCase() : notes,
               style: style.copyWith(
-                color: isHeader ? AppColors.muted : AppColors.muted,
+                color: isHeader ? ClinicalPalette.muted : ClinicalPalette.muted,
                 fontSize: isHeader ? 11 : 11.5,
                 height: 1.3,
               ),
@@ -1018,7 +1019,7 @@ class _FbcTab extends StatelessWidget {
         Text(
           schedule.rationale,
           style: const TextStyle(
-            color: AppColors.muted,
+            color: ClinicalPalette.muted,
             fontSize: 13,
             height: 1.5,
           ),
@@ -1062,7 +1063,7 @@ class _FbcTab extends StatelessWidget {
         Text(
           schedule.fbcThresholds.benAdjustment.notes,
           style: const TextStyle(
-            color: AppColors.muted,
+            color: ClinicalPalette.muted,
             fontSize: 11,
             height: 1.5,
             fontStyle: FontStyle.italic,
@@ -1089,8 +1090,8 @@ class _PhaseCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -1101,7 +1102,7 @@ class _PhaseCard extends StatelessWidget {
               Text(
                 phase.phase.toUpperCase(),
                 style: const TextStyle(
-                  color: AppColors.accent,
+                  color: ClinicalPalette.accent,
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.3,
@@ -1111,7 +1112,7 @@ class _PhaseCard extends StatelessWidget {
               Text(
                 span,
                 style: const TextStyle(
-                  color: AppColors.muted,
+                  color: ClinicalPalette.muted,
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                 ),
@@ -1122,7 +1123,7 @@ class _PhaseCard extends StatelessWidget {
           Text(
             '${phase.frequency} · ${phase.test}',
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 13,
               fontWeight: FontWeight.w600,
               height: 1.4,
@@ -1133,7 +1134,7 @@ class _PhaseCard extends StatelessWidget {
             Text(
               phase.notes,
               style: const TextStyle(
-                color: AppColors.muted,
+                color: ClinicalPalette.muted,
                 fontSize: 12,
                 height: 1.45,
               ),
@@ -1155,8 +1156,8 @@ class _MilestoneCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -1165,7 +1166,7 @@ class _MilestoneCard extends StatelessWidget {
           Text(
             milestone.timepoint.toUpperCase(),
             style: const TextStyle(
-              color: AppColors.warning,
+              color: ClinicalPalette.warning,
               fontSize: 11,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.3,
@@ -1175,7 +1176,7 @@ class _MilestoneCard extends StatelessWidget {
           Text(
             milestone.tests.join(' · '),
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 13,
               fontWeight: FontWeight.w600,
               height: 1.4,
@@ -1185,7 +1186,7 @@ class _MilestoneCard extends StatelessWidget {
           Text(
             milestone.criticalNotes,
             style: const TextStyle(
-              color: AppColors.muted,
+              color: ClinicalPalette.muted,
               fontSize: 12,
               height: 1.45,
             ),
@@ -1231,8 +1232,8 @@ class _ThresholdsCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -1240,21 +1241,21 @@ class _ThresholdsCard extends StatelessWidget {
         children: <Widget>[
           _ThresholdRow(
             zone: 'GREEN',
-            color: AppColors.to,
+            color: ClinicalPalette.toneMintInk,
             anc: '≥ $ancGreen',
             wbc: '≥ $wbcGreen',
           ),
           const SizedBox(height: 6),
           _ThresholdRow(
             zone: 'AMBER',
-            color: AppColors.warning,
+            color: ClinicalPalette.warning,
             anc: '$ancAmberLow–$ancAmberHigh',
             wbc: '$wbcAmberLow–$wbcAmberHigh',
           ),
           const SizedBox(height: 6),
           _ThresholdRow(
             zone: 'RED',
-            color: AppColors.danger,
+            color: ClinicalPalette.danger,
             anc: '< $ancRed',
             wbc: '< $wbcRed',
           ),
@@ -1262,7 +1263,7 @@ class _ThresholdsCard extends StatelessWidget {
           Text(
             'Units: ${thresholds.unit}',
             style: const TextStyle(
-              color: AppColors.muted,
+              color: ClinicalPalette.muted,
               fontSize: 11,
               fontStyle: FontStyle.italic,
             ),
@@ -1312,7 +1313,7 @@ class _ThresholdRow extends StatelessWidget {
           child: Text(
             'ANC $anc',
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 12,
               fontFamily: 'monospace',
             ),
@@ -1322,7 +1323,7 @@ class _ThresholdRow extends StatelessWidget {
           child: Text(
             'WBC $wbc',
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 12,
               fontFamily: 'monospace',
             ),
@@ -1394,7 +1395,7 @@ class _AncCheckTabState extends State<_AncCheckTab> {
           'documented benign ethnic neutropenia — thresholds adjust to '
           'the BEN scheme.',
           style: TextStyle(
-            color: AppColors.muted,
+            color: ClinicalPalette.muted,
             fontSize: 13,
             height: 1.5,
           ),
@@ -1418,17 +1419,17 @@ class _AncCheckTabState extends State<_AncCheckTab> {
           title: const Text(
             'Benign ethnic neutropenia (BEN)',
             style: TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 13,
               fontWeight: FontWeight.w500,
             ),
           ),
           subtitle: const Text(
             'Apply BEN-adjusted thresholds.',
-            style: TextStyle(color: AppColors.muted, fontSize: 12),
+            style: TextStyle(color: ClinicalPalette.muted, fontSize: 12),
           ),
           value: _ben,
-          activeThumbColor: AppColors.accent,
+          activeThumbColor: ClinicalPalette.accent,
           onChanged: (v) {
             setState(() => _ben = v);
             _classify();
@@ -1454,9 +1455,9 @@ class _ZoneCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (color, action) = switch (classification.zone) {
-      FbcZone.green => (AppColors.to, actions.green),
-      FbcZone.amber => (AppColors.warning, actions.amber),
-      FbcZone.red => (AppColors.danger, actions.red),
+      FbcZone.green => (ClinicalPalette.toneMintInk, actions.green),
+      FbcZone.amber => (ClinicalPalette.warning, actions.amber),
+      FbcZone.red => (ClinicalPalette.danger, actions.red),
     };
     return Container(
       padding: const EdgeInsets.all(14),
@@ -1481,7 +1482,7 @@ class _ZoneCard extends StatelessWidget {
           Text(
             classification.reason,
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 13,
               height: 1.5,
             ),
@@ -1490,7 +1491,7 @@ class _ZoneCard extends StatelessWidget {
           const Text(
             'ACTION',
             style: TextStyle(
-              color: AppColors.muted,
+              color: ClinicalPalette.muted,
               fontSize: 10,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.3,
@@ -1500,7 +1501,7 @@ class _ZoneCard extends StatelessWidget {
           Text(
             action,
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 13,
               height: 1.5,
             ),
@@ -1555,7 +1556,7 @@ class _RechallengeTabState extends State<_RechallengeTab> {
         Text(
           rules.rationale,
           style: const TextStyle(
-            color: AppColors.muted,
+            color: ClinicalPalette.muted,
             fontSize: 13,
             height: 1.5,
           ),
@@ -1591,8 +1592,8 @@ class _RechallengeTabState extends State<_RechallengeTab> {
         Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: AppColors.danger.withValues(alpha: 0.06),
-            border: Border.all(color: AppColors.danger.withValues(alpha: 0.3)),
+            color: ClinicalPalette.danger.withValues(alpha: 0.06),
+            border: Border.all(color: ClinicalPalette.danger.withValues(alpha: 0.3)),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Column(
@@ -1607,14 +1608,14 @@ class _RechallengeTabState extends State<_RechallengeTab> {
                         const Icon(
                           Icons.block,
                           size: 14,
-                          color: AppColors.danger,
+                          color: ClinicalPalette.danger,
                         ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             c,
                             style: const TextStyle(
-                              color: AppColors.text,
+                              color: ClinicalPalette.text,
                               fontSize: 12.5,
                               height: 1.5,
                             ),
@@ -1641,9 +1642,9 @@ class _RechallengeTierCard extends StatelessWidget {
   final RechallengeTier tier;
 
   Color _colorFor(SafetySeverityLevel s) => switch (s) {
-        SafetySeverityLevel.info => AppColors.to,
-        SafetySeverityLevel.warning => AppColors.warning,
-        SafetySeverityLevel.danger => AppColors.danger,
+        SafetySeverityLevel.info => ClinicalPalette.toneMintInk,
+        SafetySeverityLevel.warning => ClinicalPalette.warning,
+        SafetySeverityLevel.danger => ClinicalPalette.danger,
       };
 
   @override
@@ -1672,7 +1673,7 @@ class _RechallengeTierCard extends StatelessWidget {
           Text(
             tier.heading,
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 15,
               fontWeight: FontWeight.w700,
               height: 1.3,
@@ -1682,7 +1683,7 @@ class _RechallengeTierCard extends StatelessWidget {
           Text(
             tier.guidance,
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 13,
               height: 1.55,
             ),
@@ -1702,7 +1703,7 @@ class _RechallengeTierCard extends StatelessWidget {
           const Text(
             'WATCH FOR',
             style: TextStyle(
-              color: AppColors.muted,
+              color: ClinicalPalette.muted,
               fontSize: 10,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.3,
@@ -1715,7 +1716,7 @@ class _RechallengeTierCard extends StatelessWidget {
               child: Text(
                 '• $s',
                 style: const TextStyle(
-                  color: AppColors.text,
+                  color: ClinicalPalette.text,
                   fontSize: 12,
                   height: 1.45,
                 ),
@@ -1742,7 +1743,7 @@ class _LabelLine extends StatelessWidget {
         Text(
           label.toUpperCase(),
           style: const TextStyle(
-            color: AppColors.muted,
+            color: ClinicalPalette.muted,
             fontSize: 10,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.3,
@@ -1752,7 +1753,7 @@ class _LabelLine extends StatelessWidget {
         Text(
           body,
           style: const TextStyle(
-            color: AppColors.text,
+            color: ClinicalPalette.text,
             fontSize: 12.5,
             height: 1.45,
           ),
@@ -1777,7 +1778,7 @@ class _CommunityTab extends StatelessWidget {
         Text(
           data.rationale,
           style: const TextStyle(
-            color: AppColors.muted,
+            color: ClinicalPalette.muted,
             fontSize: 13,
             height: 1.5,
           ),
@@ -1789,7 +1790,7 @@ class _CommunityTab extends StatelessWidget {
         ...data.essentialCriteria.map(
           (c) => Padding(
             padding: const EdgeInsets.only(bottom: 8),
-            child: _CriterionCard(item: c, tone: AppColors.to),
+            child: _CriterionCard(item: c, tone: ClinicalPalette.toneMintInk),
           ),
         ),
 
@@ -1799,7 +1800,7 @@ class _CommunityTab extends StatelessWidget {
         ...data.relativeContraindications.map(
           (c) => Padding(
             padding: const EdgeInsets.only(bottom: 8),
-            child: _CriterionCard(item: c, tone: AppColors.warning),
+            child: _CriterionCard(item: c, tone: ClinicalPalette.warning),
           ),
         ),
 
@@ -1809,7 +1810,7 @@ class _CommunityTab extends StatelessWidget {
         ...data.initialWorkup.map(
           (c) => Padding(
             padding: const EdgeInsets.only(bottom: 8),
-            child: _CriterionCard(item: c, tone: AppColors.accent),
+            child: _CriterionCard(item: c, tone: ClinicalPalette.accent),
           ),
         ),
 
@@ -1836,8 +1837,8 @@ class _CriterionCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -1858,7 +1859,7 @@ class _CriterionCard extends StatelessWidget {
                 child: Text(
                   item.title,
                   style: const TextStyle(
-                    color: AppColors.text,
+                    color: ClinicalPalette.text,
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
                     height: 1.35,
@@ -1873,7 +1874,7 @@ class _CriterionCard extends StatelessWidget {
             child: Text(
               item.detail,
               style: const TextStyle(
-                color: AppColors.muted,
+                color: ClinicalPalette.muted,
                 fontSize: 12,
                 height: 1.5,
               ),
@@ -1901,8 +1902,8 @@ class _MonitoringIntensityCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -1917,7 +1918,7 @@ class _MonitoringIntensityCard extends StatelessWidget {
                     Text(
                       r.$1.toUpperCase(),
                       style: const TextStyle(
-                        color: AppColors.muted,
+                        color: ClinicalPalette.muted,
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.3,
@@ -1927,7 +1928,7 @@ class _MonitoringIntensityCard extends StatelessWidget {
                     Text(
                       r.$2,
                       style: const TextStyle(
-                        color: AppColors.text,
+                        color: ClinicalPalette.text,
                         fontSize: 12.5,
                         height: 1.45,
                       ),
@@ -1951,7 +1952,7 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(text, style: AppTextSizes.eyebrow);
+    return Text(text, style: ClinicalText.eyebrow);
   }
 }
 
@@ -1976,24 +1977,24 @@ class _SegmentedRow<T> extends StatelessWidget {
         Text(
           label,
           style: const TextStyle(
-            color: AppColors.muted,
+            color: ClinicalPalette.muted,
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),
         ),
-        const Gap.v(AppSpace.xs + 2),
+        const Gap.v(ClinicalSpace.xs + 2),
         Wrap(
-          spacing: AppSpace.xs + 2,
-          runSpacing: AppSpace.xs + 2,
+          spacing: ClinicalSpace.xs + 2,
+          runSpacing: ClinicalSpace.xs + 2,
           children: options.map((opt) {
             final value = opt.$1;
             final text = opt.$2;
             final isSelected = value == selected;
             return Material(
               color: isSelected
-                  ? AppColors.accent.withValues(alpha: 0.15)
-                  : AppColors.surface,
-              borderRadius: BorderRadius.circular(AppRadii.sm + 2),
+                  ? ClinicalPalette.accent.withValues(alpha: 0.15)
+                  : ClinicalPalette.surface,
+              borderRadius: BorderRadius.circular(ClinicalRadii.chip + 2),
               clipBehavior: Clip.antiAlias,
               child: InkWell(
                 onTap: () => onSelected(value),
@@ -2001,21 +2002,21 @@ class _SegmentedRow<T> extends StatelessWidget {
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: isSelected
-                          ? AppColors.accent
-                          : AppColors.border,
+                          ? ClinicalPalette.accent
+                          : ClinicalPalette.border,
                     ),
                     borderRadius:
-                        BorderRadius.circular(AppRadii.sm + 2),
+                        BorderRadius.circular(ClinicalRadii.chip + 2),
                   ),
                   padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpace.md,
-                    vertical: AppSpace.sm,
+                    horizontal: ClinicalSpace.md,
+                    vertical: ClinicalSpace.sm,
                   ),
                   child: Text(
                     text,
                     style: TextStyle(
                       color:
-                          isSelected ? AppColors.accent : AppColors.text,
+                          isSelected ? ClinicalPalette.accent : ClinicalPalette.text,
                       fontSize: 12,
                       fontWeight: isSelected
                           ? FontWeight.w700
@@ -2056,7 +2057,7 @@ class _NumberField extends StatelessWidget {
         else
           FilteringTextInputFormatter.digitsOnly,
       ],
-      style: const TextStyle(color: AppColors.text, fontSize: 15),
+      style: const TextStyle(color: ClinicalPalette.text, fontSize: 15),
       // Decoration borders + fill come from the global InputDecorationTheme.
       decoration: InputDecoration(labelText: label),
       onChanged: onChanged,
@@ -2068,7 +2069,7 @@ class _NoteCard extends StatelessWidget {
   const _NoteCard({
     required this.eyebrow,
     required this.body,
-    this.tone = AppColors.accent,
+    this.tone = ClinicalPalette.accent,
   });
 
   final String eyebrow;
@@ -2078,29 +2079,29 @@ class _NoteCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(AppSpace.md + 2),
+      padding: const EdgeInsets.all(ClinicalSpace.md + 2),
       decoration: BoxDecoration(
         color: tone.withValues(alpha: 0.06),
         border: Border.all(color: tone.withValues(alpha: 0.3)),
-        borderRadius: BorderRadius.circular(AppRadii.md),
+        borderRadius: BorderRadius.circular(ClinicalRadii.chip),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
             eyebrow.toUpperCase(),
-            style: AppTextSizes.eyebrow.copyWith(
+            style: ClinicalText.eyebrow.copyWith(
               color: tone,
               fontSize: 11,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.3,
             ),
           ),
-          const Gap.v(AppSpace.xs),
+          const Gap.v(ClinicalSpace.xs),
           Text(
             body,
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 13,
               height: 1.55,
             ),
@@ -2123,13 +2124,13 @@ class _CitationsList extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         const _SectionHeader(text: 'CITATIONS'),
-        const Gap.v(AppSpace.xs + 2),
+        const Gap.v(ClinicalSpace.xs + 2),
         ...citations.map(
           (c) => Padding(
             padding: const EdgeInsets.symmetric(vertical: 2),
             child: Text(
               '• $c',
-              style: AppTextSizes.micro.copyWith(
+              style: ClinicalText.caption.copyWith(
                 fontSize: 11.5,
                 height: 1.5,
               ),

@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:psychswitch/src/ui/theme/breakpoints.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch_engine/errata.dart';
 
@@ -73,10 +74,10 @@ class _ErrataScreenState extends State<ErrataScreen> {
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(
-            AppSpace.lg + 4,
-            AppSpace.lg,
-            AppSpace.lg + 4,
-            AppSpace.xl,
+            ClinicalSpace.lg + 4,
+            ClinicalSpace.lg,
+            ClinicalSpace.lg + 4,
+            ClinicalSpace.xl,
           ),
           children: <Widget>[
             Text(
@@ -84,9 +85,9 @@ class _ErrataScreenState extends State<ErrataScreen> {
               'accepted change is logged with a reviewer signature and '
               'citation. No edits, no quiet rewrites — append-only audit '
               'trail.',
-              style: AppTextSizes.caption.copyWith(height: 1.55),
+              style: ClinicalText.caption.copyWith(height: 1.55),
             ),
-            const Gap.v(AppSpace.lg),
+            const Gap.v(ClinicalSpace.lg),
 
             // Search.
             TextField(
@@ -96,20 +97,20 @@ class _ErrataScreenState extends State<ErrataScreen> {
                 hintText: 'Search rule, drug, summary',
                 prefixIcon: Icon(
                   Icons.search,
-                  color: AppColors.muted,
+                  color: ClinicalPalette.muted,
                   size: 20,
                 ),
               ),
-              style: const TextStyle(color: AppColors.text, fontSize: 14),
+              style: const TextStyle(color: ClinicalPalette.text, fontSize: 14),
             ),
-            const Gap.v(AppSpace.md),
+            const Gap.v(ClinicalSpace.md),
 
             // Severity filter.
             Container(
               decoration: BoxDecoration(
-                color: AppColors.surface,
-                border: Border.all(color: AppColors.border),
-                borderRadius: BorderRadius.circular(AppRadii.lg),
+                color: ClinicalPalette.surface,
+                border: Border.all(color: ClinicalPalette.border),
+                borderRadius: BorderRadius.circular(ClinicalRadii.tile),
               ),
               padding: const EdgeInsets.all(4),
               child: Row(
@@ -123,10 +124,10 @@ class _ErrataScreenState extends State<ErrataScreen> {
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           decoration: BoxDecoration(
                             color: sev == _severityFilter
-                                ? AppColors.accent
+                                ? ClinicalPalette.accent
                                 : Colors.transparent,
                             borderRadius:
-                                BorderRadius.circular(AppRadii.md),
+                                BorderRadius.circular(ClinicalRadii.chip),
                           ),
                           child: Text(
                             label,
@@ -134,7 +135,7 @@ class _ErrataScreenState extends State<ErrataScreen> {
                             style: TextStyle(
                               color: sev == _severityFilter
                                   ? Colors.white
-                                  : AppColors.text,
+                                  : ClinicalPalette.text,
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
                             ),
@@ -145,20 +146,20 @@ class _ErrataScreenState extends State<ErrataScreen> {
                 ],
               ),
             ),
-            const Gap.v(AppSpace.md),
+            const Gap.v(ClinicalSpace.md),
 
             if (filtered.isEmpty)
               Container(
-                padding: const EdgeInsets.all(AppSpace.xl),
+                padding: const EdgeInsets.all(ClinicalSpace.xl),
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  border: Border.all(color: AppColors.border),
-                  borderRadius: BorderRadius.circular(AppRadii.lg),
+                  color: ClinicalPalette.surface,
+                  border: Border.all(color: ClinicalPalette.border),
+                  borderRadius: BorderRadius.circular(ClinicalRadii.tile),
                 ),
                 child: const Center(
                   child: Text(
                     'No matching errata.',
-                    style: TextStyle(color: AppColors.muted, fontSize: 13),
+                    style: TextStyle(color: ClinicalPalette.muted, fontSize: 13),
                   ),
                 ),
               )
@@ -167,10 +168,10 @@ class _ErrataScreenState extends State<ErrataScreen> {
               // tiles. Each tile retains its own expand/collapse state.
               LayoutBuilder(
                 builder: (ctx, constraints) {
-                  final w = (constraints.maxWidth - AppSpace.sm) / 2;
+                  final w = (constraints.maxWidth - ClinicalSpace.sm) / 2;
                   return Wrap(
-                    spacing: AppSpace.sm,
-                    runSpacing: AppSpace.sm,
+                    spacing: ClinicalSpace.sm,
+                    runSpacing: ClinicalSpace.sm,
                     children: <Widget>[
                       for (final e in filtered)
                         SizedBox(
@@ -184,36 +185,36 @@ class _ErrataScreenState extends State<ErrataScreen> {
             else
               for (final e in filtered) ...<Widget>[
                 _ErrataRow(entry: e),
-                const Gap.v(AppSpace.sm),
+                const Gap.v(ClinicalSpace.sm),
               ],
 
-            const Gap.v(AppSpace.md),
+            const Gap.v(ClinicalSpace.md),
 
             Container(
               padding: const EdgeInsets.fromLTRB(
-                AppSpace.md + 2,
-                AppSpace.md,
-                AppSpace.md + 2,
-                AppSpace.md,
+                ClinicalSpace.md + 2,
+                ClinicalSpace.md,
+                ClinicalSpace.md + 2,
+                ClinicalSpace.md,
               ),
               decoration: BoxDecoration(
-                color: AppColors.surface,
-                border: Border.all(color: AppColors.border),
-                borderRadius: BorderRadius.circular(AppRadii.lg),
+                color: ClinicalPalette.surface,
+                border: Border.all(color: ClinicalPalette.border),
+                borderRadius: BorderRadius.circular(ClinicalRadii.tile),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   const Text(
                     'REPORT A NEW ISSUE',
-                    style: AppTextSizes.eyebrow,
+                    style: ClinicalText.eyebrow,
                   ),
-                  const Gap.v(AppSpace.xs),
+                  const Gap.v(ClinicalSpace.xs),
                   Text(
                     'Found something wrong with a rule? Email '
                     'errata@psychswitch.health with the rule id and a '
                     'short description. No patient data.',
-                    style: AppTextSizes.caption.copyWith(height: 1.5),
+                    style: ClinicalText.caption.copyWith(height: 1.5),
                   ),
                 ],
               ),
@@ -239,13 +240,13 @@ class _ErrataRowState extends State<_ErrataRow> {
   Color _toneFor(ErrataSeverity s) {
     switch (s) {
       case ErrataSeverity.critical:
-        return AppColors.danger;
+        return ClinicalPalette.danger;
       case ErrataSeverity.significant:
-        return AppColors.warning;
+        return ClinicalPalette.warning;
       case ErrataSeverity.moderate:
-        return AppColors.accent;
+        return ClinicalPalette.accent;
       case ErrataSeverity.minor:
-        return AppColors.muted;
+        return ClinicalPalette.muted;
     }
   }
 
@@ -256,9 +257,9 @@ class _ErrataRowState extends State<_ErrataRow> {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(AppRadii.lg),
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -270,10 +271,10 @@ class _ErrataRowState extends State<_ErrataRow> {
               onTap: () => setState(() => _expanded = !_expanded),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(
-                  AppSpace.md + 2,
-                  AppSpace.md - 2,
-                  AppSpace.md + 2,
-                  AppSpace.md - 2,
+                  ClinicalSpace.md + 2,
+                  ClinicalSpace.md - 2,
+                  ClinicalSpace.md + 2,
+                  ClinicalSpace.md - 2,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -284,12 +285,12 @@ class _ErrataRowState extends State<_ErrataRow> {
                         Expanded(
                           child: Text(
                             '${e.dateISO} · v${e.appVersion}',
-                            style: AppTextSizes.eyebrow,
+                            style: ClinicalText.eyebrow,
                           ),
                         ),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpace.sm,
+                            horizontal: ClinicalSpace.sm,
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
@@ -298,7 +299,7 @@ class _ErrataRowState extends State<_ErrataRow> {
                               color: tone.withValues(alpha: 0.3),
                             ),
                             borderRadius:
-                                BorderRadius.circular(AppRadii.pill),
+                                BorderRadius.circular(ClinicalRadii.pill),
                           ),
                           child: Text(
                             severityLabel(e.severity).toUpperCase(),
@@ -312,11 +313,11 @@ class _ErrataRowState extends State<_ErrataRow> {
                         ),
                       ],
                     ),
-                    const Gap.v(AppSpace.xs + 2),
+                    const Gap.v(ClinicalSpace.xs + 2),
                     Text(
                       e.summary,
                       style: const TextStyle(
-                        color: AppColors.text,
+                        color: ClinicalPalette.text,
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                         height: 1.4,
@@ -325,7 +326,7 @@ class _ErrataRowState extends State<_ErrataRow> {
                     const Gap.v(2),
                     Text(
                       '${e.scopeLabel} · ${changeKindLabel(e.changeKind)}',
-                      style: AppTextSizes.micro,
+                      style: ClinicalText.caption,
                     ),
                   ],
                 ),
@@ -340,80 +341,80 @@ class _ErrataRowState extends State<_ErrataRow> {
                 ? Container(
                     decoration: const BoxDecoration(
                       border: Border(
-                        top: BorderSide(color: AppColors.border),
+                        top: BorderSide(color: ClinicalPalette.border),
                       ),
                     ),
                     padding: const EdgeInsets.fromLTRB(
-                      AppSpace.md + 2,
-                      AppSpace.md,
-                      AppSpace.md + 2,
-                      AppSpace.md,
+                      ClinicalSpace.md + 2,
+                      ClinicalSpace.md,
+                      ClinicalSpace.md + 2,
+                      ClinicalSpace.md,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        const Text('DETAIL', style: AppTextSizes.eyebrow),
-                        const Gap.v(AppSpace.xs),
+                        const Text('DETAIL', style: ClinicalText.eyebrow),
+                        const Gap.v(ClinicalSpace.xs),
                         Text(
                           e.detail,
                           style: const TextStyle(
-                            color: AppColors.text,
+                            color: ClinicalPalette.text,
                             fontSize: 12,
                             height: 1.5,
                           ),
                         ),
                         if (e.before != null || e.after != null) ...<Widget>[
-                          const Gap.v(AppSpace.md),
-                          const Text('DIFF', style: AppTextSizes.eyebrow),
-                          const Gap.v(AppSpace.xs),
+                          const Gap.v(ClinicalSpace.md),
+                          const Text('DIFF', style: ClinicalText.eyebrow),
+                          const Gap.v(ClinicalSpace.xs),
                           if (e.before != null)
                             _DiffLine(
                               text: e.before!,
                               prefix: '−',
-                              tone: AppColors.danger,
+                              tone: ClinicalPalette.danger,
                             ),
                           if (e.after != null) ...<Widget>[
                             const Gap.v(2),
                             _DiffLine(
                               text: e.after!,
                               prefix: '+',
-                              tone: AppColors.to,
+                              tone: ClinicalPalette.toneMintInk,
                             ),
                           ],
                         ],
-                        const Gap.v(AppSpace.md),
-                        const Text('RATIONALE', style: AppTextSizes.eyebrow),
-                        const Gap.v(AppSpace.xs),
+                        const Gap.v(ClinicalSpace.md),
+                        const Text('RATIONALE', style: ClinicalText.eyebrow),
+                        const Gap.v(ClinicalSpace.xs),
                         Text(
                           e.rationale,
                           style: const TextStyle(
-                            color: AppColors.text,
+                            color: ClinicalPalette.text,
                             fontSize: 12,
                             height: 1.5,
                           ),
                         ),
                         if (e.citations.isNotEmpty) ...<Widget>[
-                          const Gap.v(AppSpace.md),
+                          const Gap.v(ClinicalSpace.md),
                           const Text(
                             'CITATIONS',
-                            style: AppTextSizes.eyebrow,
+                            style: ClinicalText.eyebrow,
                           ),
-                          const Gap.v(AppSpace.xs),
+                          const Gap.v(ClinicalSpace.xs),
                           for (final c in e.citations)
                             Padding(
                               padding: const EdgeInsets.only(bottom: 1),
                               child: Text(
                                 '· $c',
-                                style: AppTextSizes.micro.copyWith(
+                                style: ClinicalText.caption.copyWith(
                                   fontFamily: 'monospace',
                                 ),
                               ),
                             ),
                         ],
-                        const Gap.v(AppSpace.md),
+                        const Gap.v(ClinicalSpace.md),
                         Text(
                           'Reviewer: ${e.reviewer} · scope: ${e.scope}',
-                          style: AppTextSizes.eyebrow.copyWith(
+                          style: ClinicalText.eyebrow.copyWith(
                             fontSize: 10,
                           ),
                         ),
@@ -452,15 +453,15 @@ class _DiffLine extends StatelessWidget {
         ),
       ),
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.sm + 2,
-        AppSpace.xs,
-        AppSpace.sm + 2,
-        AppSpace.xs + 2,
+        ClinicalSpace.sm + 2,
+        ClinicalSpace.xs,
+        ClinicalSpace.sm + 2,
+        ClinicalSpace.xs + 2,
       ),
       child: Text(
         '$prefix $text',
         style: const TextStyle(
-          color: AppColors.text,
+          color: ClinicalPalette.text,
           fontSize: 11,
           height: 1.5,
           fontFamily: 'monospace',

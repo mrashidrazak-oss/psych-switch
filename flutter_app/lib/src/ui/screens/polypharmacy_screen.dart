@@ -20,6 +20,7 @@ import 'package:go_router/go_router.dart';
 import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch_engine/anticholinergic.dart';
@@ -77,7 +78,7 @@ class _PolypharmacyScreenState extends ConsumerState<PolypharmacyScreen> {
               },
               icon: const Icon(Icons.refresh_rounded),
             ),
-          const Gap.h(AppSpace.xs),
+          const Gap.h(ClinicalSpace.xs),
         ],
       ),
       body: SafeArea(
@@ -137,14 +138,14 @@ class _Body extends StatelessWidget {
     final ddiHits = checkAll(selectedIds);
     return ListView(
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg + 4,
-        AppSpace.lg,
-        AppSpace.lg + 4,
-        AppSpace.xl,
+        ClinicalSpace.lg + 4,
+        ClinicalSpace.lg,
+        ClinicalSpace.lg + 4,
+        ClinicalSpace.xl,
       ),
       children: <Widget>[
         _Hero(selectedCount: selected.length),
-        const Gap.v(AppSpace.lg),
+        const Gap.v(ClinicalSpace.lg),
         if (selected.isNotEmpty) ...<Widget>[
           _ScoreGrid(
             qtcOverall: qtcAssessment.overallRisk,
@@ -156,10 +157,10 @@ class _Body extends StatelessWidget {
             sedationAdditive: sedationAdditiveCount,
             ddiHits: ddiHits.length,
           ),
-          const Gap.v(AppSpace.lg),
+          const Gap.v(ClinicalSpace.lg),
           if (ddiHits.isNotEmpty) ...<Widget>[
             _DdiCard(hits: ddiHits, engine: engine),
-            const Gap.v(AppSpace.lg),
+            const Gap.v(ClinicalSpace.lg),
           ],
           _SelectedDrugsList(
             ids: selectedIds,
@@ -168,14 +169,14 @@ class _Body extends StatelessWidget {
             qtc: qtc,
             onRemove: onToggle,
           ),
-          const Gap.v(AppSpace.lg),
+          const Gap.v(ClinicalSpace.lg),
         ],
         _DrugPicker(
           drugs: visibleDrugs,
           selected: selected,
           onToggle: onToggle,
         ),
-        const Gap.v(AppSpace.lg),
+        const Gap.v(ClinicalSpace.lg),
         const _FooterNote(),
       ],
     );
@@ -190,15 +191,15 @@ class _Hero extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const tone = AppColors.accent;
+    const tone = ClinicalPalette.accent;
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.xl),
+        borderRadius: BorderRadius.circular(ClinicalRadii.card),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -207,10 +208,10 @@ class _Hero extends StatelessWidget {
           Container(
             color: tone.withValues(alpha: 0.08),
             padding: const EdgeInsets.fromLTRB(
-              AppSpace.lg,
-              AppSpace.md + 2,
-              AppSpace.md,
-              AppSpace.md + 2,
+              ClinicalSpace.lg,
+              ClinicalSpace.md + 2,
+              ClinicalSpace.md,
+              ClinicalSpace.md + 2,
             ),
             child: Row(
               children: <Widget>[
@@ -223,7 +224,7 @@ class _Hero extends StatelessWidget {
                       color: tone.withValues(alpha: 0.36),
                       width: 0.5,
                     ),
-                    borderRadius: BorderRadius.circular(AppRadii.md),
+                    borderRadius: BorderRadius.circular(ClinicalRadii.chip),
                   ),
                   child: const Icon(
                     Icons.medication_outlined,
@@ -231,7 +232,7 @@ class _Hero extends StatelessWidget {
                     color: tone,
                   ),
                 ),
-                const Gap.h(AppSpace.md),
+                const Gap.h(ClinicalSpace.md),
                 const Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -239,18 +240,18 @@ class _Hero extends StatelessWidget {
                       Text(
                         'Regimen check',
                         style: TextStyle(
-                          color: AppColors.text,
+                          color: ClinicalPalette.text,
                           fontSize: 19,
                           fontWeight: FontWeight.w800,
                           letterSpacing: -0.4,
                           height: 1.15,
                         ),
                       ),
-                      Gap.v(AppSpace.xs - 1),
+                      Gap.v(ClinicalSpace.xs - 1),
                       Text(
                         'QTc · anticholinergic · sedation · DDI',
                         style: TextStyle(
-                          color: AppColors.muted,
+                          color: ClinicalPalette.muted,
                           fontSize: 12.5,
                           fontWeight: FontWeight.w500,
                           letterSpacing: 0.1,
@@ -264,12 +265,12 @@ class _Hero extends StatelessWidget {
             ),
           ),
           Container(
-            color: AppColors.bg.withValues(alpha: 0.4),
+            color: ClinicalPalette.bg.withValues(alpha: 0.4),
             padding: const EdgeInsets.fromLTRB(
-              AppSpace.lg,
-              AppSpace.sm + 2,
-              AppSpace.lg,
-              AppSpace.sm + 2,
+              ClinicalSpace.lg,
+              ClinicalSpace.sm + 2,
+              ClinicalSpace.lg,
+              ClinicalSpace.sm + 2,
             ),
             child: Text(
               selectedCount == 0
@@ -280,7 +281,7 @@ class _Hero extends StatelessWidget {
                   : '$selectedCount drug${selectedCount == 1 ? '' : 's'} '
                       'in the regimen. Scroll for the composite report '
                       'or pick more below.',
-              style: AppTextSizes.caption.copyWith(height: 1.55),
+              style: ClinicalText.caption.copyWith(height: 1.55),
             ),
           ),
         ],
@@ -312,38 +313,38 @@ class _ScoreGrid extends StatelessWidget {
     switch (qtcOverall) {
       case OverallRisk.none:
       case OverallRisk.low:
-        return AppColors.to;
+        return ClinicalPalette.toneMintInk;
       case OverallRisk.moderate:
-        return AppColors.warning;
+        return ClinicalPalette.warning;
       case OverallRisk.high:
       case OverallRisk.veryHigh:
-        return AppColors.danger;
+        return ClinicalPalette.danger;
     }
   }
 
   Color _acbTone() {
     switch (acbCategory) {
       case AcbCategory.none:
-        return AppColors.to;
+        return ClinicalPalette.toneMintInk;
       case AcbCategory.low:
-        return AppColors.accent;
+        return ClinicalPalette.accent;
       case AcbCategory.moderate:
-        return AppColors.warning;
+        return ClinicalPalette.warning;
       case AcbCategory.high:
-        return AppColors.danger;
+        return ClinicalPalette.danger;
     }
   }
 
   Color _sedTone() {
-    if (sedationAdditive <= 1) return AppColors.to;
-    if (sedationAdditive == 2) return AppColors.warning;
-    return AppColors.danger;
+    if (sedationAdditive <= 1) return ClinicalPalette.toneMintInk;
+    if (sedationAdditive == 2) return ClinicalPalette.warning;
+    return ClinicalPalette.danger;
   }
 
   Color _ddiTone() {
-    if (ddiHits == 0) return AppColors.to;
-    if (ddiHits <= 2) return AppColors.warning;
-    return AppColors.danger;
+    if (ddiHits == 0) return ClinicalPalette.toneMintInk;
+    if (ddiHits <= 2) return ClinicalPalette.warning;
+    return ClinicalPalette.danger;
   }
 
   String _qtcLabel() {
@@ -373,15 +374,15 @@ class _ScoreGrid extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        const Text('COMPOSITE RISK', style: AppTextSizes.eyebrow),
-        const Gap.v(AppSpace.sm),
+        const Text('COMPOSITE RISK', style: ClinicalText.eyebrow),
+        const Gap.v(ClinicalSpace.sm),
         // Two-up grid.
         LayoutBuilder(
           builder: (context, constraints) {
-            final w = (constraints.maxWidth - AppSpace.sm) / 2;
+            final w = (constraints.maxWidth - ClinicalSpace.sm) / 2;
             return Wrap(
-              spacing: AppSpace.sm,
-              runSpacing: AppSpace.sm,
+              spacing: ClinicalSpace.sm,
+              runSpacing: ClinicalSpace.sm,
               children: <Widget>[
                 SizedBox(
                   width: w,
@@ -454,18 +455,18 @@ class _ScoreTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.lg),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.md,
-        AppSpace.md - 2,
-        AppSpace.md,
-        AppSpace.md,
+        ClinicalSpace.md,
+        ClinicalSpace.md - 2,
+        ClinicalSpace.md,
+        ClinicalSpace.md,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -479,7 +480,7 @@ class _ScoreTile extends StatelessWidget {
               letterSpacing: 1.4,
             ),
           ),
-          const Gap.v(AppSpace.xs),
+          const Gap.v(ClinicalSpace.xs),
           Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
@@ -497,13 +498,13 @@ class _ScoreTile extends StatelessWidget {
                   ],
                 ),
               ),
-              const Gap.h(AppSpace.xs + 2),
+              const Gap.h(ClinicalSpace.xs + 2),
               Padding(
                 padding: const EdgeInsets.only(bottom: 4),
                 child: Text(
                   unit,
                   style: const TextStyle(
-                    color: AppColors.mutedStrong,
+                    color: ClinicalPalette.mutedStrong,
                     fontSize: 11.5,
                     fontWeight: FontWeight.w600,
                   ),
@@ -511,10 +512,10 @@ class _ScoreTile extends StatelessWidget {
               ),
             ],
           ),
-          const Gap.v(AppSpace.xs + 2),
+          const Gap.v(ClinicalSpace.xs + 2),
           Text(
             subtitle,
-            style: AppTextSizes.micro.copyWith(height: 1.4),
+            style: ClinicalText.caption.copyWith(height: 1.4),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -535,13 +536,13 @@ class _DdiCard extends StatelessWidget {
   Color _toneFor(DdiSeverity s) {
     switch (s) {
       case DdiSeverity.info:
-        return AppColors.muted;
+        return ClinicalPalette.muted;
       case DdiSeverity.caution:
-        return AppColors.accent;
+        return ClinicalPalette.accent;
       case DdiSeverity.warning:
-        return AppColors.warning;
+        return ClinicalPalette.warning;
       case DdiSeverity.avoid:
-        return AppColors.danger;
+        return ClinicalPalette.danger;
     }
   }
 
@@ -551,30 +552,30 @@ class _DdiCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg - 2,
-        AppSpace.md + 2,
-        AppSpace.lg - 2,
-        AppSpace.md + 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.md + 2,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          const Text('DRUG INTERACTIONS', style: AppTextSizes.eyebrow),
-          const Gap.v(AppSpace.sm + 2),
+          const Text('DRUG INTERACTIONS', style: ClinicalText.eyebrow),
+          const Gap.v(ClinicalSpace.sm + 2),
           for (var i = 0; i < hits.length; i++) ...<Widget>[
             if (i > 0)
               Container(
                 height: 0.5,
-                color: AppColors.border.withValues(alpha: 0.5),
-                margin: const EdgeInsets.symmetric(vertical: AppSpace.sm),
+                color: ClinicalPalette.border.withValues(alpha: 0.5),
+                margin: const EdgeInsets.symmetric(vertical: ClinicalSpace.sm),
               ),
             _DdiRow(hit: hits[i], tone: _toneFor(hits[i].severity),
               fromName: _name(hits[i].pair[0]),
@@ -610,7 +611,7 @@ class _DdiRow extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
                 color: tone.withValues(alpha: 0.16),
-                borderRadius: BorderRadius.circular(AppRadii.pill),
+                borderRadius: BorderRadius.circular(ClinicalRadii.pill),
               ),
               child: Text(
                 hit.severity.jsonValue.toUpperCase(),
@@ -622,12 +623,12 @@ class _DdiRow extends StatelessWidget {
                 ),
               ),
             ),
-            const Gap.h(AppSpace.sm),
+            const Gap.h(ClinicalSpace.sm),
             Expanded(
               child: Text(
                 '$fromName + $toName',
                 style: const TextStyle(
-                  color: AppColors.text,
+                  color: ClinicalPalette.text,
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                   letterSpacing: -0.1,
@@ -636,10 +637,10 @@ class _DdiRow extends StatelessWidget {
             ),
           ],
         ),
-        const Gap.v(AppSpace.xs),
+        const Gap.v(ClinicalSpace.xs),
         Text(
           hit.message,
-          style: AppTextSizes.caption.copyWith(height: 1.55),
+          style: ClinicalText.caption.copyWith(height: 1.55),
         ),
       ],
     );
@@ -666,13 +667,13 @@ class _SelectedDrugsList extends StatelessWidget {
   Color _acbTone(AcbTier t) {
     switch (t) {
       case AcbTier.none:
-        return AppColors.muted;
+        return ClinicalPalette.muted;
       case AcbTier.possible:
-        return AppColors.accent;
+        return ClinicalPalette.accent;
       case AcbTier.definiteLow:
-        return AppColors.warning;
+        return ClinicalPalette.warning;
       case AcbTier.definiteSevere:
-        return AppColors.danger;
+        return ClinicalPalette.danger;
     }
   }
 
@@ -681,16 +682,16 @@ class _SelectedDrugsList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        const Text('CURRENT REGIMEN', style: AppTextSizes.eyebrow),
-        const Gap.v(AppSpace.sm),
+        const Text('CURRENT REGIMEN', style: ClinicalText.eyebrow),
+        const Gap.v(ClinicalSpace.sm),
         Container(
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: ClinicalPalette.surface,
             border: Border.all(
-              color: AppColors.border.withValues(alpha: 0.7),
+              color: ClinicalPalette.border.withValues(alpha: 0.7),
               width: 0.5,
             ),
-            borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+            borderRadius: BorderRadius.circular(ClinicalRadii.tile),
           ),
           clipBehavior: Clip.antiAlias,
           child: Column(
@@ -699,7 +700,7 @@ class _SelectedDrugsList extends StatelessWidget {
                 if (i > 0)
                   Container(
                     height: 0.5,
-                    color: AppColors.border.withValues(alpha: 0.5),
+                    color: ClinicalPalette.border.withValues(alpha: 0.5),
                   ),
                 _RegimenRow(
                   drug: engine.getDrug(ids[i]),
@@ -737,10 +738,10 @@ class _RegimenRow extends StatelessWidget {
     final name = drug?.genericName ?? drugId;
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg - 2,
-        AppSpace.sm + 2,
-        AppSpace.sm,
-        AppSpace.sm + 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.sm + 2,
+        ClinicalSpace.sm,
+        ClinicalSpace.sm + 2,
       ),
       child: Row(
         children: <Widget>[
@@ -751,7 +752,7 @@ class _RegimenRow extends StatelessWidget {
                 Text(
                   name,
                   style: const TextStyle(
-                    color: AppColors.text,
+                    color: ClinicalPalette.text,
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                     letterSpacing: -0.1,
@@ -761,7 +762,7 @@ class _RegimenRow extends StatelessWidget {
                   const Gap.v(1),
                   Text(
                     drug!.drugClass,
-                    style: AppTextSizes.micro,
+                    style: ClinicalText.caption,
                   ),
                 ],
               ],
@@ -775,7 +776,7 @@ class _RegimenRow extends StatelessWidget {
               ),
               decoration: BoxDecoration(
                 color: acbTone.withValues(alpha: 0.16),
-                borderRadius: BorderRadius.circular(AppRadii.pill),
+                borderRadius: BorderRadius.circular(ClinicalRadii.pill),
               ),
               child: Text(
                 'ACB ${acb.score}',
@@ -792,7 +793,7 @@ class _RegimenRow extends StatelessWidget {
             onPressed: onRemove,
             icon: const Icon(
               Icons.close_rounded,
-              color: AppColors.muted,
+              color: ClinicalPalette.muted,
               size: 18,
             ),
             tooltip: 'Remove',
@@ -847,8 +848,8 @@ class _DrugPickerState extends State<_DrugPicker> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        const Text('ADD A DRUG', style: AppTextSizes.eyebrow),
-        const Gap.v(AppSpace.sm),
+        const Text('ADD A DRUG', style: ClinicalText.eyebrow),
+        const Gap.v(ClinicalSpace.sm),
         TextField(
           controller: _searchCtl,
           onChanged: (v) => setState(() => _query = v),
@@ -857,29 +858,29 @@ class _DrugPickerState extends State<_DrugPicker> {
             prefixIcon: Icon(
               Icons.search,
               size: 18,
-              color: AppColors.muted,
+              color: ClinicalPalette.muted,
             ),
           ),
         ),
-        const Gap.v(AppSpace.sm),
+        const Gap.v(ClinicalSpace.sm),
         Container(
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: ClinicalPalette.surface,
             border: Border.all(
-              color: AppColors.border.withValues(alpha: 0.7),
+              color: ClinicalPalette.border.withValues(alpha: 0.7),
               width: 0.5,
             ),
-            borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+            borderRadius: BorderRadius.circular(ClinicalRadii.tile),
           ),
           clipBehavior: Clip.antiAlias,
           child: Column(
             children: <Widget>[
               if (filtered.isEmpty)
                 Padding(
-                  padding: const EdgeInsets.all(AppSpace.lg),
+                  padding: const EdgeInsets.all(ClinicalSpace.lg),
                   child: Text(
                     q.isEmpty ? 'No drugs.' : 'No matches for "$q".',
-                    style: AppTextSizes.caption.copyWith(height: 1.55),
+                    style: ClinicalText.caption.copyWith(height: 1.55),
                   ),
                 )
               else
@@ -887,7 +888,7 @@ class _DrugPickerState extends State<_DrugPicker> {
                   if (i > 0)
                     Container(
                       height: 0.5,
-                      color: AppColors.border.withValues(alpha: 0.5),
+                      color: ClinicalPalette.border.withValues(alpha: 0.5),
                     ),
                   _PickerRow(
                     drug: filtered[i],
@@ -918,14 +919,14 @@ class _PickerRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: isSelected
-          ? AppColors.accent.withValues(alpha: 0.08)
+          ? ClinicalPalette.accent.withValues(alpha: 0.08)
           : Colors.transparent,
       child: InkWell(
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: AppSpace.lg - 2,
-            vertical: AppSpace.sm + 2,
+            horizontal: ClinicalSpace.lg - 2,
+            vertical: ClinicalSpace.sm + 2,
           ),
           child: Row(
             children: <Widget>[
@@ -934,14 +935,14 @@ class _PickerRow extends StatelessWidget {
                 width: 20,
                 height: 20,
                 decoration: BoxDecoration(
-                  color: isSelected ? AppColors.accent : Colors.transparent,
+                  color: isSelected ? ClinicalPalette.accent : Colors.transparent,
                   border: Border.all(
                     color: isSelected
-                        ? AppColors.accent
-                        : AppColors.border.withValues(alpha: 0.7),
+                        ? ClinicalPalette.accent
+                        : ClinicalPalette.border.withValues(alpha: 0.7),
                     width: isSelected ? 1.5 : 0.5,
                   ),
-                  borderRadius: BorderRadius.circular(AppRadii.sm - 2),
+                  borderRadius: BorderRadius.circular(ClinicalRadii.chip - 2),
                 ),
                 child: isSelected
                     ? const Icon(
@@ -951,7 +952,7 @@ class _PickerRow extends StatelessWidget {
                       )
                     : null,
               ),
-              const Gap.h(AppSpace.md - 2),
+              const Gap.h(ClinicalSpace.md - 2),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -959,14 +960,14 @@ class _PickerRow extends StatelessWidget {
                     Text(
                       drug.genericName,
                       style: const TextStyle(
-                        color: AppColors.text,
+                        color: ClinicalPalette.text,
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     if (drug.drugClass.isNotEmpty) ...<Widget>[
                       const Gap.v(1),
-                      Text(drug.drugClass, style: AppTextSizes.micro),
+                      Text(drug.drugClass, style: ClinicalText.caption),
                     ],
                   ],
                 ),
@@ -979,7 +980,7 @@ class _PickerRow extends StatelessWidget {
                 icon: const Icon(
                   Icons.info_outline_rounded,
                   size: 17,
-                  color: AppColors.muted,
+                  color: ClinicalPalette.muted,
                 ),
                 tooltip: 'Drug profile',
                 constraints: const BoxConstraints(
@@ -1003,12 +1004,12 @@ class _FooterNote extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpace.lg),
+        padding: const EdgeInsets.symmetric(horizontal: ClinicalSpace.lg),
         child: Text(
           'Composite-risk heuristic. Final regimen review still '
           'requires patient context — confirm against the chart, the '
           'pharmacist, and any local DDI service before deprescribing.',
-          style: AppTextSizes.micro.copyWith(height: 1.6),
+          style: ClinicalText.caption.copyWith(height: 1.6),
           textAlign: TextAlign.center,
         ),
       ),

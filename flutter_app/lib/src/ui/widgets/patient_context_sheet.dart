@@ -21,6 +21,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch_engine/patient_context_pure.dart';
 
@@ -195,36 +196,36 @@ class _PatientContextSheetState extends State<_PatientContextSheet> {
         height: mq.size.height * 0.85,
         child: Column(
           children: <Widget>[
-            const Gap.v(AppSpace.md),
+            const Gap.v(ClinicalSpace.md),
             Container(
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: AppColors.borderStrong,
+                color: ClinicalPalette.borderStrong,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            const Gap.v(AppSpace.md),
+            const Gap.v(ClinicalSpace.md),
             const Padding(
-              padding: EdgeInsets.symmetric(horizontal: AppSpace.xl),
+              padding: EdgeInsets.symmetric(horizontal: ClinicalSpace.xl),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Text('Patient context', style: AppTextSizes.subtitle),
+                child: Text('Patient context', style: ClinicalText.subtitle),
               ),
             ),
-            const Gap.v(AppSpace.xs),
+            const Gap.v(ClinicalSpace.xs),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpace.xl),
+              padding: const EdgeInsets.symmetric(horizontal: ClinicalSpace.xl),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Optional. Every field below narrows the warnings, '
                   'monitoring add-ons, and PsychSwitch Score.',
-                  style: AppTextSizes.caption.copyWith(height: 1.5),
+                  style: ClinicalText.caption.copyWith(height: 1.5),
                 ),
               ),
             ),
-            const Gap.v(AppSpace.lg),
+            const Gap.v(ClinicalSpace.lg),
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
@@ -352,13 +353,13 @@ class _PatientContextSheetState extends State<_PatientContextSheet> {
             ),
             Container(
               decoration: const BoxDecoration(
-                border: Border(top: BorderSide(color: AppColors.border)),
+                border: Border(top: BorderSide(color: ClinicalPalette.border)),
               ),
               padding: const EdgeInsets.fromLTRB(
-                AppSpace.lg,
-                AppSpace.md,
-                AppSpace.lg,
-                AppSpace.lg,
+                ClinicalSpace.lg,
+                ClinicalSpace.md,
+                ClinicalSpace.lg,
+                ClinicalSpace.lg,
               ),
               child: Row(
                 children: <Widget>[
@@ -367,18 +368,18 @@ class _PatientContextSheetState extends State<_PatientContextSheet> {
                     icon: const Icon(Icons.refresh_rounded, size: 16),
                     label: const Text('Clear'),
                     style: TextButton.styleFrom(
-                      foregroundColor: AppColors.muted,
+                      foregroundColor: ClinicalPalette.muted,
                     ),
                   ),
                   const Spacer(),
                   TextButton(
                     onPressed: () => Navigator.of(context).pop(),
                     style: TextButton.styleFrom(
-                      foregroundColor: AppColors.muted,
+                      foregroundColor: ClinicalPalette.muted,
                     ),
                     child: const Text('Cancel'),
                   ),
-                  const Gap.h(AppSpace.sm),
+                  const Gap.h(ClinicalSpace.sm),
                   FilledButton(
                     onPressed: () {
                       unawaited(hapticsConfirm());
@@ -403,7 +404,7 @@ class _SectionLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(text, style: AppTextSizes.eyebrow);
+    return Text(text, style: ClinicalText.eyebrow);
   }
 }
 
@@ -421,7 +422,7 @@ class _AgeField extends StatelessWidget {
         FilteringTextInputFormatter.digitsOnly,
         LengthLimitingTextInputFormatter(3),
       ],
-      style: const TextStyle(color: AppColors.text, fontSize: 15),
+      style: const TextStyle(color: ClinicalPalette.text, fontSize: 15),
       // Decoration borders + fill come from the global InputDecorationTheme.
       decoration: const InputDecoration(
         labelText: 'Age (years)',
@@ -452,24 +453,24 @@ class _SegmentedRow<T> extends StatelessWidget {
         Text(
           label,
           style: const TextStyle(
-            color: AppColors.muted,
+            color: ClinicalPalette.muted,
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),
         ),
-        const Gap.v(AppSpace.xs + 2),
+        const Gap.v(ClinicalSpace.xs + 2),
         Wrap(
-          spacing: AppSpace.xs + 2,
-          runSpacing: AppSpace.xs + 2,
+          spacing: ClinicalSpace.xs + 2,
+          runSpacing: ClinicalSpace.xs + 2,
           children: options.map((opt) {
             final value = opt.$1;
             final text = opt.$2;
             final isSelected = value == selected;
             return Material(
               color: isSelected
-                  ? AppColors.accent.withValues(alpha: 0.15)
-                  : AppColors.bg,
-              borderRadius: BorderRadius.circular(AppRadii.sm + 2),
+                  ? ClinicalPalette.accent.withValues(alpha: 0.15)
+                  : ClinicalPalette.bg,
+              borderRadius: BorderRadius.circular(ClinicalRadii.chip + 2),
               clipBehavior: Clip.antiAlias,
               child: InkWell(
                 onTap: () => onSelected(value),
@@ -477,21 +478,21 @@ class _SegmentedRow<T> extends StatelessWidget {
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: isSelected
-                          ? AppColors.accent
-                          : AppColors.border,
+                          ? ClinicalPalette.accent
+                          : ClinicalPalette.border,
                     ),
                     borderRadius:
-                        BorderRadius.circular(AppRadii.sm + 2),
+                        BorderRadius.circular(ClinicalRadii.chip + 2),
                   ),
                   padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpace.md,
-                    vertical: AppSpace.sm,
+                    horizontal: ClinicalSpace.md,
+                    vertical: ClinicalSpace.sm,
                   ),
                   child: Text(
                     text,
                     style: TextStyle(
                       color:
-                          isSelected ? AppColors.accent : AppColors.text,
+                          isSelected ? ClinicalPalette.accent : ClinicalPalette.text,
                       fontSize: 12,
                       fontWeight: isSelected
                           ? FontWeight.w700
@@ -525,9 +526,9 @@ class _CheckRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: value
-          ? AppColors.accent.withValues(alpha: 0.06)
-          : AppColors.bg,
-      borderRadius: BorderRadius.circular(AppRadii.md),
+          ? ClinicalPalette.accent.withValues(alpha: 0.06)
+          : ClinicalPalette.bg,
+      borderRadius: BorderRadius.circular(ClinicalRadii.chip),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => onChanged(!value),
@@ -535,16 +536,16 @@ class _CheckRow extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border.all(
               color: value
-                  ? AppColors.accent.withValues(alpha: 0.4)
-                  : AppColors.border,
+                  ? ClinicalPalette.accent.withValues(alpha: 0.4)
+                  : ClinicalPalette.border,
             ),
-            borderRadius: BorderRadius.circular(AppRadii.md),
+            borderRadius: BorderRadius.circular(ClinicalRadii.chip),
           ),
           padding: const EdgeInsets.fromLTRB(
-            AppSpace.md,
-            AppSpace.sm + 2,
-            AppSpace.sm,
-            AppSpace.sm + 2,
+            ClinicalSpace.md,
+            ClinicalSpace.sm + 2,
+            ClinicalSpace.sm,
+            ClinicalSpace.sm + 2,
           ),
           child: Row(
             children: <Widget>[
@@ -555,7 +556,7 @@ class _CheckRow extends StatelessWidget {
                     Text(
                       label,
                       style: TextStyle(
-                        color: value ? AppColors.text : AppColors.text,
+                        color: value ? ClinicalPalette.text : ClinicalPalette.text,
                         fontSize: 13,
                         fontWeight:
                             value ? FontWeight.w600 : FontWeight.w500,
@@ -565,7 +566,7 @@ class _CheckRow extends StatelessWidget {
                       const Gap.v(2),
                       Text(
                         description!,
-                        style: AppTextSizes.micro.copyWith(height: 1.45),
+                        style: ClinicalText.caption.copyWith(height: 1.45),
                       ),
                     ],
                   ],

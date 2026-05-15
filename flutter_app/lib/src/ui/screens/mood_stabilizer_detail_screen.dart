@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:psychswitch/src/providers/engine_provider.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
@@ -35,11 +36,11 @@ class MoodStabilizerDetailScreen extends ConsumerWidget {
             final drug = engine.getDrug(drugId);
             if (drug == null) {
               return const Padding(
-                padding: EdgeInsets.all(AppSpace.xl),
+                padding: EdgeInsets.all(ClinicalSpace.xl),
                 child: Center(
                   child: Text(
                     'Drug not found.',
-                    style: TextStyle(color: AppColors.danger),
+                    style: TextStyle(color: ClinicalPalette.danger),
                   ),
                 ),
               );
@@ -47,10 +48,10 @@ class MoodStabilizerDetailScreen extends ConsumerWidget {
 
             return ListView(
               padding: const EdgeInsets.fromLTRB(
-                AppSpace.lg + 4,
-                AppSpace.lg,
-                AppSpace.lg + 4,
-                AppSpace.xl,
+                ClinicalSpace.lg + 4,
+                ClinicalSpace.lg,
+                ClinicalSpace.lg + 4,
+                ClinicalSpace.xl,
               ),
               children: <Widget>[
                 EntranceFade(
@@ -60,23 +61,23 @@ class MoodStabilizerDetailScreen extends ConsumerWidget {
                       Text(
                         drug.genericName,
                         style: const TextStyle(
-                          color: AppColors.text,
+                          color: ClinicalPalette.text,
                           fontSize: 26,
                           fontWeight: FontWeight.w800,
                           letterSpacing: -0.5,
                         ),
                       ),
-                      const Gap.v(AppSpace.xs),
-                      Text(drug.drugClass, style: AppTextSizes.caption),
+                      const Gap.v(ClinicalSpace.xs),
+                      Text(drug.drugClass, style: ClinicalText.caption),
                       const Gap.v(2),
                       Text(
                         drug.malaysianBrandNames.join(' · '),
-                        style: AppTextSizes.micro,
+                        style: ClinicalText.caption,
                       ),
                     ],
                   ),
                 ),
-                const Gap.v(AppSpace.lg),
+                const Gap.v(ClinicalSpace.lg),
 
                 // ── Dosing ────────────────────────────────────────
                 EntranceFade(
@@ -100,32 +101,32 @@ class MoodStabilizerDetailScreen extends ConsumerWidget {
                           label: 'Maximum dose',
                           value: '${_fmt(drug.dosing.maxDoseMg)} mg/day',
                         ),
-                        const Gap.v(AppSpace.sm),
+                        const Gap.v(ClinicalSpace.sm),
                         Text(
                           'AVAILABLE IN MALAYSIA',
-                          style: AppTextSizes.eyebrow.copyWith(
+                          style: ClinicalText.eyebrow.copyWith(
                             fontSize: 9,
                             letterSpacing: 1.4,
                           ),
                         ),
-                        const Gap.v(AppSpace.xs),
+                        const Gap.v(ClinicalSpace.xs),
                         for (final f in drug.dosing.formulationsAvailableMy)
                           Padding(
                             padding: const EdgeInsets.only(bottom: 2),
                             child: Text(
                               '• $f',
                               style: const TextStyle(
-                                color: AppColors.text,
+                                color: ClinicalPalette.text,
                                 fontSize: 12.5,
                                 height: 1.4,
                               ),
                             ),
                           ),
                         if (drug.formulationNotes.isNotEmpty) ...<Widget>[
-                          const Gap.v(AppSpace.sm),
+                          const Gap.v(ClinicalSpace.sm),
                           Text(
                             drug.formulationNotes,
-                            style: AppTextSizes.micro.copyWith(
+                            style: ClinicalText.caption.copyWith(
                               height: 1.5,
                               fontStyle: FontStyle.italic,
                             ),
@@ -135,7 +136,7 @@ class MoodStabilizerDetailScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
-                const Gap.v(AppSpace.lg),
+                const Gap.v(ClinicalSpace.lg),
 
                 // ── PK ────────────────────────────────────────────
                 EntranceFade(
@@ -152,25 +153,25 @@ class MoodStabilizerDetailScreen extends ConsumerWidget {
                               '${_fmt(drug.halfLife.rangeHours[1])}h)',
                         ),
                         if (drug.halfLife.notes != null) ...<Widget>[
-                          const Gap.v(AppSpace.sm),
+                          const Gap.v(ClinicalSpace.sm),
                           Text(
                             drug.halfLife.notes!,
-                            style: AppTextSizes.micro.copyWith(height: 1.5),
+                            style: ClinicalText.caption.copyWith(height: 1.5),
                           ),
                         ],
                         if (drug.activeMetabolite.clinicallySignificant) ...<Widget>[
-                          const Gap.v(AppSpace.md),
+                          const Gap.v(ClinicalSpace.md),
                           const Divider(height: 1),
-                          const Gap.v(AppSpace.md),
+                          const Gap.v(ClinicalSpace.md),
                           _InfoRow(
                             label: 'Active metabolite',
                             value: drug.activeMetabolite.name ?? '—',
                           ),
                           if (drug.activeMetabolite.notes != null) ...<Widget>[
-                            const Gap.v(AppSpace.xs),
+                            const Gap.v(ClinicalSpace.xs),
                             Text(
                               drug.activeMetabolite.notes!,
-                              style: AppTextSizes.micro.copyWith(height: 1.5),
+                              style: ClinicalText.caption.copyWith(height: 1.5),
                             ),
                           ],
                         ],
@@ -178,7 +179,7 @@ class MoodStabilizerDetailScreen extends ConsumerWidget {
                     ),
                   ),
                 ),
-                const Gap.v(AppSpace.lg),
+                const Gap.v(ClinicalSpace.lg),
 
                 // ── CYP / interactions ─────────────────────────────
                 EntranceFade(
@@ -198,16 +199,16 @@ class MoodStabilizerDetailScreen extends ConsumerWidget {
                             label: 'Inhibitor of',
                             value: drug.cypInteractions.inhibitorOf.join(', '),
                           ),
-                        const Gap.v(AppSpace.sm),
+                        const Gap.v(ClinicalSpace.sm),
                         Text(
                           drug.cypInteractions.switchingRelevance,
-                          style: AppTextSizes.micro.copyWith(height: 1.5),
+                          style: ClinicalText.caption.copyWith(height: 1.5),
                         ),
                       ],
                     ),
                   ),
                 ),
-                const Gap.v(AppSpace.lg),
+                const Gap.v(ClinicalSpace.lg),
 
                 // ── Citations ──────────────────────────────────────
                 EntranceFade(
@@ -223,17 +224,17 @@ class MoodStabilizerDetailScreen extends ConsumerWidget {
                             child: Text(
                               '[${i + 1}] ${drug.citations[i]}',
                               style: const TextStyle(
-                                color: AppColors.text,
+                                color: ClinicalPalette.text,
                                 fontSize: 12,
                                 height: 1.5,
                               ),
                             ),
                           ),
-                        const Gap.v(AppSpace.sm),
+                        const Gap.v(ClinicalSpace.sm),
                         Text(
                           'Reviewed by: ${drug.reviewedBy} · '
                           '${drug.lastReviewedISO}',
-                          style: AppTextSizes.micro,
+                          style: ClinicalText.caption,
                         ),
                       ],
                     ),
@@ -258,19 +259,19 @@ class _Section extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(title, style: AppTextSizes.eyebrow),
-        const Gap.v(AppSpace.sm),
+        Text(title, style: ClinicalText.eyebrow),
+        const Gap.v(ClinicalSpace.sm),
         Container(
           padding: const EdgeInsets.fromLTRB(
-            AppSpace.md + 2,
-            AppSpace.md,
-            AppSpace.md + 2,
-            AppSpace.md,
+            ClinicalSpace.md + 2,
+            ClinicalSpace.md,
+            ClinicalSpace.md + 2,
+            ClinicalSpace.md,
           ),
           decoration: BoxDecoration(
-            color: AppColors.surface,
-            border: Border.all(color: AppColors.border),
-            borderRadius: BorderRadius.circular(AppRadii.lg),
+            color: ClinicalPalette.surface,
+            border: Border.all(color: ClinicalPalette.border),
+            borderRadius: BorderRadius.circular(ClinicalRadii.tile),
           ),
           child: child,
         ),
@@ -287,18 +288,18 @@ class _InfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpace.xs),
+      padding: const EdgeInsets.only(bottom: ClinicalSpace.xs),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Expanded(
-            child: Text(label, style: AppTextSizes.micro),
+            child: Text(label, style: ClinicalText.caption),
           ),
-          const Gap.h(AppSpace.sm),
+          const Gap.h(ClinicalSpace.sm),
           Text(
             value,
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 13,
               fontWeight: FontWeight.w600,
             ),

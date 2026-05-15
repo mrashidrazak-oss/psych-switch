@@ -6,6 +6,7 @@
 
 import 'package:flutter/material.dart';
 
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 
 /// Splash shown while `assets/content_bundle.json` is decoding into a
@@ -35,14 +36,14 @@ class EngineLoadingView extends StatelessWidget {
               ),
             ),
           ),
-          const Gap.v(AppSpace.lg),
-          const Text('PsychSwitch', style: AppTextSizes.subtitle),
-          const Gap.v(AppSpace.xs),
+          const Gap.v(ClinicalSpace.lg),
+          const Text('PsychSwitch', style: ClinicalText.subtitle),
+          const Gap.v(ClinicalSpace.xs),
           const Text(
             'Loading clinical registry…',
-            style: AppTextSizes.caption,
+            style: ClinicalText.caption,
           ),
-          const Gap.v(AppSpace.xl),
+          const Gap.v(ClinicalSpace.xl),
           const RepaintBoundary(
             child: SizedBox(
               width: 22,
@@ -68,12 +69,12 @@ class _BrandMark extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: <Color>[AppColors.from, AppColors.to],
+          colors: <Color>[ClinicalPalette.toneLavenderInk, ClinicalPalette.toneMintInk],
         ),
-        borderRadius: BorderRadius.circular(AppRadii.lg),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: AppColors.accent.withValues(alpha: 0.25),
+            color: ClinicalPalette.accent.withValues(alpha: 0.25),
             blurRadius: 16,
             spreadRadius: -2,
           ),
@@ -105,7 +106,7 @@ class EngineErrorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(AppSpace.xl),
+      padding: const EdgeInsets.all(ClinicalSpace.xl),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -114,25 +115,25 @@ class EngineErrorView extends StatelessWidget {
               width: 56,
               height: 56,
               decoration: BoxDecoration(
-                color: AppColors.danger.withValues(alpha: 0.12),
+                color: ClinicalPalette.danger.withValues(alpha: 0.12),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
                 Icons.error_outline,
-                color: AppColors.danger,
+                color: ClinicalPalette.danger,
                 size: 28,
               ),
             ),
-            const Gap.v(AppSpace.lg),
+            const Gap.v(ClinicalSpace.lg),
             const Text(
               'Could not load clinical content',
-              style: AppTextSizes.subtitle,
+              style: ClinicalText.subtitle,
               textAlign: TextAlign.center,
             ),
-            const Gap.v(AppSpace.sm),
+            const Gap.v(ClinicalSpace.sm),
             Text(
               '$error',
-              style: AppTextSizes.caption.copyWith(height: 1.5),
+              style: ClinicalText.caption.copyWith(height: 1.5),
               textAlign: TextAlign.center,
             ),
           ],

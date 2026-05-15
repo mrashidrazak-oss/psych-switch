@@ -11,7 +11,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:psychswitch/src/ui/theme/tokens.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch_engine/psych_switch_score.dart';
 
 class ScoreRing extends StatefulWidget {
@@ -83,13 +83,13 @@ class _ScoreRingState extends State<ScoreRing>
   Color _bandColor() {
     switch (widget.score.band) {
       case ScoreBand.excellent:
-        return AppColors.to;
+        return ClinicalPalette.toneMintInk;
       case ScoreBand.good:
-        return AppColors.accent;
+        return ClinicalPalette.accent;
       case ScoreBand.caution:
-        return AppColors.warning;
+        return ClinicalPalette.warning;
       case ScoreBand.poor:
-        return AppColors.danger;
+        return ClinicalPalette.danger;
     }
   }
 
@@ -115,7 +115,7 @@ class _ScoreRingState extends State<ScoreRing>
               progress: _progressAnim.value,
               color: color,
               strokeWidth: widget.strokeWidth,
-              trackColor: AppColors.border.withValues(alpha: 0.6),
+              trackColor: ClinicalPalette.border.withValues(alpha: 0.6),
             ),
             child: Center(
               child: Text(

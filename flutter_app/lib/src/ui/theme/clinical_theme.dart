@@ -150,8 +150,12 @@ abstract final class ClinicalText {
 }
 
 /// Build the Material 3 ThemeData for the clinical light theme.
-/// Wrap a subtree in `Theme(data: buildClinicalTheme(), child: …)` to
-/// opt that subtree into the new language.
+///
+/// This is the app's ROOT theme (set on MaterialApp.theme in main.dart).
+/// Every Material widget — AppBars, TextFields, Cards, Dialogs, Sheets,
+/// Buttons, Switches, Tabs, Scrollbars — inherits the clinical-light
+/// language from these sub-themes. Individual screens don't need to
+/// re-wrap in `Theme(buildClinicalTheme(), …)` any more.
 ThemeData buildClinicalTheme() {
   const colorScheme = ColorScheme.light(
     // Explicit even though it matches the Material default — locks the
@@ -173,23 +177,273 @@ ThemeData buildClinicalTheme() {
     scaffoldBackgroundColor: ClinicalPalette.bg,
     canvasColor: ClinicalPalette.bg,
     colorScheme: colorScheme,
+
+    // ── App bars ────────────────────────────────────────────────────
     appBarTheme: const AppBarTheme(
       backgroundColor: ClinicalPalette.bg,
       foregroundColor: ClinicalPalette.text,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       scrolledUnderElevation: 0,
+      centerTitle: false,
+      titleSpacing: ClinicalSpace.sm,
+      iconTheme: IconThemeData(color: ClinicalPalette.text, size: 22),
       titleTextStyle: TextStyle(
         color: ClinicalPalette.text,
         fontSize: 17,
         fontWeight: FontWeight.w700,
+        letterSpacing: -0.2,
       ),
-      iconTheme: IconThemeData(color: ClinicalPalette.text, size: 22),
     ),
+
+    // ── Tab bars ────────────────────────────────────────────────────
+    tabBarTheme: const TabBarThemeData(
+      indicatorColor: ClinicalPalette.cta,
+      labelColor: ClinicalPalette.cta,
+      unselectedLabelColor: ClinicalPalette.muted,
+      labelStyle: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 1.2,
+      ),
+      unselectedLabelStyle: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 1.2,
+      ),
+      indicatorSize: TabBarIndicatorSize.label,
+      dividerColor: ClinicalPalette.border,
+    ),
+
+    // ── Cards ───────────────────────────────────────────────────────
+    cardTheme: CardThemeData(
+      color: ClinicalPalette.surface,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
+        side: const BorderSide(color: ClinicalPalette.border, width: 0.5),
+      ),
+    ),
+
+    // ── Dialogs ─────────────────────────────────────────────────────
+    dialogTheme: DialogThemeData(
+      backgroundColor: ClinicalPalette.surface,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(ClinicalRadii.card),
+      ),
+      titleTextStyle: const TextStyle(
+        color: ClinicalPalette.text,
+        fontSize: 17,
+        fontWeight: FontWeight.w700,
+      ),
+      contentTextStyle: const TextStyle(
+        color: ClinicalPalette.mutedStrong,
+        fontSize: 14,
+        height: 1.5,
+      ),
+    ),
+
+    // ── Snack bars ──────────────────────────────────────────────────
+    snackBarTheme: SnackBarThemeData(
+      backgroundColor: ClinicalPalette.cta,
+      contentTextStyle: const TextStyle(
+        color: ClinicalPalette.ctaText,
+        fontSize: 13,
+        fontWeight: FontWeight.w500,
+      ),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(ClinicalRadii.chip),
+      ),
+      elevation: 0,
+      insetPadding: const EdgeInsets.symmetric(
+        horizontal: ClinicalSpace.lg,
+        vertical: ClinicalSpace.md,
+      ),
+    ),
+
+    // ── Bottom sheets ───────────────────────────────────────────────
+    bottomSheetTheme: const BottomSheetThemeData(
+      backgroundColor: ClinicalPalette.surface,
+      surfaceTintColor: Colors.transparent,
+      modalBackgroundColor: ClinicalPalette.surface,
+      modalBarrierColor: Color(0x66000000),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(ClinicalRadii.card),
+        ),
+      ),
+    ),
+
+    // ── Dividers ────────────────────────────────────────────────────
+    dividerTheme: const DividerThemeData(
+      color: ClinicalPalette.border,
+      thickness: 0.5,
+      space: 0.5,
+    ),
+
+    // ── Icons ───────────────────────────────────────────────────────
     iconTheme: const IconThemeData(color: ClinicalPalette.text, size: 20),
+
+    // ── Buttons ─────────────────────────────────────────────────────
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        backgroundColor: ClinicalPalette.cta,
+        foregroundColor: ClinicalPalette.ctaText,
+        disabledBackgroundColor: ClinicalPalette.ctaDisabled,
+        disabledForegroundColor: ClinicalPalette.mutedStrong,
+        padding: const EdgeInsets.symmetric(
+          horizontal: ClinicalSpace.xl,
+          vertical: 14,
+        ),
+        textStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.1,
+        ),
+        shape: const StadiumBorder(),
+        minimumSize: const Size(0, 44),
+      ),
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        foregroundColor: ClinicalPalette.text,
+        side: const BorderSide(color: ClinicalPalette.borderStrong),
+        padding: const EdgeInsets.symmetric(
+          horizontal: ClinicalSpace.xl,
+          vertical: 12,
+        ),
+        textStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+        ),
+        shape: const StadiumBorder(),
+        minimumSize: const Size(0, 44),
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        foregroundColor: ClinicalPalette.text,
+        padding: const EdgeInsets.symmetric(
+          horizontal: ClinicalSpace.md,
+          vertical: ClinicalSpace.sm,
+        ),
+        textStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+        ),
+        minimumSize: const Size(0, 40),
+      ),
+    ),
+    iconButtonTheme: IconButtonThemeData(
+      style: IconButton.styleFrom(
+        foregroundColor: ClinicalPalette.text,
+        minimumSize: const Size(44, 44),
+      ),
+    ),
+
+    // ── Switches ────────────────────────────────────────────────────
+    switchTheme: SwitchThemeData(
+      thumbColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.disabled)) {
+          return ClinicalPalette.muted;
+        }
+        if (states.contains(WidgetState.selected)) {
+          return Colors.white;
+        }
+        return Colors.white;
+      }),
+      trackColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return ClinicalPalette.cta;
+        }
+        return ClinicalPalette.borderStrong;
+      }),
+      trackOutlineColor:
+          const WidgetStatePropertyAll(Colors.transparent),
+    ),
+
+    // ── Inputs ──────────────────────────────────────────────────────
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: ClinicalPalette.surfaceMuted,
+      isDense: true,
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: ClinicalSpace.md,
+        vertical: 14,
+      ),
+      labelStyle:
+          const TextStyle(color: ClinicalPalette.muted, fontSize: 13),
+      hintStyle:
+          const TextStyle(color: ClinicalPalette.muted, fontSize: 14),
+      floatingLabelStyle: const TextStyle(
+        color: ClinicalPalette.cta,
+        fontSize: 12,
+        fontWeight: FontWeight.w700,
+      ),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(ClinicalRadii.chip + 2),
+        borderSide: BorderSide.none,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(ClinicalRadii.chip + 2),
+        borderSide: BorderSide.none,
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(ClinicalRadii.chip + 2),
+        borderSide:
+            const BorderSide(color: ClinicalPalette.cta, width: 1.5),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(ClinicalRadii.chip + 2),
+        borderSide: const BorderSide(color: ClinicalPalette.danger),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(ClinicalRadii.chip + 2),
+        borderSide:
+            const BorderSide(color: ClinicalPalette.danger, width: 1.5),
+      ),
+    ),
+
+    // ── List tiles ──────────────────────────────────────────────────
+    listTileTheme: const ListTileThemeData(
+      iconColor: ClinicalPalette.mutedStrong,
+      textColor: ClinicalPalette.text,
+      tileColor: ClinicalPalette.surface,
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: ClinicalSpace.lg,
+        vertical: ClinicalSpace.xs,
+      ),
+    ),
+
+    // ── Progress indicators ─────────────────────────────────────────
+    progressIndicatorTheme: const ProgressIndicatorThemeData(
+      color: ClinicalPalette.cta,
+      circularTrackColor: ClinicalPalette.border,
+      strokeWidth: 2.5,
+    ),
+
+    // ── Scrollbar ───────────────────────────────────────────────────
+    scrollbarTheme: ScrollbarThemeData(
+      thickness: const WidgetStatePropertyAll(4),
+      thumbColor: WidgetStatePropertyAll(
+        ClinicalPalette.muted.withValues(alpha: 0.4),
+      ),
+      radius: const Radius.circular(ClinicalRadii.pill),
+    ),
+
+    // ── Splash / hover ─────────────────────────────────────────────
     splashFactory: InkSparkle.splashFactory,
     splashColor: ClinicalPalette.text.withValues(alpha: 0.04),
     highlightColor: ClinicalPalette.text.withValues(alpha: 0.02),
+    hoverColor: ClinicalPalette.text.withValues(alpha: 0.02),
+
+    // ── Dividers ────────────────────────────────────────────────────
     dividerColor: ClinicalPalette.border,
   );
 }
