@@ -75,7 +75,7 @@ class _EquivalencyScreenState extends State<EquivalencyScreen> {
             Container(
               decoration: BoxDecoration(
                 color: AppColors.surface,
-                border: Border.all(color: AppColors.border),
+                border: Border.all(color: AppColors.border.withValues(alpha: 0.7), width: 0.5),
                 borderRadius: BorderRadius.circular(AppRadii.lg),
               ),
               padding: const EdgeInsets.all(4),
@@ -209,7 +209,7 @@ class _EquivalencyScreenState extends State<EquivalencyScreen> {
             Container(
               decoration: BoxDecoration(
                 color: AppColors.surface,
-                border: Border.all(color: AppColors.border),
+                border: Border.all(color: AppColors.border.withValues(alpha: 0.7), width: 0.5),
                 borderRadius: BorderRadius.circular(AppRadii.lg),
               ),
               padding: const EdgeInsets.fromLTRB(
@@ -323,7 +323,7 @@ class _DrugPicker extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: AppColors.border.withValues(alpha: 0.7), width: 0.5),
         borderRadius: BorderRadius.circular(AppRadii.lg),
       ),
       child: DropdownButtonHideUnderline(

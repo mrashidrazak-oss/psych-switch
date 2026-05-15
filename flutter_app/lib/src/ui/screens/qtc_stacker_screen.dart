@@ -127,6 +127,7 @@ class _QtcStackerScreenState extends ConsumerState<QtcStackerScreen> {
               grouped.putIfAbsent(d.category, () => <QtcDrugEntry>[]).add(d);
             }
 
+            final totalDrugs = data.drugs.length;
             return Stack(
               children: <Widget>[
                 ListView(
@@ -137,13 +138,13 @@ class _QtcStackerScreenState extends ConsumerState<QtcStackerScreen> {
                     AppSpace.xxxl + AppSpace.lg, // room for FAB
                   ),
                   children: <Widget>[
-                    Text(
-                      'Select all current medications. Tap '
-                      'Assess to get the aggregate QTc risk and '
-                      'recommendations.',
-                      style: AppTextSizes.caption.copyWith(height: 1.55),
+                    // ── Hero header — same clinical-poster chrome as
+                    //     the Result, Clozapine and Depot heros.
+                    _QtcHeroHeader(
+                      totalDrugs: totalDrugs,
+                      selectedCount: _selected.length,
                     ),
-                    const Gap.v(AppSpace.md),
+                    const Gap.v(AppSpace.lg),
 
                     // Risk legend.
                     const _RiskLegend(),
@@ -183,15 +184,18 @@ class _QtcStackerScreenState extends ConsumerState<QtcStackerScreen> {
                     // Source.
                     Container(
                       padding: const EdgeInsets.fromLTRB(
+                        AppSpace.lg - 2,
                         AppSpace.md + 2,
-                        AppSpace.md,
+                        AppSpace.lg - 2,
                         AppSpace.md + 2,
-                        AppSpace.md,
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.surface,
-                        border: Border.all(color: AppColors.border),
-                        borderRadius: BorderRadius.circular(AppRadii.lg),
+                        border: Border.all(
+                          color: AppColors.border.withValues(alpha: 0.7),
+                          width: 0.5,
+                        ),
+                        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,16 +204,19 @@ class _QtcStackerScreenState extends ConsumerState<QtcStackerScreen> {
                             'DATA SOURCE',
                             style: AppTextSizes.eyebrow,
                           ),
-                          const Gap.v(AppSpace.xs),
+                          const Gap.v(AppSpace.sm),
                           for (var i = 0;
                               i < data.citations.take(2).length;
                               i++)
-                            Text(
-                              '[${i + 1}] ${data.citations[i]}',
-                              style: const TextStyle(
-                                color: AppColors.text,
-                                fontSize: 12,
-                                height: 1.5,
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 4),
+                              child: Text(
+                                '[${i + 1}] ${data.citations[i]}',
+                                style: const TextStyle(
+                                  color: AppColors.text,
+                                  fontSize: 12.5,
+                                  height: 1.55,
+                                ),
                               ),
                             ),
                           const Gap.v(AppSpace.xs),
@@ -319,8 +326,11 @@ class _DrugGroup extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(AppRadii.lg),
+        border: Border.all(
+          color: AppColors.border.withValues(alpha: 0.7),
+          width: 0.5,
+        ),
+        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -364,8 +374,11 @@ class _DrugRow extends StatelessWidget {
           decoration: BoxDecoration(
             border: isLast
                 ? null
-                : const Border(
-                    bottom: BorderSide(color: AppColors.border),
+                : Border(
+                    bottom: BorderSide(
+                      color: AppColors.border.withValues(alpha: 0.5),
+                      width: 0.5,
+                    ),
                   ),
           ),
           child: Padding(
@@ -447,12 +460,15 @@ class _AssessmentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final tone = _riskTone(assessment.overallRisk);
     return ClipRRect(
-      borderRadius: BorderRadius.circular(AppRadii.lg),
+      borderRadius: BorderRadius.circular(AppRadii.lg + 2),
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: AppColors.surface,
-          border: Border.all(color: AppColors.border),
-          borderRadius: BorderRadius.circular(AppRadii.lg),
+          border: Border.all(
+            color: AppColors.border.withValues(alpha: 0.7),
+            width: 0.5,
+          ),
+          borderRadius: BorderRadius.circular(AppRadii.lg + 2),
         ),
         child: IntrinsicHeight(
           child: Row(
@@ -522,12 +538,15 @@ class _DrugNoteCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final tone = _toneFor(drug.qtcCategory);
     return ClipRRect(
-      borderRadius: BorderRadius.circular(AppRadii.lg),
+      borderRadius: BorderRadius.circular(AppRadii.lg + 2),
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: AppColors.surface,
-          border: Border.all(color: AppColors.border),
-          borderRadius: BorderRadius.circular(AppRadii.lg),
+          border: Border.all(
+            color: AppColors.border.withValues(alpha: 0.7),
+            width: 0.5,
+          ),
+          borderRadius: BorderRadius.circular(AppRadii.lg + 2),
         ),
         child: IntrinsicHeight(
           child: Row(
@@ -580,6 +599,221 @@ class _DrugNoteCard extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Clinical-poster hero for the QTc stacker. Same chrome rhythm as
+/// the Result, Clozapine, Depot heros — tone-tinted identity band
+/// with the eyebrow + tagline, twin stat cells with a hairline rule,
+/// and a tinted rationale band underneath.
+class _QtcHeroHeader extends StatelessWidget {
+  const _QtcHeroHeader({
+    required this.totalDrugs,
+    required this.selectedCount,
+  });
+
+  final int totalDrugs;
+  final int selectedCount;
+
+  @override
+  Widget build(BuildContext context) {
+    const tone = AppColors.warning;
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        border: Border.all(
+          color: AppColors.border.withValues(alpha: 0.7),
+          width: 0.5,
+        ),
+        borderRadius: BorderRadius.circular(AppRadii.xl),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          // ── Identity band ─────────────────────────────────────
+          Container(
+            color: tone.withValues(alpha: 0.08),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpace.lg,
+              AppSpace.md + 2,
+              AppSpace.md - 2,
+              AppSpace.md + 2,
+            ),
+            child: Row(
+              children: <Widget>[
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: tone.withValues(alpha: 0.12),
+                    border: Border.all(
+                      color: tone.withValues(alpha: 0.36),
+                      width: 0.5,
+                    ),
+                    borderRadius: BorderRadius.circular(AppRadii.md),
+                  ),
+                  child: const Icon(
+                    Icons.monitor_heart_outlined,
+                    size: 19,
+                    color: tone,
+                  ),
+                ),
+                const Gap.h(AppSpace.md),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        'QTc stacker',
+                        style: TextStyle(
+                          color: AppColors.text,
+                          fontSize: 19,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.4,
+                          height: 1.15,
+                        ),
+                      ),
+                      Gap.v(AppSpace.xs - 1),
+                      Text(
+                        'Cumulative QTc-prolongation risk',
+                        style: TextStyle(
+                          color: AppColors.muted,
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.1,
+                          height: 1.3,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // ── Stats row ─────────────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpace.lg,
+              AppSpace.md + 2,
+              AppSpace.lg,
+              AppSpace.md,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  child: _QtcMiniStat(
+                    eyebrow: 'CATALOGUE',
+                    value: '$totalDrugs',
+                    unit: 'drugs',
+                  ),
+                ),
+                Container(
+                  width: 0.5,
+                  height: 36,
+                  color: AppColors.border.withValues(alpha: 0.6),
+                ),
+                Expanded(
+                  child: _QtcMiniStat(
+                    eyebrow: 'SELECTED',
+                    value: '$selectedCount',
+                    unit: selectedCount == 1 ? 'drug' : 'drugs',
+                    tone: selectedCount == 0
+                        ? AppColors.muted
+                        : AppColors.accent,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // ── Rationale band ────────────────────────────────────
+          Container(
+            color: AppColors.bg.withValues(alpha: 0.4),
+            padding: const EdgeInsets.fromLTRB(
+              AppSpace.lg,
+              AppSpace.sm + 2,
+              AppSpace.lg,
+              AppSpace.sm + 2,
+            ),
+            child: Text(
+              'Tap every drug the patient is on. CredibleMeds-tiered '
+              'risk × dose-additive scoring → aggregate ECG / cardiology '
+              'recommendation. Tap Assess once selections are complete.',
+              style: AppTextSizes.caption.copyWith(height: 1.55),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _QtcMiniStat extends StatelessWidget {
+  const _QtcMiniStat({
+    required this.eyebrow,
+    required this.value,
+    required this.unit,
+    this.tone,
+  });
+
+  final String eyebrow;
+  final String value;
+  final String unit;
+  final Color? tone;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 2),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            eyebrow,
+            style: const TextStyle(
+              color: AppColors.muted,
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.4,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: <Widget>[
+              Text(
+                value,
+                style: TextStyle(
+                  color: tone ?? AppColors.text,
+                  fontSize: 28,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.8,
+                  height: 1.05,
+                  fontFeatures: const <FontFeature>[
+                    FontFeature.tabularFigures(),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 5),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Text(
+                  unit,
+                  style: const TextStyle(
+                    color: AppColors.muted,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.1,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

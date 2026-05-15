@@ -73,7 +73,7 @@ class _AdverseEffectsScreenState extends State<AdverseEffectsScreen> {
               Container(
                 decoration: BoxDecoration(
                   color: AppColors.surface,
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(color: AppColors.border.withValues(alpha: 0.7), width: 0.5),
                   borderRadius: BorderRadius.circular(AppRadii.lg),
                 ),
                 clipBehavior: Clip.antiAlias,
@@ -194,7 +194,7 @@ class _PickPrompt extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpace.xl),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: AppColors.border.withValues(alpha: 0.7), width: 0.5),
         borderRadius: BorderRadius.circular(AppRadii.lg),
       ),
       child: Column(

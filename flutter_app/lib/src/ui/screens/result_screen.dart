@@ -1152,8 +1152,10 @@ class _ResultHero extends StatelessWidget {
                 _HeroDrugBand(
                   fromName: fromName,
                   fromDose: input.fromDoseMg,
+                  fromId: input.fromDrugId,
                   toName: toName,
                   toDose: input.toDoseMg,
+                  toId: input.toDrugId,
                 ),
                 Container(
                   height: 0.5,
@@ -1180,14 +1182,26 @@ class _HeroDrugBand extends StatelessWidget {
   const _HeroDrugBand({
     required this.fromName,
     required this.fromDose,
+    required this.fromId,
     required this.toName,
     required this.toDose,
+    required this.toId,
   });
 
   final String fromName;
   final num fromDose;
+  final String fromId;
   final String toName;
   final num toDose;
+  final String toId;
+
+  void _openProfile(BuildContext context, String id) {
+    unawaited(hapticsTap());
+    context.pushNamed(
+      Routes.drugProfile,
+      pathParameters: <String, String>{'id': id},
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1206,6 +1220,7 @@ class _HeroDrugBand extends StatelessWidget {
               name: fromName,
               dose: fromDose,
               tone: AppColors.from,
+              onTap: () => _openProfile(context, fromId),
             ),
           ),
           Padding(
@@ -1223,6 +1238,7 @@ class _HeroDrugBand extends StatelessWidget {
               dose: toDose,
               tone: AppColors.to,
               alignEnd: true,
+              onTap: () => _openProfile(context, toId),
             ),
           ),
         ],
@@ -1238,6 +1254,7 @@ class _HeroDrugCell extends StatelessWidget {
     required this.dose,
     required this.tone,
     this.alignEnd = false,
+    this.onTap,
   });
 
   final String label;
@@ -1245,6 +1262,7 @@ class _HeroDrugCell extends StatelessWidget {
   final num dose;
   final Color tone;
   final bool alignEnd;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -1255,7 +1273,7 @@ class _HeroDrugCell extends StatelessWidget {
       height: 6,
       decoration: BoxDecoration(color: tone, shape: BoxShape.circle),
     );
-    return Column(
+    final content = Column(
       crossAxisAlignment: align,
       children: <Widget>[
         Row(
@@ -1276,6 +1294,9 @@ class _HeroDrugCell extends StatelessWidget {
           ],
         ),
         const Gap.v(AppSpace.sm + 2),
+        // Drug name carries an underline-on-tap affordance so clinicians
+        // discover the drug-profile drill-in. Subtle — accent-tinted
+        // dashed underline; no shouty link styling.
         Text(
           name,
           style: const TextStyle(
@@ -1284,6 +1305,10 @@ class _HeroDrugCell extends StatelessWidget {
             fontWeight: FontWeight.w700,
             height: 1.15,
             letterSpacing: -0.3,
+            decoration: TextDecoration.underline,
+            decorationStyle: TextDecorationStyle.dotted,
+            decorationColor: AppColors.muted,
+            decorationThickness: 1,
           ),
           textAlign: textAlign,
           maxLines: 2,
@@ -1300,6 +1325,23 @@ class _HeroDrugCell extends StatelessWidget {
           ),
         ),
       ],
+    );
+    if (onTap == null) return content;
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(AppRadii.sm),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppRadii.sm),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 2,
+            vertical: 2,
+          ),
+          child: content,
+        ),
+      ),
     );
   }
 }
