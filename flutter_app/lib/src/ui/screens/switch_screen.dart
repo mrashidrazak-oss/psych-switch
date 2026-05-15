@@ -49,7 +49,9 @@ import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/screens/result_screen.dart';
 import 'package:psychswitch/src/ui/theme/breakpoints.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
+import 'package:psychswitch/src/ui/widgets/clinical_primitives.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch/src/ui/widgets/patient_context_sheet.dart';
 import 'package:psychswitch/src/ui/widgets/score_ring.dart';
@@ -76,12 +78,18 @@ class SwitchScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncEngine = ref.watch(engineProvider);
-    return Scaffold(
-      body: SafeArea(
-        child: asyncEngine.when(
-          loading: () => const EngineLoadingView(),
-          error: (e, st) => EngineErrorView(error: e),
-          data: (engine) => _SwitchForm(engine: engine),
+    return Theme(
+      data: buildClinicalTheme(),
+      child: Builder(
+        builder: (context) => Scaffold(
+          backgroundColor: ClinicalPalette.bg,
+          body: SafeArea(
+            child: asyncEngine.when(
+              loading: () => const EngineLoadingView(),
+              error: (e, _) => EngineErrorView(error: e),
+              data: (engine) => _SwitchForm(engine: engine),
+            ),
+          ),
         ),
       ),
     );
@@ -261,6 +269,7 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
     final engineOut = _engineOutput();
 
     return Scaffold(
+      backgroundColor: ClinicalPalette.bg,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -278,7 +287,7 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
             hasContext: hasCtx,
             onPressed: _openPatientContextSheet,
           ),
-          const Gap.h(AppSpace.xs),
+          const Gap.h(ClinicalSpace.xs),
         ],
       ),
       body: SafeArea(
@@ -289,10 +298,10 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
               constraints: const BoxConstraints(maxWidth: _maxFormWidth),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(
-                  AppSpace.xl,
-                  AppSpace.lg,
-                  AppSpace.xl,
-                  AppSpace.xl,
+                  ClinicalSpace.xl,
+                  ClinicalSpace.lg,
+                  ClinicalSpace.xl,
+                  ClinicalSpace.xl,
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -302,14 +311,14 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
                         summary: ctxSummary,
                         onTap: _openPatientContextSheet,
                       ),
-                    if (hasCtx) const Gap.v(AppSpace.lg),
+                    if (hasCtx) const Gap.v(ClinicalSpace.lg),
 
                     if (recents.isNotEmpty) ...<Widget>[
                       _RecentsRow(
                         drugs: recents,
                         onTap: _onRecentTap,
                       ),
-                      const Gap.v(AppSpace.md + 2),
+                      const Gap.v(ClinicalSpace.md + 2),
                     ],
 
                     _HeroCard(
@@ -342,16 +351,16 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
                     ),
 
                     if (_sameDrug) ...<Widget>[
-                      const Gap.v(AppSpace.md),
+                      const Gap.v(ClinicalSpace.md),
                       const _SameDrugWarning(),
                     ],
 
-                    const Gap.v(AppSpace.xl),
+                    const Gap.v(ClinicalSpace.xl),
                     _PrimaryCta(
                       enabled: _ready,
                       onPressed: _onContinue,
                     ),
-                    const Gap.v(AppSpace.xl),
+                    const Gap.v(ClinicalSpace.xl),
                   ],
                 ),
               ),
@@ -410,7 +419,7 @@ class _PatientContextAction extends StatelessWidget {
           children: <Widget>[
             Icon(
               hasContext ? Icons.person : Icons.person_outline,
-              color: hasContext ? AppColors.accent : AppColors.text,
+              color: hasContext ? ClinicalPalette.accent : ClinicalPalette.text,
             ),
             if (hasContext)
               Positioned(
@@ -420,9 +429,9 @@ class _PatientContextAction extends StatelessWidget {
                   width: 8,
                   height: 8,
                   decoration: BoxDecoration(
-                    color: AppColors.accent,
+                    color: ClinicalPalette.accent,
                     shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.bg, width: 1.5),
+                    border: Border.all(color: ClinicalPalette.bg, width: 1.5),
                   ),
                 ),
               ),
@@ -442,33 +451,33 @@ class _ContextSummaryChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.accent.withValues(alpha: 0.06),
-      borderRadius: BorderRadius.circular(AppRadii.lg),
+      color: ClinicalPalette.accent.withValues(alpha: 0.06),
+      borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: Ink(
           decoration: BoxDecoration(
             border: Border.all(
-              color: AppColors.accent.withValues(alpha: 0.28),
+              color: ClinicalPalette.accent.withValues(alpha: 0.28),
             ),
-            borderRadius: BorderRadius.circular(AppRadii.lg),
+            borderRadius: BorderRadius.circular(ClinicalRadii.tile),
           ),
           padding: const EdgeInsets.fromLTRB(
-            AppSpace.md,
-            AppSpace.sm + 2,
-            AppSpace.sm,
-            AppSpace.sm + 2,
+            ClinicalSpace.md,
+            ClinicalSpace.sm + 2,
+            ClinicalSpace.sm,
+            ClinicalSpace.sm + 2,
           ),
           child: Row(
             children: <Widget>[
-              const Icon(Icons.person, size: 14, color: AppColors.accent),
-              const Gap.h(AppSpace.sm),
+              const Icon(Icons.person, size: 14, color: ClinicalPalette.accent),
+              const Gap.h(ClinicalSpace.sm),
               Expanded(
                 child: Text(
                   'Adjusts for: $summary',
                   style: const TextStyle(
-                    color: AppColors.text,
+                    color: ClinicalPalette.text,
                     fontSize: 12.5,
                     fontWeight: FontWeight.w500,
                     height: 1.4,
@@ -476,8 +485,8 @@ class _ContextSummaryChip extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const Icon(Icons.tune, size: 14, color: AppColors.accent),
-              const Gap.h(AppSpace.xs),
+              const Icon(Icons.tune, size: 14, color: ClinicalPalette.accent),
+              const Gap.h(ClinicalSpace.xs),
             ],
           ),
         ),
@@ -501,15 +510,15 @@ class _RecentsRow extends StatelessWidget {
       children: <Widget>[
         const Padding(
           padding: EdgeInsets.only(left: 2),
-          child: Text('RECENT', style: AppTextSizes.eyebrow),
+          child: Text('RECENT', style: ClinicalText.eyebrow),
         ),
-        const Gap.v(AppSpace.xs + 2),
+        const Gap.v(ClinicalSpace.xs + 2),
         SizedBox(
           height: 32,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: drugs.length,
-            separatorBuilder: (_, __) => const Gap.h(AppSpace.xs + 2),
+            separatorBuilder: (_, __) => const Gap.h(ClinicalSpace.xs + 2),
             itemBuilder: (_, i) => _RecentChip(
               drug: drugs[i],
               onTap: () => onTap(drugs[i]),
@@ -533,13 +542,13 @@ class _RecentChip extends StatelessWidget {
   Color _categoryTone() {
     switch (drug.category) {
       case DrugCategory.antidepressant:
-        return AppColors.from;
+        return ClinicalPalette.toneLavenderInk;
       case DrugCategory.antipsychotic:
-        return AppColors.to;
+        return ClinicalPalette.toneMintInk;
       case DrugCategory.moodStabilizer:
-        return AppColors.muted;
+        return ClinicalPalette.muted;
       case null:
-        return AppColors.muted;
+        return ClinicalPalette.muted;
     }
   }
 
@@ -547,22 +556,22 @@ class _RecentChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final tone = _categoryTone();
     return Material(
-      color: AppColors.surface,
-      borderRadius: BorderRadius.circular(AppRadii.pill),
+      color: ClinicalPalette.surface,
+      borderRadius: BorderRadius.circular(ClinicalRadii.pill),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: Ink(
           decoration: BoxDecoration(
             border: Border.all(
-              color: AppColors.border.withValues(alpha: 0.7),
+              color: ClinicalPalette.border.withValues(alpha: 0.7),
               width: 0.5,
             ),
-            borderRadius: BorderRadius.circular(AppRadii.pill),
+            borderRadius: BorderRadius.circular(ClinicalRadii.pill),
           ),
           padding: const EdgeInsets.symmetric(
-            horizontal: AppSpace.md,
-            vertical: AppSpace.xs + 2,
+            horizontal: ClinicalSpace.md,
+            vertical: ClinicalSpace.xs + 2,
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -575,11 +584,11 @@ class _RecentChip extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
               ),
-              const Gap.h(AppSpace.xs + 2),
+              const Gap.h(ClinicalSpace.xs + 2),
               Text(
                 drug.genericName,
                 style: const TextStyle(
-                  color: AppColors.text,
+                  color: ClinicalPalette.text,
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
@@ -627,7 +636,7 @@ class _HeroCard extends StatelessWidget {
 
     final fromSection = _DrugSection(
       side: 'FROM DRUG',
-      tone: AppColors.from,
+      tone: ClinicalPalette.toneLavenderInk,
       drug: from,
       doseCtl: fromDoseCtl,
       doseFieldKey: _fromDoseKey,
@@ -636,7 +645,7 @@ class _HeroCard extends StatelessWidget {
     );
     final toSection = _DrugSection(
       side: 'TO DRUG',
-      tone: AppColors.to,
+      tone: ClinicalPalette.toneMintInk,
       drug: to,
       doseCtl: toDoseCtl,
       doseFieldKey: _toDoseKey,
@@ -657,9 +666,12 @@ class _HeroCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border, width: 0.5),
-        borderRadius: BorderRadius.circular(AppRadii.xl),
+        color: ClinicalPalette.surface,
+        borderRadius: BorderRadius.circular(ClinicalRadii.card),
+        border: Border.all(
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
+          width: 0.5,
+        ),
       ),
       clipBehavior: Clip.antiAlias,
       child: context.isWide
@@ -703,55 +715,70 @@ class _DrugSection extends StatelessWidget {
   final RelevanceTier? tier;
   final String? tierTag;
 
+  /// Soft pastel fill behind the section so the hero reads as a
+  /// from→to gradient. Picks the family that matches the `tone` ink.
+  Color _toneFill() {
+    if (tone == ClinicalPalette.toneLavenderInk) {
+      return ClinicalPalette.toneLavender.withValues(alpha: 0.45);
+    }
+    if (tone == ClinicalPalette.toneMintInk) {
+      return ClinicalPalette.toneMint.withValues(alpha: 0.45);
+    }
+    return ClinicalPalette.surfaceMuted;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpace.xl - 2,
-        AppSpace.lg,
-        AppSpace.xl - 2,
-        AppSpace.xl - 2,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Container(
-                width: 6,
-                height: 6,
-                decoration: BoxDecoration(
-                  color: tone,
-                  shape: BoxShape.circle,
+    return ColoredBox(
+      color: _toneFill(),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          ClinicalSpace.xl - 2,
+          ClinicalSpace.lg,
+          ClinicalSpace.xl - 2,
+          ClinicalSpace.xl - 2,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Container(
+                  width: 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: tone,
+                    shape: BoxShape.circle,
+                  ),
                 ),
-              ),
-              const Gap.h(AppSpace.sm),
-              Text(
-                side,
-                style: AppTextSizes.eyebrow.copyWith(color: tone),
-              ),
-              if (tier != null && tierTag != null) ...<Widget>[
-                const Spacer(),
-                StatusPill(
-                  label: tierTag!,
-                  tone: _tierTone(tier!),
-                  compact: true,
+                const Gap.h(ClinicalSpace.sm),
+                Text(
+                  side,
+                  style: ClinicalText.eyebrow.copyWith(color: tone),
                 ),
+                if (tier != null && tierTag != null) ...<Widget>[
+                  const Spacer(),
+                  StatusPill(
+                    label: tierTag!,
+                    tone: _tierTone(tier!),
+                    compact: true,
+                  ),
+                ],
               ],
-            ],
-          ),
-          const Gap.v(AppSpace.md),
-          _DrugPickerTile(drug: drug, onPick: onPick),
-          if (drug != null) ...<Widget>[
-            const Gap.v(AppSpace.md + 2),
-            _DoseField(
-              key: doseFieldKey,
-              drug: drug!,
-              controller: doseCtl,
-              onChanged: onDoseChanged,
             ),
+            const Gap.v(ClinicalSpace.md),
+            _DrugPickerTile(drug: drug, onPick: onPick),
+            if (drug != null) ...<Widget>[
+              const Gap.v(ClinicalSpace.md + 2),
+              _DoseField(
+                key: doseFieldKey,
+                drug: drug!,
+                controller: doseCtl,
+                onChanged: onDoseChanged,
+              ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }
@@ -759,15 +786,15 @@ class _DrugSection extends StatelessWidget {
   static Color _tierTone(RelevanceTier t) {
     switch (t) {
       case RelevanceTier.top:
-        return AppColors.to;
+        return ClinicalPalette.toneMintInk;
       case RelevanceTier.reviewed:
-        return AppColors.accent;
+        return ClinicalPalette.accent;
       case RelevanceTier.fallback:
-        return AppColors.muted;
+        return ClinicalPalette.muted;
       case RelevanceTier.caution:
-        return AppColors.warning;
+        return ClinicalPalette.warning;
       case RelevanceTier.avoid:
-        return AppColors.danger;
+        return ClinicalPalette.danger;
     }
   }
 }
@@ -783,7 +810,7 @@ class _DrugPickerTile extends StatelessWidget {
     final hasDrug = drug != null;
     return Material(
       color: Colors.transparent,
-      borderRadius: BorderRadius.circular(AppRadii.lg),
+      borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onPick,
@@ -791,20 +818,20 @@ class _DrugPickerTile extends StatelessWidget {
           duration: const Duration(milliseconds: 220),
           curve: Curves.easeOutCubic,
           padding: EdgeInsets.symmetric(
-            horizontal: hasDrug ? 0 : AppSpace.md - 2,
-            vertical: hasDrug ? AppSpace.xs : AppSpace.sm + 2,
+            horizontal: hasDrug ? 0 : ClinicalSpace.md - 2,
+            vertical: hasDrug ? ClinicalSpace.xs : ClinicalSpace.sm + 2,
           ),
           decoration: BoxDecoration(
             color: hasDrug
                 ? Colors.transparent
-                : AppColors.bg.withValues(alpha: 0.4),
+                : ClinicalPalette.surfaceMuted,
             border: hasDrug
                 ? null
                 : Border.all(
-                    color: AppColors.border.withValues(alpha: 0.6),
+                    color: ClinicalPalette.border.withValues(alpha: 0.6),
                     width: 0.5,
                   ),
-            borderRadius: BorderRadius.circular(AppRadii.lg),
+            borderRadius: BorderRadius.circular(ClinicalRadii.tile),
           ),
           child: Row(
             children: <Widget>[
@@ -817,7 +844,7 @@ class _DrugPickerTile extends StatelessWidget {
                           Text(
                             drug!.genericName,
                             style: const TextStyle(
-                              color: AppColors.text,
+                              color: ClinicalPalette.text,
                               fontSize: 24,
                               fontWeight: FontWeight.w800,
                               letterSpacing: -0.6,
@@ -825,10 +852,10 @@ class _DrugPickerTile extends StatelessWidget {
                             ),
                             overflow: TextOverflow.ellipsis,
                           ),
-                          const Gap.v(AppSpace.xs),
+                          const Gap.v(ClinicalSpace.xs),
                           Text(
                             drug!.drugClass,
-                            style: AppTextSizes.micro.copyWith(
+                            style: ClinicalText.caption.copyWith(
                               fontWeight: FontWeight.w600,
                               letterSpacing: 0.2,
                             ),
@@ -840,14 +867,14 @@ class _DrugPickerTile extends StatelessWidget {
                         children: <Widget>[
                           Icon(
                             Icons.add_rounded,
-                            color: AppColors.mutedStrong,
+                            color: ClinicalPalette.mutedStrong,
                             size: 18,
                           ),
-                          Gap.h(AppSpace.sm),
+                          Gap.h(ClinicalSpace.sm),
                           Text(
                             'Choose drug',
                             style: TextStyle(
-                              color: AppColors.mutedStrong,
+                              color: ClinicalPalette.mutedStrong,
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                               letterSpacing: -0.2,
@@ -860,7 +887,7 @@ class _DrugPickerTile extends StatelessWidget {
                 hasDrug
                     ? Icons.expand_more_rounded
                     : Icons.chevron_right_rounded,
-                color: AppColors.muted,
+                color: ClinicalPalette.muted,
                 size: hasDrug ? 22 : 20,
               ),
             ],
@@ -901,7 +928,7 @@ class _DoseField extends StatelessWidget {
             FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
           ],
           style: const TextStyle(
-            color: AppColors.text,
+            color: ClinicalPalette.text,
             fontSize: 15,
             fontWeight: FontWeight.w600,
             fontFeatures: <FontFeature>[FontFeature.tabularFigures()],
@@ -910,16 +937,16 @@ class _DoseField extends StatelessWidget {
             // Test contract + RN parity: '<drug> dose (mg)'.
             labelText: '${drug.genericName} dose (mg)',
             suffixText: 'mg',
-            suffixStyle: AppTextSizes.micro.copyWith(
+            suffixStyle: ClinicalText.caption.copyWith(
               fontWeight: FontWeight.w700,
             ),
           ),
           onChanged: (_) => onChanged(),
         ),
-        const Gap.v(AppSpace.xs),
+        const Gap.v(ClinicalSpace.xs),
         Padding(
-          padding: const EdgeInsets.only(left: AppSpace.md),
-          child: Text(_rangeLabel(), style: AppTextSizes.micro),
+          padding: const EdgeInsets.only(left: ClinicalSpace.md),
+          child: Text(_rangeLabel(), style: ClinicalText.caption),
         ),
       ],
     );
@@ -966,19 +993,19 @@ class _Journey extends StatelessWidget {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: AppColors.bg.withValues(alpha: 0.5),
+        color: ClinicalPalette.surfaceMuted,
         border: Border(
           top: isWide
               ? BorderSide.none
-              : const BorderSide(color: AppColors.border, width: 0.5),
+              : const BorderSide(color: ClinicalPalette.border, width: 0.5),
           bottom: isWide
               ? BorderSide.none
-              : const BorderSide(color: AppColors.border, width: 0.5),
+              : const BorderSide(color: ClinicalPalette.border, width: 0.5),
           left: isWide
-              ? const BorderSide(color: AppColors.border, width: 0.5)
+              ? const BorderSide(color: ClinicalPalette.border, width: 0.5)
               : BorderSide.none,
           right: isWide
-              ? const BorderSide(color: AppColors.border, width: 0.5)
+              ? const BorderSide(color: ClinicalPalette.border, width: 0.5)
               : BorderSide.none,
         ),
       ),
@@ -1055,10 +1082,10 @@ class _JourneyFilled extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg,
-        AppSpace.md + 2,
-        AppSpace.lg,
-        AppSpace.md + 2,
+        ClinicalSpace.lg,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.lg,
+        ClinicalSpace.md + 2,
       ),
       child: switch (plan) {
         final SwitchPlanOk ok => _OkJourney(
@@ -1071,22 +1098,22 @@ class _JourneyFilled extends StatelessWidget {
           ),
         SwitchPlanMaoiWashout(:final washoutDays, :final reason) =>
           _ToneJourney(
-            tone: AppColors.danger,
+            tone: ClinicalPalette.danger,
             eyebrow: 'MAOI WASHOUT · $washoutDays DAYS',
             body: reason,
           ),
         SwitchPlanMaudsleyGuidance(:final guidance) => _ToneJourney(
-            tone: AppColors.accent,
+            tone: ClinicalPalette.accent,
             eyebrow: 'CLASS-LEVEL GUIDANCE',
             body: guidance.headline,
           ),
         SwitchPlanClozapineRedirect() => const _ToneJourney(
-            tone: AppColors.warning,
+            tone: ClinicalPalette.warning,
             eyebrow: 'CLOZAPINE',
             body: 'Use the Clozapine module for titration + monitoring.',
           ),
         SwitchPlanNoRule(:final reason) => _ToneJourney(
-            tone: AppColors.muted,
+            tone: ClinicalPalette.muted,
             eyebrow: 'NO REVIEWED RULE',
             body: reason,
           ),
@@ -1166,8 +1193,8 @@ class _OkJourney extends StatelessWidget {
               child: Text(
                 '${ok.rule.durationDays} DAYS · '
                 '${_strategyLabel(ok.rule.strategy.jsonValue).toUpperCase()}',
-                style: AppTextSizes.eyebrow.copyWith(
-                  color: AppColors.mutedStrong,
+                style: ClinicalText.eyebrow.copyWith(
+                  color: ClinicalPalette.mutedStrong,
                   letterSpacing: 1.6,
                 ),
               ),
@@ -1179,15 +1206,15 @@ class _OkJourney extends StatelessWidget {
             ),
           ],
         ),
-        const Gap.v(AppSpace.sm + 2),
+        const Gap.v(ClinicalSpace.sm + 2),
         Row(
           children: <Widget>[
             ScoreRing(score: score, size: 64, strokeWidth: 6),
-            const Gap.h(AppSpace.md + 2),
+            const Gap.h(ClinicalSpace.md + 2),
             Expanded(
               child: Wrap(
-                spacing: AppSpace.xs + 2,
-                runSpacing: AppSpace.xs + 2,
+                spacing: ClinicalSpace.xs + 2,
+                runSpacing: ClinicalSpace.xs + 2,
                 children: <Widget>[
                   if (ddiHits.isNotEmpty)
                     _MetaChip(
@@ -1201,13 +1228,13 @@ class _OkJourney extends StatelessWidget {
                       icon: Icons.warning_amber_rounded,
                       label: '${ok.safetyFlags.length} safety '
                           'flag${ok.safetyFlags.length == 1 ? '' : 's'}',
-                      tone: AppColors.warning,
+                      tone: ClinicalPalette.warning,
                     ),
                   if (!ok.dosesMatchReference)
                     const _MetaChip(
                       icon: Icons.tune_rounded,
                       label: 'Dose-adapted',
-                      tone: AppColors.warning,
+                      tone: ClinicalPalette.warning,
                     ),
                   if (ddiHits.isEmpty &&
                       ok.safetyFlags.isEmpty &&
@@ -1215,7 +1242,7 @@ class _OkJourney extends StatelessWidget {
                     const _MetaChip(
                       icon: Icons.check_rounded,
                       label: 'Reviewed schedule',
-                      tone: AppColors.to,
+                      tone: ClinicalPalette.toneMintInk,
                     ),
                 ],
               ),
@@ -1227,14 +1254,14 @@ class _OkJourney extends StatelessWidget {
   }
 
   static Color _ddiTone(List<DdiHit> hits) {
-    var worst = AppColors.accent;
+    var worst = ClinicalPalette.accent;
     for (final h in hits) {
       switch (h.severity) {
         case DdiSeverity.avoid:
-          return AppColors.danger;
+          return ClinicalPalette.danger;
         case DdiSeverity.warning:
         case DdiSeverity.caution:
-          worst = AppColors.warning;
+          worst = ClinicalPalette.warning;
         case DdiSeverity.info:
           break;
       }
@@ -1260,26 +1287,26 @@ class _ToneJourney extends StatelessWidget {
       decoration: BoxDecoration(
         color: tone.withValues(alpha: 0.08),
         border: Border.all(color: tone.withValues(alpha: 0.35)),
-        borderRadius: BorderRadius.circular(AppRadii.md),
+        borderRadius: BorderRadius.circular(ClinicalRadii.chip),
       ),
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.md,
-        AppSpace.sm + 2,
-        AppSpace.md,
-        AppSpace.sm + 2,
+        ClinicalSpace.md,
+        ClinicalSpace.sm + 2,
+        ClinicalSpace.md,
+        ClinicalSpace.sm + 2,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
             eyebrow,
-            style: AppTextSizes.eyebrow.copyWith(color: tone),
+            style: ClinicalText.eyebrow.copyWith(color: tone),
           ),
           const Gap.v(2),
           Text(
             body,
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 12.5,
               height: 1.45,
             ),
@@ -1305,19 +1332,19 @@ class _MetaChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSpace.sm,
+        horizontal: ClinicalSpace.sm,
         vertical: 3,
       ),
       decoration: BoxDecoration(
         color: tone.withValues(alpha: 0.1),
         border: Border.all(color: tone.withValues(alpha: 0.3)),
-        borderRadius: BorderRadius.circular(AppRadii.pill),
+        borderRadius: BorderRadius.circular(ClinicalRadii.pill),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           Icon(icon, size: 11, color: tone),
-          const Gap.h(AppSpace.xs + 2),
+          const Gap.h(ClinicalSpace.xs + 2),
           Text(
             label,
             style: TextStyle(
@@ -1353,12 +1380,12 @@ class _SwapBadge extends StatelessWidget {
       height: 30,
       decoration: BoxDecoration(
         color: canSwap
-            ? AppColors.accent.withValues(alpha: 0.14)
-            : AppColors.surface,
+            ? ClinicalPalette.accent.withValues(alpha: 0.14)
+            : ClinicalPalette.surface,
         border: Border.all(
           color: canSwap
-              ? AppColors.accent.withValues(alpha: 0.5)
-              : AppColors.border,
+              ? ClinicalPalette.accent.withValues(alpha: 0.5)
+              : ClinicalPalette.border,
         ),
         shape: BoxShape.circle,
       ),
@@ -1377,7 +1404,7 @@ class _SwapBadge extends StatelessWidget {
                       ? Icons.arrow_forward_rounded
                       : Icons.arrow_downward_rounded),
               size: 15,
-              color: canSwap ? AppColors.accent : AppColors.muted,
+              color: canSwap ? ClinicalPalette.accent : ClinicalPalette.muted,
             ),
           ),
         ),
@@ -1395,31 +1422,31 @@ class _SameDrugWarning extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.md,
-        AppSpace.sm + 2,
-        AppSpace.md,
-        AppSpace.sm + 2,
+        ClinicalSpace.md,
+        ClinicalSpace.sm + 2,
+        ClinicalSpace.md,
+        ClinicalSpace.sm + 2,
       ),
       decoration: BoxDecoration(
-        color: AppColors.warning.withValues(alpha: 0.08),
+        color: ClinicalPalette.warning.withValues(alpha: 0.08),
         border: Border.all(
-          color: AppColors.warning.withValues(alpha: 0.35),
+          color: ClinicalPalette.warning.withValues(alpha: 0.35),
         ),
-        borderRadius: BorderRadius.circular(AppRadii.md),
+        borderRadius: BorderRadius.circular(ClinicalRadii.chip),
       ),
       child: const Row(
         children: <Widget>[
           Icon(
             Icons.swap_calls_rounded,
             size: 14,
-            color: AppColors.warning,
+            color: ClinicalPalette.warning,
           ),
-          Gap.h(AppSpace.sm),
+          Gap.h(ClinicalSpace.sm),
           Expanded(
             child: Text(
               'From and To are the same drug. Pick a different target.',
               style: TextStyle(
-                color: AppColors.warning,
+                color: ClinicalPalette.warning,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 height: 1.4,
@@ -1442,54 +1469,12 @@ class _PrimaryCta extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppRadii.xl),
-          boxShadow: enabled
-              ? <BoxShadow>[
-                  BoxShadow(
-                    color: AppColors.accent.withValues(alpha: 0.3),
-                    blurRadius: 24,
-                    spreadRadius: -6,
-                    offset: const Offset(0, 8),
-                  ),
-                ]
-              : null,
-        ),
-        child: FilledButton(
-          onPressed: enabled ? onPressed : null,
-          style: FilledButton.styleFrom(
-            backgroundColor: AppColors.accent,
-            foregroundColor: Colors.white,
-            disabledBackgroundColor: AppColors.surface,
-            disabledForegroundColor: AppColors.muted,
-            padding: const EdgeInsets.symmetric(vertical: 18),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppRadii.xl),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Text(
-                'Generate plan',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.1,
-                ),
-              ),
-              const Gap.h(AppSpace.sm + 2),
-              Icon(
-                Icons.arrow_forward_rounded,
-                size: 18,
-                color: enabled ? Colors.white : AppColors.muted,
-              ),
-            ],
-          ),
-        ),
+    return Center(
+      child: PillButton(
+        label: 'Generate plan',
+        icon: Icons.arrow_forward_rounded,
+        onPressed: enabled ? onPressed : null,
+        expanded: true,
       ),
     );
   }
@@ -1546,62 +1531,62 @@ class _DrugPickerSheetState extends State<_DrugPickerSheet> {
         height: mq.size.height * 0.72,
         child: Column(
           children: <Widget>[
-            const Gap.v(AppSpace.md),
+            const Gap.v(ClinicalSpace.md),
             Container(
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: AppColors.borderStrong,
+                color: ClinicalPalette.borderStrong,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            const Gap.v(AppSpace.md),
+            const Gap.v(ClinicalSpace.md),
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                AppSpace.lg,
+                ClinicalSpace.lg,
                 0,
-                AppSpace.lg,
-                AppSpace.sm,
+                ClinicalSpace.lg,
+                ClinicalSpace.sm,
               ),
               child: Row(
                 children: <Widget>[
                   Text(
                     widget.fromDrugId == null ? 'Pick from-drug' : 'Pick to-drug',
-                    style: AppTextSizes.subtitle,
+                    style: ClinicalText.subtitle,
                   ),
                   const Spacer(),
                   Text(
                     '${ranked.length} drug${ranked.length == 1 ? '' : 's'}',
-                    style: AppTextSizes.micro,
+                    style: ClinicalText.caption,
                   ),
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpace.lg),
+              padding: const EdgeInsets.symmetric(horizontal: ClinicalSpace.lg),
               child: TextField(
                 controller: _searchCtl,
                 autofocus: true,
-                style: const TextStyle(color: AppColors.text, fontSize: 15),
+                style: const TextStyle(color: ClinicalPalette.text, fontSize: 15),
                 decoration: const InputDecoration(
                   hintText: 'Search drugs',
                   prefixIcon: Icon(
                     Icons.search,
-                    color: AppColors.muted,
+                    color: ClinicalPalette.muted,
                     size: 20,
                   ),
                 ),
                 onChanged: (_) => setState(() {}),
               ),
             ),
-            const Gap.v(AppSpace.md),
+            const Gap.v(ClinicalSpace.md),
             Expanded(
               child: ListView.separated(
                 padding: const EdgeInsets.fromLTRB(
-                  AppSpace.lg,
+                  ClinicalSpace.lg,
                   0,
-                  AppSpace.lg,
-                  AppSpace.lg,
+                  ClinicalSpace.lg,
+                  ClinicalSpace.lg,
                 ),
                 itemCount: ranked.length,
                 separatorBuilder: (_, __) => const Divider(height: 1),
@@ -1625,7 +1610,7 @@ class _DrugRow extends StatelessWidget {
     return InkWell(
       onTap: () => Navigator.of(context).pop(ranked.drug),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppSpace.md + 2),
+        padding: const EdgeInsets.symmetric(vertical: ClinicalSpace.md + 2),
         child: Row(
           children: <Widget>[
             Expanded(
@@ -1635,7 +1620,7 @@ class _DrugRow extends StatelessWidget {
                   Text(
                     ranked.drug.genericName,
                     style: const TextStyle(
-                      color: AppColors.text,
+                      color: ClinicalPalette.text,
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                     ),
@@ -1643,7 +1628,7 @@ class _DrugRow extends StatelessWidget {
                   const Gap.v(2),
                   Text(
                     ranked.drug.drugClass,
-                    style: AppTextSizes.micro,
+                    style: ClinicalText.caption,
                   ),
                 ],
               ),
@@ -1654,7 +1639,7 @@ class _DrugRow extends StatelessWidget {
                 tone: _toneFor(ranked.tier),
                 compact: true,
               ),
-            const Gap.h(AppSpace.sm),
+            const Gap.h(ClinicalSpace.sm),
             // "i" button — open drug profile without picking the drug.
             // Lets the clinician scan PK / risk / interactions before
             // committing to the selection.
@@ -1669,12 +1654,12 @@ class _DrugRow extends StatelessWidget {
                     pathParameters: <String, String>{'id': ranked.drug.id},
                   );
                 },
-                borderRadius: BorderRadius.circular(AppRadii.sm),
+                borderRadius: BorderRadius.circular(ClinicalRadii.chip),
                 child: const Padding(
-                  padding: EdgeInsets.all(AppSpace.xs + 2),
+                  padding: EdgeInsets.all(ClinicalSpace.xs + 2),
                   child: Icon(
                     Icons.info_outline_rounded,
-                    color: AppColors.muted,
+                    color: ClinicalPalette.muted,
                     size: 18,
                   ),
                 ),
@@ -1688,11 +1673,11 @@ class _DrugRow extends StatelessWidget {
 
   static Color _toneFor(RelevanceTier tier) {
     return switch (tier) {
-      RelevanceTier.top => AppColors.to,
-      RelevanceTier.reviewed => AppColors.accent,
-      RelevanceTier.fallback => AppColors.muted,
-      RelevanceTier.caution => AppColors.warning,
-      RelevanceTier.avoid => AppColors.danger,
+      RelevanceTier.top => ClinicalPalette.toneMintInk,
+      RelevanceTier.reviewed => ClinicalPalette.accent,
+      RelevanceTier.fallback => ClinicalPalette.muted,
+      RelevanceTier.caution => ClinicalPalette.warning,
+      RelevanceTier.avoid => ClinicalPalette.danger,
     };
   }
 }
