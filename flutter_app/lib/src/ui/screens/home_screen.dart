@@ -1017,6 +1017,12 @@ class _ReferenceRail extends StatelessWidget {
   Widget build(BuildContext context) {
     const rows = <_RailRow>[
       _RailRow(
+        label: 'Rating scales',
+        sub: 'PHQ-9 · GAD-7 · HAM-D · AIMS',
+        icon: Icons.assignment_turned_in_outlined,
+        route: Routes.scales,
+      ),
+      _RailRow(
         label: 'QTc stacker',
         sub: 'Aggregate QTc risk',
         icon: Icons.monitor_heart_outlined,

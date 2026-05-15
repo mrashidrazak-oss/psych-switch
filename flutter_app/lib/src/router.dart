@@ -41,6 +41,8 @@ import 'package:psychswitch/src/ui/screens/polypharmacy_screen.dart';
 import 'package:psychswitch/src/ui/screens/qtc_stacker_screen.dart';
 import 'package:psychswitch/src/ui/screens/ramadan_screen.dart';
 import 'package:psychswitch/src/ui/screens/result_screen.dart';
+import 'package:psychswitch/src/ui/screens/scale_runner_screen.dart';
+import 'package:psychswitch/src/ui/screens/scales_screen.dart';
 import 'package:psychswitch/src/ui/screens/search_screen.dart';
 import 'package:psychswitch/src/ui/screens/settings_screen.dart';
 import 'package:psychswitch/src/ui/screens/switch_screen.dart';
@@ -71,6 +73,8 @@ abstract final class Routes {
   static const polypharmacy = 'polypharmacy';
   static const compare = 'compare';
   static const search = 'search';
+  static const scales = 'scales';
+  static const scaleRunner = 'scale_runner';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -262,6 +266,25 @@ GoRouter buildRouter() => GoRouter(
             state: state,
             child: const SearchScreen(),
           ),
+        ),
+        GoRoute(
+          name: Routes.scales,
+          path: '/scales',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const ScalesScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.scaleRunner,
+          path: '/scales/:id',
+          pageBuilder: (context, state) {
+            final id = state.pathParameters['id']!;
+            return _fadeThroughPage(
+              state: state,
+              child: ScaleRunnerScreen(scaleId: id),
+            );
+          },
         ),
         GoRoute(
           name: Routes.compare,

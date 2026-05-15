@@ -259,6 +259,16 @@ const List<_ToolItem> _allTools = <_ToolItem>[
     ],
   ),
   _ToolItem(
+    label: 'Rating scales',
+    tagline: 'PHQ-9 · GAD-7 · HAM-D · AIMS',
+    icon: Icons.assignment_turned_in_outlined,
+    route: Routes.scales,
+    keywords: <String>[
+      'phq', 'gad', 'hamilton', 'hamd', 'aims', 'scale', 'rating',
+      'depression', 'anxiety', 'dyskinesia',
+    ],
+  ),
+  _ToolItem(
     label: 'QTc stacker',
     tagline: 'Aggregate QTc risk',
     icon: Icons.monitor_heart_outlined,
