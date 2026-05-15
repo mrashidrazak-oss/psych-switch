@@ -65,10 +65,12 @@ void main() {
       expect(find.textContaining('Dr R'), findsOneWidget);
       // Hero copy.
       expect(find.text('Plan a safe cross-titration'), findsOneWidget);
-      // Drug/rule signal line — verify the trailing source.
+      // Drug/rule signal line — verify the trailing source. (May appear
+      // more than once on days when the daily pearl also cites
+      // Maudsley.)
       expect(
         find.textContaining('Maudsley 15th ed.'),
-        findsOneWidget,
+        findsWidgets,
       );
       // Primary CTA.
       expect(find.text('Start a switch'), findsOneWidget);

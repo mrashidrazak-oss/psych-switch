@@ -69,6 +69,10 @@ class SettingsScreen extends ConsumerWidget {
             AppSpace.xl,
           ),
           children: <Widget>[
+            const _SectionHeader(text: 'PROFILE'),
+            const _ClinicianNameField(),
+
+            const Gap.v(AppSpace.xl),
             const _SectionHeader(text: 'DISPLAY'),
             _ToggleTile(
               label: 'Show citation chips',
@@ -438,6 +442,107 @@ class _DangerTile extends StatelessWidget {
               ),
               child: Text(label),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Clinician-name editor — surfaces on the Home greeting and (future)
+/// PDF exports. Stored locally via [clinicianNameProvider]; never
+/// transmitted.
+class _ClinicianNameField extends ConsumerStatefulWidget {
+  const _ClinicianNameField();
+
+  @override
+  ConsumerState<_ClinicianNameField> createState() =>
+      _ClinicianNameFieldState();
+}
+
+class _ClinicianNameFieldState extends ConsumerState<_ClinicianNameField> {
+  late final TextEditingController _ctrl;
+  bool _seeded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Seed the field once when prefs resolve so we don't fight the
+    // user's edits on every rebuild.
+    ref.watch(clinicianNameProvider).whenData((current) {
+      if (!_seeded) {
+        _ctrl.text = current;
+        _seeded = true;
+      }
+    });
+
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        border: Border.all(
+          color: AppColors.border.withValues(alpha: 0.7),
+          width: 0.5,
+        ),
+        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+      ),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpace.lg - 2,
+        AppSpace.md + 2,
+        AppSpace.lg - 2,
+        AppSpace.md + 2,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Row(
+            children: <Widget>[
+              Icon(Icons.person_outline, size: 18, color: AppColors.accent),
+              Gap.h(AppSpace.sm + 2),
+              Expanded(
+                child: Text(
+                  'Your name',
+                  style: TextStyle(
+                    color: AppColors.text,
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.1,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const Gap.v(AppSpace.xs + 1),
+          Text(
+            'Personalises the Home greeting and (later) exported '
+            'switch-plan PDFs. Stays on this device.',
+            style: AppTextSizes.caption.copyWith(height: 1.55),
+          ),
+          const Gap.v(AppSpace.md),
+          TextField(
+            controller: _ctrl,
+            textCapitalization: TextCapitalization.words,
+            textInputAction: TextInputAction.done,
+            maxLength: 40,
+            decoration: const InputDecoration(
+              hintText: 'e.g. Rashid Razak',
+              counterText: '',
+              isDense: true,
+            ),
+            onSubmitted: (v) =>
+                ref.read(clinicianNameProvider.notifier).set(v),
+            onChanged: (v) =>
+                ref.read(clinicianNameProvider.notifier).set(v),
           ),
         ],
       ),

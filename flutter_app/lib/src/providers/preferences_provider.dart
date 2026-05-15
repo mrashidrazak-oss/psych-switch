@@ -32,6 +32,64 @@ class _BoolPref extends AsyncNotifier<bool> {
   }
 }
 
+/// Clinician display name — surfaces on the Home greeting and on
+/// exported switch-plan PDFs. Empty string means "not set"; the UI
+/// falls back to a generic salutation. Two-letter initials are
+/// derived for the avatar bubble.
+final clinicianNameProvider =
+    AsyncNotifierProvider<_StringPref, String>(_StringPref.new);
+
+class _StringPref extends AsyncNotifier<String> {
+  static const _key = 'pref_clinician_name';
+
+  @override
+  Future<String> build() async {
+    final prefs = await ref.watch(sharedPreferencesProvider.future);
+    return prefs.getString(_key) ?? '';
+  }
+
+  Future<void> set(String value) async {
+    final trimmed = value.trim();
+    state = AsyncValue.data(trimmed);
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    await prefs.setString(_key, trimmed);
+  }
+}
+
+/// Compute up-to-two-character initials from a clinician name.
+/// Returns 'RX' when the name is empty so the avatar never collapses.
+String clinicianInitials(String name) {
+  final tokens = name
+      .replaceAll(RegExp(r'^Dr\.?\s+', caseSensitive: false), '')
+      .trim()
+      .split(RegExp(r'\s+'))
+      .where((t) => t.isNotEmpty)
+      .toList();
+  if (tokens.isEmpty) return 'RX';
+  if (tokens.length == 1) {
+    final t = tokens.first;
+    return t.length >= 2
+        ? t.substring(0, 2).toUpperCase()
+        : t.substring(0, 1).toUpperCase();
+  }
+  return (tokens.first.substring(0, 1) + tokens.last.substring(0, 1))
+      .toUpperCase();
+}
+
+/// Salutation form for the greeting — strips/prefixes "Dr" as needed
+/// so the greeting reads naturally regardless of how the user typed
+/// their name in. Returns "Dr R" when the name is empty (matches the
+/// pre-personalisation default).
+String clinicianSalutation(String name) {
+  final trimmed = name.trim();
+  if (trimmed.isEmpty) return 'Dr R';
+  // Already starts with "Dr" / "dr" / "DR" — pass through.
+  if (RegExp(r'^Dr\.?\b', caseSensitive: false).hasMatch(trimmed)) {
+    return trimmed;
+  }
+  return 'Dr $trimmed';
+}
+
 /// Whether monitoring-reminder notifications fire on saved cases.
 /// Default: false — opt-in. Toggling off cancels every pending
 /// reminder via `NotificationService.cancelAll`.

@@ -30,10 +30,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:psychswitch/src/providers/engine_provider.dart';
+import 'package:psychswitch/src/providers/preferences_provider.dart';
+import 'package:psychswitch/src/providers/saved_cases_provider.dart';
 import 'package:psychswitch/src/router.dart';
+import 'package:psychswitch/src/ui/screens/result_screen.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/widgets/clinical_primitives.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
+import 'package:psychswitch_engine/case_pulse.dart' show SavedCase;
+import 'package:psychswitch_engine/switching_engine.dart' show SwitchInput;
 
 /// Maximum content-column width on wide screens. Anything wider gets
 /// flanked by whitespace so we never stretch a CTA across a 7.6" panel.
@@ -66,20 +71,24 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
-class _HomeBody extends StatelessWidget {
+class _HomeBody extends ConsumerWidget {
   const _HomeBody({required this.drugCount, required this.ruleCount});
 
   final int drugCount;
   final int ruleCount;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final hour = DateTime.now().hour;
     final greeting = hour < 12
         ? 'Good morning'
         : hour < 18
             ? 'Good afternoon'
             : 'Good evening';
+    final nameAsync = ref.watch(clinicianNameProvider);
+    final name = nameAsync.maybeWhen(data: (n) => n, orElse: () => '');
+    final salutation = clinicianSalutation(name);
+    final initials = clinicianInitials(name);
 
     return Center(
       child: ConstrainedBox(
@@ -95,11 +104,18 @@ class _HomeBody extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              _Greeting(greeting: greeting),
+              _Greeting(
+                greeting: greeting,
+                salutation: salutation,
+                initials: initials,
+              ),
               const SizedBox(height: ClinicalSpace.lg + 4),
               const _SearchField(),
               const SizedBox(height: ClinicalSpace.lg),
               _Hero(drugCount: drugCount, ruleCount: ruleCount),
+              const SizedBox(height: ClinicalSpace.lg),
+              const _RecentCasesStrip(),
+              const _PearlCard(),
               const SizedBox(height: ClinicalSpace.lg),
               const _QuickActions(),
               const SizedBox(height: ClinicalSpace.lg + 4),
@@ -126,21 +142,27 @@ class _HomeBody extends StatelessWidget {
 // ── Greeting header ─────────────────────────────────────────────────
 
 class _Greeting extends StatelessWidget {
-  const _Greeting({required this.greeting});
+  const _Greeting({
+    required this.greeting,
+    required this.salutation,
+    required this.initials,
+  });
   final String greeting;
+  final String salutation;
+  final String initials;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        const AvatarCircle(initials: 'RR'),
+        AvatarCircle(initials: initials),
         const SizedBox(width: ClinicalSpace.md + 2),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                '$greeting, Dr R',
+                '$greeting, $salutation',
                 style: ClinicalText.title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -357,6 +379,401 @@ class _Hero extends StatelessWidget {
             '$drugCount drugs · $ruleCount rules · Maudsley 15th ed.',
             style: ClinicalText.caption.copyWith(
               color: ClinicalPalette.toneLavenderInk.withValues(alpha: 0.7),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Recent cases strip ──────────────────────────────────────────────
+
+/// Horizontal mini-strip of the three most-recent saved cases. Hides
+/// itself silently when there are no cases (so first-launch and clean
+/// installs don't show an empty row).
+class _RecentCasesStrip extends ConsumerWidget {
+  const _RecentCasesStrip();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final async = ref.watch(savedCasesProvider);
+    final cases = async.maybeWhen(
+      data: (list) => list.take(3).toList(),
+      orElse: () => const <SavedCase>[],
+    );
+    if (cases.isEmpty) return const SizedBox.shrink();
+
+    final engineAsync = ref.watch(engineProvider);
+    final engine = engineAsync.maybeWhen(
+      data: (e) => e,
+      orElse: () => null,
+    );
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: ClinicalSpace.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(
+              left: ClinicalSpace.xs,
+              bottom: ClinicalSpace.md,
+            ),
+            child: Row(
+              children: <Widget>[
+                const Text('Recent cases', style: ClinicalText.title),
+                const Spacer(),
+                InkWell(
+                  onTap: () => context.pushNamed(Routes.history),
+                  borderRadius:
+                      BorderRadius.circular(ClinicalRadii.pill),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: ClinicalSpace.sm,
+                      vertical: 4,
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        Text(
+                          'All',
+                          style: ClinicalText.caption.copyWith(
+                            color: ClinicalPalette.text,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(width: 2),
+                        const Icon(Icons.chevron_right,
+                            size: 14, color: ClinicalPalette.text),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Row(
+            children: <Widget>[
+              for (var i = 0; i < cases.length; i++) ...<Widget>[
+                if (i > 0) const SizedBox(width: ClinicalSpace.sm + 2),
+                Expanded(
+                  child: _RecentCaseTile(
+                    savedCase: cases[i],
+                    fromName: engine?.getDrug(cases[i].fromDrugId)?.genericName ??
+                        cases[i].fromDrugId,
+                    toName: engine?.getDrug(cases[i].toDrugId)?.genericName ??
+                        cases[i].toDrugId,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RecentCaseTile extends StatelessWidget {
+  const _RecentCaseTile({
+    required this.savedCase,
+    required this.fromName,
+    required this.toName,
+  });
+
+  final SavedCase savedCase;
+  final String fromName;
+  final String toName;
+
+  /// Pick a tone family per case position so the strip reads as three
+  /// distinct cards (lavender / mint / peach in rotation).
+  static const _tones = <({Color tone, Color ink})>[
+    (tone: ClinicalPalette.toneLavender, ink: ClinicalPalette.toneLavenderInk),
+    (tone: ClinicalPalette.toneMint, ink: ClinicalPalette.toneMintInk),
+    (tone: ClinicalPalette.tonePeach, ink: ClinicalPalette.tonePeachInk),
+  ];
+
+  String _ago(String iso) {
+    final t = DateTime.tryParse(iso);
+    if (t == null) return '';
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final that = DateTime(t.year, t.month, t.day);
+    final diff = today.difference(that).inDays;
+    if (diff == 0) return 'Today';
+    if (diff == 1) return 'Yesterday';
+    if (diff < 7) return '${diff}d ago';
+    if (diff < 30) return '${(diff / 7).floor()}w ago';
+    return '${(diff / 30).floor()}mo ago';
+  }
+
+  String _hash(String s) {
+    var h = 0;
+    for (final c in s.codeUnits) {
+      h = (h * 31 + c) & 0x7fffffff;
+    }
+    return h.toString();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = _tones[int.parse(_hash(savedCase.id)) % _tones.length];
+    return SquircleCard(
+      tone: palette.tone,
+      radius: ClinicalRadii.tile,
+      padding: const EdgeInsets.all(ClinicalSpace.md),
+      onTap: () => context.pushNamed(
+        Routes.result,
+        extra: ResultScreenArgs(
+          input: SwitchInput(
+            fromDrugId: savedCase.fromDrugId,
+            fromDoseMg: savedCase.fromDoseMg,
+            toDrugId: savedCase.toDrugId,
+            toDoseMg: savedCase.toDoseMg,
+          ),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Icon(Icons.swap_horiz_rounded,
+                  size: 14, color: palette.ink.withValues(alpha: 0.7)),
+              const SizedBox(width: 4),
+              Expanded(
+                child: Text(
+                  _ago(savedCase.updatedISO),
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1,
+                    color: palette.ink.withValues(alpha: 0.7),
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: ClinicalSpace.sm),
+          Text(
+            fromName,
+            style: TextStyle(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w700,
+              color: palette.ink,
+              height: 1.2,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          Text(
+            '→ $toName',
+            style: TextStyle(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w700,
+              color: palette.ink,
+              height: 1.25,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Today's pearl ───────────────────────────────────────────────────
+
+/// One bite of Maudsley-derived clinical wisdom, rotated daily.
+///
+/// Deterministic by date so two devices on the same day see the same
+/// pearl — the clinician can mention it to a colleague and they'll
+/// recognise it.
+class _PearlCard extends StatelessWidget {
+  const _PearlCard();
+
+  static const List<({String title, String body, String source})> _pearls =
+      <({String title, String body, String source})>[
+    (
+      title: 'Fluoxetine washout',
+      body:
+          'Allow at least 5 weeks off fluoxetine before starting an '
+              'MAOI — its long-acting metabolite norfluoxetine has a '
+              'half-life of 7–15 days.',
+      source: 'Maudsley 15th ed.',
+    ),
+    (
+      title: 'Clozapine missed doses',
+      body:
+          'After ≥48 h off clozapine, restart from 12.5 mg and re-titrate. '
+              'Tolerance is rapidly lost; the original dose can precipitate '
+              'severe orthostasis or sedation.',
+      source: 'Maudsley 15th ed.',
+    ),
+    (
+      title: 'Lithium + ACE inhibitors',
+      body:
+          'Adding an ACE inhibitor can raise lithium levels by 30–40%. '
+              'Recheck a level within 5–7 days and dose-reduce lithium '
+              'pre-emptively in the elderly.',
+      source: 'Stahl, 7e',
+    ),
+    (
+      title: 'Paroxetine discontinuation',
+      body:
+          'Of the SSRIs, paroxetine has the highest discontinuation-syndrome '
+              'risk owing to its short half-life and potent muscarinic '
+              'rebound. Taper over ≥ 4 weeks; consider fluoxetine bridge.',
+      source: 'Maudsley 15th ed.',
+    ),
+    (
+      title: 'Valproate in women of childbearing age',
+      body:
+          'Valproate is teratogenic and neurodevelopmentally toxic — avoid '
+              'unless there is no effective alternative AND a '
+              'pregnancy-prevention plan is documented.',
+      source: 'MHRA Toolkit',
+    ),
+    (
+      title: 'Olanzapine + smoking cessation',
+      body:
+          'Stopping smoking raises olanzapine and clozapine levels by '
+              '~50% via CYP1A2 de-induction. Recheck levels within 1–2 '
+              'weeks of cessation and consider a 25–50% dose reduction.',
+      source: 'Stahl, 7e',
+    ),
+    (
+      title: 'Aripiprazole partial agonism',
+      body:
+          'Cross-titrating onto aripiprazole from a full D2 antagonist '
+              'can unmask dopaminergic rebound (akathisia, agitation). '
+              'Slow the taper of the outgoing drug to mitigate.',
+      source: 'Maudsley 15th ed.',
+    ),
+    (
+      title: 'Mirtazapine + sedation paradox',
+      body:
+          'At 15 mg mirtazapine is more sedating than at 45 mg — higher '
+              'doses recruit noradrenergic activity that offsets the H1 '
+              'antihistamine effect. Up-titrate to fix daytime drowsiness.',
+      source: 'Stahl, 7e',
+    ),
+    (
+      title: 'Quetiapine QTc',
+      body:
+          'Quetiapine has a dose-dependent QTc effect that becomes '
+              'meaningful above 600 mg/day; combine with citalopram and '
+              'the additive risk crosses clinically significant thresholds.',
+      source: 'CredibleMeds',
+    ),
+    (
+      title: 'SSRI bleeding risk',
+      body:
+          'Co-prescribed SSRI + NSAID raises GI bleed risk 4–5×. '
+              'Consider a PPI, especially in patients > 65 or on '
+              'anticoagulants.',
+      source: 'Maudsley 15th ed.',
+    ),
+    (
+      title: 'Lamotrigine titration',
+      body:
+          'Slow up-titration (25 mg/day for weeks 1-2, then 50 mg/day for '
+              'weeks 3-4) is non-negotiable — fast titration drives the '
+              'Stevens-Johnson rate from 1:10,000 to 1:300.',
+      source: 'Maudsley 15th ed.',
+    ),
+    (
+      title: 'NaSSA + SSRI combo',
+      body:
+          'Mirtazapine + SSRI ("California rocket fuel") can be more '
+              'effective than monotherapy, but watch for sedation, weight '
+              'gain, and rare serotonin-syndrome reports at high SSRI '
+              'doses.',
+      source: 'Stahl, 7e',
+    ),
+    (
+      title: 'Metformin for AP weight gain',
+      body:
+          'Metformin can blunt antipsychotic-induced weight gain by '
+              '3–5 kg over 12 weeks, especially in olanzapine/clozapine '
+              'users. Start at 500 mg BD with food.',
+      source: 'BMJ Open 2022',
+    ),
+    (
+      title: 'Carbamazepine auto-induction',
+      body:
+          'CBZ induces its own CYP3A4 metabolism over the first 2–4 '
+              'weeks — expect serum levels to fall after the first '
+              'dose-target hit, then re-uptitrate.',
+      source: 'Maudsley 15th ed.',
+    ),
+    (
+      title: 'Hyponatraemia with SSRIs',
+      body:
+          'SSRI-induced SIADH typically appears in the first 2–4 weeks. '
+              'Check sodium at baseline and at week 2 in patients ≥ 65 '
+              'or on diuretics.',
+      source: 'Maudsley 15th ed.',
+    ),
+  ];
+
+  static ({String title, String body, String source}) _pearlOfTheDay() {
+    final now = DateTime.now();
+    final dayOfYear =
+        now.difference(DateTime(now.year)).inDays;
+    return _pearls[dayOfYear % _pearls.length];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = _pearlOfTheDay();
+    return SquircleCard(
+      tone: ClinicalPalette.toneSand,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Row(
+            children: <Widget>[
+              TonePill(
+                label: "Today's pearl",
+                tone: Color(0xFFFFFFFF),
+                ink: ClinicalPalette.toneSandInk,
+              ),
+              Spacer(),
+              Icon(
+                Icons.auto_awesome,
+                size: 16,
+                color: ClinicalPalette.toneSandInk,
+              ),
+            ],
+          ),
+          const SizedBox(height: ClinicalSpace.md),
+          Text(
+            p.title,
+            style: ClinicalText.subtitle.copyWith(
+              color: ClinicalPalette.toneSandInk,
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: ClinicalSpace.xs + 2),
+          Text(
+            p.body,
+            style: ClinicalText.body.copyWith(
+              color: ClinicalPalette.toneSandInk.withValues(alpha: 0.9),
+              height: 1.45,
+            ),
+          ),
+          const SizedBox(height: ClinicalSpace.md),
+          Text(
+            p.source,
+            style: ClinicalText.caption.copyWith(
+              color: ClinicalPalette.toneSandInk.withValues(alpha: 0.7),
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.3,
             ),
           ),
         ],
