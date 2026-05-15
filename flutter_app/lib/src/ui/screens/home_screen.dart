@@ -524,6 +524,11 @@ class _ToolsSection extends StatelessWidget {
 
   static const _reference = <_ToolItem>[
     _ToolItem(
+      label: 'Calculators',
+      icon: Icons.calculate_outlined,
+      route: Routes.calculators,
+    ),
+    _ToolItem(
       label: 'QTc stacker',
       icon: Icons.monitor_heart_outlined,
       route: Routes.qtcStacker,

@@ -24,6 +24,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:psychswitch/src/ui/screens/about_screen.dart';
 import 'package:psychswitch/src/ui/screens/adverse_effects_screen.dart';
+import 'package:psychswitch/src/ui/screens/calculators_screen.dart';
 import 'package:psychswitch/src/ui/screens/clozapine_screen.dart';
 import 'package:psychswitch/src/ui/screens/depot_screen.dart';
 import 'package:psychswitch/src/ui/screens/drug_profile_screen.dart';
@@ -63,6 +64,7 @@ abstract final class Routes {
   static const equivalency = 'equivalency';
   static const drugProfile = 'drug_profile';
   static const ramadan = 'ramadan';
+  static const calculators = 'calculators';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -237,6 +239,14 @@ GoRouter buildRouter() => GoRouter(
           pageBuilder: (context, state) => _fadeThroughPage(
             state: state,
             child: const RamadanScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.calculators,
+          path: '/calculators',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const CalculatorsScreen(),
           ),
         ),
         GoRoute(

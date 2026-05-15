@@ -1654,6 +1654,32 @@ class _DrugRow extends StatelessWidget {
                 tone: _toneFor(ranked.tier),
                 compact: true,
               ),
+            const Gap.h(AppSpace.sm),
+            // "i" button — open drug profile without picking the drug.
+            // Lets the clinician scan PK / risk / interactions before
+            // committing to the selection.
+            Tooltip(
+              message: 'Drug profile',
+              child: InkWell(
+                onTap: () {
+                  unawaited(hapticsTap());
+                  Navigator.of(context).pop();
+                  context.pushNamed(
+                    Routes.drugProfile,
+                    pathParameters: <String, String>{'id': ranked.drug.id},
+                  );
+                },
+                borderRadius: BorderRadius.circular(AppRadii.sm),
+                child: const Padding(
+                  padding: EdgeInsets.all(AppSpace.xs + 2),
+                  child: Icon(
+                    Icons.info_outline_rounded,
+                    color: AppColors.muted,
+                    size: 18,
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
