@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/screens/result_screen.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/status_pill.dart';
 import 'package:psychswitch_engine/patient_context_pure.dart';
@@ -44,15 +45,15 @@ class AlternativesCard extends StatelessWidget {
   Color _toneFor(RelevanceTier t) {
     switch (t) {
       case RelevanceTier.top:
-        return AppColors.warning;
+        return ClinicalPalette.warning;
       case RelevanceTier.reviewed:
-        return AppColors.to;
+        return ClinicalPalette.toneMintInk;
       case RelevanceTier.fallback:
-        return AppColors.muted;
+        return ClinicalPalette.muted;
       case RelevanceTier.caution:
-        return AppColors.warning;
+        return ClinicalPalette.warning;
       case RelevanceTier.avoid:
-        return AppColors.danger;
+        return ClinicalPalette.danger;
     }
   }
 
@@ -79,9 +80,9 @@ class AlternativesCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(AppRadii.lg),
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -89,10 +90,10 @@ class AlternativesCard extends StatelessWidget {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.fromLTRB(
-              AppSpace.md + 2,
-              AppSpace.md - 2,
-              AppSpace.md + 2,
-              AppSpace.md - 2,
+              ClinicalSpace.md + 2,
+              ClinicalSpace.md - 2,
+              ClinicalSpace.md + 2,
+              ClinicalSpace.md - 2,
             ),
             child: Row(
               children: <Widget>[
@@ -100,19 +101,19 @@ class AlternativesCard extends StatelessWidget {
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: AppColors.from.withValues(alpha: 0.15),
+                    color: ClinicalPalette.toneLavenderInk.withValues(alpha: 0.15),
                     border: Border.all(
-                      color: AppColors.from.withValues(alpha: 0.3),
+                      color: ClinicalPalette.toneLavenderInk.withValues(alpha: 0.3),
                     ),
-                    borderRadius: BorderRadius.circular(AppRadii.sm + 2),
+                    borderRadius: BorderRadius.circular(ClinicalRadii.chip + 2),
                   ),
                   child: const Icon(
                     Icons.auto_awesome,
                     size: 16,
-                    color: AppColors.from,
+                    color: ClinicalPalette.toneLavenderInk,
                   ),
                 ),
-                const Gap.h(AppSpace.md),
+                const Gap.h(ClinicalSpace.md),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -120,7 +121,7 @@ class AlternativesCard extends StatelessWidget {
                       const Text(
                         "What if this doesn't work out?",
                         style: TextStyle(
-                          color: AppColors.text,
+                          color: ClinicalPalette.text,
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
                         ),
@@ -130,7 +131,7 @@ class AlternativesCard extends StatelessWidget {
                         '${picks.length} alternative '
                         '${picks.length == 1 ? 'target' : 'targets'} '
                         'from ${fromDrug.genericName}',
-                        style: AppTextSizes.micro,
+                        style: ClinicalText.caption,
                       ),
                     ],
                   ),
@@ -195,13 +196,13 @@ class _AlternativeRow extends StatelessWidget {
             border: isLast
                 ? null
                 : const Border(
-                    bottom: BorderSide(color: AppColors.border),
+                    bottom: BorderSide(color: ClinicalPalette.border),
                   ),
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: AppSpace.md + 2,
-              vertical: AppSpace.md - 2,
+              horizontal: ClinicalSpace.md + 2,
+              vertical: ClinicalSpace.md - 2,
             ),
             child: Row(
               children: <Widget>[
@@ -212,7 +213,7 @@ class _AlternativeRow extends StatelessWidget {
                       Text(
                         ranked.drug.genericName,
                         style: const TextStyle(
-                          color: AppColors.text,
+                          color: ClinicalPalette.text,
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
                         ),
@@ -220,18 +221,18 @@ class _AlternativeRow extends StatelessWidget {
                       const Gap.v(2),
                       Text(
                         ranked.drug.drugClass,
-                        style: AppTextSizes.micro,
+                        style: ClinicalText.caption,
                       ),
                     ],
                   ),
                 ),
-                const Gap.h(AppSpace.sm),
+                const Gap.h(ClinicalSpace.sm),
                 StatusPill(label: tierLabel, tone: tone, compact: true),
-                const Gap.h(AppSpace.xs),
+                const Gap.h(ClinicalSpace.xs),
                 const Icon(
                   Icons.chevron_right_rounded,
                   size: 18,
-                  color: AppColors.muted,
+                  color: ClinicalPalette.muted,
                 ),
               ],
             ),

@@ -6,6 +6,7 @@
 
 import 'package:flutter/material.dart';
 
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 
 class RationalePanel extends StatefulWidget {
@@ -36,41 +37,41 @@ class _RationalePanelState extends State<RationalePanel> {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg - 2,
-        AppSpace.md + 2,
-        AppSpace.lg - 2,
-        AppSpace.lg - 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.lg - 2,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          const Text('WHY THIS STRATEGY', style: AppTextSizes.eyebrow),
-          const Gap.v(AppSpace.xs + 2),
+          const Text('WHY THIS STRATEGY', style: ClinicalText.eyebrow),
+          const Gap.v(ClinicalSpace.xs + 2),
           Text(
             _expanded || !isLong ? cleaned : preview,
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 13,
               height: 1.55,
             ),
           ),
           if (isLong) ...<Widget>[
-            const Gap.v(AppSpace.sm),
+            const Gap.v(ClinicalSpace.sm),
             GestureDetector(
               onTap: () => setState(() => _expanded = !_expanded),
               behavior: HitTestBehavior.opaque,
               child: Text(
                 _expanded ? 'Show less' : 'Read more',
                 style: const TextStyle(
-                  color: AppColors.accent,
+                  color: ClinicalPalette.accent,
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
                 ),

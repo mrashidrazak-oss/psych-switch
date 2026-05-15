@@ -17,6 +17,7 @@
 
 import 'package:flutter/material.dart';
 
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/status_pill.dart';
 import 'package:psychswitch_engine/predicted_ae_profile.dart';
@@ -51,9 +52,9 @@ class _PredictedAeCardState extends State<PredictedAeCard> {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(AppRadii.lg),
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -66,8 +67,8 @@ class _PredictedAeCardState extends State<PredictedAeCard> {
               onTap: () => setState(() => _expanded = !_expanded),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpace.md + 2,
-                  vertical: AppSpace.md - 2,
+                  horizontal: ClinicalSpace.md + 2,
+                  vertical: ClinicalSpace.md - 2,
                 ),
                 child: Row(
                   children: <Widget>[
@@ -75,19 +76,19 @@ class _PredictedAeCardState extends State<PredictedAeCard> {
                       width: 36,
                       height: 36,
                       decoration: BoxDecoration(
-                        color: AppColors.warning.withValues(alpha: 0.15),
+                        color: ClinicalPalette.warning.withValues(alpha: 0.15),
                         border: Border.all(
-                          color: AppColors.warning.withValues(alpha: 0.3),
+                          color: ClinicalPalette.warning.withValues(alpha: 0.3),
                         ),
-                        borderRadius: BorderRadius.circular(AppRadii.sm + 2),
+                        borderRadius: BorderRadius.circular(ClinicalRadii.chip + 2),
                       ),
                       child: const Icon(
                         Icons.info_outline,
                         size: 16,
-                        color: AppColors.warning,
+                        color: ClinicalPalette.warning,
                       ),
                     ),
-                    const Gap.h(AppSpace.md),
+                    const Gap.h(ClinicalSpace.md),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,7 +96,7 @@ class _PredictedAeCardState extends State<PredictedAeCard> {
                           const Text(
                             'Predicted side-effect profile',
                             style: TextStyle(
-                              color: AppColors.text,
+                              color: ClinicalPalette.text,
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
                             ),
@@ -103,7 +104,7 @@ class _PredictedAeCardState extends State<PredictedAeCard> {
                           const Gap.v(2),
                           Text(
                             '${widget.profile.toDrug.genericName} · $headline',
-                            style: AppTextSizes.micro,
+                            style: ClinicalText.caption,
                           ),
                         ],
                       ),
@@ -115,7 +116,7 @@ class _PredictedAeCardState extends State<PredictedAeCard> {
                       child: const Icon(
                         Icons.chevron_right_rounded,
                         size: 22,
-                        color: AppColors.muted,
+                        color: ClinicalPalette.muted,
                       ),
                     ),
                   ],
@@ -142,10 +143,10 @@ class _PredictedAeCardState extends State<PredictedAeCard> {
                         ),
                       const Divider(height: 1),
                       Container(
-                        color: AppColors.bg.withValues(alpha: 0.5),
+                        color: ClinicalPalette.bg.withValues(alpha: 0.5),
                         padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpace.md + 2,
-                          vertical: AppSpace.sm,
+                          horizontal: ClinicalSpace.md + 2,
+                          vertical: ClinicalSpace.sm,
                         ),
                         child: Text(
                           'Likelihoods are tier-based (high / moderate / '
@@ -153,7 +154,7 @@ class _PredictedAeCardState extends State<PredictedAeCard> {
                           'per-drug profile fields and the adverse-effect '
                           'reverse-lookup table. Verify with the Maudsley '
                           'reference if a tier surprises you.',
-                          style: AppTextSizes.micro.copyWith(height: 1.5),
+                          style: ClinicalText.caption.copyWith(height: 1.5),
                         ),
                       ),
                     ],
@@ -187,15 +188,15 @@ class _PredictionRowState extends State<_PredictionRow> {
   static Color _toneFor(AeLikelihood l) {
     switch (l) {
       case AeLikelihood.high:
-        return AppColors.danger;
+        return ClinicalPalette.danger;
       case AeLikelihood.moderate:
-        return AppColors.warning;
+        return ClinicalPalette.warning;
       case AeLikelihood.low:
-        return AppColors.accent;
+        return ClinicalPalette.accent;
       case AeLikelihood.lowerThanCurrent:
-        return AppColors.to;
+        return ClinicalPalette.toneMintInk;
       case AeLikelihood.unknown:
-        return AppColors.muted;
+        return ClinicalPalette.muted;
     }
   }
 
@@ -214,13 +215,13 @@ class _PredictionRowState extends State<_PredictionRow> {
             border: widget.isLast
                 ? null
                 : const Border(
-                    bottom: BorderSide(color: AppColors.border),
+                    bottom: BorderSide(color: ClinicalPalette.border),
                   ),
           ),
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: AppSpace.md + 2,
-              vertical: AppSpace.md - 2,
+              horizontal: ClinicalSpace.md + 2,
+              vertical: ClinicalSpace.md - 2,
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -232,7 +233,7 @@ class _PredictionRowState extends State<_PredictionRow> {
                       Text(
                         p.ae.label,
                         style: const TextStyle(
-                          color: AppColors.text,
+                          color: ClinicalPalette.text,
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           height: 1.3,
@@ -243,7 +244,7 @@ class _PredictionRowState extends State<_PredictionRow> {
                         Text(
                           formatEffect(quant),
                           style: const TextStyle(
-                            color: AppColors.muted,
+                            color: ClinicalPalette.muted,
                             fontSize: 11,
                             height: 1.4,
                             fontFamily: 'monospace',
@@ -254,17 +255,17 @@ class _PredictionRowState extends State<_PredictionRow> {
                         ),
                       ],
                       if (_open) ...<Widget>[
-                        const Gap.v(AppSpace.xs + 2),
+                        const Gap.v(ClinicalSpace.xs + 2),
                         Text(
                           '${p.reason} ${p.ae.management}',
-                          style: AppTextSizes.micro.copyWith(height: 1.5),
+                          style: ClinicalText.caption.copyWith(height: 1.5),
                         ),
                         if (quant != null) ...<Widget>[
                           const Gap.v(2),
                           Text(
                             'SOURCE: ${quant.citation}'
                             '${quant.note != null ? ' · ${quant.note}' : ''}',
-                            style: AppTextSizes.eyebrow.copyWith(
+                            style: ClinicalText.eyebrow.copyWith(
                               fontSize: 9,
                               letterSpacing: 1.2,
                             ),
@@ -274,7 +275,7 @@ class _PredictionRowState extends State<_PredictionRow> {
                     ],
                   ),
                 ),
-                const Gap.h(AppSpace.md),
+                const Gap.h(ClinicalSpace.md),
                 StatusPill(
                   label: likelihoodLabel(p.likelihood),
                   tone: tone,

@@ -24,8 +24,10 @@ import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/services/notification_service.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/breakpoints.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/alternatives_card.dart';
+import 'package:psychswitch/src/ui/widgets/clinical_primitives.dart';
 import 'package:psychswitch/src/ui/widgets/ddi_warnings_card.dart';
 import 'package:psychswitch/src/ui/widgets/discontinuation_card.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
@@ -122,50 +124,57 @@ class ResultScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncEngine = ref.watch(engineProvider);
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Result'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
-        actions: <Widget>[
-          if (args != null)
-            IconButton(
-              icon: const Icon(Icons.bookmark_add_outlined),
-              tooltip: 'Save case',
-              onPressed: () => _onSavePressed(context, ref, args!.input),
+    return Theme(
+      data: buildClinicalTheme(),
+      child: Builder(
+        builder: (context) => Scaffold(
+          backgroundColor: ClinicalPalette.bg,
+          appBar: AppBar(
+            title: const Text('Result'),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () => context.pop(),
             ),
-          if (args != null)
-            asyncEngine.when(
+            actions: <Widget>[
+              if (args != null)
+                IconButton(
+                  icon: const Icon(Icons.bookmark_add_outlined),
+                  tooltip: 'Save case',
+                  onPressed: () =>
+                      _onSavePressed(context, ref, args!.input),
+                ),
+              if (args != null)
+                asyncEngine.when(
+                  data: (engine) {
+                    final plan = engine.generateSwitchPlan(args!.input);
+                    if (plan is! SwitchPlanOk) return const SizedBox.shrink();
+                    return _ShareMenu(
+                      plan: plan,
+                      input: args!.input,
+                      fromDrug: engine.getDrug(args!.input.fromDrugId),
+                      toDrug: engine.getDrug(args!.input.toDrugId),
+                    );
+                  },
+                  loading: () => const SizedBox.shrink(),
+                  error: (_, __) => const SizedBox.shrink(),
+                ),
+            ],
+          ),
+          body: SafeArea(
+            child: asyncEngine.when(
+              loading: () => const EngineLoadingView(),
+              error: (e, _) => EngineErrorView(error: e),
               data: (engine) {
+                if (args == null) return const _MissingArgs();
                 final plan = engine.generateSwitchPlan(args!.input);
-                if (plan is! SwitchPlanOk) return const SizedBox.shrink();
-                return _ShareMenu(
+                return _ResultBody(
                   plan: plan,
+                  engine: engine,
                   input: args!.input,
-                  fromDrug: engine.getDrug(args!.input.fromDrugId),
-                  toDrug: engine.getDrug(args!.input.toDrugId),
                 );
               },
-              loading: () => const SizedBox.shrink(),
-              error: (_, __) => const SizedBox.shrink(),
             ),
-        ],
-      ),
-      body: SafeArea(
-        child: asyncEngine.when(
-          loading: () => const EngineLoadingView(),
-          error: (e, st) => EngineErrorView(error: e),
-          data: (engine) {
-            if (args == null) return const _MissingArgs();
-            final plan = engine.generateSwitchPlan(args!.input);
-            return _ResultBody(
-              plan: plan,
-              engine: engine,
-              input: args!.input,
-            );
-          },
+          ),
         ),
       ),
     );
@@ -213,10 +222,10 @@ class ResultScreen extends ConsumerWidget {
     if (!context.mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: AppColors.surface,
+        backgroundColor: ClinicalPalette.surface,
         content: Text(
           'Saved as "$label"',
-          style: const TextStyle(color: AppColors.text),
+          style: const TextStyle(color: ClinicalPalette.text),
         ),
         duration: const Duration(seconds: 2),
       ),
@@ -416,10 +425,10 @@ class _SaveCaseDialogState extends State<_SaveCaseDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: AppColors.surface,
+      backgroundColor: ClinicalPalette.surface,
       title: const Text(
         'Save case',
-        style: TextStyle(color: AppColors.text),
+        style: TextStyle(color: ClinicalPalette.text),
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -428,16 +437,16 @@ class _SaveCaseDialogState extends State<_SaveCaseDialog> {
           const Text(
             'Free-form label — initials, room number, ward code. '
             'No patient identifiers.',
-            style: TextStyle(color: AppColors.muted, fontSize: 12),
+            style: TextStyle(color: ClinicalPalette.muted, fontSize: 12),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _ctl,
             autofocus: true,
-            style: const TextStyle(color: AppColors.text),
+            style: const TextStyle(color: ClinicalPalette.text),
             decoration: const InputDecoration(
               hintText: 'e.g. JD · Bed 7 · 4F-12',
-              hintStyle: TextStyle(color: AppColors.muted),
+              hintStyle: TextStyle(color: ClinicalPalette.muted),
             ),
             onSubmitted: (v) => Navigator.of(context).pop(v.trim()),
           ),
@@ -471,7 +480,7 @@ class _MissingArgs extends StatelessWidget {
       child: Center(
         child: Text(
           'No switch input was provided. Go back and start a switch.',
-          style: TextStyle(color: AppColors.muted, height: 1.5),
+          style: TextStyle(color: ClinicalPalette.muted, height: 1.5),
           textAlign: TextAlign.center,
         ),
       ),
@@ -561,7 +570,7 @@ class _ResultBody extends ConsumerWidget {
           overrideDurationDays: adjustedDuration,
         ),
       ),
-      const Gap.v(AppSpace.xl - 4),
+      const Gap.v(ClinicalSpace.xl - 4),
     ];
 
     // Trailing footer — sits below every plan branch (OK, Maudsley
@@ -598,10 +607,10 @@ class _ResultBody extends ConsumerWidget {
           ...hero,
           LayoutBuilder(
             builder: (ctx, constraints) {
-              final w = (constraints.maxWidth - AppSpace.lg) / 2;
+              final w = (constraints.maxWidth - ClinicalSpace.lg) / 2;
               return Wrap(
-                spacing: AppSpace.lg,
-                runSpacing: AppSpace.lg,
+                spacing: ClinicalSpace.lg,
+                runSpacing: ClinicalSpace.lg,
                 children: <Widget>[
                   for (var i = 0; i < cards.length; i++)
                     SizedBox(
@@ -741,7 +750,7 @@ class _ResultBody extends ConsumerWidget {
     }
     return <Widget>[
       OverlapIntensityCard(assessment: assessment),
-      const Gap.v(AppSpace.lg),
+      const Gap.v(ClinicalSpace.lg),
     ];
   }
 
@@ -820,7 +829,7 @@ class _ResultBody extends ConsumerWidget {
           ref.read(_conservativeProvider.notifier).state = v;
         },
       ),
-      const Gap.v(AppSpace.lg),
+      const Gap.v(ClinicalSpace.lg),
     ];
   }
 
@@ -926,7 +935,7 @@ class _ResultBody extends ConsumerWidget {
           // The body picks up from the supporting clinical surfaces.
           if (ctxWarnings.isNotEmpty) ...<Widget>[
             _ContextWarningsCard(warnings: ctxWarnings),
-            const Gap.v(AppSpace.lg),
+            const Gap.v(ClinicalSpace.lg),
           ],
           // Adapted-vs-reviewed banner — ALWAYS shown for OK plans so the
           // toggle is discoverable. Three states:
@@ -941,7 +950,7 @@ class _ResultBody extends ConsumerWidget {
               scaleResult.applied.mode == ScalingMode.noScale &&
               !ok.dosesMatchReference) ...<Widget>[
             _FixedProtocolNotice(inputDoses: ok.inputDoses),
-            const Gap.v(AppSpace.lg),
+            const Gap.v(ClinicalSpace.lg),
           ] else if (scaleResult != null &&
               scaleResult.applied.mode != ScalingMode.noScale) ...<Widget>[
             _AdaptiveScheduleBanner(
@@ -957,7 +966,7 @@ class _ResultBody extends ConsumerWidget {
                         : _ScheduleView.adapted;
               },
             ),
-            const Gap.v(AppSpace.lg),
+            const Gap.v(ClinicalSpace.lg),
           ],
           // Taper-speed selector — only renders when the rule's
           // strategy supports compression (cross-taper / plateau /
@@ -990,7 +999,7 @@ class _ResultBody extends ConsumerWidget {
                 );
               },
             ),
-            const Gap.v(AppSpace.lg),
+            const Gap.v(ClinicalSpace.lg),
           ],
           // Soften-Day-1 toggle (Conservative mode) — adapted from
           // Maudsley 15th's "halve-and-add" strategy. Reduces Day 1
@@ -1014,7 +1023,7 @@ class _ResultBody extends ConsumerWidget {
             ),
             day1Softened: conservative,
           ),
-          const Gap.v(AppSpace.lg),
+          const Gap.v(ClinicalSpace.lg),
           // Overlap-intensity assessment — quantifies the clinical
           // concern about co-prescribing the two drugs during the
           // overlap window. Engine derives tier + score from Day-1
@@ -1032,10 +1041,10 @@ class _ResultBody extends ConsumerWidget {
           ),
           // Why this strategy was chosen — sits with the schedule.
           RationalePanel(rationale: ok.rule.rationale),
-          const Gap.v(AppSpace.lg),
+          const Gap.v(ClinicalSpace.lg),
           if (ok.safetyFlags.isNotEmpty) ...<Widget>[
             _SafetyFlagsCard(flags: ok.safetyFlags),
-            const Gap.v(AppSpace.lg),
+            const Gap.v(ClinicalSpace.lg),
           ],
           // Discontinuation-syndrome banner for the from-drug — sits
           // with the other safety surfaces above the DDI list.
@@ -1048,7 +1057,7 @@ class _ResultBody extends ConsumerWidget {
             toDrugId: input.toDrugId,
             patientContext: ctx,
           ),
-          const Gap.v(AppSpace.lg),
+          const Gap.v(ClinicalSpace.lg),
           // Specialty depth — pregnancy / breastfeeding / pediatric /
           // geriatric. Renders only when patient context activates.
           ..._specialtySection(ctx),
@@ -1059,7 +1068,7 @@ class _ResultBody extends ConsumerWidget {
           ..._alternativesSection(ctx, ok),
           // Rule provenance footer — trust signals for CME audit.
           RuleProvenanceCard(rule: ok.rule),
-          const Gap.v(AppSpace.lg),
+          const Gap.v(ClinicalSpace.lg),
           _CitationsCard(citations: ok.citations),
         ],
       SwitchPlanMaudsleyGuidance(
@@ -1070,7 +1079,7 @@ class _ResultBody extends ConsumerWidget {
           // Verdict (eyebrow + headline + body) now lives in hero.
           if (safetyFlags.isNotEmpty) ...<Widget>[
             _SafetyFlagsCard(flags: safetyFlags),
-            const Gap.v(AppSpace.lg),
+            const Gap.v(ClinicalSpace.lg),
           ],
           _CitationsCard(citations: guidance.citations),
         ],
@@ -1136,15 +1145,15 @@ class _ResultHero extends StatelessWidget {
       container: true,
       child: ExcludeSemantics(
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(AppRadii.xl),
+          borderRadius: BorderRadius.circular(ClinicalRadii.card),
           child: Container(
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: ClinicalPalette.surface,
               border: Border.all(
-                color: AppColors.border.withValues(alpha: 0.7),
+                color: ClinicalPalette.border.withValues(alpha: 0.7),
                 width: 0.5,
               ),
-              borderRadius: BorderRadius.circular(AppRadii.xl),
+              borderRadius: BorderRadius.circular(ClinicalRadii.card),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1159,7 +1168,7 @@ class _ResultHero extends StatelessWidget {
                 ),
                 Container(
                   height: 0.5,
-                  color: AppColors.border.withValues(alpha: 0.7),
+                  color: ClinicalPalette.border.withValues(alpha: 0.7),
                 ),
                 _HeroVerdictBand(
                   plan: plan,
@@ -1207,10 +1216,10 @@ class _HeroDrugBand extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg + 2,
-        AppSpace.lg,
-        AppSpace.lg + 2,
-        AppSpace.lg,
+        ClinicalSpace.lg + 2,
+        ClinicalSpace.lg,
+        ClinicalSpace.lg + 2,
+        ClinicalSpace.lg,
       ),
       child: Row(
         children: <Widget>[
@@ -1219,15 +1228,15 @@ class _HeroDrugBand extends StatelessWidget {
               label: 'FROM',
               name: fromName,
               dose: fromDose,
-              tone: AppColors.from,
+              tone: ClinicalPalette.toneLavenderInk,
               onTap: () => _openProfile(context, fromId),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpace.sm),
+            padding: const EdgeInsets.symmetric(horizontal: ClinicalSpace.sm),
             child: Icon(
               Icons.arrow_forward_rounded,
-              color: AppColors.muted.withValues(alpha: 0.7),
+              color: ClinicalPalette.muted.withValues(alpha: 0.7),
               size: 18,
             ),
           ),
@@ -1236,7 +1245,7 @@ class _HeroDrugBand extends StatelessWidget {
               label: 'TO',
               name: toName,
               dose: toDose,
-              tone: AppColors.to,
+              tone: ClinicalPalette.toneMintInk,
               alignEnd: true,
               onTap: () => _openProfile(context, toId),
             ),
@@ -1281,44 +1290,44 @@ class _HeroDrugCell extends StatelessWidget {
           children: <Widget>[
             if (!alignEnd) ...<Widget>[
               dot,
-              const Gap.h(AppSpace.xs + 2),
+              const Gap.h(ClinicalSpace.xs + 2),
             ],
             Text(
               label,
-              style: AppTextSizes.eyebrow.copyWith(color: tone),
+              style: ClinicalText.eyebrow.copyWith(color: tone),
             ),
             if (alignEnd) ...<Widget>[
-              const Gap.h(AppSpace.xs + 2),
+              const Gap.h(ClinicalSpace.xs + 2),
               dot,
             ],
           ],
         ),
-        const Gap.v(AppSpace.sm + 2),
+        const Gap.v(ClinicalSpace.sm + 2),
         // Drug name carries an underline-on-tap affordance so clinicians
         // discover the drug-profile drill-in. Subtle — accent-tinted
         // dashed underline; no shouty link styling.
         Text(
           name,
           style: const TextStyle(
-            color: AppColors.text,
+            color: ClinicalPalette.text,
             fontSize: 17,
             fontWeight: FontWeight.w700,
             height: 1.15,
             letterSpacing: -0.3,
             decoration: TextDecoration.underline,
             decorationStyle: TextDecorationStyle.dotted,
-            decorationColor: AppColors.muted,
+            decorationColor: ClinicalPalette.muted,
             decorationThickness: 1,
           ),
           textAlign: textAlign,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
-        const Gap.v(AppSpace.xxs),
+        const Gap.v(ClinicalSpace.xxs),
         Text(
           '${_formatDose(dose)} mg',
           style: const TextStyle(
-            color: AppColors.mutedStrong,
+            color: ClinicalPalette.mutedStrong,
             fontSize: 12.5,
             fontWeight: FontWeight.w500,
             height: 1.2,
@@ -1329,11 +1338,11 @@ class _HeroDrugCell extends StatelessWidget {
     if (onTap == null) return content;
     return Material(
       color: Colors.transparent,
-      borderRadius: BorderRadius.circular(AppRadii.sm),
+      borderRadius: BorderRadius.circular(ClinicalRadii.chip),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadii.sm),
+        borderRadius: BorderRadius.circular(ClinicalRadii.chip),
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: 2,
@@ -1372,7 +1381,7 @@ class _HeroVerdictBand extends StatelessWidget {
           overrideDurationDays: overrideDurationDays,
         ),
       SwitchPlanMaudsleyGuidance(:final guidance) => _ToneVerdict(
-          tone: AppColors.accent,
+          tone: ClinicalPalette.accent,
           eyebrow: 'GUIDANCE',
           headline: guidance.headline,
           status: 'Maudsley class-level guidance',
@@ -1382,7 +1391,7 @@ class _HeroVerdictBand extends StatelessWidget {
               : guidance.detail,
         ),
       SwitchPlanMaoiWashout(:final washoutDays, :final reason) => _ToneVerdict(
-          tone: AppColors.danger,
+          tone: ClinicalPalette.danger,
           eyebrow: 'MAOI WASHOUT',
           headline: '$washoutDays-day washout required',
           status: 'MAOI washout required',
@@ -1392,7 +1401,7 @@ class _HeroVerdictBand extends StatelessWidget {
           guidance: guidance,
         ),
       SwitchPlanNoRule(:final reason) => _ToneVerdict(
-          tone: AppColors.muted,
+          tone: ClinicalPalette.muted,
           eyebrow: 'NO REVIEWED RULE',
           headline: 'No specific reviewed rule for this pair',
           status: 'No reviewed rule',
@@ -1430,10 +1439,10 @@ class _OkVerdict extends StatelessWidget {
   /// Mirrors `ScoreRing._bandColor` so the dot + label in the verdict
   /// text uses the same tone as the arc itself.
   static Color _bandColor(ScoreBand band) => switch (band) {
-        ScoreBand.excellent => AppColors.to,
-        ScoreBand.good => AppColors.accent,
-        ScoreBand.caution => AppColors.warning,
-        ScoreBand.poor => AppColors.danger,
+        ScoreBand.excellent => ClinicalPalette.toneMintInk,
+        ScoreBand.good => ClinicalPalette.accent,
+        ScoreBand.caution => ClinicalPalette.warning,
+        ScoreBand.poor => ClinicalPalette.danger,
       };
 
   String get _metaLine {
@@ -1476,10 +1485,10 @@ class _OkVerdict extends StatelessWidget {
     final meta = _metaLine;
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg + 2,
-        AppSpace.md + 2,
-        AppSpace.lg + 2,
-        AppSpace.lg,
+        ClinicalSpace.lg + 2,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.lg + 2,
+        ClinicalSpace.lg,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1489,16 +1498,16 @@ class _OkVerdict extends StatelessWidget {
               final days = overrideDurationDays ?? plan.rule.durationDays;
               return Text(
                 '$_strategyLabel · $days DAY${days == 1 ? '' : 'S'}',
-                style: AppTextSizes.eyebrow.copyWith(color: AppColors.to),
+                style: ClinicalText.eyebrow.copyWith(color: ClinicalPalette.toneMintInk),
               );
             },
           ),
-          const Gap.v(AppSpace.md),
+          const Gap.v(ClinicalSpace.md),
           Row(
             children: <Widget>[
               if (score != null) ...<Widget>[
                 ScoreRing(score: score, size: 64, strokeWidth: 6),
-                const Gap.h(AppSpace.lg),
+                const Gap.h(ClinicalSpace.lg),
               ],
               Expanded(
                 child: Column(
@@ -1515,7 +1524,7 @@ class _OkVerdict extends StatelessWidget {
                           child: Text(
                             'Reviewed schedule',
                             style: TextStyle(
-                              color: AppColors.text,
+                              color: ClinicalPalette.text,
                               fontSize: 15,
                               fontWeight: FontWeight.w600,
                               height: 1.25,
@@ -1524,7 +1533,7 @@ class _OkVerdict extends StatelessWidget {
                           ),
                         ),
                         if (score != null) ...<Widget>[
-                          const Gap.h(AppSpace.sm),
+                          const Gap.h(ClinicalSpace.sm),
                           Container(
                             width: 4,
                             height: 4,
@@ -1533,7 +1542,7 @@ class _OkVerdict extends StatelessWidget {
                               shape: BoxShape.circle,
                             ),
                           ),
-                          const Gap.h(AppSpace.xs + 1),
+                          const Gap.h(ClinicalSpace.xs + 1),
                           Text(
                             bandLabel(score.band),
                             style: TextStyle(
@@ -1546,13 +1555,13 @@ class _OkVerdict extends StatelessWidget {
                         ],
                       ],
                     ),
-                    const Gap.v(AppSpace.xs),
+                    const Gap.v(ClinicalSpace.xs),
                     Text(
                       meta.isNotEmpty
                           ? meta
                           : (score?.headline ?? 'Reviewed cross-titration'),
                       style: const TextStyle(
-                        color: AppColors.muted,
+                        color: ClinicalPalette.muted,
                         fontSize: 12.5,
                         height: 1.45,
                       ),
@@ -1596,30 +1605,30 @@ class _ToneVerdict extends StatelessWidget {
         border: Border(left: BorderSide(color: tone, width: 3)),
       ),
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg,
-        AppSpace.md + 2,
-        AppSpace.lg + 2,
-        AppSpace.lg,
+        ClinicalSpace.lg,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.lg + 2,
+        ClinicalSpace.lg,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
             eyebrow,
-            style: AppTextSizes.eyebrow.copyWith(color: tone),
+            style: ClinicalText.eyebrow.copyWith(color: tone),
           ),
-          const Gap.v(AppSpace.xs + 2),
+          const Gap.v(ClinicalSpace.xs + 2),
           Text(
             headline,
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 17,
               fontWeight: FontWeight.w700,
               height: 1.25,
               letterSpacing: -0.3,
             ),
           ),
-          const Gap.v(AppSpace.xs + 2),
+          const Gap.v(ClinicalSpace.xs + 2),
           Text(
             status,
             style: TextStyle(
@@ -1629,11 +1638,11 @@ class _ToneVerdict extends StatelessWidget {
               letterSpacing: 0.2,
             ),
           ),
-          const Gap.v(AppSpace.sm + 2),
+          const Gap.v(ClinicalSpace.sm + 2),
           Text(
             body,
             style: const TextStyle(
-              color: AppColors.mutedStrong,
+              color: ClinicalPalette.mutedStrong,
               fontSize: 13,
               height: 1.5,
             ),
@@ -1654,46 +1663,46 @@ class _ClozapineVerdict extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const tone = AppColors.warning;
+    const tone = ClinicalPalette.warning;
     return Container(
       decoration: BoxDecoration(
         color: tone.withValues(alpha: 0.06),
         border: const Border(left: BorderSide(color: tone, width: 3)),
       ),
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg,
-        AppSpace.md + 2,
-        AppSpace.lg + 2,
-        AppSpace.lg,
+        ClinicalSpace.lg,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.lg + 2,
+        ClinicalSpace.lg,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
             'CLOZAPINE INITIATION',
-            style: AppTextSizes.eyebrow.copyWith(color: tone),
+            style: ClinicalText.eyebrow.copyWith(color: tone),
           ),
-          const Gap.v(AppSpace.xs + 2),
+          const Gap.v(ClinicalSpace.xs + 2),
           const Text(
             'Use Clozapine module',
             style: TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 17,
               fontWeight: FontWeight.w700,
               height: 1.25,
               letterSpacing: -0.3,
             ),
           ),
-          const Gap.v(AppSpace.sm + 2),
+          const Gap.v(ClinicalSpace.sm + 2),
           Text(
             guidance,
             style: const TextStyle(
-              color: AppColors.mutedStrong,
+              color: ClinicalPalette.mutedStrong,
               fontSize: 13,
               height: 1.5,
             ),
           ),
-          const Gap.v(AppSpace.md + 2),
+          const Gap.v(ClinicalSpace.md + 2),
           FilledButton.icon(
             onPressed: () => context.pushNamed(Routes.clozapine),
             icon: const Icon(Icons.medical_services_outlined, size: 16),
@@ -1702,11 +1711,11 @@ class _ClozapineVerdict extends StatelessWidget {
               backgroundColor: tone,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(
-                horizontal: AppSpace.md + 2,
-                vertical: AppSpace.sm + 2,
+                horizontal: ClinicalSpace.md + 2,
+                vertical: ClinicalSpace.sm + 2,
               ),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppRadii.md),
+                borderRadius: BorderRadius.circular(ClinicalRadii.chip),
               ),
             ),
           ),
@@ -1753,7 +1762,7 @@ class _AdaptiveScheduleBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tone = dosesMatchReference ? AppColors.to : AppColors.accent;
+    final tone = dosesMatchReference ? ClinicalPalette.toneMintInk : ClinicalPalette.accent;
     final String eyebrow;
     if (dosesMatchReference) {
       eyebrow = 'DOSES MATCH REVIEWED REFERENCE';
@@ -1769,15 +1778,15 @@ class _AdaptiveScheduleBanner extends StatelessWidget {
         color: tone.withValues(alpha: 0.06),
         border: Border(left: BorderSide(color: tone, width: 3)),
         borderRadius: const BorderRadius.only(
-          topRight: Radius.circular(AppRadii.lg),
-          bottomRight: Radius.circular(AppRadii.lg),
+          topRight: Radius.circular(ClinicalRadii.tile),
+          bottomRight: Radius.circular(ClinicalRadii.tile),
         ),
       ),
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg,
-        AppSpace.md,
-        AppSpace.md,
-        AppSpace.md + 2,
+        ClinicalSpace.lg,
+        ClinicalSpace.md,
+        ClinicalSpace.md,
+        ClinicalSpace.md + 2,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1787,21 +1796,21 @@ class _AdaptiveScheduleBanner extends StatelessWidget {
               Expanded(
                 child: Text(
                   eyebrow,
-                  style: AppTextSizes.eyebrow.copyWith(color: tone),
+                  style: ClinicalText.eyebrow.copyWith(color: tone),
                 ),
               ),
-              const Gap.h(AppSpace.sm),
+              const Gap.h(ClinicalSpace.sm),
               _AdaptiveToggleButton(label: ctaLabel, onPressed: onToggle),
             ],
           ),
-          const Gap.v(AppSpace.sm),
+          const Gap.v(ClinicalSpace.sm),
           if (dosesMatchReference)
             // Matched case — no dose-context line needed; the schedule
             // below IS the reviewed reference, exact to the published rule.
             RichText(
               text: TextSpan(
                 style: const TextStyle(
-                  color: AppColors.text,
+                  color: ClinicalPalette.text,
                   fontSize: 13,
                   height: 1.5,
                 ),
@@ -1825,7 +1834,7 @@ class _AdaptiveScheduleBanner extends StatelessWidget {
             RichText(
               text: TextSpan(
                 style: const TextStyle(
-                  color: AppColors.text,
+                  color: ClinicalPalette.text,
                   fontSize: 13,
                   height: 1.5,
                 ),
@@ -1861,26 +1870,26 @@ class _AdaptiveScheduleBanner extends StatelessWidget {
               ),
             ),
           if (!dosesMatchReference && _isAdapted && warnings.isNotEmpty) ...<Widget>[
-            const Gap.v(AppSpace.sm + 2),
+            const Gap.v(ClinicalSpace.sm + 2),
             Container(
               decoration: BoxDecoration(
-                color: AppColors.bg.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(AppRadii.md),
+                color: ClinicalPalette.bg.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(ClinicalRadii.chip),
               ),
               padding: const EdgeInsets.symmetric(
-                horizontal: AppSpace.md,
-                vertical: AppSpace.sm,
+                horizontal: ClinicalSpace.md,
+                vertical: ClinicalSpace.sm,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   for (final w in warnings.take(4))
                     Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpace.xxs),
+                      padding: const EdgeInsets.only(bottom: ClinicalSpace.xxs),
                       child: Text(
                         '• ${w.message}',
                         style: const TextStyle(
-                          color: AppColors.warning,
+                          color: ClinicalPalette.warning,
                           fontSize: 11.5,
                           height: 1.4,
                         ),
@@ -1889,7 +1898,7 @@ class _AdaptiveScheduleBanner extends StatelessWidget {
                   if (warnings.length > 4)
                     Text(
                       '+${warnings.length - 4} more',
-                      style: AppTextSizes.eyebrow,
+                      style: ClinicalText.eyebrow,
                     ),
                 ],
               ),
@@ -1925,24 +1934,24 @@ class _AdaptiveToggleButton extends StatelessWidget {
             unawaited(hapticsTap());
             onPressed();
           },
-          borderRadius: BorderRadius.circular(AppRadii.md),
+          borderRadius: BorderRadius.circular(ClinicalRadii.chip),
           child: Container(
             decoration: BoxDecoration(
-              color: AppColors.bg,
+              color: ClinicalPalette.bg,
               border: Border.all(
-                color: AppColors.border.withValues(alpha: 0.7),
+                color: ClinicalPalette.border.withValues(alpha: 0.7),
                 width: 0.5,
               ),
-              borderRadius: BorderRadius.circular(AppRadii.md),
+              borderRadius: BorderRadius.circular(ClinicalRadii.chip),
             ),
             padding: const EdgeInsets.symmetric(
-              horizontal: AppSpace.sm + 2,
-              vertical: AppSpace.xs + 2,
+              horizontal: ClinicalSpace.sm + 2,
+              vertical: ClinicalSpace.xs + 2,
             ),
             child: Text(
               label.toUpperCase(),
               style: const TextStyle(
-                color: AppColors.text,
+                color: ClinicalPalette.text,
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.2,
@@ -1988,21 +1997,21 @@ class _TaperSpeedSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isNonDefault = picked != TaperSpeed.standard;
-    final accentTone = isNonDefault ? AppColors.warning : AppColors.muted;
+    final accentTone = isNonDefault ? ClinicalPalette.warning : ClinicalPalette.muted;
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg - 2,
-        AppSpace.md + 2,
-        AppSpace.lg - 2,
-        AppSpace.lg - 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.lg - 2,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2011,7 +2020,7 @@ class _TaperSpeedSelector extends StatelessWidget {
             children: <Widget>[
               const Text(
                 'TAPER SPEED',
-                style: AppTextSizes.eyebrow,
+                style: ClinicalText.eyebrow,
               ),
               const Spacer(),
               Text(
@@ -2027,14 +2036,14 @@ class _TaperSpeedSelector extends StatelessWidget {
               ),
             ],
           ),
-          const Gap.v(AppSpace.sm + 2),
+          const Gap.v(ClinicalSpace.sm + 2),
           // Segmented control.
           Container(
             decoration: BoxDecoration(
-              color: AppColors.bg,
-              borderRadius: BorderRadius.circular(AppRadii.md + 2),
+              color: ClinicalPalette.bg,
+              borderRadius: BorderRadius.circular(ClinicalRadii.chip + 2),
               border: Border.all(
-                color: AppColors.border.withValues(alpha: 0.5),
+                color: ClinicalPalette.border.withValues(alpha: 0.5),
                 width: 0.5,
               ),
             ),
@@ -2053,11 +2062,11 @@ class _TaperSpeedSelector extends StatelessWidget {
             ),
           ),
           if (isNonDefault) ...<Widget>[
-            const Gap.v(AppSpace.sm + 2),
+            const Gap.v(ClinicalSpace.sm + 2),
             Text(
               speedBasis[picked]!,
               style: const TextStyle(
-                color: AppColors.muted,
+                color: ClinicalPalette.muted,
                 fontSize: 11.5,
                 height: 1.5,
               ),
@@ -2083,8 +2092,8 @@ class _TaperSpeedSegment extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final accent = speed != TaperSpeed.standard;
-    final activeTone = accent ? AppColors.warning : AppColors.text;
-    const inactiveTone = AppColors.muted;
+    final activeTone = accent ? ClinicalPalette.warning : ClinicalPalette.text;
+    const inactiveTone = ClinicalPalette.muted;
     return Semantics(
       button: true,
       selected: isActive,
@@ -2093,21 +2102,21 @@ class _TaperSpeedSegment extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(AppRadii.md),
+          borderRadius: BorderRadius.circular(ClinicalRadii.chip),
           child: Container(
             decoration: BoxDecoration(
-              color: isActive ? AppColors.surface : Colors.transparent,
-              borderRadius: BorderRadius.circular(AppRadii.md),
+              color: isActive ? ClinicalPalette.surface : Colors.transparent,
+              borderRadius: BorderRadius.circular(ClinicalRadii.chip),
               border: isActive
                   ? Border.all(
-                      color: AppColors.border.withValues(alpha: 0.7),
+                      color: ClinicalPalette.border.withValues(alpha: 0.7),
                       width: 0.5,
                     )
                   : null,
             ),
             padding: const EdgeInsets.symmetric(
-              horizontal: AppSpace.sm,
-              vertical: AppSpace.sm,
+              horizontal: ClinicalSpace.sm,
+              vertical: ClinicalSpace.sm,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -2204,8 +2213,8 @@ class _SoftenDay1Card extends StatelessWidget {
   Widget build(BuildContext context) {
     final activeOn = on && applicable;
     final tone = !applicable
-        ? AppColors.muted
-        : (on ? AppColors.accent : AppColors.mutedStrong);
+        ? ClinicalPalette.muted
+        : (on ? ClinicalPalette.accent : ClinicalPalette.mutedStrong);
     final pct = day1Original > 0
         ? ((deltaMg / day1Original) * 100).round()
         : 0;
@@ -2213,25 +2222,25 @@ class _SoftenDay1Card extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: applicable ? () => onToggle(!on) : null,
-        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
         child: Container(
           decoration: BoxDecoration(
             color: activeOn
-                ? AppColors.accent.withValues(alpha: 0.06)
-                : AppColors.surface,
+                ? ClinicalPalette.accent.withValues(alpha: 0.06)
+                : ClinicalPalette.surface,
             border: Border.all(
               color: activeOn
-                  ? AppColors.accent.withValues(alpha: 0.6)
-                  : AppColors.border.withValues(alpha: 0.7),
+                  ? ClinicalPalette.accent.withValues(alpha: 0.6)
+                  : ClinicalPalette.border.withValues(alpha: 0.7),
               width: activeOn ? 1 : 0.5,
             ),
-            borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+            borderRadius: BorderRadius.circular(ClinicalRadii.tile),
           ),
           padding: const EdgeInsets.fromLTRB(
-            AppSpace.lg - 2,
-            AppSpace.md + 2,
-            AppSpace.lg - 2,
-            AppSpace.lg - 2,
+            ClinicalSpace.lg - 2,
+            ClinicalSpace.md + 2,
+            ClinicalSpace.lg - 2,
+            ClinicalSpace.lg - 2,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -2244,7 +2253,7 @@ class _SoftenDay1Card extends StatelessWidget {
                     size: 18,
                     color: tone,
                   ),
-                  const Gap.h(AppSpace.sm),
+                  const Gap.h(ClinicalSpace.sm),
                   Expanded(
                     child: Text(
                       !applicable
@@ -2252,10 +2261,10 @@ class _SoftenDay1Card extends StatelessWidget {
                           : (on
                               ? 'DAY 1 SOFTENED'
                               : 'SOFTEN DAY 1 OVERLAP'),
-                      style: AppTextSizes.eyebrow.copyWith(color: tone),
+                      style: ClinicalText.eyebrow.copyWith(color: tone),
                     ),
                   ),
-                  const Gap.h(AppSpace.sm),
+                  const Gap.h(ClinicalSpace.sm),
                   if (applicable)
                     IgnorePointer(
                       child: Transform.scale(
@@ -2263,31 +2272,31 @@ class _SoftenDay1Card extends StatelessWidget {
                         child: Switch.adaptive(
                           value: on,
                           onChanged: onToggle,
-                          activeThumbColor: AppColors.accent,
+                          activeThumbColor: ClinicalPalette.accent,
                         ),
                       ),
                     )
                   else
                     Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpace.sm,
+                        horizontal: ClinicalSpace.sm,
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.muted.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(AppRadii.pill),
+                        color: ClinicalPalette.muted.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(ClinicalRadii.pill),
                       ),
                       child: Text(
                         'UNAVAILABLE',
-                        style: AppTextSizes.eyebrow.copyWith(
-                          color: AppColors.muted,
+                        style: ClinicalText.eyebrow.copyWith(
+                          color: ClinicalPalette.muted,
                           letterSpacing: 1,
                         ),
                       ),
                     ),
                 ],
               ),
-              const Gap.v(AppSpace.sm + 2),
+              const Gap.v(ClinicalSpace.sm + 2),
           // ── State-dependent body ────────────────────────────────
           if (!applicable)
             _NotApplicableBody(
@@ -2300,7 +2309,7 @@ class _SoftenDay1Card extends StatelessWidget {
             RichText(
               text: TextSpan(
                 style: const TextStyle(
-                  color: AppColors.text,
+                  color: ClinicalPalette.text,
                   fontSize: 14,
                   height: 1.45,
                 ),
@@ -2341,25 +2350,25 @@ class _SoftenDay1Card extends StatelessWidget {
                       'the simultaneous receptor occupancy during the '
                       'highest-risk day of the cross-taper.',
               style: const TextStyle(
-                color: AppColors.text,
+                color: ClinicalPalette.text,
                 fontSize: 13,
                 height: 1.5,
               ),
             ),
-          const Gap.v(AppSpace.lg - 2),
+          const Gap.v(ClinicalSpace.lg - 2),
           Container(
             height: 0.5,
-            color: AppColors.border.withValues(alpha: 0.5),
+            color: ClinicalPalette.border.withValues(alpha: 0.5),
           ),
-          const Gap.v(AppSpace.md + 2),
+          const Gap.v(ClinicalSpace.md + 2),
           // ── Clinical reasoning ──────────────────────────────────
           Text(
             'CLINICAL REASONING',
-            style: AppTextSizes.eyebrow.copyWith(color: tone),
+            style: ClinicalText.eyebrow.copyWith(color: tone),
           ),
-          const Gap.v(AppSpace.sm + 2),
+          const Gap.v(ClinicalSpace.sm + 2),
           const _SoftenReasoningRow(
-            tone: AppColors.accent,
+            tone: ClinicalPalette.accent,
             heading: 'Maudsley 15th halve-and-add, softer',
             body:
                 'Adapted from the Maudsley 15th edition halve-and-add '
@@ -2368,9 +2377,9 @@ class _SoftenDay1Card extends StatelessWidget {
                 'overlap is concerning but a full halve would risk '
                 'from-drug withdrawal.',
           ),
-          const Gap.v(AppSpace.md + 2),
+          const Gap.v(ClinicalSpace.md + 2),
           const _SoftenReasoningRow(
-            tone: AppColors.accent,
+            tone: ClinicalPalette.accent,
             heading: 'Lower simultaneous occupancy, lower stacking',
             body:
                 'Cutting the from-drug on Day 1 directly reduces the '
@@ -2379,9 +2388,9 @@ class _SoftenDay1Card extends StatelessWidget {
                 'QTc-additive, sedation-additive and EPS-additive risk '
                 'where the mechanisms stack.',
           ),
-          const Gap.v(AppSpace.md + 2),
+          const Gap.v(ClinicalSpace.md + 2),
           const _SoftenReasoningRow(
-            tone: AppColors.accent,
+            tone: ClinicalPalette.accent,
             heading: 'Consider when',
             body:
                 'Overlap intensity is moderate-to-severe · patient is '
@@ -2389,9 +2398,9 @@ class _SoftenDay1Card extends StatelessWidget {
                 'intolerance to the receptor profile · baseline cardiac '
                 '(QTc), cognitive (anticholinergic) or sedation concern.',
           ),
-              const Gap.v(AppSpace.md + 2),
+              const Gap.v(ClinicalSpace.md + 2),
               const _SoftenReasoningRow(
-                tone: AppColors.warning,
+                tone: ClinicalPalette.warning,
                 heading: 'Trade-off',
                 body:
                     'Slightly higher chance of from-drug discontinuation '
@@ -2447,7 +2456,7 @@ class _NotApplicableBody extends StatelessWidget {
     return Text(
       body,
       style: const TextStyle(
-        color: AppColors.mutedStrong,
+        color: ClinicalPalette.mutedStrong,
         fontSize: 13,
         height: 1.55,
       ),
@@ -2477,7 +2486,7 @@ class _SoftenReasoningRow extends StatelessWidget {
           margin: const EdgeInsets.only(top: 6),
           decoration: BoxDecoration(color: tone, shape: BoxShape.circle),
         ),
-        const Gap.h(AppSpace.sm + 2),
+        const Gap.h(ClinicalSpace.sm + 2),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -2485,18 +2494,18 @@ class _SoftenReasoningRow extends StatelessWidget {
               Text(
                 heading,
                 style: const TextStyle(
-                  color: AppColors.text,
+                  color: ClinicalPalette.text,
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                   letterSpacing: -0.1,
                   height: 1.3,
                 ),
               ),
-              const Gap.v(AppSpace.xs),
+              const Gap.v(ClinicalSpace.xs),
               Text(
                 body,
                 style: const TextStyle(
-                  color: AppColors.mutedStrong,
+                  color: ClinicalPalette.mutedStrong,
                   fontSize: 12.5,
                   height: 1.55,
                 ),
@@ -2522,7 +2531,7 @@ class _FixedProtocolNotice extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _Banner(
-      tone: AppColors.warning,
+      tone: ClinicalPalette.warning,
       eyebrow: 'FIXED PROTOCOL',
       title: 'Schedule not scaled to your input doses',
       body: "This rule's doses are dictated by the product PI or "
@@ -2588,8 +2597,8 @@ class _ScheduleCard extends StatelessWidget {
             if (i > 0)
               Container(
                 height: 0.5,
-                color: AppColors.border.withValues(alpha: 0.5),
-                margin: const EdgeInsets.symmetric(vertical: AppSpace.sm + 2),
+                color: ClinicalPalette.border.withValues(alpha: 0.5),
+                margin: const EdgeInsets.symmetric(vertical: ClinicalSpace.sm + 2),
               ),
             _ScheduleStepBlock(
               step: schedule[i],
@@ -2640,7 +2649,7 @@ class _ScheduleStepBlock extends StatelessWidget {
             Text(
               'DAY ${step.day}',
               style: const TextStyle(
-                color: AppColors.text,
+                color: ClinicalPalette.text,
                 fontSize: 15,
                 fontWeight: FontWeight.w800,
                 letterSpacing: -0.2,
@@ -2649,15 +2658,15 @@ class _ScheduleStepBlock extends StatelessWidget {
               ),
             ),
             if (isSoftened) ...<Widget>[
-              const Gap.h(AppSpace.sm + 2),
+              const Gap.h(ClinicalSpace.sm + 2),
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpace.sm,
+                  horizontal: ClinicalSpace.sm,
                   vertical: 3,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.accent.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(AppRadii.pill),
+                  color: ClinicalPalette.accent.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(ClinicalRadii.pill),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -2665,13 +2674,13 @@ class _ScheduleStepBlock extends StatelessWidget {
                     const Icon(
                       Icons.spa_rounded,
                       size: 11,
-                      color: AppColors.accent,
+                      color: ClinicalPalette.accent,
                     ),
-                    const Gap.h(AppSpace.xs),
+                    const Gap.h(ClinicalSpace.xs),
                     Text(
                       'SOFTENED',
-                      style: AppTextSizes.eyebrow.copyWith(
-                        color: AppColors.accent,
+                      style: ClinicalText.eyebrow.copyWith(
+                        color: ClinicalPalette.accent,
                         letterSpacing: 1.2,
                       ),
                     ),
@@ -2683,43 +2692,43 @@ class _ScheduleStepBlock extends StatelessWidget {
             if (showCompleteTag)
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpace.sm,
+                  horizontal: ClinicalSpace.sm,
                   vertical: 3,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.to.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(AppRadii.pill),
+                  color: ClinicalPalette.toneMintInk.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(ClinicalRadii.pill),
                 ),
                 child: Text(
                   'SWITCH COMPLETE',
-                  style: AppTextSizes.eyebrow.copyWith(
-                    color: AppColors.to,
+                  style: ClinicalText.eyebrow.copyWith(
+                    color: ClinicalPalette.toneMintInk,
                     letterSpacing: 1.2,
                   ),
                 ),
               ),
           ],
         ),
-        const Gap.v(AppSpace.md),
+        const Gap.v(ClinicalSpace.md),
         _ScheduleDoseRow(
           label: 'FROM',
           dose: step.fromDoseMg,
           max: fromMax,
-          tone: AppColors.from,
+          tone: ClinicalPalette.toneLavenderInk,
         ),
-        const Gap.v(AppSpace.sm + 2),
+        const Gap.v(ClinicalSpace.sm + 2),
         _ScheduleDoseRow(
           label: 'TO',
           dose: step.toDoseMg,
           max: toMax,
-          tone: AppColors.to,
+          tone: ClinicalPalette.toneMintInk,
         ),
         if (notes.isNotEmpty) ...<Widget>[
-          const Gap.v(AppSpace.md - 2),
+          const Gap.v(ClinicalSpace.md - 2),
           Text(
             notes,
             style: const TextStyle(
-              color: AppColors.muted,
+              color: ClinicalPalette.muted,
               fontSize: 12.5,
               height: 1.55,
             ),
@@ -2754,7 +2763,7 @@ class _ScheduleDoseRow extends StatelessWidget {
         ? (dose / max).clamp(0, 1).toDouble()
         : 0.0;
     final effectiveTone =
-        isZero ? AppColors.muted.withValues(alpha: 0.5) : tone;
+        isZero ? ClinicalPalette.muted.withValues(alpha: 0.5) : tone;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -2771,18 +2780,18 @@ class _ScheduleDoseRow extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
             ),
-            const Gap.h(AppSpace.sm),
+            const Gap.h(ClinicalSpace.sm),
             Text(
               label,
-              style: AppTextSizes.eyebrow.copyWith(color: effectiveTone),
+              style: ClinicalText.eyebrow.copyWith(color: effectiveTone),
             ),
             const Spacer(),
             Text(
               '${_formatDose(dose)} mg',
               style: TextStyle(
                 color: isZero
-                    ? AppColors.muted.withValues(alpha: 0.5)
-                    : AppColors.text,
+                    ? ClinicalPalette.muted.withValues(alpha: 0.5)
+                    : ClinicalPalette.text,
                 fontSize: 17,
                 fontWeight: FontWeight.w700,
                 letterSpacing: -0.3,
@@ -2794,14 +2803,14 @@ class _ScheduleDoseRow extends StatelessWidget {
             ),
           ],
         ),
-        const Gap.v(AppSpace.xs + 2),
+        const Gap.v(ClinicalSpace.xs + 2),
         ClipRRect(
           borderRadius: BorderRadius.circular(2),
           child: Stack(
             children: <Widget>[
               Container(
                 height: 4,
-                color: AppColors.border.withValues(alpha: 0.5),
+                color: ClinicalPalette.border.withValues(alpha: 0.5),
               ),
               AnimatedFractionallySizedBox(
                 alignment: Alignment.centerLeft,
@@ -2830,9 +2839,9 @@ class _ContextWarningsCard extends StatelessWidget {
   final List<ContextWarning> warnings;
 
   Color _toneFor(WarningSeverity s) => switch (s) {
-        WarningSeverity.info => AppColors.accent,
-        WarningSeverity.warning => AppColors.warning,
-        WarningSeverity.danger => AppColors.danger,
+        WarningSeverity.info => ClinicalPalette.accent,
+        WarningSeverity.warning => ClinicalPalette.warning,
+        WarningSeverity.danger => ClinicalPalette.danger,
       };
 
   IconData _iconFor(WarningSeverity s) => switch (s) {
@@ -2873,7 +2882,7 @@ class _ContextWarningsCard extends StatelessWidget {
                       Text(
                         w.message,
                         style: const TextStyle(
-                          color: AppColors.text,
+                          color: ClinicalPalette.text,
                           fontSize: 12,
                           height: 1.45,
                         ),
@@ -2919,9 +2928,9 @@ class _FlagChip extends StatelessWidget {
         flag.startsWith('maoi_washout') ||
         flag == 'discontinuation_syndrome_high' ||
         flag == 'qtc_additive_overlap') {
-      return AppColors.warning;
+      return ClinicalPalette.warning;
     }
-    return AppColors.accent;
+    return ClinicalPalette.accent;
   }
 
   String _label() => flag.replaceAll('_', ' ');
@@ -2953,8 +2962,8 @@ class _CitationsCard extends StatelessWidget {
             if (i > 0)
               Container(
                 height: 0.5,
-                margin: const EdgeInsets.symmetric(vertical: AppSpace.xs),
-                color: AppColors.border.withValues(alpha: 0.5),
+                margin: const EdgeInsets.symmetric(vertical: ClinicalSpace.xs),
+                color: ClinicalPalette.border.withValues(alpha: 0.5),
               ),
             _CitationRow(key_: citations[i]),
           ],
@@ -2977,7 +2986,7 @@ class _CitationRow extends StatelessWidget {
     final info = _citationSummary(key_);
     return Material(
       color: Colors.transparent,
-      borderRadius: BorderRadius.circular(AppRadii.sm + 2),
+      borderRadius: BorderRadius.circular(ClinicalRadii.chip + 2),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {
@@ -2986,8 +2995,8 @@ class _CitationRow extends StatelessWidget {
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: AppSpace.xs + 2,
-            vertical: AppSpace.xs + 2,
+            horizontal: ClinicalSpace.xs + 2,
+            vertical: ClinicalSpace.xs + 2,
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -2995,9 +3004,9 @@ class _CitationRow extends StatelessWidget {
               Container(
                 width: 4,
                 height: 4,
-                margin: const EdgeInsets.only(top: 7, right: AppSpace.sm + 2),
+                margin: const EdgeInsets.only(top: 7, right: ClinicalSpace.sm + 2),
                 decoration: BoxDecoration(
-                  color: AppColors.accent.withValues(alpha: 0.7),
+                  color: ClinicalPalette.accent.withValues(alpha: 0.7),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -3008,7 +3017,7 @@ class _CitationRow extends StatelessWidget {
                     Text(
                       info.title,
                       style: const TextStyle(
-                        color: AppColors.text,
+                        color: ClinicalPalette.text,
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                         height: 1.35,
@@ -3020,7 +3029,7 @@ class _CitationRow extends StatelessWidget {
                       Text(
                         info.locator,
                         style: const TextStyle(
-                          color: AppColors.muted,
+                          color: ClinicalPalette.muted,
                           fontSize: 11.5,
                           fontWeight: FontWeight.w500,
                           letterSpacing: 0.1,
@@ -3030,10 +3039,10 @@ class _CitationRow extends StatelessWidget {
                   ],
                 ),
               ),
-              const Gap.h(AppSpace.sm),
+              const Gap.h(ClinicalSpace.sm),
               const Icon(
                 Icons.expand_more_rounded,
-                color: AppColors.muted,
+                color: ClinicalPalette.muted,
                 size: 18,
               ),
             ],
@@ -3051,17 +3060,17 @@ void _showCitationSheet(
 ) {
   showModalBottomSheet<void>(
     context: context,
-    backgroundColor: AppColors.surface,
+    backgroundColor: ClinicalPalette.surface,
     showDragHandle: true,
     shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadii.xl)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(ClinicalRadii.card)),
     ),
     builder: (_) => Padding(
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.xl,
+        ClinicalSpace.xl,
         0,
-        AppSpace.xl,
-        AppSpace.xxl,
+        ClinicalSpace.xl,
+        ClinicalSpace.xxl,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -3069,13 +3078,13 @@ void _showCitationSheet(
         children: <Widget>[
           Text(
             'CITATION',
-            style: AppTextSizes.eyebrow.copyWith(color: AppColors.accent),
+            style: ClinicalText.eyebrow.copyWith(color: ClinicalPalette.accent),
           ),
-          const Gap.v(AppSpace.sm),
+          const Gap.v(ClinicalSpace.sm),
           Text(
             info.title,
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 19,
               fontWeight: FontWeight.w800,
               letterSpacing: -0.4,
@@ -3083,65 +3092,65 @@ void _showCitationSheet(
             ),
           ),
           if (info.locator.isNotEmpty) ...<Widget>[
-            const Gap.v(AppSpace.xs + 1),
+            const Gap.v(ClinicalSpace.xs + 1),
             Text(
               info.locator,
               style: const TextStyle(
-                color: AppColors.mutedStrong,
+                color: ClinicalPalette.mutedStrong,
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
               ),
             ),
           ],
-          const Gap.v(AppSpace.lg),
+          const Gap.v(ClinicalSpace.lg),
           Container(
             height: 0.5,
-            color: AppColors.border.withValues(alpha: 0.6),
+            color: ClinicalPalette.border.withValues(alpha: 0.6),
           ),
-          const Gap.v(AppSpace.lg),
+          const Gap.v(ClinicalSpace.lg),
           Text(
             'WHAT IT SAYS',
-            style: AppTextSizes.eyebrow.copyWith(color: AppColors.mutedStrong),
+            style: ClinicalText.eyebrow.copyWith(color: ClinicalPalette.mutedStrong),
           ),
-          const Gap.v(AppSpace.sm),
+          const Gap.v(ClinicalSpace.sm),
           Text(
             info.summary,
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 13.5,
               height: 1.6,
             ),
           ),
-          const Gap.v(AppSpace.lg),
+          const Gap.v(ClinicalSpace.lg),
           Text(
             'HOW PSYCHSWITCH USES IT',
-            style: AppTextSizes.eyebrow.copyWith(color: AppColors.mutedStrong),
+            style: ClinicalText.eyebrow.copyWith(color: ClinicalPalette.mutedStrong),
           ),
-          const Gap.v(AppSpace.sm),
+          const Gap.v(ClinicalSpace.sm),
           Text(
             info.usage,
             style: const TextStyle(
-              color: AppColors.mutedStrong,
+              color: ClinicalPalette.mutedStrong,
               fontSize: 13,
               height: 1.55,
             ),
           ),
-          const Gap.v(AppSpace.lg),
+          const Gap.v(ClinicalSpace.lg),
           // Citation key footer — kept visible so the clinician can
           // grep the source bundle / changelog if they need to.
           Container(
             padding: const EdgeInsets.symmetric(
-              horizontal: AppSpace.sm + 2,
-              vertical: AppSpace.xs + 1,
+              horizontal: ClinicalSpace.sm + 2,
+              vertical: ClinicalSpace.xs + 1,
             ),
             decoration: BoxDecoration(
-              color: AppColors.bg.withValues(alpha: 0.6),
-              borderRadius: BorderRadius.circular(AppRadii.sm),
+              color: ClinicalPalette.bg.withValues(alpha: 0.6),
+              borderRadius: BorderRadius.circular(ClinicalRadii.chip),
             ),
             child: Text(
               key_,
               style: const TextStyle(
-                color: AppColors.muted,
+                color: ClinicalPalette.muted,
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
                 fontFamily: 'monospace',
@@ -3335,8 +3344,8 @@ class _ResultFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(
-        top: AppSpace.xl,
-        bottom: AppSpace.xxl,
+        top: ClinicalSpace.xl,
+        bottom: ClinicalSpace.xxl,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -3346,40 +3355,40 @@ class _ResultFooter extends StatelessWidget {
             child: Container(
               width: 36,
               height: 1,
-              color: AppColors.border.withValues(alpha: 0.6),
+              color: ClinicalPalette.border.withValues(alpha: 0.6),
             ),
           ),
-          const Gap.v(AppSpace.lg),
+          const Gap.v(ClinicalSpace.lg),
           Center(
             child: Text(
               'PLAN COMPLETE',
-              style: AppTextSizes.eyebrow.copyWith(
-                color: AppColors.mutedStrong,
+              style: ClinicalText.eyebrow.copyWith(
+                color: ClinicalPalette.mutedStrong,
                 letterSpacing: 2,
               ),
             ),
           ),
-          const Gap.v(AppSpace.md + 2),
+          const Gap.v(ClinicalSpace.md + 2),
           Center(
             child: Text(
               'Save it, share it, or queue the next case.',
-              style: AppTextSizes.caption.copyWith(height: 1.5),
+              style: ClinicalText.caption.copyWith(height: 1.5),
               textAlign: TextAlign.center,
             ),
           ),
-          const Gap.v(AppSpace.xl - 2),
+          const Gap.v(ClinicalSpace.xl - 2),
           // ── Primary CTA ──────────────────────────────────────────
           _StartAnotherButton(onPressed: onStartAnother),
-          const Gap.v(AppSpace.md),
+          const Gap.v(ClinicalSpace.md),
           // ── Subtle home link ─────────────────────────────────────
           Center(
             child: TextButton(
               onPressed: onHome,
               style: TextButton.styleFrom(
-                foregroundColor: AppColors.muted,
+                foregroundColor: ClinicalPalette.muted,
                 padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpace.lg,
-                  vertical: AppSpace.sm,
+                  horizontal: ClinicalSpace.lg,
+                  vertical: ClinicalSpace.sm,
                 ),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 visualDensity: VisualDensity.compact,
@@ -3411,43 +3420,12 @@ class _StartAnotherButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppRadii.xl),
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: AppColors.accent.withValues(alpha: 0.22),
-            blurRadius: 22,
-            spreadRadius: -6,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: FilledButton(
+    return Center(
+      child: PillButton(
+        label: 'Start another switch',
+        icon: Icons.restart_alt_rounded,
         onPressed: onPressed,
-        style: FilledButton.styleFrom(
-          backgroundColor: AppColors.accent,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppRadii.xl),
-          ),
-        ),
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Icon(Icons.restart_alt_rounded, size: 19),
-            Gap.h(AppSpace.sm + 2),
-            Text(
-              'Start another switch',
-              style: TextStyle(
-                fontSize: 15.5,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.1,
-              ),
-            ),
-          ],
-        ),
+        expanded: true,
       ),
     );
   }
@@ -3494,7 +3472,7 @@ class _Banner extends StatelessWidget {
           Text(
             title,
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 14,
               fontWeight: FontWeight.w600,
               height: 1.4,
@@ -3504,7 +3482,7 @@ class _Banner extends StatelessWidget {
           Text(
             body,
             style: const TextStyle(
-              color: AppColors.muted,
+              color: ClinicalPalette.muted,
               fontSize: 12,
               height: 1.5,
             ),
@@ -3527,27 +3505,27 @@ class _Card extends StatelessWidget {
     // the result hero so cards read as a calmer secondary stream.
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg - 2,
-        AppSpace.md + 2,
-        AppSpace.lg - 2,
-        AppSpace.lg - 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.lg - 2,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
             title.toUpperCase(),
-            style: AppTextSizes.eyebrow,
+            style: ClinicalText.eyebrow,
           ),
-          const Gap.v(AppSpace.sm + 2),
+          const Gap.v(ClinicalSpace.sm + 2),
           child,
         ],
       ),
@@ -3569,15 +3547,15 @@ class _MonitoringPlanCard extends StatelessWidget {
   Color _categoryColor(MonitoringCategory c) {
     switch (c) {
       case MonitoringCategory.lab:
-        return AppColors.accent;
+        return ClinicalPalette.accent;
       case MonitoringCategory.ecg:
-        return AppColors.danger;
+        return ClinicalPalette.danger;
       case MonitoringCategory.physical:
-        return AppColors.to;
+        return ClinicalPalette.toneMintInk;
       case MonitoringCategory.rating:
-        return AppColors.warning;
+        return ClinicalPalette.warning;
       case MonitoringCategory.review:
-        return AppColors.muted;
+        return ClinicalPalette.muted;
     }
   }
 
@@ -3622,7 +3600,7 @@ class _MonitoringPlanCard extends StatelessWidget {
                     child: Text(
                       'Day ${e.dayOffset}',
                       style: const TextStyle(
-                        color: AppColors.muted,
+                        color: ClinicalPalette.muted,
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
                       ),
@@ -3635,7 +3613,7 @@ class _MonitoringPlanCard extends StatelessWidget {
                         Text(
                           e.label,
                           style: const TextStyle(
-                            color: AppColors.text,
+                            color: ClinicalPalette.text,
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
@@ -3644,7 +3622,7 @@ class _MonitoringPlanCard extends StatelessWidget {
                         Text(
                           e.detail,
                           style: const TextStyle(
-                            color: AppColors.muted,
+                            color: ClinicalPalette.muted,
                             fontSize: 11,
                             height: 1.4,
                           ),
@@ -3661,7 +3639,7 @@ class _MonitoringPlanCard extends StatelessWidget {
             Text(
               '+$hidden more entr${hidden == 1 ? 'y' : 'ies'}',
               style: const TextStyle(
-                color: AppColors.muted,
+                color: ClinicalPalette.muted,
                 fontSize: 11,
                 fontStyle: FontStyle.italic,
               ),

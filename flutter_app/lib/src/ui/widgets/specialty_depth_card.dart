@@ -11,6 +11,7 @@
 
 import 'package:flutter/material.dart';
 
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/status_pill.dart';
 import 'package:psychswitch_engine/specialty.dart';
@@ -35,22 +36,22 @@ class _SpecialtyDepthCardState extends State<SpecialtyDepthCard> {
   };
 
   static const Map<Specialty, Color> _tint = <Specialty, Color>{
-    Specialty.pregnancy: AppColors.danger,
+    Specialty.pregnancy: ClinicalPalette.danger,
     Specialty.breastfeeding: Color(0xFFA78BFA),
-    Specialty.pediatric: AppColors.to,
-    Specialty.geriatric: AppColors.warning,
+    Specialty.pediatric: ClinicalPalette.toneMintInk,
+    Specialty.geriatric: ClinicalPalette.warning,
   };
 
   Color _toneFor(SpecialtyTier t) {
     switch (t) {
       case SpecialtyTier.preferred:
-        return AppColors.to;
+        return ClinicalPalette.toneMintInk;
       case SpecialtyTier.acceptable:
-        return AppColors.accent;
+        return ClinicalPalette.accent;
       case SpecialtyTier.caution:
-        return AppColors.warning;
+        return ClinicalPalette.warning;
       case SpecialtyTier.avoid:
-        return AppColors.danger;
+        return ClinicalPalette.danger;
     }
   }
 
@@ -101,9 +102,9 @@ class _SpecialtyDepthCardState extends State<SpecialtyDepthCard> {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(color: heroTone.withValues(alpha: 0.4)),
-        borderRadius: BorderRadius.circular(AppRadii.lg),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -115,10 +116,10 @@ class _SpecialtyDepthCardState extends State<SpecialtyDepthCard> {
               onTap: () => setState(() => _expanded = !_expanded),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(
-                  AppSpace.md + 2,
-                  AppSpace.md - 2,
-                  AppSpace.md + 2,
-                  AppSpace.md - 2,
+                  ClinicalSpace.md + 2,
+                  ClinicalSpace.md - 2,
+                  ClinicalSpace.md + 2,
+                  ClinicalSpace.md - 2,
                 ),
                 child: Row(
                   children: <Widget>[
@@ -132,7 +133,7 @@ class _SpecialtyDepthCardState extends State<SpecialtyDepthCard> {
                               _tint[heroSpecialty]!.withValues(alpha: 0.3),
                         ),
                         borderRadius:
-                            BorderRadius.circular(AppRadii.sm + 2),
+                            BorderRadius.circular(ClinicalRadii.chip + 2),
                       ),
                       child: Icon(
                         _icon[heroSpecialty],
@@ -140,7 +141,7 @@ class _SpecialtyDepthCardState extends State<SpecialtyDepthCard> {
                         color: _tint[heroSpecialty],
                       ),
                     ),
-                    const Gap.h(AppSpace.md),
+                    const Gap.h(ClinicalSpace.md),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,7 +149,7 @@ class _SpecialtyDepthCardState extends State<SpecialtyDepthCard> {
                           const Text(
                             'Specialty considerations',
                             style: TextStyle(
-                              color: AppColors.text,
+                              color: ClinicalPalette.text,
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
                             ),
@@ -175,7 +176,7 @@ class _SpecialtyDepthCardState extends State<SpecialtyDepthCard> {
                       child: const Icon(
                         Icons.chevron_right_rounded,
                         size: 22,
-                        color: AppColors.muted,
+                        color: ClinicalPalette.muted,
                       ),
                     ),
                   ],
@@ -203,16 +204,16 @@ class _SpecialtyDepthCardState extends State<SpecialtyDepthCard> {
                             tierLabel: _tierLabel,
                           ),
                       Container(
-                        color: AppColors.bg.withValues(alpha: 0.5),
+                        color: ClinicalPalette.bg.withValues(alpha: 0.5),
                         padding: const EdgeInsets.symmetric(
-                          horizontal: AppSpace.md + 2,
-                          vertical: AppSpace.sm,
+                          horizontal: ClinicalSpace.md + 2,
+                          vertical: ClinicalSpace.sm,
                         ),
                         child: Text(
                           'Tiers (best → worst): preferred · acceptable · '
                           'caution · avoid. Drawn from Maudsley 15th, NICE '
                           'perinatal NG192, Beers 2023, FDA labelling.',
-                          style: AppTextSizes.micro.copyWith(height: 1.5),
+                          style: ClinicalText.caption.copyWith(height: 1.5),
                         ),
                       ),
                     ],
@@ -246,10 +247,10 @@ class _SpecialtyGroup extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Container(
-          color: AppColors.bg.withValues(alpha: 0.5),
+          color: ClinicalPalette.bg.withValues(alpha: 0.5),
           padding: const EdgeInsets.symmetric(
-            horizontal: AppSpace.md + 2,
-            vertical: AppSpace.sm,
+            horizontal: ClinicalSpace.md + 2,
+            vertical: ClinicalSpace.sm,
           ),
           child: Row(
             children: <Widget>[
@@ -261,10 +262,10 @@ class _SpecialtyGroup extends StatelessWidget {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              const Gap.h(AppSpace.sm),
+              const Gap.h(ClinicalSpace.sm),
               Text(
                 specialtyLabel(specialty).toUpperCase(),
-                style: AppTextSizes.eyebrow,
+                style: ClinicalText.eyebrow,
               ),
             ],
           ),
@@ -301,15 +302,15 @@ class _RecommendationRow extends StatelessWidget {
         border: isLast
             ? null
             : const Border(
-                bottom: BorderSide(color: AppColors.border),
+                bottom: BorderSide(color: ClinicalPalette.border),
               ),
       ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
-          AppSpace.md + 2,
-          AppSpace.md - 2,
-          AppSpace.md + 2,
-          AppSpace.md - 2,
+          ClinicalSpace.md + 2,
+          ClinicalSpace.md - 2,
+          ClinicalSpace.md + 2,
+          ClinicalSpace.md - 2,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -321,7 +322,7 @@ class _RecommendationRow extends StatelessWidget {
                   Text(
                     rec.drugName ?? rec.drugId,
                     style: const TextStyle(
-                      color: AppColors.text,
+                      color: ClinicalPalette.text,
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
                     ),
@@ -329,16 +330,16 @@ class _RecommendationRow extends StatelessWidget {
                   const Gap.v(2),
                   Text(
                     rec.rationale,
-                    style: AppTextSizes.micro.copyWith(height: 1.5),
+                    style: ClinicalText.caption.copyWith(height: 1.5),
                   ),
                   if (rec.knownRisks != null) ...<Widget>[
-                    const Gap.v(AppSpace.sm),
+                    const Gap.v(ClinicalSpace.sm),
                     Container(
                       decoration: BoxDecoration(
-                        color: AppColors.danger.withValues(alpha: 0.08),
+                        color: ClinicalPalette.danger.withValues(alpha: 0.08),
                         border: const Border(
                           left: BorderSide(
-                            color: AppColors.danger,
+                            color: ClinicalPalette.danger,
                             width: 2,
                           ),
                         ),
@@ -348,31 +349,31 @@ class _RecommendationRow extends StatelessWidget {
                         ),
                       ),
                       padding: const EdgeInsets.fromLTRB(
-                        AppSpace.sm + 2,
-                        AppSpace.xs + 2,
-                        AppSpace.sm + 2,
-                        AppSpace.xs + 2,
+                        ClinicalSpace.sm + 2,
+                        ClinicalSpace.xs + 2,
+                        ClinicalSpace.sm + 2,
+                        ClinicalSpace.xs + 2,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
                             'KNOWN RISKS',
-                            style: AppTextSizes.eyebrow.copyWith(
-                              color: AppColors.danger,
+                            style: ClinicalText.eyebrow.copyWith(
+                              color: ClinicalPalette.danger,
                             ),
                           ),
                           const Gap.v(2),
                           Text(
                             rec.knownRisks!,
-                            style: AppTextSizes.micro.copyWith(height: 1.5),
+                            style: ClinicalText.caption.copyWith(height: 1.5),
                           ),
                         ],
                       ),
                     ),
                   ],
                   if (rec.doseFactor != null && rec.doseFactor! < 1) ...<Widget>[
-                    const Gap.v(AppSpace.xs + 2),
+                    const Gap.v(ClinicalSpace.xs + 2),
                     Text.rich(
                       TextSpan(
                         children: <InlineSpan>[
@@ -382,31 +383,31 @@ class _RecommendationRow extends StatelessWidget {
                                 '${(rec.doseFactor! * 100).round()}%',
                             style: const TextStyle(
                               fontWeight: FontWeight.w800,
-                              color: AppColors.text,
+                              color: ClinicalPalette.text,
                             ),
                           ),
                           const TextSpan(text: ' of adult target.'),
                         ],
                       ),
-                      style: AppTextSizes.micro,
+                      style: ClinicalText.caption,
                     ),
                   ],
                   if (rec.additionalMonitoring != null &&
                       rec.additionalMonitoring!.isNotEmpty) ...<Widget>[
-                    const Gap.v(AppSpace.xs + 2),
+                    const Gap.v(ClinicalSpace.xs + 2),
                     for (final m in rec.additionalMonitoring!)
                       Padding(
                         padding: const EdgeInsets.only(bottom: 2),
                         child: Text(
                           '• $m',
-                          style: AppTextSizes.micro.copyWith(height: 1.5),
+                          style: ClinicalText.caption.copyWith(height: 1.5),
                         ),
                       ),
                   ],
                 ],
               ),
             ),
-            const Gap.h(AppSpace.md),
+            const Gap.h(ClinicalSpace.md),
             StatusPill(label: tierLabel, tone: tone, compact: true),
           ],
         ),

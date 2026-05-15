@@ -21,6 +21,7 @@
 //   4. Component breakdown so the assessment is auditable.
 
 import 'package:flutter/material.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch_engine/overlap_intensity.dart';
 
@@ -31,10 +32,10 @@ class OverlapIntensityCard extends StatelessWidget {
 
   /// Pick the design-token tone for a tier — green / blue / amber / red.
   static Color _toneFor(OverlapTier t) => switch (t) {
-        OverlapTier.low => AppColors.to,
-        OverlapTier.moderate => AppColors.accent,
-        OverlapTier.high => AppColors.warning,
-        OverlapTier.severe => AppColors.danger,
+        OverlapTier.low => ClinicalPalette.toneMintInk,
+        OverlapTier.moderate => ClinicalPalette.accent,
+        OverlapTier.high => ClinicalPalette.warning,
+        OverlapTier.severe => ClinicalPalette.danger,
       };
 
   /// Per-mechanism clinical reasoning — what to monitor, why it
@@ -103,18 +104,18 @@ class OverlapIntensityCard extends StatelessWidget {
     final mult = assessment.components.mechanismMultiplier;
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: ClinicalPalette.surface,
         border: Border.all(
-          color: AppColors.border.withValues(alpha: 0.7),
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
           width: 0.5,
         ),
-        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
       ),
       padding: const EdgeInsets.fromLTRB(
-        AppSpace.lg - 2,
-        AppSpace.md + 2,
-        AppSpace.lg - 2,
-        AppSpace.lg - 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.lg - 2,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -123,7 +124,7 @@ class OverlapIntensityCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
-              const Text('OVERLAP INTENSITY', style: AppTextSizes.eyebrow),
+              const Text('OVERLAP INTENSITY', style: ClinicalText.eyebrow),
               const Spacer(),
               RichText(
                 text: TextSpan(
@@ -144,7 +145,7 @@ class OverlapIntensityCard extends StatelessWidget {
                     const TextSpan(
                       text: ' /100',
                       style: TextStyle(
-                        color: AppColors.muted,
+                        color: ClinicalPalette.muted,
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         letterSpacing: 0.2,
@@ -156,14 +157,14 @@ class OverlapIntensityCard extends StatelessWidget {
               ),
             ],
           ),
-          const Gap.v(AppSpace.md),
+          const Gap.v(ClinicalSpace.md),
           ClipRRect(
             borderRadius: BorderRadius.circular(3),
             child: Stack(
               children: <Widget>[
                 Container(
                   height: 5,
-                  color: AppColors.border.withValues(alpha: 0.5),
+                  color: ClinicalPalette.border.withValues(alpha: 0.5),
                 ),
                 AnimatedFractionallySizedBox(
                   alignment: Alignment.centerLeft,
@@ -181,7 +182,7 @@ class OverlapIntensityCard extends StatelessWidget {
               ],
             ),
           ),
-          const Gap.v(AppSpace.lg - 2),
+          const Gap.v(ClinicalSpace.lg - 2),
           // ── Tier label ──────────────────────────────────────────
           Text(
             _localTierLabel().toUpperCase(),
@@ -192,31 +193,31 @@ class OverlapIntensityCard extends StatelessWidget {
               letterSpacing: 1.4,
             ),
           ),
-          const Gap.v(AppSpace.sm + 2),
+          const Gap.v(ClinicalSpace.sm + 2),
           // ── Engine rationale (plain English how-derived) ────────
           Text(
             assessment.rationale,
             style: const TextStyle(
-              color: AppColors.text,
+              color: ClinicalPalette.text,
               fontSize: 13,
               height: 1.55,
             ),
           ),
           // ── Mechanism flags + per-flag clinical reasoning ───────
           if (assessment.flags.isNotEmpty) ...<Widget>[
-            const Gap.v(AppSpace.lg - 2),
+            const Gap.v(ClinicalSpace.lg - 2),
             Container(
               height: 0.5,
-              color: AppColors.border.withValues(alpha: 0.5),
+              color: ClinicalPalette.border.withValues(alpha: 0.5),
             ),
-            const Gap.v(AppSpace.md + 2),
+            const Gap.v(ClinicalSpace.md + 2),
             Text(
               'CLINICAL REASONING',
-              style: AppTextSizes.eyebrow.copyWith(color: tone),
+              style: ClinicalText.eyebrow.copyWith(color: tone),
             ),
-            const Gap.v(AppSpace.sm + 2),
+            const Gap.v(ClinicalSpace.sm + 2),
             for (var i = 0; i < assessment.flags.length; i++) ...<Widget>[
-              if (i > 0) const Gap.v(AppSpace.md + 2),
+              if (i > 0) const Gap.v(ClinicalSpace.md + 2),
               _MechanismRow(
                 flag: assessment.flags[i],
                 tone: tone,
@@ -225,27 +226,27 @@ class OverlapIntensityCard extends StatelessWidget {
             ],
           ],
           // ── Component breakdown ─────────────────────────────────
-          const Gap.v(AppSpace.lg - 2),
+          const Gap.v(ClinicalSpace.lg - 2),
           Container(
             height: 0.5,
-            color: AppColors.border.withValues(alpha: 0.5),
+            color: ClinicalPalette.border.withValues(alpha: 0.5),
           ),
-          const Gap.v(AppSpace.md + 2),
+          const Gap.v(ClinicalSpace.md + 2),
           _StatRow(
             label: 'Overlap window',
             value: '$overlapDays day${overlapDays == 1 ? '' : 's'}',
           ),
-          const Gap.v(AppSpace.sm),
+          const Gap.v(ClinicalSpace.sm),
           _StatRow(
             label: 'Day 1 from-dose',
             value: '${(from * 100).round()}% of target',
           ),
-          const Gap.v(AppSpace.sm),
+          const Gap.v(ClinicalSpace.sm),
           _StatRow(
             label: 'Day 1 to-dose',
             value: '${(to * 100).round()}% of target',
           ),
-          const Gap.v(AppSpace.sm),
+          const Gap.v(ClinicalSpace.sm),
           _StatRow(
             label: 'Mechanism multiplier',
             value: '${mult.toStringAsFixed(1)}×',
@@ -280,7 +281,7 @@ class _MechanismRow extends StatelessWidget {
           margin: const EdgeInsets.only(top: 6),
           decoration: BoxDecoration(color: tone, shape: BoxShape.circle),
         ),
-        const Gap.h(AppSpace.sm + 2),
+        const Gap.h(ClinicalSpace.sm + 2),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -288,7 +289,7 @@ class _MechanismRow extends StatelessWidget {
               Text(
                 flagLabel(flag),
                 style: const TextStyle(
-                  color: AppColors.text,
+                  color: ClinicalPalette.text,
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                   letterSpacing: -0.1,
@@ -296,11 +297,11 @@ class _MechanismRow extends StatelessWidget {
                 ),
               ),
               if (concern.isNotEmpty) ...<Widget>[
-                const Gap.v(AppSpace.xs),
+                const Gap.v(ClinicalSpace.xs),
                 Text(
                   concern,
                   style: const TextStyle(
-                    color: AppColors.mutedStrong,
+                    color: ClinicalPalette.mutedStrong,
                     fontSize: 12.5,
                     height: 1.55,
                   ),
@@ -332,7 +333,7 @@ class _StatRow extends StatelessWidget {
           child: Text(
             label,
             style: const TextStyle(
-              color: AppColors.muted,
+              color: ClinicalPalette.muted,
               fontSize: 12,
               fontWeight: FontWeight.w500,
               height: 1.4,
@@ -342,7 +343,7 @@ class _StatRow extends StatelessWidget {
         Text(
           value,
           style: const TextStyle(
-            color: AppColors.mutedStrong,
+            color: ClinicalPalette.mutedStrong,
             fontSize: 12.5,
             fontWeight: FontWeight.w600,
             letterSpacing: -0.1,

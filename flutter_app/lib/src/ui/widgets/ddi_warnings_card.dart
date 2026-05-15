@@ -18,6 +18,7 @@
 
 import 'package:flutter/material.dart';
 
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch_engine/ddi.dart';
 
@@ -47,13 +48,13 @@ class DdiWarningsCard extends StatelessWidget {
               Icon(
                 Icons.shield_outlined,
                 size: 14,
-                color: AppColors.warning,
+                color: ClinicalPalette.warning,
               ),
-              Gap.h(AppSpace.xs + 2),
+              Gap.h(ClinicalSpace.xs + 2),
               Text(
                 'OVERLAP-WINDOW INTERACTIONS',
                 style: TextStyle(
-                  color: AppColors.warning,
+                  color: ClinicalPalette.warning,
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.5,
@@ -61,10 +62,10 @@ class DdiWarningsCard extends StatelessWidget {
               ),
             ],
           ),
-          const Gap.v(AppSpace.sm),
+          const Gap.v(ClinicalSpace.sm),
           for (var i = 0; i < sorted.length; i++) ...<Widget>[
             _DdiHitRow(hit: sorted[i]),
-            if (i < sorted.length - 1) const Gap.v(AppSpace.sm),
+            if (i < sorted.length - 1) const Gap.v(ClinicalSpace.sm),
           ],
         ],
       ),
@@ -80,12 +81,12 @@ class _DdiHitRow extends StatelessWidget {
   static Color _toneFor(DdiSeverity s) {
     switch (s) {
       case DdiSeverity.info:
-        return AppColors.accent;
+        return ClinicalPalette.accent;
       case DdiSeverity.caution:
       case DdiSeverity.warning:
-        return AppColors.warning;
+        return ClinicalPalette.warning;
       case DdiSeverity.avoid:
-        return AppColors.danger;
+        return ClinicalPalette.danger;
     }
   }
 
@@ -117,12 +118,12 @@ class _DdiHitRow extends StatelessWidget {
           '${hit.mitigation != null ? '. Mitigation: ${hit.mitigation}' : ''}',
       child: ExcludeSemantics(
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(AppRadii.lg),
+          borderRadius: BorderRadius.circular(ClinicalRadii.tile),
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: AppColors.surface,
-              border: Border.all(color: AppColors.border),
-              borderRadius: BorderRadius.circular(AppRadii.lg),
+              color: ClinicalPalette.surface,
+              border: Border.all(color: ClinicalPalette.border),
+              borderRadius: BorderRadius.circular(ClinicalRadii.tile),
             ),
             child: IntrinsicHeight(
               child: Row(
@@ -133,10 +134,10 @@ class _DdiHitRow extends StatelessWidget {
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(
-                        AppSpace.md,
-                        AppSpace.md - 2,
-                        AppSpace.md,
-                        AppSpace.md - 2,
+                        ClinicalSpace.md,
+                        ClinicalSpace.md - 2,
+                        ClinicalSpace.md,
+                        ClinicalSpace.md - 2,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,20 +152,20 @@ class _DdiHitRow extends StatelessWidget {
                               letterSpacing: 1.3,
                             ),
                           ),
-                          const Gap.v(AppSpace.xs),
+                          const Gap.v(ClinicalSpace.xs),
                           Text(
                             hit.message,
                             style: const TextStyle(
-                              color: AppColors.text,
+                              color: ClinicalPalette.text,
                               fontSize: 13,
                               height: 1.5,
                             ),
                           ),
                           if (hit.mitigation != null) ...<Widget>[
-                            const Gap.v(AppSpace.xs + 2),
+                            const Gap.v(ClinicalSpace.xs + 2),
                             RichText(
                               text: TextSpan(
-                                style: AppTextSizes.micro.copyWith(
+                                style: ClinicalText.caption.copyWith(
                                   height: 1.5,
                                 ),
                                 children: <InlineSpan>[
@@ -172,7 +173,7 @@ class _DdiHitRow extends StatelessWidget {
                                     text: 'Mitigation: ',
                                     style: TextStyle(
                                       fontWeight: FontWeight.w700,
-                                      color: AppColors.mutedStrong,
+                                      color: ClinicalPalette.mutedStrong,
                                     ),
                                   ),
                                   TextSpan(text: hit.mitigation),
