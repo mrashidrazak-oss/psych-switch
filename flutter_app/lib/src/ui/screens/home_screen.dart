@@ -1023,6 +1023,24 @@ class _ReferenceRail extends StatelessWidget {
         route: Routes.scales,
       ),
       _RailRow(
+        label: 'DSM-5-TR criteria',
+        sub: 'Tick-box criterion sets · live tally',
+        icon: Icons.checklist_rounded,
+        route: Routes.dsm,
+      ),
+      _RailRow(
+        label: 'Pregnancy & lactation',
+        sub: 'Per-drug perinatal safety atlas',
+        icon: Icons.pregnant_woman,
+        route: Routes.perinatal,
+      ),
+      _RailRow(
+        label: 'STOPP / START',
+        sub: 'Geriatric deprescribing prompts',
+        icon: Icons.elderly,
+        route: Routes.stoppStart,
+      ),
+      _RailRow(
         label: 'QTc stacker',
         sub: 'Aggregate QTc risk',
         icon: Icons.monitor_heart_outlined,

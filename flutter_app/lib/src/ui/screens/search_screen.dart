@@ -269,6 +269,36 @@ const List<_ToolItem> _allTools = <_ToolItem>[
     ],
   ),
   _ToolItem(
+    label: 'DSM-5-TR criteria',
+    tagline: 'Tick-box criterion sets',
+    icon: Icons.checklist_rounded,
+    route: Routes.dsm,
+    keywords: <String>[
+      'dsm', 'criteria', 'diagnosis', 'mdd', 'gad', 'ptsd',
+      'schizophrenia', 'ocd', 'mania', 'bipolar', 'panic', 'aud', 'adhd',
+    ],
+  ),
+  _ToolItem(
+    label: 'Pregnancy & lactation',
+    tagline: 'Per-drug perinatal safety atlas',
+    icon: Icons.pregnant_woman,
+    route: Routes.perinatal,
+    keywords: <String>[
+      'pregnancy', 'lactation', 'breastfeeding', 'perinatal',
+      'pregnant', 'teratogen', 'breast', 'milk', 'fetal',
+    ],
+  ),
+  _ToolItem(
+    label: 'STOPP / START',
+    tagline: 'Geriatric deprescribing prompts',
+    icon: Icons.elderly,
+    route: Routes.stoppStart,
+    keywords: <String>[
+      'stopp', 'start', 'elderly', 'geriatric', 'deprescribe',
+      'deprescribing', 'older', 'fall', 'anticholinergic',
+    ],
+  ),
+  _ToolItem(
     label: 'QTc stacker',
     tagline: 'Aggregate QTc risk',
     icon: Icons.monitor_heart_outlined,
