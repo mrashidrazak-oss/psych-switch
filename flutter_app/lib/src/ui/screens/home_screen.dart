@@ -1,25 +1,29 @@
-// Home screen.
+// Home screen — redesigned 2026-05-15 in the new "Clinical Light"
+// visual language. See `lib/src/ui/theme/clinical_theme.dart` for the
+// palette + spacing tokens, and `lib/src/ui/widgets/clinical_primitives.dart`
+// for the reusable squircle / pill / ring widgets.
 //
-// Design principle: this app exists to plan a cross-titration. The
-// home screen exists to start one. Everything else is in service of
-// that single act, and earns its visual weight accordingly.
+// Structure (top → bottom):
 //
-//   1. Hero — display headline + the giant Start-a-switch CTA.
-//      Restrained brand mark (24-pt), wordmark only as a quiet
-//      eyebrow line. The button is the focal point of the screen.
-//   2. Today's pulse — only renders when there's actionable
-//      monitoring on a saved case. Hidden silently when empty.
-//   3. Modules — a calm vertical list of clinical entry points
-//      (Clozapine, Depot, Mood stabilisers). Each row is a wide
-//      tap target with subtle chrome, not a tile in a grid.
-//   4. Tools — inline interpunct-separated text links. They're
-//      utilities; they don't deserve grid real estate.
-//   5. Sign-off footer — for licensed clinicians, decision support
-//      only, version. One line, dimmed.
+//   1. Greeting header — circular avatar (initials), good-time-of-day
+//      greeting + clinician role, notification bell.
+//   2. Search field — taps through to the global search screen
+//      (`Routes.search`).
+//   3. Hero "Start a switch" — large lavender-tone squircle with the
+//      primary CTA, optional drug-count chip.
+//   4. Quick actions — 4 tone-tinted tiles (Compare · Regimen check ·
+//      Calculators · Adverse-effect lookup).
+//   5. Category grid — 2×2 of large tone-tinted cards
+//      (Antidepressants · Antipsychotics · Mood stabilisers ·
+//      Clozapine), each routes to the relevant browsing surface.
+//   6. Reference rail — clean list of supporting tools (Glossary,
+//      Errata, Ramadan, Depot, History).
+//   7. Footer — version + clinician disclaimer line, dimmed.
 //
-// Wide screens (foldable inner / tablet / desktop) keep the same
-// vertical flow but cap the content column at ~640 px so we never
-// stretch a single button or row across an entire 7.6" panel.
+// Wrapped in a `Theme(data: buildClinicalTheme(), …)` so this screen
+// renders in the new light language even though the rest of the app
+// still uses the dark default. As more screens migrate we promote the
+// clinical theme to the app root.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -27,14 +31,12 @@ import 'package:go_router/go_router.dart';
 
 import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/router.dart';
-import 'package:psychswitch/src/ui/theme/tokens.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
+import 'package:psychswitch/src/ui/widgets/clinical_primitives.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
-import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
-import 'package:psychswitch/src/ui/widgets/today_pulse_card.dart';
 
 /// Maximum content-column width on wide screens. Anything wider gets
-/// flanked by whitespace — never stretch a single CTA across a
-/// 7.6-inch foldable.
+/// flanked by whitespace so we never stretch a CTA across a 7.6" panel.
 const double _maxContentWidth = 640;
 
 class HomeScreen extends ConsumerWidget {
@@ -43,14 +45,20 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncEngine = ref.watch(engineProvider);
-    return Scaffold(
-      body: SafeArea(
-        child: asyncEngine.when(
-          loading: () => const EngineLoadingView(),
-          error: (e, st) => EngineErrorView(error: e),
-          data: (engine) => _HomeBody(
-            drugCount: engine.listDrugs().length,
-            ruleCount: engine.listRules().length,
+    return Theme(
+      data: buildClinicalTheme(),
+      child: Builder(
+        builder: (context) => Scaffold(
+          backgroundColor: ClinicalPalette.bg,
+          body: SafeArea(
+            child: asyncEngine.when(
+              loading: () => const EngineLoadingView(),
+              error: (e, _) => EngineErrorView(error: e),
+              data: (engine) => _HomeBody(
+                drugCount: engine.listDrugs().length,
+                ruleCount: engine.listRules().length,
+              ),
+            ),
           ),
         ),
       ),
@@ -66,66 +74,48 @@ class _HomeBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: _maxContentWidth),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpace.xl,
-              AppSpace.xxl,
-              AppSpace.xl,
-              AppSpace.xl,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const EntranceFade(child: _Mark()),
-                const Gap.v(AppSpace.xxl + AppSpace.md),
-                const EntranceFade(index: 1, child: _Headline()),
-                const Gap.v(AppSpace.lg),
-                EntranceFade(
-                  index: 2,
-                  child: _Stats(
-                    drugCount: drugCount,
-                    ruleCount: ruleCount,
-                  ),
-                ),
-                const Gap.v(AppSpace.xxl + AppSpace.md),
-                EntranceFade(
-                  index: 3,
-                  child: _StartButton(
-                    onPressed: () =>
-                        context.pushNamed(Routes.switch_),
-                  ),
-                ),
-                const Gap.v(AppSpace.lg),
-                EntranceFade(
-                  index: 4,
-                  child: _HistoryLink(
-                    onPressed: () =>
-                        context.pushNamed(Routes.history),
-                  ),
-                ),
-                const Gap.v(AppSpace.xxl),
+    final hour = DateTime.now().hour;
+    final greeting = hour < 12
+        ? 'Good morning'
+        : hour < 18
+            ? 'Good afternoon'
+            : 'Good evening';
 
-                // Today's pulse — only renders when there are
-                // actionable saved-case reminders, otherwise the
-                // widget collapses to SizedBox.shrink and this
-                // section disappears completely.
-                const EntranceFade(index: 5, child: TodayPulseCard()),
-                const Gap.v(AppSpace.xl),
-
-                const EntranceFade(index: 6, child: _ModulesSection()),
-                const Gap.v(AppSpace.xxl),
-
-                const EntranceFade(index: 7, child: _ToolsSection()),
-                const Gap.v(AppSpace.xxl + AppSpace.md),
-
-                const EntranceFade(index: 8, child: _SignOff()),
-              ],
-            ),
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: _maxContentWidth),
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(
+            ClinicalSpace.lg + 4,
+            ClinicalSpace.lg,
+            ClinicalSpace.lg + 4,
+            ClinicalSpace.xxl,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              _Greeting(greeting: greeting),
+              const SizedBox(height: ClinicalSpace.lg + 4),
+              const _SearchField(),
+              const SizedBox(height: ClinicalSpace.lg),
+              _Hero(drugCount: drugCount, ruleCount: ruleCount),
+              const SizedBox(height: ClinicalSpace.lg),
+              const _QuickActions(),
+              const SizedBox(height: ClinicalSpace.lg + 4),
+              const _SectionLabel(
+                label: 'Browse by class',
+                tagline: 'Tap to open the matching reference',
+              ),
+              const SizedBox(height: ClinicalSpace.md),
+              const _CategoryGrid(),
+              const SizedBox(height: ClinicalSpace.lg + 4),
+              const _SectionLabel(label: 'Reference', tagline: null),
+              const SizedBox(height: ClinicalSpace.md),
+              const _ReferenceRail(),
+              const SizedBox(height: ClinicalSpace.xl),
+              const _Footer(),
+            ],
           ),
         ),
       ),
@@ -133,120 +123,148 @@ class _HomeBody extends StatelessWidget {
   }
 }
 
-// ── Hero ──────────────────────────────────────────────────────────────
+// ── Greeting header ─────────────────────────────────────────────────
 
-/// Brand mark.
-///
-/// The product's own logo (the cross-titration X-mark in from-blue +
-/// to-green) sits at 54-pt with a soft dual-tone glow behind it — the
-/// blue glow leaning left, the green leaning right, mirroring the
-/// strokes in the icon. Pairs with a confident 24-pt w800 wordmark
-/// and a small caps tagline.
-///
-/// Materially honest: no gimmick, no decorative chrome. Just the
-/// product mark given the room it deserves, the way Apple gives a
-/// 60-pt icon room on App Store landing pages.
-class _Mark extends StatelessWidget {
-  const _Mark();
-
-  static const double _markSize = 54;
+class _Greeting extends StatelessWidget {
+  const _Greeting({required this.greeting});
+  final String greeting;
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      label: 'PsychSwitch · Reviewed cross-titration',
-      child: ExcludeSemantics(
-        child: Row(
-          children: <Widget>[
-            // ── Brand mark with dual-tone glow ──────────────────────
-            // The two shadows offset opposite directions so the glow
-            // mirrors the logo's X-strokes — from-blue trailing one
-            // way, to-green the other. Subtle, only visible when the
-            // surrounding bg is dark (which on this screen it always
-            // is).
-            DecoratedBox(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(AppRadii.lg + 2),
-                boxShadow: <BoxShadow>[
-                  BoxShadow(
-                    color: AppColors.from.withValues(alpha: 0.28),
-                    blurRadius: 30,
-                    spreadRadius: -8,
-                    offset: const Offset(-5, 6),
-                  ),
-                  BoxShadow(
-                    color: AppColors.to.withValues(alpha: 0.28),
-                    blurRadius: 30,
-                    spreadRadius: -8,
-                    offset: const Offset(5, 6),
-                  ),
-                ],
+    return Row(
+      children: <Widget>[
+        const AvatarCircle(initials: 'RR'),
+        const SizedBox(width: ClinicalSpace.md + 2),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                '$greeting, Dr R',
+                style: ClinicalText.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(AppRadii.lg + 2),
-                child: Image.asset(
-                  'assets/icon.png',
-                  width: _markSize,
-                  height: _markSize,
-                  fit: BoxFit.cover,
-                  filterQuality: FilterQuality.high,
+              const SizedBox(height: 2),
+              const Text('Consultant Psychiatrist',
+                  style: ClinicalText.caption),
+            ],
+          ),
+        ),
+        _IconBubble(
+          icon: Icons.notifications_none_rounded,
+          onTap: () => context.pushNamed(Routes.errata),
+          showDot: true,
+        ),
+        const SizedBox(width: ClinicalSpace.sm),
+        _IconBubble(
+          icon: Icons.settings_outlined,
+          onTap: () => context.pushNamed(Routes.settings),
+        ),
+      ],
+    );
+  }
+}
+
+class _IconBubble extends StatelessWidget {
+  const _IconBubble({
+    required this.icon,
+    required this.onTap,
+    this.showDot = false,
+  });
+
+  final IconData icon;
+  final VoidCallback onTap;
+  final bool showDot;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkResponse(
+      onTap: onTap,
+      radius: 28,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: <Widget>[
+          Container(
+            width: 44,
+            height: 44,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: ClinicalPalette.surface,
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: ClinicalPalette.border,
+                width: 0.5,
+              ),
+            ),
+            child: Icon(icon, size: 20, color: ClinicalPalette.text),
+          ),
+          if (showDot)
+            Positioned(
+              right: 4,
+              top: 4,
+              child: Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: ClinicalPalette.danger,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: ClinicalPalette.bg, width: 2),
                 ),
               ),
             ),
-            const Gap.h(AppSpace.md + 2),
-            // ── Wordmark + tagline ─────────────────────────────────
+        ],
+      ),
+    );
+  }
+}
+
+// ── Search ─────────────────────────────────────────────────────────
+
+class _SearchField extends StatelessWidget {
+  const _SearchField();
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => context.pushNamed(Routes.search),
+      borderRadius: BorderRadius.circular(ClinicalRadii.pill),
+      child: Container(
+        height: 52,
+        padding: const EdgeInsets.symmetric(horizontal: ClinicalSpace.lg),
+        decoration: BoxDecoration(
+          color: ClinicalPalette.surface,
+          borderRadius: BorderRadius.circular(ClinicalRadii.pill),
+          border: Border.all(
+            color: ClinicalPalette.border,
+            width: 0.5,
+          ),
+        ),
+        child: Row(
+          children: <Widget>[
+            const Icon(Icons.search,
+                size: 20, color: ClinicalPalette.mutedStrong),
+            const SizedBox(width: ClinicalSpace.md),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  const Text(
-                    'PsychSwitch',
-                    style: TextStyle(
-                      color: AppColors.text,
-                      fontSize: 24,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -0.6,
-                      height: 1.1,
-                    ),
-                  ),
-                  const Gap.v(AppSpace.xs + 1),
-                  Row(
-                    children: <Widget>[
-                      // Two tiny tone dots echoing the logo's palette
-                      // so the brand identity reads as a system, not
-                      // as an isolated icon.
-                      Container(
-                        width: 5,
-                        height: 5,
-                        decoration: const BoxDecoration(
-                          color: AppColors.from,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const Gap.h(3),
-                      Container(
-                        width: 5,
-                        height: 5,
-                        decoration: const BoxDecoration(
-                          color: AppColors.to,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const Gap.h(AppSpace.sm),
-                      const Text(
-                        'Reviewed cross-titration',
-                        style: TextStyle(
-                          color: AppColors.mutedStrong,
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 0.2,
-                          height: 1.2,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+              child: Text(
+                'Search drugs, brands, glossary…',
+                style: ClinicalText.body.copyWith(
+                  color: ClinicalPalette.muted,
+                ),
+              ),
+            ),
+            Container(
+              width: 28,
+              height: 28,
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(
+                color: ClinicalPalette.cta,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.arrow_forward,
+                size: 14,
+                color: ClinicalPalette.ctaText,
               ),
             ),
           ],
@@ -256,395 +274,186 @@ class _Mark extends StatelessWidget {
   }
 }
 
-class _Headline extends StatelessWidget {
-  const _Headline();
+// ── Hero ────────────────────────────────────────────────────────────
 
-  @override
-  Widget build(BuildContext context) {
-    return const Text(
-      'Plan a cross-\ntitration.',
-      style: TextStyle(
-        color: AppColors.text,
-        fontSize: 40,
-        fontWeight: FontWeight.w800,
-        height: 1.05,
-        letterSpacing: -1.4,
-      ),
-    );
-  }
-}
-
-class _Stats extends StatelessWidget {
-  const _Stats({required this.drugCount, required this.ruleCount});
+class _Hero extends StatelessWidget {
+  const _Hero({required this.drugCount, required this.ruleCount});
 
   final int drugCount;
   final int ruleCount;
 
   @override
   Widget build(BuildContext context) {
-    // Wording deliberately preserved: existing widget tests + RN
-    // parity assert "<drugs> drugs · <rules> reviewed switching rules".
-    return Text(
-      '$drugCount drugs · $ruleCount reviewed switching rules',
-      style: const TextStyle(
-        color: AppColors.muted,
-        fontSize: 13,
-        fontWeight: FontWeight.w500,
-        height: 1.4,
-        letterSpacing: 0.1,
-      ),
-    );
-  }
-}
-
-/// The screen's single focal point. Big rounded rectangle, accent
-/// fill, generous internal padding. The button itself is the design.
-class _StartButton extends StatelessWidget {
-  const _StartButton({required this.onPressed});
-
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(AppRadii.xl),
-          boxShadow: <BoxShadow>[
-            BoxShadow(
-              color: AppColors.accent.withValues(alpha: 0.28),
-              blurRadius: 28,
-              spreadRadius: -6,
-              offset: const Offset(0, 10),
-            ),
-          ],
-        ),
-        child: FilledButton(
-          onPressed: onPressed,
-          style: FilledButton.styleFrom(
-            backgroundColor: AppColors.accent,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 22),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppRadii.xl),
-            ),
-          ),
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+    return SquircleCard(
+      tone: ClinicalPalette.toneLavender,
+      padding: const EdgeInsets.all(ClinicalSpace.xl),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text(
-                'Start a switch',
-                style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.1,
-                ),
-              ),
-              Gap.h(AppSpace.sm + 2),
-              Icon(Icons.arrow_forward_rounded, size: 18),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// History as a quiet text link, not a button. Tertiary action.
-class _HistoryLink extends StatelessWidget {
-  const _HistoryLink({required this.onPressed});
-
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: TextButton(
-        onPressed: onPressed,
-        style: TextButton.styleFrom(
-          foregroundColor: AppColors.mutedStrong,
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpace.md,
-            vertical: AppSpace.sm,
-          ),
-          textStyle: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.2,
-          ),
-        ),
-        child: const Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Icon(Icons.history, size: 14),
-            Gap.h(AppSpace.xs + 2),
-            Text('History'),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ── Modules ──────────────────────────────────────────────────────────
-
-class _ModulesSection extends StatelessWidget {
-  const _ModulesSection();
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        const Padding(
-          padding: EdgeInsets.only(left: AppSpace.xs),
-          child: Text('CLINICAL MODULES', style: AppTextSizes.eyebrow),
-        ),
-        const Gap.v(AppSpace.md),
-        _ModuleRow(
-          title: 'Clozapine',
-          subtitle: 'Titration · FBC monitoring · ANC checker · '
-              'rechallenge · community criteria',
-          icon: Icons.medical_services_outlined,
-          tone: AppColors.warning,
-          onPressed: () => context.pushNamed(Routes.clozapine),
-        ),
-        const Gap.v(AppSpace.sm + 2),
-        _ModuleRow(
-          title: 'Depot LAI',
-          subtitle: 'Sustenna · Trinza · Maintena initiation, '
-              'missed-dose flows, needle guides',
-          icon: Icons.colorize_outlined,
-          tone: AppColors.accent,
-          onPressed: () => context.pushNamed(Routes.depotIndex),
-        ),
-        // Mood-stabiliser module hidden pre-release pending clinical
-        // sign-off of lithium / valproate / lamotrigine / carbamazepine
-        // content. Route + screens kept in the codebase; restore the
-        // _ModuleRow here once content is reviewed.
-      ],
-    );
-  }
-}
-
-class _ModuleRow extends StatelessWidget {
-  const _ModuleRow({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.tone,
-    required this.onPressed,
-  });
-
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final Color tone;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.surface,
-      borderRadius: BorderRadius.circular(AppRadii.lg),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onPressed,
-        child: Ink(
-          decoration: BoxDecoration(
-            border: Border.all(color: AppColors.border),
-            borderRadius: BorderRadius.circular(AppRadii.lg),
-          ),
-          padding: const EdgeInsets.fromLTRB(
-            AppSpace.md + 2,
-            AppSpace.md + 2,
-            AppSpace.md + 2,
-            AppSpace.md + 2,
-          ),
-          child: Row(
-            children: <Widget>[
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: tone.withValues(alpha: 0.14),
-                  borderRadius: BorderRadius.circular(AppRadii.sm + 2),
-                ),
-                child: Icon(icon, size: 18, color: tone),
-              ),
-              const Gap.h(AppSpace.md + 2),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    const TonePill(
+                      label: 'Switch wizard',
+                      tone: Color(0xFFFFFFFF),
+                      ink: ClinicalPalette.toneLavenderInk,
+                    ),
+                    const SizedBox(height: ClinicalSpace.md),
                     Text(
-                      title,
-                      style: const TextStyle(
-                        color: AppColors.text,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.1,
+                      'Plan a safe cross-titration',
+                      style: ClinicalText.heading.copyWith(
+                        color: ClinicalPalette.toneLavenderInk,
                       ),
                     ),
-                    const Gap.v(2),
+                    const SizedBox(height: ClinicalSpace.sm),
                     Text(
-                      subtitle,
-                      style: AppTextSizes.micro.copyWith(height: 1.45),
+                      'Day-by-day schedule, half-life maths, MAOI '
+                      'washout, citations — all in one tap.',
+                      style: ClinicalText.body.copyWith(
+                        color: ClinicalPalette.toneLavenderInk
+                            .withValues(alpha: 0.85),
+                      ),
                     ),
                   ],
                 ),
               ),
-              const Gap.h(AppSpace.sm),
-              const Icon(
-                Icons.chevron_right_rounded,
-                color: AppColors.muted,
-                size: 22,
+              const SizedBox(width: ClinicalSpace.md),
+              ProgressRing(
+                value: 1,
+                label: '$drugCount',
+                size: 56,
+                thickness: 5,
+                tone: ClinicalPalette.toneLavenderInk,
+                labelStyle: const TextStyle(
+                  color: ClinicalPalette.toneLavenderInk,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 16,
+                  letterSpacing: -0.4,
+                ),
               ),
             ],
           ),
-        ),
+          const SizedBox(height: ClinicalSpace.xl),
+          Row(
+            children: <Widget>[
+              PillButton(
+                label: 'Start a switch',
+                icon: Icons.arrow_forward,
+                onPressed: () => context.pushNamed(Routes.switch_),
+              ),
+              const SizedBox(width: ClinicalSpace.sm + 2),
+              GhostPillButton(
+                label: 'History',
+                onPressed: () => context.pushNamed(Routes.history),
+              ),
+            ],
+          ),
+          const SizedBox(height: ClinicalSpace.md),
+          Text(
+            '$drugCount drugs · $ruleCount rules · Maudsley 15th ed.',
+            style: ClinicalText.caption.copyWith(
+              color: ClinicalPalette.toneLavenderInk.withValues(alpha: 0.7),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-// ── Tools ────────────────────────────────────────────────────────────
-//
-// Two grouped cells, Apple-Settings style. The clinical reference
-// utilities cluster as one group (QTc, Equivalency, AE lookup,
-// Glossary, Errata); app-shell utilities (Settings, About) cluster as
-// a second. Each row is a quiet tap-target with a monochrome icon, a
-// label, and a chevron — no accent blue, no tinted tiles. The chrome
-// is borderless surface with hairline dividers between rows so the
-// cluster reads as one considered unit, not a list of links.
+// ── Quick actions ───────────────────────────────────────────────────
 
-class _ToolsSection extends StatelessWidget {
-  const _ToolsSection();
-
-  static const _reference = <_ToolItem>[
-    _ToolItem(
-      label: 'Search',
-      icon: Icons.search,
-      route: Routes.search,
-    ),
-    _ToolItem(
-      label: 'Calculators',
-      icon: Icons.calculate_outlined,
-      route: Routes.calculators,
-    ),
-    _ToolItem(
-      label: 'Compare drugs',
-      icon: Icons.compare_arrows,
-      route: Routes.compare,
-    ),
-    _ToolItem(
-      label: 'Regimen check',
-      icon: Icons.medication_outlined,
-      route: Routes.polypharmacy,
-    ),
-    _ToolItem(
-      label: 'QTc stacker',
-      icon: Icons.monitor_heart_outlined,
-      route: Routes.qtcStacker,
-    ),
-    _ToolItem(
-      label: 'Dose equivalency',
-      icon: Icons.swap_horiz_rounded,
-      route: Routes.equivalency,
-    ),
-    _ToolItem(
-      label: 'Adverse-effect lookup',
-      icon: Icons.health_and_safety_outlined,
-      route: Routes.adverseEffects,
-    ),
-    _ToolItem(
-      label: 'Halal & Ramadan',
-      icon: Icons.dark_mode_outlined,
-      route: Routes.ramadan,
-    ),
-    _ToolItem(
-      label: 'Glossary',
-      icon: Icons.menu_book_outlined,
-      route: Routes.glossary,
-    ),
-    _ToolItem(
-      label: 'Errata',
-      icon: Icons.fact_check_outlined,
-      route: Routes.errata,
-    ),
-  ];
-
-  static const _app = <_ToolItem>[
-    _ToolItem(
-      label: 'Settings',
-      icon: Icons.settings_outlined,
-      route: Routes.settings,
-    ),
-    _ToolItem(
-      label: 'About',
-      icon: Icons.info_outline,
-      route: Routes.about,
-    ),
-  ];
+class _QuickActions extends StatelessWidget {
+  const _QuickActions();
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    const items = <_QuickActionData>[
+      _QuickActionData(
+        icon: Icons.compare_arrows,
+        label: 'Compare',
+        tone: ClinicalPalette.toneSky,
+        ink: ClinicalPalette.toneSkyInk,
+        route: Routes.compare,
+      ),
+      _QuickActionData(
+        icon: Icons.medication_outlined,
+        label: 'Regimen',
+        tone: ClinicalPalette.tonePeach,
+        ink: ClinicalPalette.tonePeachInk,
+        route: Routes.polypharmacy,
+      ),
+      _QuickActionData(
+        icon: Icons.calculate_outlined,
+        label: 'Calculate',
+        tone: ClinicalPalette.toneMint,
+        ink: ClinicalPalette.toneMintInk,
+        route: Routes.calculators,
+      ),
+      _QuickActionData(
+        icon: Icons.health_and_safety_outlined,
+        label: 'AE lookup',
+        tone: ClinicalPalette.toneRose,
+        ink: ClinicalPalette.toneRoseInk,
+        route: Routes.adverseEffects,
+      ),
+    ];
+    return Row(
       children: <Widget>[
-        Padding(
-          padding: EdgeInsets.only(left: AppSpace.xs),
-          child: Text('REFERENCE', style: AppTextSizes.eyebrow),
-        ),
-        Gap.v(AppSpace.sm + 2),
-        _ToolGroup(items: _reference),
-        Gap.v(AppSpace.lg),
-        Padding(
-          padding: EdgeInsets.only(left: AppSpace.xs),
-          child: Text('APP', style: AppTextSizes.eyebrow),
-        ),
-        Gap.v(AppSpace.sm + 2),
-        _ToolGroup(items: _app),
+        for (var i = 0; i < items.length; i++) ...<Widget>[
+          if (i > 0) const SizedBox(width: ClinicalSpace.sm),
+          Expanded(
+            child: ToneTile(
+              icon: items[i].icon,
+              label: items[i].label,
+              tone: items[i].tone,
+              ink: items[i].ink,
+              onTap: () => context.pushNamed(items[i].route),
+            ),
+          ),
+        ],
       ],
     );
   }
 }
 
-class _ToolItem {
-  const _ToolItem({
-    required this.label,
+class _QuickActionData {
+  const _QuickActionData({
     required this.icon,
+    required this.label,
+    required this.tone,
+    required this.ink,
     required this.route,
   });
-  final String label;
   final IconData icon;
+  final String label;
+  final Color tone;
+  final Color ink;
   final String route;
 }
 
-class _ToolGroup extends StatelessWidget {
-  const _ToolGroup({required this.items});
+// ── Section label ───────────────────────────────────────────────────
 
-  final List<_ToolItem> items;
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel({required this.label, required this.tagline});
+  final String label;
+  final String? tagline;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(AppRadii.lg),
-      ),
-      clipBehavior: Clip.antiAlias,
+    return Padding(
+      padding: const EdgeInsets.only(left: ClinicalSpace.xs),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          for (var i = 0; i < items.length; i++) ...<Widget>[
-            _ToolRow(item: items[i]),
-            if (i < items.length - 1)
-              const Padding(
-                padding: EdgeInsets.only(left: 56),
-                child: Divider(height: 1, thickness: 0.5),
-              ),
+          Text(label, style: ClinicalText.title),
+          if (tagline != null) ...<Widget>[
+            const SizedBox(height: 2),
+            Text(tagline!, style: ClinicalText.caption),
           ],
         ],
       ),
@@ -652,92 +461,271 @@ class _ToolGroup extends StatelessWidget {
   }
 }
 
-class _ToolRow extends StatelessWidget {
-  const _ToolRow({required this.item});
+// ── Category grid ───────────────────────────────────────────────────
 
-  final _ToolItem item;
+class _CategoryGrid extends StatelessWidget {
+  const _CategoryGrid();
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () => context.pushNamed(item.route),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpace.md + 2,
-            AppSpace.md - 2,
-            AppSpace.md + 2,
-            AppSpace.md - 2,
+    const items = <_CategoryData>[
+      _CategoryData(
+        label: 'Antidepressants',
+        sub: 'SSRI · SNRI · TCA · MAOI',
+        icon: Icons.brightness_low,
+        tone: ClinicalPalette.toneLavender,
+        ink: ClinicalPalette.toneLavenderInk,
+        route: Routes.equivalency,
+      ),
+      _CategoryData(
+        label: 'Antipsychotics',
+        sub: 'Typical · atypical · LAI',
+        icon: Icons.bubble_chart_outlined,
+        tone: ClinicalPalette.tonePeach,
+        ink: ClinicalPalette.tonePeachInk,
+        route: Routes.equivalency,
+      ),
+      _CategoryData(
+        label: 'Mood stabilisers',
+        sub: 'Lithium · valproate · lamotrigine',
+        icon: Icons.balance_outlined,
+        tone: ClinicalPalette.toneMint,
+        ink: ClinicalPalette.toneMintInk,
+        route: Routes.moodStabilizers,
+      ),
+      _CategoryData(
+        label: 'Clozapine',
+        sub: 'Titration · ANC · myocarditis',
+        icon: Icons.local_hospital_outlined,
+        tone: ClinicalPalette.toneRose,
+        ink: ClinicalPalette.toneRoseInk,
+        route: Routes.clozapine,
+      ),
+    ];
+
+    return Column(
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Expanded(child: _CategoryCard(data: items[0])),
+            const SizedBox(width: ClinicalSpace.sm + 2),
+            Expanded(child: _CategoryCard(data: items[1])),
+          ],
+        ),
+        const SizedBox(height: ClinicalSpace.sm + 2),
+        Row(
+          children: <Widget>[
+            Expanded(child: _CategoryCard(data: items[2])),
+            const SizedBox(width: ClinicalSpace.sm + 2),
+            Expanded(child: _CategoryCard(data: items[3])),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _CategoryData {
+  const _CategoryData({
+    required this.label,
+    required this.sub,
+    required this.icon,
+    required this.tone,
+    required this.ink,
+    required this.route,
+  });
+  final String label;
+  final String sub;
+  final IconData icon;
+  final Color tone;
+  final Color ink;
+  final String route;
+}
+
+class _CategoryCard extends StatelessWidget {
+  const _CategoryCard({required this.data});
+  final _CategoryData data;
+
+  @override
+  Widget build(BuildContext context) {
+    return SquircleCard(
+      tone: data.tone,
+      onTap: () => context.pushNamed(data.route),
+      padding: const EdgeInsets.all(ClinicalSpace.lg),
+      radius: ClinicalRadii.tile + 4,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            width: 38,
+            height: 38,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.7),
+              borderRadius: BorderRadius.circular(ClinicalRadii.chip),
+            ),
+            child: Icon(data.icon, size: 20, color: data.ink),
           ),
-          child: Row(
-            children: <Widget>[
-              SizedBox(
-                width: 28,
-                child: Icon(
-                  item.icon,
-                  size: 18,
-                  color: AppColors.mutedStrong,
-                ),
-              ),
-              const Gap.h(AppSpace.md - 2),
-              Expanded(
-                child: Text(
-                  item.label,
-                  style: const TextStyle(
-                    color: AppColors.text,
-                    fontSize: 14.5,
-                    fontWeight: FontWeight.w500,
-                    letterSpacing: -0.05,
-                  ),
-                ),
-              ),
-              const Icon(
-                Icons.chevron_right_rounded,
-                color: AppColors.muted,
-                size: 20,
-              ),
-            ],
+          const SizedBox(height: ClinicalSpace.md + 2),
+          Text(
+            data.label,
+            style: ClinicalText.subtitle.copyWith(
+              color: data.ink,
+              fontSize: 14,
+              fontWeight: FontWeight.w800,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
+          const SizedBox(height: 2),
+          Text(
+            data.sub,
+            style: ClinicalText.caption.copyWith(
+              color: data.ink.withValues(alpha: 0.75),
+            ),
+            maxLines: 2,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Reference rail ──────────────────────────────────────────────────
+
+class _ReferenceRail extends StatelessWidget {
+  const _ReferenceRail();
+
+  @override
+  Widget build(BuildContext context) {
+    const rows = <_RailRow>[
+      _RailRow(
+        label: 'QTc stacker',
+        sub: 'Aggregate QTc risk',
+        icon: Icons.monitor_heart_outlined,
+        route: Routes.qtcStacker,
+      ),
+      _RailRow(
+        label: 'Depot LAI',
+        sub: 'Long-acting injectable protocols',
+        icon: Icons.vaccines_outlined,
+        route: Routes.depotIndex,
+      ),
+      _RailRow(
+        label: 'Halal & Ramadan',
+        sub: 'Fasting-window dosing',
+        icon: Icons.dark_mode_outlined,
+        route: Routes.ramadan,
+      ),
+      _RailRow(
+        label: 'Glossary',
+        sub: 'Clinical-term lookup',
+        icon: Icons.menu_book_outlined,
+        route: Routes.glossary,
+      ),
+      _RailRow(
+        label: 'Errata',
+        sub: 'Content corrections',
+        icon: Icons.fact_check_outlined,
+        route: Routes.errata,
+      ),
+      _RailRow(
+        label: 'About',
+        sub: 'Version · licences',
+        icon: Icons.info_outline,
+        route: Routes.about,
+      ),
+    ];
+    return SquircleCard(
+      padding: EdgeInsets.zero,
+      child: Column(
+        children: <Widget>[
+          for (var i = 0; i < rows.length; i++) ...<Widget>[
+            if (i > 0)
+              const Divider(
+                height: 0.5,
+                thickness: 0.5,
+                indent: ClinicalSpace.lg + 4 + 30 + ClinicalSpace.md,
+                color: ClinicalPalette.border,
+              ),
+            _RailRowView(row: rows[i]),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _RailRow {
+  const _RailRow({
+    required this.label,
+    required this.sub,
+    required this.icon,
+    required this.route,
+  });
+  final String label;
+  final String sub;
+  final IconData icon;
+  final String route;
+}
+
+class _RailRowView extends StatelessWidget {
+  const _RailRowView({required this.row});
+  final _RailRow row;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => context.pushNamed(row.route),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: ClinicalSpace.lg + 4,
+          vertical: ClinicalSpace.md + 2,
+        ),
+        child: Row(
+          children: <Widget>[
+            Icon(row.icon, size: 20, color: ClinicalPalette.mutedStrong),
+            const SizedBox(width: ClinicalSpace.md + 2),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(row.label, style: ClinicalText.subtitle),
+                  Text(row.sub, style: ClinicalText.caption),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.chevron_right,
+              size: 18,
+              color: ClinicalPalette.muted,
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-// ── Sign-off footer ──────────────────────────────────────────────────
+// ── Footer ──────────────────────────────────────────────────────────
 
-class _SignOff extends StatelessWidget {
-  const _SignOff();
+class _Footer extends StatelessWidget {
+  const _Footer();
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Column(
-        children: <Widget>[
-          Container(
-            width: 24,
-            height: 1,
-            color: AppColors.border,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: ClinicalSpace.lg),
+        child: Text(
+          'PsychSwitch · Decision support for licensed clinicians.\n'
+          'Always confirm with the most current product label.',
+          textAlign: TextAlign.center,
+          style: ClinicalText.caption.copyWith(
+            color: ClinicalPalette.muted,
+            height: 1.6,
           ),
-          const Gap.v(AppSpace.md),
-          Text(
-            'For licensed clinicians.',
-            style: AppTextSizes.micro.copyWith(
-              color: AppColors.mutedStrong,
-              letterSpacing: 0.3,
-            ),
-          ),
-          const Gap.v(2),
-          Text(
-            'Decision support — not medical advice.',
-            style: AppTextSizes.micro.copyWith(
-              color: AppColors.muted,
-              fontSize: 10,
-              letterSpacing: 0.2,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

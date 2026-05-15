@@ -1,16 +1,12 @@
-// Widget test for HomeScreen.
+// Widget test for HomeScreen — 2026-05-15 redesign.
 //
-// Pumps the screen inside a real ProviderScope (so the engine
-// provider does its real load against the asset bundle), waits for
-// the async engine to resolve, then asserts that:
-//   • the wordmark + ready-badge render
-//   • the Start-a-switch button is tappable
-//   • the tap navigates to /switch
-//
-// Both behaviours are checked in a single pumpWidget cycle. Splitting
-// them across two `testWidgets` calls reliably wedges the second one
-// — flutter_test's rootBundle + Riverpod FutureProvider don't tear
-// down cleanly between widget-test calls in the same file.
+// Pumps the screen inside a real ProviderScope (so the engine provider
+// does its real load against the asset bundle), waits for the async
+// engine to resolve, then asserts that the new clinical-light home:
+//   • renders the greeting + hero
+//   • shows the "Start a switch" black-pill CTA
+//   • surfaces the drug-count / rules-count signal line
+//   • navigates to /switch when the CTA is tapped
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -41,10 +37,7 @@ Widget _harness({GoRouter? router}) {
   );
 }
 
-/// Pump until the engine FutureProvider resolves. We alternate
-/// `runAsync` (lets real timers fire so the rootBundle future
-/// completes) with `pump` (drives the widget rebuild). Generous
-/// budget so a slow CI runner still has headroom.
+/// Pump until the engine FutureProvider resolves.
 Future<void> _waitForEngine(WidgetTester tester) async {
   for (var attempt = 0; attempt < 100; attempt++) {
     await tester.runAsync(
@@ -60,7 +53,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets(
-    'HomeScreen — wordmark + ready badge render and CTA navigates to /switch',
+    'HomeScreen — hero renders and Start-a-switch CTA navigates to /switch',
     (tester) async {
       await tester.pumpWidget(_harness());
       // Initial frame: spinner.
@@ -68,16 +61,13 @@ void main() {
 
       await _waitForEngine(tester);
 
-      // Wordmark — appears in the body and in the MaterialApp title.
-      expect(find.text('PsychSwitch'), findsWidgets);
-      // Tagline.
+      // Greeting (Dr R appears in any time-of-day variant).
+      expect(find.textContaining('Dr R'), findsOneWidget);
+      // Hero copy.
+      expect(find.text('Plan a safe cross-titration'), findsOneWidget);
+      // Drug/rule signal line — verify the trailing source.
       expect(
-        find.textContaining('Reviewed cross-titration'),
-        findsOneWidget,
-      );
-      // Ready-badge wording: "<drugs> drugs · <rules> reviewed switching rules".
-      expect(
-        find.textContaining('reviewed switching rules'),
+        find.textContaining('Maudsley 15th ed.'),
         findsOneWidget,
       );
       // Primary CTA.
