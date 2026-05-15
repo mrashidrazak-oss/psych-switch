@@ -10,7 +10,11 @@ void main() {
     test('returns each registered scale', () {
       expect(scaleById('phq9')?.name, 'PHQ-9');
       expect(scaleById('gad7')?.name, 'GAD-7');
+      expect(scaleById('madrs')?.name, 'MADRS');
       expect(scaleById('hamd17')?.name, 'HAM-D-17');
+      expect(scaleById('epds')?.name, 'EPDS');
+      expect(scaleById('audit')?.name, 'AUDIT');
+      expect(scaleById('dast10')?.name, 'DAST-10');
       expect(scaleById('aims')?.name, 'AIMS');
     });
 
@@ -146,6 +150,58 @@ void main() {
       final r = scoreScale(scaleById('aims')!, ans);
       expect(r.total, 18);
       expect(r.band.label, 'Severe');
+    });
+  });
+
+  group('MADRS', () {
+    test('max 60 · 0–6 → no/minimal, 35 → severe', () {
+      expect(scaleById('madrs')!.maxScore, 60);
+      expect(scoreScale(scaleById('madrs')!, <String, int>{'madrs_1': 6})
+          .band.label, 'No / minimal');
+      expect(scoreScale(scaleById('madrs')!, <String, int>{
+        for (var i = 1; i <= 10; i++) 'madrs_$i': 4,
+      }).band.label, 'Severe');
+    });
+  });
+
+  group('EPDS', () {
+    test('threshold 9 = possible, 13 = probable', () {
+      expect(scoreScale(scaleById('epds')!, <String, int>{
+        for (var i = 1; i <= 3; i++) 'epds_$i': 3,
+      }).band.label, 'Possible');
+      expect(scoreScale(scaleById('epds')!, <String, int>{
+        for (var i = 1; i <= 5; i++) 'epds_$i': 3,
+      }).band.label, 'Probable');
+    });
+  });
+
+  group('AUDIT', () {
+    test('8 → hazardous, 16 → harmful, 20 → possible dependence', () {
+      final audit = scaleById('audit')!;
+      expect(scoreScale(audit, <String, int>{'audit_1': 4, 'audit_2': 4})
+          .band.label, 'Hazardous');
+      expect(scoreScale(audit, <String, int>{
+        for (var i = 1; i <= 4; i++) 'audit_$i': 4,
+      }).band.label, 'Harmful');
+      expect(scoreScale(audit, <String, int>{
+        for (var i = 1; i <= 5; i++) 'audit_$i': 4,
+      }).band.label, 'Possible dependence');
+    });
+  });
+
+  group('DAST-10', () {
+    test('0 = no problems, 3 = moderate, 6 = substantial, 9 = severe', () {
+      final dast = scaleById('dast10')!;
+      expect(scoreScale(dast, <String, int>{}).band.label, 'No problems');
+      expect(scoreScale(dast, <String, int>{
+        for (var i = 1; i <= 3; i++) 'dast_$i': 1,
+      }).band.label, 'Moderate');
+      expect(scoreScale(dast, <String, int>{
+        for (var i = 1; i <= 6; i++) 'dast_$i': 1,
+      }).band.label, 'Substantial');
+      expect(scoreScale(dast, <String, int>{
+        for (var i = 1; i <= 9; i++) 'dast_$i': 1,
+      }).band.label, 'Severe');
     });
   });
 

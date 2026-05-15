@@ -260,12 +260,54 @@ const List<_ToolItem> _allTools = <_ToolItem>[
   ),
   _ToolItem(
     label: 'Rating scales',
-    tagline: 'PHQ-9 · GAD-7 · HAM-D · AIMS',
+    tagline: 'PHQ-9 · GAD-7 · MADRS · EPDS · AUDIT · DAST-10 · HAM-D · AIMS',
     icon: Icons.assignment_turned_in_outlined,
     route: Routes.scales,
     keywords: <String>[
-      'phq', 'gad', 'hamilton', 'hamd', 'aims', 'scale', 'rating',
-      'depression', 'anxiety', 'dyskinesia',
+      'phq', 'gad', 'madrs', 'hamilton', 'hamd', 'aims', 'epds',
+      'audit', 'dast', 'scale', 'rating',
+      'depression', 'anxiety', 'dyskinesia', 'alcohol', 'drug',
+      'postnatal', 'perinatal',
+    ],
+  ),
+  _ToolItem(
+    label: 'C-SSRS suicide screen',
+    tagline: 'Columbia severity + risk tier',
+    icon: Icons.emergency_outlined,
+    route: Routes.cssrs,
+    keywords: <String>[
+      'cssrs', 'columbia', 'suicide', 'suicidal', 'ideation',
+      'self-harm', 'risk',
+    ],
+  ),
+  _ToolItem(
+    label: 'MSE generator',
+    tagline: 'Mental State Exam narrative',
+    icon: Icons.edit_note_rounded,
+    route: Routes.mse,
+    keywords: <String>[
+      'mse', 'mental state', 'narrative', 'note', 'documentation',
+      'examination',
+    ],
+  ),
+  _ToolItem(
+    label: 'Crisis + safety plan',
+    tagline: 'Lifelines · Stanley-Brown plan',
+    icon: Icons.phone_in_talk,
+    route: Routes.crisis,
+    keywords: <String>[
+      'crisis', 'safety', 'plan', 'talian', 'kasih', 'befrienders',
+      'mentari', 'helpline', 'hotline', 'suicide',
+    ],
+  ),
+  _ToolItem(
+    label: 'MHA 2001 (Malaysia)',
+    tagline: 'Sections · durations · forms',
+    icon: Icons.gavel_outlined,
+    route: Routes.mha,
+    keywords: <String>[
+      'mha', 'mental health act', 'section', 'admission', 'detention',
+      'involuntary', 'voluntary', 'act 615', 'gazette', 'malaysia',
     ],
   ),
   _ToolItem(

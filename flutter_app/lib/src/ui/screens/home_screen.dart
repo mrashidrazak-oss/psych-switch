@@ -1018,9 +1018,33 @@ class _ReferenceRail extends StatelessWidget {
     const rows = <_RailRow>[
       _RailRow(
         label: 'Rating scales',
-        sub: 'PHQ-9 · GAD-7 · HAM-D · AIMS',
+        sub: 'PHQ-9 · GAD-7 · MADRS · AUDIT · AIMS · more',
         icon: Icons.assignment_turned_in_outlined,
         route: Routes.scales,
+      ),
+      _RailRow(
+        label: 'C-SSRS suicide screen',
+        sub: 'Columbia severity + risk tier',
+        icon: Icons.emergency_outlined,
+        route: Routes.cssrs,
+      ),
+      _RailRow(
+        label: 'MSE generator',
+        sub: 'Tap anchors · paste-ready paragraph',
+        icon: Icons.edit_note_rounded,
+        route: Routes.mse,
+      ),
+      _RailRow(
+        label: 'Crisis + safety plan',
+        sub: 'Talian Kasih · Befrienders · Stanley-Brown',
+        icon: Icons.phone_in_talk,
+        route: Routes.crisis,
+      ),
+      _RailRow(
+        label: 'MHA 2001 (MY)',
+        sub: 'Sections · durations · forms',
+        icon: Icons.gavel_outlined,
+        route: Routes.mha,
       ),
       _RailRow(
         label: 'DSM-5-TR criteria',

@@ -695,13 +695,491 @@ const _aims = ClinicalScale(
   ],
 );
 
+// ── MADRS ────────────────────────────────────────────────────────────
+//
+// 10 items × 0–6, total 0–60. Clinician-rated; anchors picked at
+// even-numbered scores (0/2/4/6) per the original Montgomery/Åsberg
+// scoring guide — interpolate odd values per the convention.
+
+const _madrsAnchors = <String>[
+  'No abnormality',
+  'Minor / fleeting',
+  'Mild but clear',
+  'Moderate',
+  'Pervasive',
+  'Severe',
+  'Extreme / unbearable',
+];
+
+const _madrs = ClinicalScale(
+  id: 'madrs',
+  name: 'MADRS',
+  fullName: 'Montgomery–Åsberg Depression Rating Scale',
+  tagline: 'Clinician-rated depression · 10 items · 0–60',
+  citation: 'Montgomery SA, Åsberg M. Br J Psychiatry 1979;134:382-9.',
+  headingPrompt: 'Rate over the past week. Pick the severity anchor '
+      'that best matches the picture.',
+  items: <ScaleItem>[
+    ScaleItem(
+      id: 'madrs_1',
+      prompt: 'Apparent sadness',
+      subtitle: 'Despondency, gloom, despair beyond ordinary low mood.',
+      anchors: _madrsAnchors,
+    ),
+    ScaleItem(
+      id: 'madrs_2',
+      prompt: 'Reported sadness',
+      subtitle: 'Self-reported low mood.',
+      anchors: _madrsAnchors,
+    ),
+    ScaleItem(
+      id: 'madrs_3',
+      prompt: 'Inner tension',
+      subtitle: 'Indefinable discomfort, edginess, panic.',
+      anchors: _madrsAnchors,
+    ),
+    ScaleItem(
+      id: 'madrs_4',
+      prompt: 'Reduced sleep',
+      anchors: _madrsAnchors,
+    ),
+    ScaleItem(
+      id: 'madrs_5',
+      prompt: 'Reduced appetite',
+      anchors: _madrsAnchors,
+    ),
+    ScaleItem(
+      id: 'madrs_6',
+      prompt: 'Concentration difficulties',
+      anchors: _madrsAnchors,
+    ),
+    ScaleItem(
+      id: 'madrs_7',
+      prompt: 'Lassitude',
+      subtitle: 'Difficulty getting started or sluggishness.',
+      anchors: _madrsAnchors,
+    ),
+    ScaleItem(
+      id: 'madrs_8',
+      prompt: 'Inability to feel',
+      subtitle: 'Reduced interest, emotional flattening.',
+      anchors: _madrsAnchors,
+    ),
+    ScaleItem(
+      id: 'madrs_9',
+      prompt: 'Pessimistic thoughts',
+      subtitle: 'Guilt, self-reproach, ruin.',
+      anchors: _madrsAnchors,
+    ),
+    ScaleItem(
+      id: 'madrs_10',
+      prompt: 'Suicidal thoughts',
+      subtitle: 'Score > 0 warrants explicit safety planning.',
+      anchors: _madrsAnchors,
+    ),
+  ],
+  bands: <SeverityBand>[
+    SeverityBand(
+      min: 0,
+      max: 6,
+      label: 'No / minimal',
+      interpretation: 'Within the non-depressed range.',
+      severity: 0,
+    ),
+    SeverityBand(
+      min: 7,
+      max: 19,
+      label: 'Mild',
+      interpretation: 'Mild depression; consider monitoring + '
+          'psychotherapy.',
+      severity: 1,
+    ),
+    SeverityBand(
+      min: 20,
+      max: 34,
+      label: 'Moderate',
+      interpretation: 'Moderate depression; antidepressant '
+          'pharmacotherapy usually indicated.',
+      severity: 2,
+    ),
+    SeverityBand(
+      min: 35,
+      max: 60,
+      label: 'Severe',
+      interpretation: 'Severe depression; full-dose treatment + '
+          'consider augmentation / ECT / admission.',
+      severity: 4,
+    ),
+  ],
+);
+
+// ── EPDS ─────────────────────────────────────────────────────────────
+//
+// Edinburgh Postnatal Depression Scale (Cox 1987). Self-rated. 10
+// items × 0–3 (items 3, 5, 6, 7, 8, 9, 10 are reverse-scored — but the
+// engine receives the already-mapped 0-3 score per item).
+
+const _epdsAnchors = <String>[
+  'Not at all / never',
+  'Hardly ever / occasionally',
+  'Yes, quite often',
+  'Yes, most of the time',
+];
+
+const _epds = ClinicalScale(
+  id: 'epds',
+  name: 'EPDS',
+  fullName: 'Edinburgh Postnatal Depression Scale',
+  tagline: 'Perinatal depression screen · 10 items · 0–30',
+  citation: 'Cox JL, Holden JM, Sagovsky R. Br J Psychiatry 1987;150:782-6.',
+  headingPrompt: 'Over the past 7 days, the mother has felt:',
+  items: <ScaleItem>[
+    ScaleItem(
+      id: 'epds_1',
+      prompt: 'Able to laugh and see the funny side of things '
+          '(reverse-scored)',
+      anchors: _epdsAnchors,
+    ),
+    ScaleItem(
+      id: 'epds_2',
+      prompt: 'Looked forward with enjoyment to things '
+          '(reverse-scored)',
+      anchors: _epdsAnchors,
+    ),
+    ScaleItem(
+      id: 'epds_3',
+      prompt: 'Blamed myself unnecessarily when things went wrong',
+      anchors: _epdsAnchors,
+    ),
+    ScaleItem(
+      id: 'epds_4',
+      prompt: 'Been anxious or worried for no good reason',
+      anchors: _epdsAnchors,
+    ),
+    ScaleItem(
+      id: 'epds_5',
+      prompt: 'Felt scared or panicky for no very good reason',
+      anchors: _epdsAnchors,
+    ),
+    ScaleItem(
+      id: 'epds_6',
+      prompt: 'Things have been getting on top of me',
+      anchors: _epdsAnchors,
+    ),
+    ScaleItem(
+      id: 'epds_7',
+      prompt: 'Been so unhappy that I have had difficulty sleeping',
+      anchors: _epdsAnchors,
+    ),
+    ScaleItem(
+      id: 'epds_8',
+      prompt: 'Felt sad or miserable',
+      anchors: _epdsAnchors,
+    ),
+    ScaleItem(
+      id: 'epds_9',
+      prompt: 'Been so unhappy I have been crying',
+      anchors: _epdsAnchors,
+    ),
+    ScaleItem(
+      id: 'epds_10',
+      prompt: 'Thought of harming myself has occurred to me',
+      subtitle: 'Any positive answer warrants same-day safety review.',
+      anchors: _epdsAnchors,
+    ),
+  ],
+  bands: <SeverityBand>[
+    SeverityBand(
+      min: 0,
+      max: 8,
+      label: 'Low likelihood',
+      interpretation: 'Low likelihood of perinatal depression.',
+      severity: 0,
+    ),
+    SeverityBand(
+      min: 9,
+      max: 12,
+      label: 'Possible',
+      interpretation: 'Possible depression; rescreen at 2-4 weeks + '
+          'enhanced support.',
+      severity: 1,
+    ),
+    SeverityBand(
+      min: 13,
+      max: 30,
+      label: 'Probable',
+      interpretation: 'Probable depression; assess clinically, '
+          'consider treatment (psychotherapy / antidepressant).',
+      severity: 3,
+    ),
+  ],
+);
+
+// ── AUDIT ────────────────────────────────────────────────────────────
+//
+// Alcohol Use Disorders Identification Test (Saunders 1993, WHO).
+// 10 items: items 1-8 score 0-4, items 9-10 score 0/2/4. Total 0-40.
+
+const _auditFrequency = <String>[
+  'Never',
+  'Monthly or less',
+  '2–4 times a month',
+  '2–3 times a week',
+  '4+ times a week',
+];
+
+const _auditDrinks = <String>[
+  '1 or 2',
+  '3 or 4',
+  '5 or 6',
+  '7 to 9',
+  '10 or more',
+];
+
+const _auditOccurrence = <String>[
+  'Never',
+  'Less than monthly',
+  'Monthly',
+  'Weekly',
+  'Daily or almost daily',
+];
+
+const _auditYesNoLifetime = <String>[
+  'No',
+  '',
+  'Yes, but not in the last year',
+  '',
+  'Yes, during the last year',
+];
+
+const _audit = ClinicalScale(
+  id: 'audit',
+  name: 'AUDIT',
+  fullName: 'Alcohol Use Disorders Identification Test',
+  tagline: 'Alcohol-use screening · 10 items · 0–40',
+  citation: 'Saunders JB, Aasland OG, Babor TF, et al. Addiction '
+      '1993;88:791-804.',
+  items: <ScaleItem>[
+    ScaleItem(
+      id: 'audit_1',
+      prompt: 'How often do you have a drink containing alcohol?',
+      anchors: _auditFrequency,
+    ),
+    ScaleItem(
+      id: 'audit_2',
+      prompt: 'How many drinks containing alcohol do you have on a '
+          'typical day when drinking?',
+      anchors: _auditDrinks,
+    ),
+    ScaleItem(
+      id: 'audit_3',
+      prompt: 'How often do you have six or more drinks on one occasion?',
+      anchors: _auditOccurrence,
+    ),
+    ScaleItem(
+      id: 'audit_4',
+      prompt: 'How often during the last year have you found that you '
+          'were not able to stop drinking once you had started?',
+      anchors: _auditOccurrence,
+    ),
+    ScaleItem(
+      id: 'audit_5',
+      prompt: 'How often during the last year have you failed to do '
+          'what was normally expected of you because of drinking?',
+      anchors: _auditOccurrence,
+    ),
+    ScaleItem(
+      id: 'audit_6',
+      prompt: 'How often during the last year have you needed a first '
+          'drink in the morning to get going after a heavy session?',
+      anchors: _auditOccurrence,
+    ),
+    ScaleItem(
+      id: 'audit_7',
+      prompt: 'How often during the last year have you had a feeling '
+          'of guilt or remorse after drinking?',
+      anchors: _auditOccurrence,
+    ),
+    ScaleItem(
+      id: 'audit_8',
+      prompt: 'How often during the last year have you been unable to '
+          'remember what happened the night before because you had '
+          'been drinking?',
+      anchors: _auditOccurrence,
+    ),
+    ScaleItem(
+      id: 'audit_9',
+      prompt: 'Have you or someone else been injured because of your '
+          'drinking?',
+      anchors: _auditYesNoLifetime,
+    ),
+    ScaleItem(
+      id: 'audit_10',
+      prompt: 'Has a relative, friend, doctor, or other health worker '
+          'been concerned about your drinking or suggested you cut down?',
+      anchors: _auditYesNoLifetime,
+    ),
+  ],
+  bands: <SeverityBand>[
+    SeverityBand(
+      min: 0,
+      max: 7,
+      label: 'Low risk',
+      interpretation: 'Low-risk drinking. Brief education sufficient.',
+      severity: 0,
+    ),
+    SeverityBand(
+      min: 8,
+      max: 15,
+      label: 'Hazardous',
+      interpretation: 'Hazardous drinking. Brief intervention indicated.',
+      severity: 2,
+    ),
+    SeverityBand(
+      min: 16,
+      max: 19,
+      label: 'Harmful',
+      interpretation: 'Harmful drinking. Brief counselling + monitoring.',
+      severity: 3,
+    ),
+    SeverityBand(
+      min: 20,
+      max: 40,
+      label: 'Possible dependence',
+      interpretation: 'Likely alcohol-use disorder; specialist '
+          'assessment + management.',
+      severity: 4,
+    ),
+  ],
+);
+
+// ── DAST-10 ──────────────────────────────────────────────────────────
+//
+// Drug Abuse Screening Test (Skinner 1982), 10 yes/no items. Item 3
+// is reverse-scored ("Can you stop drugs when you want to?") — engine
+// receives the already-mapped 0/1.
+
+const _yesNoAnchors = <String>['No', 'Yes'];
+
+const _dast10 = ClinicalScale(
+  id: 'dast10',
+  name: 'DAST-10',
+  fullName: 'Drug Abuse Screening Test (10-item)',
+  tagline: 'Drug-use screening · 10 items · 0–10',
+  citation: 'Skinner HA. Addict Behav 1982;7:363-71.',
+  headingPrompt: 'In the past 12 months — covers any non-medical use '
+      'of prescription drugs and any use of illicit drugs.',
+  items: <ScaleItem>[
+    ScaleItem(
+      id: 'dast_1',
+      prompt: 'Have you used drugs other than those required for '
+          'medical reasons?',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'dast_2',
+      prompt: 'Do you abuse more than one drug at a time?',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'dast_3',
+      prompt: 'Are you unable to stop drugs when you want to? '
+          '(reverse-scored)',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'dast_4',
+      prompt: 'Have you had blackouts or flashbacks as a result of '
+          'drug use?',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'dast_5',
+      prompt: 'Do you ever feel bad or guilty about your drug use?',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'dast_6',
+      prompt: 'Does your spouse / parents ever complain about your '
+          'involvement with drugs?',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'dast_7',
+      prompt: 'Have you neglected your family because of your drug use?',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'dast_8',
+      prompt: 'Have you engaged in illegal activities to obtain drugs?',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'dast_9',
+      prompt: 'Have you experienced withdrawal symptoms (felt sick) '
+          'when you stopped taking drugs?',
+      anchors: _yesNoAnchors,
+    ),
+    ScaleItem(
+      id: 'dast_10',
+      prompt: 'Have you had medical problems as a result of your drug '
+          'use (e.g. memory loss, hepatitis, convulsions, bleeding)?',
+      anchors: _yesNoAnchors,
+    ),
+  ],
+  bands: <SeverityBand>[
+    SeverityBand(
+      min: 0,
+      max: 0,
+      label: 'No problems',
+      interpretation: 'No problems reported.',
+      severity: 0,
+    ),
+    SeverityBand(
+      min: 1,
+      max: 2,
+      label: 'Low level',
+      interpretation: 'Low-level problems; monitor + brief advice.',
+      severity: 1,
+    ),
+    SeverityBand(
+      min: 3,
+      max: 5,
+      label: 'Moderate',
+      interpretation: 'Moderate level; further investigation + brief '
+          'counselling.',
+      severity: 2,
+    ),
+    SeverityBand(
+      min: 6,
+      max: 8,
+      label: 'Substantial',
+      interpretation: 'Substantial level; assessment + intensive '
+          'intervention.',
+      severity: 3,
+    ),
+    SeverityBand(
+      min: 9,
+      max: 10,
+      label: 'Severe',
+      interpretation: 'Severe level; specialist substance-use '
+          'treatment.',
+      severity: 4,
+    ),
+  ],
+);
+
 // ── Registry ─────────────────────────────────────────────────────────
 
 /// All built-in scales in display order.
 const List<ClinicalScale> kClinicalScales = <ClinicalScale>[
   _phq9,
   _gad7,
+  _madrs,
   _hamd17,
+  _epds,
+  _audit,
+  _dast10,
   _aims,
 ];
 

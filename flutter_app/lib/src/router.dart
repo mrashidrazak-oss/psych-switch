@@ -27,6 +27,8 @@ import 'package:psychswitch/src/ui/screens/adverse_effects_screen.dart';
 import 'package:psychswitch/src/ui/screens/calculators_screen.dart';
 import 'package:psychswitch/src/ui/screens/clozapine_screen.dart';
 import 'package:psychswitch/src/ui/screens/compare_screen.dart';
+import 'package:psychswitch/src/ui/screens/crisis_screen.dart';
+import 'package:psychswitch/src/ui/screens/cssrs_screen.dart';
 import 'package:psychswitch/src/ui/screens/depot_screen.dart';
 import 'package:psychswitch/src/ui/screens/drug_profile_screen.dart';
 import 'package:psychswitch/src/ui/screens/dsm_runner_screen.dart';
@@ -37,8 +39,10 @@ import 'package:psychswitch/src/ui/screens/glossary_screen.dart';
 import 'package:psychswitch/src/ui/screens/history_screen.dart';
 import 'package:psychswitch/src/ui/screens/home_screen.dart';
 import 'package:psychswitch/src/ui/screens/lithium_tapering_screen.dart';
+import 'package:psychswitch/src/ui/screens/mha_screen.dart';
 import 'package:psychswitch/src/ui/screens/mood_stabilizer_detail_screen.dart';
 import 'package:psychswitch/src/ui/screens/mood_stabilizer_home_screen.dart';
+import 'package:psychswitch/src/ui/screens/mse_screen.dart';
 import 'package:psychswitch/src/ui/screens/perinatal_screen.dart';
 import 'package:psychswitch/src/ui/screens/polypharmacy_screen.dart';
 import 'package:psychswitch/src/ui/screens/qtc_stacker_screen.dart';
@@ -83,6 +87,10 @@ abstract final class Routes {
   static const dsmRunner = 'dsm_runner';
   static const perinatal = 'perinatal';
   static const stoppStart = 'stopp_start';
+  static const cssrs = 'cssrs';
+  static const mse = 'mse';
+  static const mha = 'mha';
+  static const crisis = 'crisis';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -327,6 +335,38 @@ GoRouter buildRouter() => GoRouter(
           pageBuilder: (context, state) => _fadeThroughPage(
             state: state,
             child: const StoppStartScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.cssrs,
+          path: '/cssrs',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const CssrsScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.mse,
+          path: '/mse',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const MseScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.mha,
+          path: '/mha',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const MhaScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.crisis,
+          path: '/crisis',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const CrisisScreen(),
           ),
         ),
         GoRoute(
