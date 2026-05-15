@@ -524,9 +524,24 @@ class _ToolsSection extends StatelessWidget {
 
   static const _reference = <_ToolItem>[
     _ToolItem(
+      label: 'Search',
+      icon: Icons.search,
+      route: Routes.search,
+    ),
+    _ToolItem(
       label: 'Calculators',
       icon: Icons.calculate_outlined,
       route: Routes.calculators,
+    ),
+    _ToolItem(
+      label: 'Compare drugs',
+      icon: Icons.compare_arrows,
+      route: Routes.compare,
+    ),
+    _ToolItem(
+      label: 'Regimen check',
+      icon: Icons.medication_outlined,
+      route: Routes.polypharmacy,
     ),
     _ToolItem(
       label: 'QTc stacker',

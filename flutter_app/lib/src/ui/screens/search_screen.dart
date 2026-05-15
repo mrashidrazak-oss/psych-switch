@@ -1,0 +1,663 @@
+// Global search — one-box jumping point across the whole app.
+//
+// A single query searches three indexes at once:
+//
+//   • Drugs — generic name, Malaysian brand names, drug class
+//   • Glossary terms
+//   • App tools (calculators, regimen check, comparator, depot…)
+//
+// Results render in three named groups so the user always knows what
+// kind of thing they're tapping. Tapping a drug routes to its profile;
+// glossary scrolls to that term; tool routes to the screen.
+//
+// Designed for the "I know there's something for this — where is it?"
+// moment that an unfamiliar UI always has. Pure presentation, all
+// indexes are computed in-memory from already-loaded providers.
+
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import 'package:psychswitch/src/providers/engine_provider.dart';
+import 'package:psychswitch/src/router.dart';
+import 'package:psychswitch/src/ui/haptics.dart';
+import 'package:psychswitch/src/ui/theme/tokens.dart';
+import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
+import 'package:psychswitch_engine/glossary.dart';
+import 'package:psychswitch_engine/switching_engine.dart';
+import 'package:psychswitch_engine/types/drug.dart';
+
+class SearchScreen extends ConsumerStatefulWidget {
+  const SearchScreen({super.key});
+
+  @override
+  ConsumerState<SearchScreen> createState() => _SearchScreenState();
+}
+
+class _SearchScreenState extends ConsumerState<SearchScreen> {
+  final _ctrl = TextEditingController();
+  String _q = '';
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final engineAsync = ref.watch(engineProvider);
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Search'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
+        ),
+      ),
+      body: SafeArea(
+        child: engineAsync.when(
+          loading: () => const EngineLoadingView(),
+          error: (e, _) => EngineErrorView(error: e),
+          data: (engine) => Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpace.lg + 4,
+                  AppSpace.md,
+                  AppSpace.lg + 4,
+                  AppSpace.sm,
+                ),
+                child: TextField(
+                  controller: _ctrl,
+                  autofocus: true,
+                  style: AppTextSizes.body,
+                  onChanged: (v) => setState(() => _q = v),
+                  decoration: InputDecoration(
+                    hintText: 'Search drugs, brands, terms, tools',
+                    hintStyle: AppTextSizes.body
+                        .copyWith(color: AppColors.muted),
+                    prefixIcon: const Icon(Icons.search, size: 18),
+                    suffixIcon: _q.isEmpty
+                        ? null
+                        : IconButton(
+                            icon: const Icon(Icons.close, size: 18),
+                            onPressed: () {
+                              _ctrl.clear();
+                              setState(() => _q = '');
+                              unawaited(hapticsTap());
+                            },
+                          ),
+                    filled: true,
+                    fillColor: AppColors.surfaceHigh,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(AppRadii.lg),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(child: _Results(engine: engine, q: _q)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Results extends StatelessWidget {
+  const _Results({required this.engine, required this.q});
+
+  final SwitchingEngine engine;
+  final String q;
+
+  @override
+  Widget build(BuildContext context) {
+    final query = q.trim().toLowerCase();
+
+    if (query.isEmpty) return const _EmptyHint();
+
+    final drugs = _searchDrugs(engine, query);
+    final terms = _searchGlossary(query);
+    final tools = _searchTools(query);
+
+    if (drugs.isEmpty && terms.isEmpty && tools.isEmpty) {
+      return const _NoResults();
+    }
+
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpace.lg + 4,
+        AppSpace.sm,
+        AppSpace.lg + 4,
+        AppSpace.xl,
+      ),
+      children: <Widget>[
+        if (tools.isNotEmpty) ...<Widget>[
+          _GroupHeader(label: 'Tools', count: tools.length),
+          _Card(child: Column(children: <Widget>[
+            for (var i = 0; i < tools.length; i++) ...<Widget>[
+              if (i > 0) _hairline(),
+              _ToolRow(item: tools[i]),
+            ],
+          ])),
+          const Gap.v(AppSpace.lg),
+        ],
+        if (drugs.isNotEmpty) ...<Widget>[
+          _GroupHeader(label: 'Drugs', count: drugs.length),
+          _Card(child: Column(children: <Widget>[
+            for (var i = 0; i < drugs.length; i++) ...<Widget>[
+              if (i > 0) _hairline(),
+              _DrugRow(drug: drugs[i], query: query),
+            ],
+          ])),
+          const Gap.v(AppSpace.lg),
+        ],
+        if (terms.isNotEmpty) ...<Widget>[
+          _GroupHeader(label: 'Glossary', count: terms.length),
+          _Card(child: Column(children: <Widget>[
+            for (var i = 0; i < terms.length; i++) ...<Widget>[
+              if (i > 0) _hairline(),
+              _TermRow(entry: terms[i]),
+            ],
+          ])),
+        ],
+      ],
+    );
+  }
+
+  static Widget _hairline() => Divider(
+        height: 0.5,
+        thickness: 0.5,
+        color: AppColors.border.withValues(alpha: 0.7),
+      );
+}
+
+// ── Indexes ─────────────────────────────────────────────────────────
+
+List<Drug> _searchDrugs(SwitchingEngine engine, String q) {
+  final hits = <Drug>[];
+  for (final d in engine.listDrugs()) {
+    if (d.genericName.toLowerCase().contains(q)) {
+      hits.add(d);
+      continue;
+    }
+    if (d.drugClass.toLowerCase().contains(q)) {
+      hits.add(d);
+      continue;
+    }
+    for (final b in d.malaysianBrandNames) {
+      if (b.toLowerCase().contains(q)) {
+        hits.add(d);
+        break;
+      }
+    }
+  }
+  hits.sort((a, b) => a.genericName.compareTo(b.genericName));
+  return hits.take(20).toList();
+}
+
+List<GlossaryEntry> _searchGlossary(String q) {
+  final all = listGlossary();
+  final hits = <GlossaryEntry>[];
+  for (final e in all) {
+    if (e.term.toLowerCase().contains(q) ||
+        e.definition.toLowerCase().contains(q)) {
+      hits.add(e);
+    }
+  }
+  return hits.take(15).toList();
+}
+
+class _ToolItem {
+  const _ToolItem({
+    required this.label,
+    required this.tagline,
+    required this.icon,
+    required this.route,
+    this.keywords = const <String>[],
+  });
+
+  final String label;
+  final String tagline;
+  final IconData icon;
+  final String route;
+  final List<String> keywords;
+}
+
+const List<_ToolItem> _allTools = <_ToolItem>[
+  _ToolItem(
+    label: 'Switch wizard',
+    tagline: 'Generate a cross-titration plan',
+    icon: Icons.swap_horiz_rounded,
+    route: Routes.switch_,
+    keywords: <String>['switch', 'taper', 'cross-titration'],
+  ),
+  _ToolItem(
+    label: 'Compare drugs',
+    tagline: 'Side-by-side attribute matrix',
+    icon: Icons.compare_arrows,
+    route: Routes.compare,
+    keywords: <String>['compare', 'side by side'],
+  ),
+  _ToolItem(
+    label: 'Regimen check',
+    tagline: 'QTc · ACB · sedation · DDI',
+    icon: Icons.medication_outlined,
+    route: Routes.polypharmacy,
+    keywords: <String>[
+      'polypharmacy',
+      'regimen',
+      'ddi',
+      'interaction',
+      'anticholinergic',
+      'acb',
+    ],
+  ),
+  _ToolItem(
+    label: 'QTc stacker',
+    tagline: 'Aggregate QTc risk',
+    icon: Icons.monitor_heart_outlined,
+    route: Routes.qtcStacker,
+    keywords: <String>['qtc', 'qt', 'torsade'],
+  ),
+  _ToolItem(
+    label: 'Calculators',
+    tagline: 'CrCl · QTc · BMI',
+    icon: Icons.calculate_outlined,
+    route: Routes.calculators,
+    keywords: <String>[
+      'calculator',
+      'crcl',
+      'cockcroft',
+      'creatinine',
+      'bmi',
+      'qtc'
+    ],
+  ),
+  _ToolItem(
+    label: 'Dose equivalency',
+    tagline: 'Antipsychotic / antidepressant equivalents',
+    icon: Icons.swap_horiz_rounded,
+    route: Routes.equivalency,
+    keywords: <String>['equivalent', 'equivalence', 'chlorpromazine'],
+  ),
+  _ToolItem(
+    label: 'Adverse-effect lookup',
+    tagline: 'EPS · metabolic · prolactin · sexual',
+    icon: Icons.health_and_safety_outlined,
+    route: Routes.adverseEffects,
+    keywords: <String>['adverse', 'side effect', 'ae'],
+  ),
+  _ToolItem(
+    label: 'Halal & Ramadan',
+    tagline: 'Fasting-window dosing guidance',
+    icon: Icons.dark_mode_outlined,
+    route: Routes.ramadan,
+    keywords: <String>['ramadan', 'fasting', 'halal', 'suhoor', 'iftar'],
+  ),
+  _ToolItem(
+    label: 'Clozapine',
+    tagline: 'Titration · FBC · myocarditis · constipation',
+    icon: Icons.local_hospital_outlined,
+    route: Routes.clozapine,
+    keywords: <String>['clozapine', 'fbc', 'anc', 'myocarditis'],
+  ),
+  _ToolItem(
+    label: 'Depot LAI',
+    tagline: 'Long-acting injectable protocols',
+    icon: Icons.vaccines_outlined,
+    route: Routes.depotIndex,
+    keywords: <String>['depot', 'lai', 'paliperidone', 'aripiprazole'],
+  ),
+  _ToolItem(
+    label: 'Mood stabilisers',
+    tagline: 'Lithium · valproate · lamotrigine · carbamazepine',
+    icon: Icons.balance_outlined,
+    route: Routes.moodStabilizers,
+    keywords: <String>['lithium', 'valproate', 'lamotrigine', 'mood'],
+  ),
+  _ToolItem(
+    label: 'Lithium tapering',
+    tagline: 'Slow stop protocol',
+    icon: Icons.timelapse_outlined,
+    route: Routes.lithiumTapering,
+    keywords: <String>['lithium', 'taper', 'stop'],
+  ),
+  _ToolItem(
+    label: 'Glossary',
+    tagline: 'Clinical-term lookup',
+    icon: Icons.menu_book_outlined,
+    route: Routes.glossary,
+    keywords: <String>['glossary', 'definition'],
+  ),
+  _ToolItem(
+    label: 'Errata',
+    tagline: 'Content corrections log',
+    icon: Icons.fact_check_outlined,
+    route: Routes.errata,
+    keywords: <String>['errata', 'correction'],
+  ),
+  _ToolItem(
+    label: 'History',
+    tagline: 'Saved cases',
+    icon: Icons.history,
+    route: Routes.history,
+    keywords: <String>['history', 'saved'],
+  ),
+];
+
+List<_ToolItem> _searchTools(String q) {
+  final hits = <_ToolItem>[];
+  for (final t in _allTools) {
+    if (t.label.toLowerCase().contains(q) ||
+        t.tagline.toLowerCase().contains(q)) {
+      hits.add(t);
+      continue;
+    }
+    for (final k in t.keywords) {
+      if (k.toLowerCase().contains(q)) {
+        hits.add(t);
+        break;
+      }
+    }
+  }
+  return hits;
+}
+
+// ── UI pieces ───────────────────────────────────────────────────────
+
+class _GroupHeader extends StatelessWidget {
+  const _GroupHeader({required this.label, required this.count});
+  final String label;
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: AppSpace.xs,
+        bottom: AppSpace.sm,
+      ),
+      child: Row(
+        children: <Widget>[
+          Text(label.toUpperCase(), style: AppTextSizes.eyebrow),
+          const Gap.h(AppSpace.sm),
+          Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpace.sm,
+              vertical: 1,
+            ),
+            decoration: BoxDecoration(
+              color: AppColors.surfaceHigh,
+              borderRadius: BorderRadius.circular(AppRadii.pill),
+            ),
+            child: Text(
+              '$count',
+              style: AppTextSizes.eyebrow.copyWith(color: AppColors.muted),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Card extends StatelessWidget {
+  const _Card({required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        border: Border.all(
+          color: AppColors.border.withValues(alpha: 0.7),
+          width: 0.5,
+        ),
+        borderRadius: BorderRadius.circular(AppRadii.lg + 2),
+      ),
+      child: child,
+    );
+  }
+}
+
+class _DrugRow extends StatelessWidget {
+  const _DrugRow({required this.drug, required this.query});
+  final Drug drug;
+  final String query;
+
+  @override
+  Widget build(BuildContext context) {
+    final brandHit = drug.malaysianBrandNames.firstWhere(
+      (b) => b.toLowerCase().contains(query),
+      orElse: () => '',
+    );
+    return InkWell(
+      onTap: () {
+        unawaited(hapticsTap());
+        context.pushNamed(
+          Routes.drugProfile,
+          pathParameters: <String, String>{'id': drug.id},
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpace.md + 2,
+          vertical: AppSpace.md,
+        ),
+        child: Row(
+          children: <Widget>[
+            const Icon(Icons.medication_outlined,
+                size: 18, color: AppColors.muted),
+            const Gap.h(AppSpace.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    drug.genericName,
+                    style: AppTextSizes.body.copyWith(
+                      color: AppColors.text,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    brandHit.isNotEmpty
+                        ? '${drug.drugClass} · $brandHit'
+                        : drug.drugClass,
+                    style: AppTextSizes.caption,
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right,
+                size: 18, color: AppColors.muted),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _TermRow extends StatelessWidget {
+  const _TermRow({required this.entry});
+  final GlossaryEntry entry;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        unawaited(hapticsTap());
+        context.pushNamed(Routes.glossary);
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpace.md + 2,
+          vertical: AppSpace.md,
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const Icon(Icons.menu_book_outlined,
+                size: 18, color: AppColors.muted),
+            const Gap.h(AppSpace.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    entry.term.toUpperCase(),
+                    style: AppTextSizes.body.copyWith(
+                      color: AppColors.text,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const Gap.v(AppSpace.xs - 1),
+                  Text(
+                    entry.definition,
+                    style: AppTextSizes.caption,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ToolRow extends StatelessWidget {
+  const _ToolRow({required this.item});
+  final _ToolItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        unawaited(hapticsTap());
+        context.pushNamed(item.route);
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpace.md + 2,
+          vertical: AppSpace.md,
+        ),
+        child: Row(
+          children: <Widget>[
+            Icon(item.icon, size: 18, color: AppColors.accent),
+            const Gap.h(AppSpace.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    item.label,
+                    style: AppTextSizes.body.copyWith(
+                      color: AppColors.text,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(item.tagline, style: AppTextSizes.caption),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right,
+                size: 18, color: AppColors.muted),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _EmptyHint extends StatelessWidget {
+  const _EmptyHint();
+
+  @override
+  Widget build(BuildContext context) {
+    final hints = <String>[
+      'Try a drug name: sertraline, clozapine, lithium',
+      'Or a Malaysian brand: Zoloft, Clopine, Lithicarb',
+      'Or a tool: regimen, QTc, calculator, fasting',
+      'Or a clinical term: akathisia, NMS, hyponatraemia',
+    ];
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(
+        AppSpace.lg + 4,
+        AppSpace.md,
+        AppSpace.lg + 4,
+        AppSpace.xl,
+      ),
+      children: <Widget>[
+        const Text('Search anything', style: AppTextSizes.title),
+        const Gap.v(AppSpace.sm),
+        const Text(
+          'One box for drugs, glossary terms, and every tool.',
+          style: AppTextSizes.caption,
+        ),
+        const Gap.v(AppSpace.lg),
+        for (final h in hints) ...<Widget>[
+          Container(
+            margin: const EdgeInsets.only(bottom: AppSpace.sm),
+            padding: const EdgeInsets.all(AppSpace.md),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              border: Border.all(
+                color: AppColors.border.withValues(alpha: 0.7),
+                width: 0.5,
+              ),
+              borderRadius: BorderRadius.circular(AppRadii.md),
+            ),
+            child: Row(
+              children: <Widget>[
+                const Icon(Icons.lightbulb_outline,
+                    size: 16, color: AppColors.muted),
+                const Gap.h(AppSpace.sm),
+                Expanded(child: Text(h, style: AppTextSizes.caption)),
+              ],
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _NoResults extends StatelessWidget {
+  const _NoResults();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpace.xl),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const Icon(Icons.search_off,
+                size: 36, color: AppColors.muted),
+            const Gap.v(AppSpace.md),
+            Text(
+              'No matches',
+              style: AppTextSizes.subtitle.copyWith(color: AppColors.text),
+            ),
+            const Gap.v(AppSpace.xs),
+            const Text(
+              'Try a different spelling or shorter prefix.',
+              style: AppTextSizes.caption,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

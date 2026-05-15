@@ -26,6 +26,7 @@ import 'package:psychswitch/src/ui/screens/about_screen.dart';
 import 'package:psychswitch/src/ui/screens/adverse_effects_screen.dart';
 import 'package:psychswitch/src/ui/screens/calculators_screen.dart';
 import 'package:psychswitch/src/ui/screens/clozapine_screen.dart';
+import 'package:psychswitch/src/ui/screens/compare_screen.dart';
 import 'package:psychswitch/src/ui/screens/depot_screen.dart';
 import 'package:psychswitch/src/ui/screens/drug_profile_screen.dart';
 import 'package:psychswitch/src/ui/screens/equivalency_screen.dart';
@@ -36,9 +37,11 @@ import 'package:psychswitch/src/ui/screens/home_screen.dart';
 import 'package:psychswitch/src/ui/screens/lithium_tapering_screen.dart';
 import 'package:psychswitch/src/ui/screens/mood_stabilizer_detail_screen.dart';
 import 'package:psychswitch/src/ui/screens/mood_stabilizer_home_screen.dart';
+import 'package:psychswitch/src/ui/screens/polypharmacy_screen.dart';
 import 'package:psychswitch/src/ui/screens/qtc_stacker_screen.dart';
 import 'package:psychswitch/src/ui/screens/ramadan_screen.dart';
 import 'package:psychswitch/src/ui/screens/result_screen.dart';
+import 'package:psychswitch/src/ui/screens/search_screen.dart';
 import 'package:psychswitch/src/ui/screens/settings_screen.dart';
 import 'package:psychswitch/src/ui/screens/switch_screen.dart';
 
@@ -65,6 +68,9 @@ abstract final class Routes {
   static const drugProfile = 'drug_profile';
   static const ramadan = 'ramadan';
   static const calculators = 'calculators';
+  static const polypharmacy = 'polypharmacy';
+  static const compare = 'compare';
+  static const search = 'search';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -247,6 +253,30 @@ GoRouter buildRouter() => GoRouter(
           pageBuilder: (context, state) => _fadeThroughPage(
             state: state,
             child: const CalculatorsScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.search,
+          path: '/search',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const SearchScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.compare,
+          path: '/compare',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const CompareScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.polypharmacy,
+          path: '/polypharmacy',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const PolypharmacyScreen(),
           ),
         ),
         GoRoute(
