@@ -362,6 +362,47 @@ const List<_ToolItem> _allTools = <_ToolItem>[
     ],
   ),
   _ToolItem(
+    label: 'Benzo taper',
+    tagline: 'Diazepam-equivalent + Ashton schedule',
+    icon: Icons.trending_down,
+    route: Routes.benzoTaper,
+    keywords: <String>[
+      'benzo', 'benzodiazepine', 'diazepam', 'ashton', 'taper',
+      'equivalent', 'lorazepam', 'alprazolam', 'clonazepam',
+      'zopiclone', 'zolpidem', 'wean', 'withdrawal',
+    ],
+  ),
+  _ToolItem(
+    label: '4AT delirium',
+    tagline: 'Rapid delirium assessment',
+    icon: Icons.psychology_alt_outlined,
+    route: Routes.delirium4at,
+    keywords: <String>[
+      '4at', 'delirium', 'confusion', 'amt4', 'attention',
+      'cognitive', 'acute', 'fluctuating',
+    ],
+  ),
+  _ToolItem(
+    label: 'Catatonia screen',
+    tagline: 'Bush-Francis + lorazepam challenge',
+    icon: Icons.accessibility_new,
+    route: Routes.catatonia,
+    keywords: <String>[
+      'catatonia', 'bush', 'francis', 'bfcsi', 'stupor', 'mutism',
+      'posturing', 'waxy', 'negativism', 'lorazepam',
+    ],
+  ),
+  _ToolItem(
+    label: 'Renal & hepatic dosing',
+    tagline: 'eGFR / Child-Pugh adjustment',
+    icon: Icons.water_drop_outlined,
+    route: Routes.renalHepatic,
+    keywords: <String>[
+      'renal', 'hepatic', 'egfr', 'ckd', 'child-pugh', 'liver',
+      'kidney', 'dialysis', 'dose', 'adjustment', 'impairment',
+    ],
+  ),
+  _ToolItem(
     label: 'Pharmacogenomics',
     tagline: 'CYP2D6 / CYP2C19 dosing',
     icon: Icons.biotech_outlined,

@@ -1071,6 +1071,30 @@ class _ReferenceRail extends StatelessWidget {
         route: Routes.deprescribing,
       ),
       _RailRow(
+        label: 'Benzo taper',
+        sub: 'Diazepam-equivalent + Ashton schedule',
+        icon: Icons.trending_down,
+        route: Routes.benzoTaper,
+      ),
+      _RailRow(
+        label: '4AT delirium',
+        sub: 'Rapid delirium assessment (Bellelli 2014)',
+        icon: Icons.psychology_alt_outlined,
+        route: Routes.delirium4at,
+      ),
+      _RailRow(
+        label: 'Catatonia screen',
+        sub: 'Bush-Francis + lorazepam challenge',
+        icon: Icons.accessibility_new,
+        route: Routes.catatonia,
+      ),
+      _RailRow(
+        label: 'Renal & hepatic dosing',
+        sub: 'eGFR / Child-Pugh adjustment reference',
+        icon: Icons.water_drop_outlined,
+        route: Routes.renalHepatic,
+      ),
+      _RailRow(
         label: 'Pharmacogenomics',
         sub: 'CYP2D6 / CYP2C19 dosing implications',
         icon: Icons.biotech_outlined,

@@ -25,12 +25,15 @@ import 'package:go_router/go_router.dart';
 import 'package:psychswitch/src/ui/screens/about_screen.dart';
 import 'package:psychswitch/src/ui/screens/adverse_effects_screen.dart';
 import 'package:psychswitch/src/ui/screens/agitation_screen.dart';
+import 'package:psychswitch/src/ui/screens/benzo_taper_screen.dart';
 import 'package:psychswitch/src/ui/screens/calculators_screen.dart';
 import 'package:psychswitch/src/ui/screens/capacity_screen.dart';
+import 'package:psychswitch/src/ui/screens/catatonia_screen.dart';
 import 'package:psychswitch/src/ui/screens/clozapine_screen.dart';
 import 'package:psychswitch/src/ui/screens/compare_screen.dart';
 import 'package:psychswitch/src/ui/screens/crisis_screen.dart';
 import 'package:psychswitch/src/ui/screens/cssrs_screen.dart';
+import 'package:psychswitch/src/ui/screens/delirium_4at_screen.dart';
 import 'package:psychswitch/src/ui/screens/depot_screen.dart';
 import 'package:psychswitch/src/ui/screens/deprescribing_screen.dart';
 import 'package:psychswitch/src/ui/screens/drug_profile_screen.dart';
@@ -55,6 +58,7 @@ import 'package:psychswitch/src/ui/screens/pharmacogenomics_screen.dart';
 import 'package:psychswitch/src/ui/screens/polypharmacy_screen.dart';
 import 'package:psychswitch/src/ui/screens/qtc_stacker_screen.dart';
 import 'package:psychswitch/src/ui/screens/ramadan_screen.dart';
+import 'package:psychswitch/src/ui/screens/renal_hepatic_screen.dart';
 import 'package:psychswitch/src/ui/screens/result_screen.dart';
 import 'package:psychswitch/src/ui/screens/scale_runner_screen.dart';
 import 'package:psychswitch/src/ui/screens/scales_screen.dart';
@@ -115,6 +119,10 @@ abstract final class Routes {
   static const pharmacogenomics = 'pharmacogenomics';
   static const metabolicMonitoring = 'metabolic_monitoring';
   static const smokingAdjustment = 'smoking_adjustment';
+  static const delirium4at = 'delirium_4at';
+  static const catatonia = 'catatonia';
+  static const benzoTaper = 'benzo_taper';
+  static const renalHepatic = 'renal_hepatic';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -487,6 +495,38 @@ GoRouter buildRouter() => GoRouter(
           pageBuilder: (context, state) => _fadeThroughPage(
             state: state,
             child: const SmokingAdjustmentScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.delirium4at,
+          path: '/delirium-4at',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const Delirium4atScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.catatonia,
+          path: '/catatonia',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const CatatoniaScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.benzoTaper,
+          path: '/benzo-taper',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const BenzoTaperScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.renalHepatic,
+          path: '/renal-hepatic',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const RenalHepaticScreen(),
           ),
         ),
         GoRoute(
