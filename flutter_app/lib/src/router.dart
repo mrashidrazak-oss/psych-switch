@@ -27,6 +27,7 @@ import 'package:psychswitch/src/ui/screens/adverse_effects_screen.dart';
 import 'package:psychswitch/src/ui/screens/agitation_screen.dart';
 import 'package:psychswitch/src/ui/screens/alcohol_withdrawal_screen.dart';
 import 'package:psychswitch/src/ui/screens/antipsychotic_high_dose_screen.dart';
+import 'package:psychswitch/src/ui/screens/antipsychotic_in_parkinsonism_screen.dart';
 import 'package:psychswitch/src/ui/screens/benzo_taper_screen.dart';
 import 'package:psychswitch/src/ui/screens/bupe_microdosing_screen.dart';
 import 'package:psychswitch/src/ui/screens/calculators_screen.dart';
@@ -64,6 +65,7 @@ import 'package:psychswitch/src/ui/screens/movement_disorder_screen.dart';
 import 'package:psychswitch/src/ui/screens/mse_screen.dart';
 import 'package:psychswitch/src/ui/screens/nms_screen.dart';
 import 'package:psychswitch/src/ui/screens/opioid_overdose_screen.dart';
+import 'package:psychswitch/src/ui/screens/ost_acute_pain_screen.dart';
 import 'package:psychswitch/src/ui/screens/ost_induction_screen.dart';
 import 'package:psychswitch/src/ui/screens/perinatal_screen.dart';
 import 'package:psychswitch/src/ui/screens/pharmacogenomics_screen.dart';
@@ -157,6 +159,9 @@ abstract final class Routes {
   static const stimulantCardiac = 'stimulant_cardiac';
   static const antipsychoticHighDose = 'antipsychotic_high_dose';
   static const bupeMicrodosing = 'bupe_microdosing';
+  static const ostAcutePain = 'ost_acute_pain';
+  static const antipsychoticParkinsonism =
+      'antipsychotic_parkinsonism';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -697,6 +702,22 @@ GoRouter buildRouter() => GoRouter(
           pageBuilder: (context, state) => _fadeThroughPage(
             state: state,
             child: const BupeMicrodosingScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.ostAcutePain,
+          path: '/ost-acute-pain',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const OstAcutePainScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.antipsychoticParkinsonism,
+          path: '/antipsychotic-parkinsonism',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const AntipsychoticInParkinsonismScreen(),
           ),
         ),
         GoRoute(

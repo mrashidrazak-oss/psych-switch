@@ -1173,6 +1173,18 @@ class _ReferenceRail extends StatelessWidget {
         route: Routes.bupeMicrodosing,
       ),
       _RailRow(
+        label: 'Acute pain on OST',
+        sub: 'Continue maintenance + additive analgesia',
+        icon: Icons.healing_outlined,
+        route: Routes.ostAcutePain,
+      ),
+      _RailRow(
+        label: 'Antipsychotic + Parkinsonism',
+        sub: 'Lewy-body sensitivity, safe choices, BPSD',
+        icon: Icons.psychology_outlined,
+        route: Routes.antipsychoticParkinsonism,
+      ),
+      _RailRow(
         label: 'ECT work-up',
         sub: 'Pre-ECT checklist + drug-interaction review',
         icon: Icons.electric_bolt_outlined,

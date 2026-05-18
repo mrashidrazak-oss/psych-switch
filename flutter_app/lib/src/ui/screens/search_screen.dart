@@ -539,6 +539,27 @@ const List<_ToolItem> _allTools = <_ToolItem>[
     ],
   ),
   _ToolItem(
+    label: 'Acute pain on OST',
+    tagline: 'Continue maintenance + additive analgesia',
+    icon: Icons.healing_outlined,
+    route: Routes.ostAcutePain,
+    keywords: <String>[
+      'pain', 'analgesia', 'ost', 'methadone', 'buprenorphine',
+      'naltrexone', 'perioperative', 'surgery', 'opioid',
+    ],
+  ),
+  _ToolItem(
+    label: 'Antipsychotic + Parkinsonism',
+    tagline: 'Lewy-body sensitivity, safe choices, BPSD',
+    icon: Icons.psychology_outlined,
+    route: Routes.antipsychoticParkinsonism,
+    keywords: <String>[
+      'parkinson', 'lewy', 'dlb', 'pdd', 'dementia', 'bpsd',
+      'neuroleptic sensitivity', 'quetiapine', 'clozapine',
+      'pimavanserin', 'risperidone',
+    ],
+  ),
+  _ToolItem(
     label: 'ECT work-up',
     tagline: 'Pre-ECT checklist + drug review',
     icon: Icons.electric_bolt_outlined,
