@@ -1221,6 +1221,18 @@ class _ReferenceRail extends StatelessWidget {
         route: Routes.lamotrigineTitration,
       ),
       _RailRow(
+        label: 'Tardive dyskinesia',
+        sub: 'Stepwise: optimise → VMAT-2 → specialist',
+        icon: Icons.gesture_outlined,
+        route: Routes.tardiveDyskinesia,
+      ),
+      _RailRow(
+        label: 'NMS rechallenge',
+        sub: 'Restart-after-NMS readiness + safer protocol',
+        icon: Icons.restart_alt_outlined,
+        route: Routes.nmsRechallenge,
+      ),
+      _RailRow(
         label: 'ECT work-up',
         sub: 'Pre-ECT checklist + drug-interaction review',
         icon: Icons.electric_bolt_outlined,

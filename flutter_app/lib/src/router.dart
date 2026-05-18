@@ -66,6 +66,7 @@ import 'package:psychswitch/src/ui/screens/mood_stabilizer_detail_screen.dart';
 import 'package:psychswitch/src/ui/screens/mood_stabilizer_home_screen.dart';
 import 'package:psychswitch/src/ui/screens/movement_disorder_screen.dart';
 import 'package:psychswitch/src/ui/screens/mse_screen.dart';
+import 'package:psychswitch/src/ui/screens/nms_rechallenge_screen.dart';
 import 'package:psychswitch/src/ui/screens/nms_screen.dart';
 import 'package:psychswitch/src/ui/screens/opioid_overdose_screen.dart';
 import 'package:psychswitch/src/ui/screens/ost_acute_pain_screen.dart';
@@ -92,6 +93,7 @@ import 'package:psychswitch/src/ui/screens/steroid_psychiatric_screen.dart';
 import 'package:psychswitch/src/ui/screens/stimulant_cardiac_screen_screen.dart';
 import 'package:psychswitch/src/ui/screens/stopp_start_screen.dart';
 import 'package:psychswitch/src/ui/screens/switch_screen.dart';
+import 'package:psychswitch/src/ui/screens/tardive_dyskinesia_screen.dart';
 import 'package:psychswitch/src/ui/screens/tdm_screen.dart';
 import 'package:psychswitch/src/ui/screens/thiamine_screen.dart';
 import 'package:psychswitch/src/ui/screens/valproate_ppp_screen.dart';
@@ -174,6 +176,8 @@ abstract final class Routes {
   static const clozapineGi = 'clozapine_gi';
   static const ssriSexualDysfunction = 'ssri_sexual_dysfunction';
   static const lamotrigineTitration = 'lamotrigine_titration';
+  static const tardiveDyskinesia = 'tardive_dyskinesia';
+  static const nmsRechallenge = 'nms_rechallenge';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -778,6 +782,22 @@ GoRouter buildRouter() => GoRouter(
           pageBuilder: (context, state) => _fadeThroughPage(
             state: state,
             child: const LamotrigineTitrationScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.tardiveDyskinesia,
+          path: '/tardive-dyskinesia',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const TardiveDyskinesiaScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.nmsRechallenge,
+          path: '/nms-rechallenge',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const NmsRechallengeScreen(),
           ),
         ),
         GoRoute(

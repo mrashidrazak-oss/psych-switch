@@ -620,6 +620,26 @@ const List<_ToolItem> _allTools = <_ToolItem>[
     ],
   ),
   _ToolItem(
+    label: 'Tardive dyskinesia',
+    tagline: 'Optimise → VMAT-2 → specialist',
+    icon: Icons.gesture_outlined,
+    route: Routes.tardiveDyskinesia,
+    keywords: <String>[
+      'tardive', 'dyskinesia', 'td', 'aims', 'valbenazine',
+      'deutetrabenazine', 'vmat', 'movement', 'clozapine',
+    ],
+  ),
+  _ToolItem(
+    label: 'NMS rechallenge',
+    tagline: 'Restart-after-NMS readiness + protocol',
+    icon: Icons.restart_alt_outlined,
+    route: Routes.nmsRechallenge,
+    keywords: <String>[
+      'nms', 'neuroleptic malignant', 'rechallenge', 'restart',
+      'recurrence', 'antipsychotic', 'ck', 'recovery',
+    ],
+  ),
+  _ToolItem(
     label: 'ECT work-up',
     tagline: 'Pre-ECT checklist + drug review',
     icon: Icons.electric_bolt_outlined,
