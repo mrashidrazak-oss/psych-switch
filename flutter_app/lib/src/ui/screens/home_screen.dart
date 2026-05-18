@@ -1089,6 +1089,30 @@ class _ReferenceRail extends StatelessWidget {
         route: Routes.catatonia,
       ),
       _RailRow(
+        label: 'Hyperthermic Dx',
+        sub: 'NMS vs serotonin vs catatonia vs anticholinergic',
+        icon: Icons.local_fire_department_outlined,
+        route: Routes.hyperthermicDx,
+      ),
+      _RailRow(
+        label: 'ECT work-up',
+        sub: 'Pre-ECT checklist + drug-interaction review',
+        icon: Icons.electric_bolt_outlined,
+        route: Routes.ectWorkup,
+      ),
+      _RailRow(
+        label: 'MAOI diet',
+        sub: 'Tyramine food tiers + crisis script',
+        icon: Icons.restaurant_outlined,
+        route: Routes.maoiDiet,
+      ),
+      _RailRow(
+        label: 'Refeeding risk',
+        sub: 'NICE criteria + feeding / monitoring plan',
+        icon: Icons.monitor_weight_outlined,
+        route: Routes.refeeding,
+      ),
+      _RailRow(
         label: 'Renal & hepatic dosing',
         sub: 'eGFR / Child-Pugh adjustment reference',
         icon: Icons.water_drop_outlined,

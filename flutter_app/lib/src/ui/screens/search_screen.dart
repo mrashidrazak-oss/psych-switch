@@ -393,6 +393,47 @@ const List<_ToolItem> _allTools = <_ToolItem>[
     ],
   ),
   _ToolItem(
+    label: 'Hyperthermic Dx',
+    tagline: 'NMS vs serotonin vs catatonia vs anticholinergic',
+    icon: Icons.local_fire_department_outlined,
+    route: Routes.hyperthermicDx,
+    keywords: <String>[
+      'hyperthermia', 'hyperthermic', 'nms', 'serotonin', 'malignant',
+      'catatonia', 'anticholinergic', 'toxidrome', 'rigidity',
+      'clonus', 'differential',
+    ],
+  ),
+  _ToolItem(
+    label: 'ECT work-up',
+    tagline: 'Pre-ECT checklist + drug review',
+    icon: Icons.electric_bolt_outlined,
+    route: Routes.ectWorkup,
+    keywords: <String>[
+      'ect', 'electroconvulsive', 'work-up', 'workup', 'anaesthetic',
+      'consent', 'fasting', 'lithium', 'seizure', 'checklist',
+    ],
+  ),
+  _ToolItem(
+    label: 'MAOI diet',
+    tagline: 'Tyramine food tiers + crisis script',
+    icon: Icons.restaurant_outlined,
+    route: Routes.maoiDiet,
+    keywords: <String>[
+      'maoi', 'tyramine', 'diet', 'cheese', 'phenelzine',
+      'tranylcypromine', 'hypertensive', 'crisis', 'food',
+    ],
+  ),
+  _ToolItem(
+    label: 'Refeeding risk',
+    tagline: 'NICE criteria + feeding plan',
+    icon: Icons.monitor_weight_outlined,
+    route: Routes.refeeding,
+    keywords: <String>[
+      'refeeding', 'nice', 'marsipan', 'anorexia', 'malnutrition',
+      'phosphate', 'thiamine', 'eating', 'starvation',
+    ],
+  ),
+  _ToolItem(
     label: 'Renal & hepatic dosing',
     tagline: 'eGFR / Child-Pugh adjustment',
     icon: Icons.water_drop_outlined,

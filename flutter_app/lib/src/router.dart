@@ -39,13 +39,16 @@ import 'package:psychswitch/src/ui/screens/deprescribing_screen.dart';
 import 'package:psychswitch/src/ui/screens/drug_profile_screen.dart';
 import 'package:psychswitch/src/ui/screens/dsm_runner_screen.dart';
 import 'package:psychswitch/src/ui/screens/dsm_screen.dart';
+import 'package:psychswitch/src/ui/screens/ect_workup_screen.dart';
 import 'package:psychswitch/src/ui/screens/equivalency_screen.dart';
 import 'package:psychswitch/src/ui/screens/errata_screen.dart';
 import 'package:psychswitch/src/ui/screens/glossary_screen.dart';
 import 'package:psychswitch/src/ui/screens/history_screen.dart';
 import 'package:psychswitch/src/ui/screens/home_screen.dart';
+import 'package:psychswitch/src/ui/screens/hyperthermic_dx_screen.dart';
 import 'package:psychswitch/src/ui/screens/lab_screen.dart';
 import 'package:psychswitch/src/ui/screens/lithium_tapering_screen.dart';
+import 'package:psychswitch/src/ui/screens/maoi_diet_screen.dart';
 import 'package:psychswitch/src/ui/screens/metabolic_monitoring_screen.dart';
 import 'package:psychswitch/src/ui/screens/mha_screen.dart';
 import 'package:psychswitch/src/ui/screens/mood_stabilizer_detail_screen.dart';
@@ -58,6 +61,7 @@ import 'package:psychswitch/src/ui/screens/pharmacogenomics_screen.dart';
 import 'package:psychswitch/src/ui/screens/polypharmacy_screen.dart';
 import 'package:psychswitch/src/ui/screens/qtc_stacker_screen.dart';
 import 'package:psychswitch/src/ui/screens/ramadan_screen.dart';
+import 'package:psychswitch/src/ui/screens/refeeding_screen.dart';
 import 'package:psychswitch/src/ui/screens/renal_hepatic_screen.dart';
 import 'package:psychswitch/src/ui/screens/result_screen.dart';
 import 'package:psychswitch/src/ui/screens/scale_runner_screen.dart';
@@ -123,6 +127,10 @@ abstract final class Routes {
   static const catatonia = 'catatonia';
   static const benzoTaper = 'benzo_taper';
   static const renalHepatic = 'renal_hepatic';
+  static const ectWorkup = 'ect_workup';
+  static const maoiDiet = 'maoi_diet';
+  static const refeeding = 'refeeding';
+  static const hyperthermicDx = 'hyperthermic_dx';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -527,6 +535,38 @@ GoRouter buildRouter() => GoRouter(
           pageBuilder: (context, state) => _fadeThroughPage(
             state: state,
             child: const RenalHepaticScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.ectWorkup,
+          path: '/ect-workup',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const EctWorkupScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.maoiDiet,
+          path: '/maoi-diet',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const MaoiDietScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.refeeding,
+          path: '/refeeding',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const RefeedingScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.hyperthermicDx,
+          path: '/hyperthermic-dx',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const HyperthermicDxScreen(),
           ),
         ),
         GoRoute(
