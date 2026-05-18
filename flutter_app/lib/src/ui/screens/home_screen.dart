@@ -1131,6 +1131,18 @@ class _ReferenceRail extends StatelessWidget {
         route: Routes.hyperprolactinaemia,
       ),
       _RailRow(
+        label: 'Clozapine myocarditis',
+        sub: 'First-weeks troponin/CRP surveillance + triage',
+        icon: Icons.monitor_heart_outlined,
+        route: Routes.clozapineMyocarditis,
+      ),
+      _RailRow(
+        label: 'Valproate PPP',
+        sub: 'Pregnancy Prevention Programme prescribing gate',
+        icon: Icons.pregnant_woman_outlined,
+        route: Routes.valproatePpp,
+      ),
+      _RailRow(
         label: 'ECT work-up',
         sub: 'Pre-ECT checklist + drug-interaction review',
         icon: Icons.electric_bolt_outlined,

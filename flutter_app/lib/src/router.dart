@@ -30,6 +30,7 @@ import 'package:psychswitch/src/ui/screens/benzo_taper_screen.dart';
 import 'package:psychswitch/src/ui/screens/calculators_screen.dart';
 import 'package:psychswitch/src/ui/screens/capacity_screen.dart';
 import 'package:psychswitch/src/ui/screens/catatonia_screen.dart';
+import 'package:psychswitch/src/ui/screens/clozapine_myocarditis_screen.dart';
 import 'package:psychswitch/src/ui/screens/clozapine_screen.dart';
 import 'package:psychswitch/src/ui/screens/compare_screen.dart';
 import 'package:psychswitch/src/ui/screens/crisis_screen.dart';
@@ -80,6 +81,7 @@ import 'package:psychswitch/src/ui/screens/stopp_start_screen.dart';
 import 'package:psychswitch/src/ui/screens/switch_screen.dart';
 import 'package:psychswitch/src/ui/screens/tdm_screen.dart';
 import 'package:psychswitch/src/ui/screens/thiamine_screen.dart';
+import 'package:psychswitch/src/ui/screens/valproate_ppp_screen.dart';
 
 /// Named route ids — kept in one place so screen code never hard-codes
 /// path strings.
@@ -143,6 +145,8 @@ abstract final class Routes {
   static const thiamine = 'thiamine';
   static const hyponatraemia = 'hyponatraemia';
   static const hyperprolactinaemia = 'hyperprolactinaemia';
+  static const clozapineMyocarditis = 'clozapine_myocarditis';
+  static const valproatePpp = 'valproate_ppp';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -627,6 +631,22 @@ GoRouter buildRouter() => GoRouter(
           pageBuilder: (context, state) => _fadeThroughPage(
             state: state,
             child: const HyperprolactinaemiaScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.clozapineMyocarditis,
+          path: '/clozapine-myocarditis',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const ClozapineMyocarditisScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.valproatePpp,
+          path: '/valproate-ppp',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const ValproatePppScreen(),
           ),
         ),
         GoRoute(

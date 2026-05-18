@@ -465,6 +465,27 @@ const List<_ToolItem> _allTools = <_ToolItem>[
     ],
   ),
   _ToolItem(
+    label: 'Clozapine myocarditis',
+    tagline: 'First-weeks troponin/CRP surveillance',
+    icon: Icons.monitor_heart_outlined,
+    route: Routes.clozapineMyocarditis,
+    keywords: <String>[
+      'clozapine', 'myocarditis', 'troponin', 'crp', 'cardiac',
+      'titration', 'cardiomyopathy', 'pericarditis',
+    ],
+  ),
+  _ToolItem(
+    label: 'Valproate PPP',
+    tagline: 'Pregnancy Prevention Programme gate',
+    icon: Icons.pregnant_woman_outlined,
+    route: Routes.valproatePpp,
+    keywords: <String>[
+      'valproate', 'valproic', 'sodium valproate', 'ppp',
+      'pregnancy prevention', 'teratogen', 'childbearing',
+      'epilim', 'depakote', 'contraception',
+    ],
+  ),
+  _ToolItem(
     label: 'ECT work-up',
     tagline: 'Pre-ECT checklist + drug review',
     icon: Icons.electric_bolt_outlined,
