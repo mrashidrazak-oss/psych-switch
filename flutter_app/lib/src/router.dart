@@ -25,6 +25,7 @@ import 'package:go_router/go_router.dart';
 import 'package:psychswitch/src/ui/screens/about_screen.dart';
 import 'package:psychswitch/src/ui/screens/adverse_effects_screen.dart';
 import 'package:psychswitch/src/ui/screens/agitation_screen.dart';
+import 'package:psychswitch/src/ui/screens/alcohol_withdrawal_screen.dart';
 import 'package:psychswitch/src/ui/screens/benzo_taper_screen.dart';
 import 'package:psychswitch/src/ui/screens/calculators_screen.dart';
 import 'package:psychswitch/src/ui/screens/capacity_screen.dart';
@@ -48,6 +49,7 @@ import 'package:psychswitch/src/ui/screens/home_screen.dart';
 import 'package:psychswitch/src/ui/screens/hyperthermic_dx_screen.dart';
 import 'package:psychswitch/src/ui/screens/lab_screen.dart';
 import 'package:psychswitch/src/ui/screens/lithium_tapering_screen.dart';
+import 'package:psychswitch/src/ui/screens/lithium_toxicity_screen.dart';
 import 'package:psychswitch/src/ui/screens/maoi_diet_screen.dart';
 import 'package:psychswitch/src/ui/screens/metabolic_monitoring_screen.dart';
 import 'package:psychswitch/src/ui/screens/mha_screen.dart';
@@ -56,6 +58,7 @@ import 'package:psychswitch/src/ui/screens/mood_stabilizer_home_screen.dart';
 import 'package:psychswitch/src/ui/screens/movement_disorder_screen.dart';
 import 'package:psychswitch/src/ui/screens/mse_screen.dart';
 import 'package:psychswitch/src/ui/screens/nms_screen.dart';
+import 'package:psychswitch/src/ui/screens/ost_induction_screen.dart';
 import 'package:psychswitch/src/ui/screens/perinatal_screen.dart';
 import 'package:psychswitch/src/ui/screens/pharmacogenomics_screen.dart';
 import 'package:psychswitch/src/ui/screens/polypharmacy_screen.dart';
@@ -74,6 +77,7 @@ import 'package:psychswitch/src/ui/screens/smoking_adjustment_screen.dart';
 import 'package:psychswitch/src/ui/screens/stopp_start_screen.dart';
 import 'package:psychswitch/src/ui/screens/switch_screen.dart';
 import 'package:psychswitch/src/ui/screens/tdm_screen.dart';
+import 'package:psychswitch/src/ui/screens/thiamine_screen.dart';
 
 /// Named route ids — kept in one place so screen code never hard-codes
 /// path strings.
@@ -131,6 +135,10 @@ abstract final class Routes {
   static const maoiDiet = 'maoi_diet';
   static const refeeding = 'refeeding';
   static const hyperthermicDx = 'hyperthermic_dx';
+  static const lithiumToxicity = 'lithium_toxicity';
+  static const alcoholWithdrawal = 'alcohol_withdrawal';
+  static const ostInduction = 'ost_induction';
+  static const thiamine = 'thiamine';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -567,6 +575,38 @@ GoRouter buildRouter() => GoRouter(
           pageBuilder: (context, state) => _fadeThroughPage(
             state: state,
             child: const HyperthermicDxScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.lithiumToxicity,
+          path: '/lithium-toxicity',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const LithiumToxicityScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.alcoholWithdrawal,
+          path: '/alcohol-withdrawal',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const AlcoholWithdrawalScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.ostInduction,
+          path: '/ost-induction',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const OstInductionScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.thiamine,
+          path: '/thiamine',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const ThiamineScreen(),
           ),
         ),
         GoRoute(

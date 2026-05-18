@@ -1095,6 +1095,30 @@ class _ReferenceRail extends StatelessWidget {
         route: Routes.hyperthermicDx,
       ),
       _RailRow(
+        label: 'Lithium toxicity',
+        sub: 'Graded management + dialysis criteria',
+        icon: Icons.science_outlined,
+        route: Routes.lithiumToxicity,
+      ),
+      _RailRow(
+        label: 'Alcohol withdrawal',
+        sub: 'CIWA-driven regimen + thiamine plan',
+        icon: Icons.local_bar_outlined,
+        route: Routes.alcoholWithdrawal,
+      ),
+      _RailRow(
+        label: 'OST induction',
+        sub: 'Buprenorphine / methadone day-1 protocol',
+        icon: Icons.medication_liquid_outlined,
+        route: Routes.ostInduction,
+      ),
+      _RailRow(
+        label: 'Wernicke / thiamine',
+        sub: 'Prophylaxis vs treatment dosing',
+        icon: Icons.vaccines_outlined,
+        route: Routes.thiamine,
+      ),
+      _RailRow(
         label: 'ECT work-up',
         sub: 'Pre-ECT checklist + drug-interaction review',
         icon: Icons.electric_bolt_outlined,

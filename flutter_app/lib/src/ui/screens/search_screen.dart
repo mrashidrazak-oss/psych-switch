@@ -404,6 +404,46 @@ const List<_ToolItem> _allTools = <_ToolItem>[
     ],
   ),
   _ToolItem(
+    label: 'Lithium toxicity',
+    tagline: 'Graded management + dialysis criteria',
+    icon: Icons.science_outlined,
+    route: Routes.lithiumToxicity,
+    keywords: <String>[
+      'lithium', 'toxicity', 'toxic', 'dialysis', 'haemodialysis',
+      'extrip', 'level', 'tremor', 'ataxia', 'overdose',
+    ],
+  ),
+  _ToolItem(
+    label: 'Alcohol withdrawal',
+    tagline: 'CIWA-driven regimen + thiamine',
+    icon: Icons.local_bar_outlined,
+    route: Routes.alcoholWithdrawal,
+    keywords: <String>[
+      'alcohol', 'withdrawal', 'ciwa', 'chlordiazepoxide',
+      'librium', 'detox', 'dts', 'delirium tremens', 'thiamine',
+    ],
+  ),
+  _ToolItem(
+    label: 'OST induction',
+    tagline: 'Buprenorphine / methadone day-1',
+    icon: Icons.medication_liquid_outlined,
+    route: Routes.ostInduction,
+    keywords: <String>[
+      'ost', 'opioid', 'substitution', 'buprenorphine', 'subutex',
+      'methadone', 'induction', 'cows', 'precipitated', 'opiate',
+    ],
+  ),
+  _ToolItem(
+    label: 'Wernicke / thiamine',
+    tagline: 'Prophylaxis vs treatment dosing',
+    icon: Icons.vaccines_outlined,
+    route: Routes.thiamine,
+    keywords: <String>[
+      'wernicke', 'thiamine', 'pabrinex', 'b1', 'korsakoff',
+      'encephalopathy', 'prophylaxis', 'vitamin',
+    ],
+  ),
+  _ToolItem(
     label: 'ECT work-up',
     tagline: 'Pre-ECT checklist + drug review',
     icon: Icons.electric_bolt_outlined,
