@@ -560,6 +560,26 @@ const List<_ToolItem> _allTools = <_ToolItem>[
     ],
   ),
   _ToolItem(
+    label: 'Serotonergic opioid',
+    tagline: 'Opioid + serotonergic agent risk',
+    icon: Icons.merge_type_outlined,
+    route: Routes.serotonergicOpioid,
+    keywords: <String>[
+      'serotonin', 'opioid', 'tramadol', 'pethidine', 'meperidine',
+      'fentanyl', 'maoi', 'ssri', 'snri', 'interaction', 'toxicity',
+    ],
+  ),
+  _ToolItem(
+    label: 'Steroid psychiatric',
+    tagline: 'Steroid-induced mania / depression',
+    icon: Icons.medication_outlined,
+    route: Routes.steroidPsychiatric,
+    keywords: <String>[
+      'steroid', 'corticosteroid', 'prednisolone', 'dexamethasone',
+      'mania', 'psychosis', 'depression', 'delirium', 'iatrogenic',
+    ],
+  ),
+  _ToolItem(
     label: 'ECT work-up',
     tagline: 'Pre-ECT checklist + drug review',
     icon: Icons.electric_bolt_outlined,

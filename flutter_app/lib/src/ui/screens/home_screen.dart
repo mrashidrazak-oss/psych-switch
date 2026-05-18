@@ -1185,6 +1185,18 @@ class _ReferenceRail extends StatelessWidget {
         route: Routes.antipsychoticParkinsonism,
       ),
       _RailRow(
+        label: 'Serotonergic opioid',
+        sub: 'Opioid + serotonergic agent risk tier',
+        icon: Icons.merge_type_outlined,
+        route: Routes.serotonergicOpioid,
+      ),
+      _RailRow(
+        label: 'Steroid psychiatric',
+        sub: 'Steroid-induced mania / depression / delirium',
+        icon: Icons.medication_outlined,
+        route: Routes.steroidPsychiatric,
+      ),
+      _RailRow(
         label: 'ECT work-up',
         sub: 'Pre-ECT checklist + drug-interaction review',
         icon: Icons.electric_bolt_outlined,

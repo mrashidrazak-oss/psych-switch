@@ -80,9 +80,11 @@ import 'package:psychswitch/src/ui/screens/scale_runner_screen.dart';
 import 'package:psychswitch/src/ui/screens/scales_screen.dart';
 import 'package:psychswitch/src/ui/screens/search_screen.dart';
 import 'package:psychswitch/src/ui/screens/self_care_screen.dart';
+import 'package:psychswitch/src/ui/screens/serotonergic_opioid_screen.dart';
 import 'package:psychswitch/src/ui/screens/serotonin_screen.dart';
 import 'package:psychswitch/src/ui/screens/settings_screen.dart';
 import 'package:psychswitch/src/ui/screens/smoking_adjustment_screen.dart';
+import 'package:psychswitch/src/ui/screens/steroid_psychiatric_screen.dart';
 import 'package:psychswitch/src/ui/screens/stimulant_cardiac_screen_screen.dart';
 import 'package:psychswitch/src/ui/screens/stopp_start_screen.dart';
 import 'package:psychswitch/src/ui/screens/switch_screen.dart';
@@ -162,6 +164,8 @@ abstract final class Routes {
   static const ostAcutePain = 'ost_acute_pain';
   static const antipsychoticParkinsonism =
       'antipsychotic_parkinsonism';
+  static const serotonergicOpioid = 'serotonergic_opioid';
+  static const steroidPsychiatric = 'steroid_psychiatric';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -718,6 +722,22 @@ GoRouter buildRouter() => GoRouter(
           pageBuilder: (context, state) => _fadeThroughPage(
             state: state,
             child: const AntipsychoticInParkinsonismScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.serotonergicOpioid,
+          path: '/serotonergic-opioid',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const SerotonergicOpioidScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.steroidPsychiatric,
+          path: '/steroid-psychiatric',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const SteroidPsychiatricScreen(),
           ),
         ),
         GoRoute(
