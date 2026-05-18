@@ -1233,6 +1233,18 @@ class _ReferenceRail extends StatelessWidget {
         route: Routes.nmsRechallenge,
       ),
       _RailRow(
+        label: 'Perioperative meds',
+        sub: 'Continue / adjust psychotropics for surgery',
+        icon: Icons.local_hospital_outlined,
+        route: Routes.perioperative,
+      ),
+      _RailRow(
+        label: 'Febrile on clozapine',
+        sub: 'Myocarditis/agranulocytosis differential',
+        icon: Icons.thermostat_outlined,
+        route: Routes.clozapineFever,
+      ),
+      _RailRow(
         label: 'ECT work-up',
         sub: 'Pre-ECT checklist + drug-interaction review',
         icon: Icons.electric_bolt_outlined,

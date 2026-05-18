@@ -640,6 +640,26 @@ const List<_ToolItem> _allTools = <_ToolItem>[
     ],
   ),
   _ToolItem(
+    label: 'Perioperative meds',
+    tagline: 'Continue / adjust psychotropics for surgery',
+    icon: Icons.local_hospital_outlined,
+    route: Routes.perioperative,
+    keywords: <String>[
+      'perioperative', 'surgery', 'anaesthesia', 'preoperative',
+      'lithium', 'maoi', 'fasting', 'nil by mouth', 'clozapine',
+    ],
+  ),
+  _ToolItem(
+    label: 'Febrile on clozapine',
+    tagline: 'Myocarditis/agranulocytosis differential',
+    icon: Icons.thermostat_outlined,
+    route: Routes.clozapineFever,
+    keywords: <String>[
+      'clozapine', 'fever', 'febrile', 'pyrexia', 'myocarditis',
+      'agranulocytosis', 'sepsis', 'nms', 'differential',
+    ],
+  ),
+  _ToolItem(
     label: 'ECT work-up',
     tagline: 'Pre-ECT checklist + drug review',
     icon: Icons.electric_bolt_outlined,

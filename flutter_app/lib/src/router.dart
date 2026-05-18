@@ -33,6 +33,7 @@ import 'package:psychswitch/src/ui/screens/bupe_microdosing_screen.dart';
 import 'package:psychswitch/src/ui/screens/calculators_screen.dart';
 import 'package:psychswitch/src/ui/screens/capacity_screen.dart';
 import 'package:psychswitch/src/ui/screens/catatonia_screen.dart';
+import 'package:psychswitch/src/ui/screens/clozapine_fever_screen.dart';
 import 'package:psychswitch/src/ui/screens/clozapine_gi_screen.dart';
 import 'package:psychswitch/src/ui/screens/clozapine_myocarditis_screen.dart';
 import 'package:psychswitch/src/ui/screens/clozapine_screen.dart';
@@ -72,6 +73,7 @@ import 'package:psychswitch/src/ui/screens/opioid_overdose_screen.dart';
 import 'package:psychswitch/src/ui/screens/ost_acute_pain_screen.dart';
 import 'package:psychswitch/src/ui/screens/ost_induction_screen.dart';
 import 'package:psychswitch/src/ui/screens/perinatal_screen.dart';
+import 'package:psychswitch/src/ui/screens/perioperative_psychotropics_screen.dart';
 import 'package:psychswitch/src/ui/screens/pharmacogenomics_screen.dart';
 import 'package:psychswitch/src/ui/screens/polypharmacy_screen.dart';
 import 'package:psychswitch/src/ui/screens/post_injection_syndrome_screen.dart';
@@ -178,6 +180,8 @@ abstract final class Routes {
   static const lamotrigineTitration = 'lamotrigine_titration';
   static const tardiveDyskinesia = 'tardive_dyskinesia';
   static const nmsRechallenge = 'nms_rechallenge';
+  static const perioperative = 'perioperative_psychotropics';
+  static const clozapineFever = 'clozapine_fever';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -798,6 +802,22 @@ GoRouter buildRouter() => GoRouter(
           pageBuilder: (context, state) => _fadeThroughPage(
             state: state,
             child: const NmsRechallengeScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.perioperative,
+          path: '/perioperative-psychotropics',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const PerioperativePsychotropicsScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.clozapineFever,
+          path: '/clozapine-fever',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const ClozapineFeverScreen(),
           ),
         ),
         GoRoute(
