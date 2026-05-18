@@ -1065,6 +1065,30 @@ class _ReferenceRail extends StatelessWidget {
         route: Routes.tdm,
       ),
       _RailRow(
+        label: 'AD deprescribing',
+        sub: 'Hyperbolic taper planner (Maudsley method)',
+        icon: Icons.trending_down,
+        route: Routes.deprescribing,
+      ),
+      _RailRow(
+        label: 'Pharmacogenomics',
+        sub: 'CYP2D6 / CYP2C19 dosing implications',
+        icon: Icons.biotech_outlined,
+        route: Routes.pharmacogenomics,
+      ),
+      _RailRow(
+        label: 'Metabolic monitoring',
+        sub: 'Antipsychotic monitoring calendar',
+        icon: Icons.event_available_outlined,
+        route: Routes.metabolicMonitoring,
+      ),
+      _RailRow(
+        label: 'Smoking & CYP1A2',
+        sub: 'Clozapine / olanzapine dose adjustment',
+        icon: Icons.smoke_free,
+        route: Routes.smokingAdjustment,
+      ),
+      _RailRow(
         label: 'Capacity assessment',
         sub: 'Four-limb ACE evaluation',
         icon: Icons.balance,

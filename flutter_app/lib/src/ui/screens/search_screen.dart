@@ -352,6 +352,46 @@ const List<_ToolItem> _allTools = <_ToolItem>[
     ],
   ),
   _ToolItem(
+    label: 'AD deprescribing',
+    tagline: 'Hyperbolic taper planner',
+    icon: Icons.trending_down,
+    route: Routes.deprescribing,
+    keywords: <String>[
+      'deprescribe', 'deprescribing', 'taper', 'hyperbolic', 'stop',
+      'discontinue', 'withdrawal', 'horowitz', 'maudsley', 'wean',
+    ],
+  ),
+  _ToolItem(
+    label: 'Pharmacogenomics',
+    tagline: 'CYP2D6 / CYP2C19 dosing',
+    icon: Icons.biotech_outlined,
+    route: Routes.pharmacogenomics,
+    keywords: <String>[
+      'pgx', 'pharmacogenomics', 'genotype', 'cyp2d6', 'cyp2c19',
+      'metaboliser', 'metabolizer', 'poor', 'ultrarapid', 'cpic',
+    ],
+  ),
+  _ToolItem(
+    label: 'Metabolic monitoring',
+    tagline: 'Antipsychotic monitoring calendar',
+    icon: Icons.event_available_outlined,
+    route: Routes.metabolicMonitoring,
+    keywords: <String>[
+      'metabolic', 'monitoring', 'schedule', 'baseline', 'lipid',
+      'hba1c', 'antipsychotic', 'lester', 'weight', 'waist',
+    ],
+  ),
+  _ToolItem(
+    label: 'Smoking & CYP1A2',
+    tagline: 'Clozapine / olanzapine dose adjustment',
+    icon: Icons.smoke_free,
+    route: Routes.smokingAdjustment,
+    keywords: <String>[
+      'smoking', 'cyp1a2', 'cessation', 'clozapine', 'olanzapine',
+      'induction', 'tobacco', 'cigarette', 'quit',
+    ],
+  ),
+  _ToolItem(
     label: 'Capacity assessment',
     tagline: 'Four-limb ACE evaluation',
     icon: Icons.balance,

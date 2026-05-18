@@ -32,6 +32,7 @@ import 'package:psychswitch/src/ui/screens/compare_screen.dart';
 import 'package:psychswitch/src/ui/screens/crisis_screen.dart';
 import 'package:psychswitch/src/ui/screens/cssrs_screen.dart';
 import 'package:psychswitch/src/ui/screens/depot_screen.dart';
+import 'package:psychswitch/src/ui/screens/deprescribing_screen.dart';
 import 'package:psychswitch/src/ui/screens/drug_profile_screen.dart';
 import 'package:psychswitch/src/ui/screens/dsm_runner_screen.dart';
 import 'package:psychswitch/src/ui/screens/dsm_screen.dart';
@@ -42,6 +43,7 @@ import 'package:psychswitch/src/ui/screens/history_screen.dart';
 import 'package:psychswitch/src/ui/screens/home_screen.dart';
 import 'package:psychswitch/src/ui/screens/lab_screen.dart';
 import 'package:psychswitch/src/ui/screens/lithium_tapering_screen.dart';
+import 'package:psychswitch/src/ui/screens/metabolic_monitoring_screen.dart';
 import 'package:psychswitch/src/ui/screens/mha_screen.dart';
 import 'package:psychswitch/src/ui/screens/mood_stabilizer_detail_screen.dart';
 import 'package:psychswitch/src/ui/screens/mood_stabilizer_home_screen.dart';
@@ -49,6 +51,7 @@ import 'package:psychswitch/src/ui/screens/movement_disorder_screen.dart';
 import 'package:psychswitch/src/ui/screens/mse_screen.dart';
 import 'package:psychswitch/src/ui/screens/nms_screen.dart';
 import 'package:psychswitch/src/ui/screens/perinatal_screen.dart';
+import 'package:psychswitch/src/ui/screens/pharmacogenomics_screen.dart';
 import 'package:psychswitch/src/ui/screens/polypharmacy_screen.dart';
 import 'package:psychswitch/src/ui/screens/qtc_stacker_screen.dart';
 import 'package:psychswitch/src/ui/screens/ramadan_screen.dart';
@@ -59,6 +62,7 @@ import 'package:psychswitch/src/ui/screens/search_screen.dart';
 import 'package:psychswitch/src/ui/screens/self_care_screen.dart';
 import 'package:psychswitch/src/ui/screens/serotonin_screen.dart';
 import 'package:psychswitch/src/ui/screens/settings_screen.dart';
+import 'package:psychswitch/src/ui/screens/smoking_adjustment_screen.dart';
 import 'package:psychswitch/src/ui/screens/stopp_start_screen.dart';
 import 'package:psychswitch/src/ui/screens/switch_screen.dart';
 import 'package:psychswitch/src/ui/screens/tdm_screen.dart';
@@ -107,6 +111,10 @@ abstract final class Routes {
   static const movement = 'movement';
   static const agitation = 'agitation';
   static const selfCare = 'self_care';
+  static const deprescribing = 'deprescribing';
+  static const pharmacogenomics = 'pharmacogenomics';
+  static const metabolicMonitoring = 'metabolic_monitoring';
+  static const smokingAdjustment = 'smoking_adjustment';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -447,6 +455,38 @@ GoRouter buildRouter() => GoRouter(
           pageBuilder: (context, state) => _fadeThroughPage(
             state: state,
             child: const SelfCareScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.deprescribing,
+          path: '/deprescribing',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const DeprescribingScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.pharmacogenomics,
+          path: '/pharmacogenomics',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const PharmacogenomicsScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.metabolicMonitoring,
+          path: '/metabolic-monitoring',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const MetabolicMonitoringScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.smokingAdjustment,
+          path: '/smoking-adjustment',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const SmokingAdjustmentScreen(),
           ),
         ),
         GoRoute(
