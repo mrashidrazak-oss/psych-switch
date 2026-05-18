@@ -26,7 +26,9 @@ import 'package:psychswitch/src/ui/screens/about_screen.dart';
 import 'package:psychswitch/src/ui/screens/adverse_effects_screen.dart';
 import 'package:psychswitch/src/ui/screens/agitation_screen.dart';
 import 'package:psychswitch/src/ui/screens/alcohol_withdrawal_screen.dart';
+import 'package:psychswitch/src/ui/screens/antipsychotic_high_dose_screen.dart';
 import 'package:psychswitch/src/ui/screens/benzo_taper_screen.dart';
+import 'package:psychswitch/src/ui/screens/bupe_microdosing_screen.dart';
 import 'package:psychswitch/src/ui/screens/calculators_screen.dart';
 import 'package:psychswitch/src/ui/screens/capacity_screen.dart';
 import 'package:psychswitch/src/ui/screens/catatonia_screen.dart';
@@ -153,6 +155,8 @@ abstract final class Routes {
   static const postInjectionSyndrome = 'post_injection_syndrome';
   static const opioidOverdose = 'opioid_overdose';
   static const stimulantCardiac = 'stimulant_cardiac';
+  static const antipsychoticHighDose = 'antipsychotic_high_dose';
+  static const bupeMicrodosing = 'bupe_microdosing';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -677,6 +681,22 @@ GoRouter buildRouter() => GoRouter(
           pageBuilder: (context, state) => _fadeThroughPage(
             state: state,
             child: const StimulantCardiacScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.antipsychoticHighDose,
+          path: '/antipsychotic-high-dose',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const AntipsychoticHighDoseScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.bupeMicrodosing,
+          path: '/bupe-microdosing',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const BupeMicrodosingScreen(),
           ),
         ),
         GoRoute(

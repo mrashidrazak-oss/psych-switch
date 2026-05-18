@@ -1161,6 +1161,18 @@ class _ReferenceRail extends StatelessWidget {
         route: Routes.stimulantCardiac,
       ),
       _RailRow(
+        label: 'High-dose antipsychotic',
+        sub: 'Cumulative %-of-max + HDAT safeguards',
+        icon: Icons.stacked_line_chart_outlined,
+        route: Routes.antipsychoticHighDose,
+      ),
+      _RailRow(
+        label: 'Bupe micro-dosing',
+        sub: 'Bernese overlapping induction schedule',
+        icon: Icons.timeline_outlined,
+        route: Routes.bupeMicrodosing,
+      ),
+      _RailRow(
         label: 'ECT work-up',
         sub: 'Pre-ECT checklist + drug-interaction review',
         icon: Icons.electric_bolt_outlined,

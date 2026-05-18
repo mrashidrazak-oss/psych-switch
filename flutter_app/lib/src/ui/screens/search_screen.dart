@@ -518,6 +518,27 @@ const List<_ToolItem> _allTools = <_ToolItem>[
     ],
   ),
   _ToolItem(
+    label: 'High-dose antipsychotic',
+    tagline: 'Cumulative %-of-max + HDAT safeguards',
+    icon: Icons.stacked_line_chart_outlined,
+    route: Routes.antipsychoticHighDose,
+    keywords: <String>[
+      'high dose', 'hdat', 'antipsychotic', 'maximum', 'bnf max',
+      'polypharmacy', 'cumulative', 'percent', 'monitoring',
+    ],
+  ),
+  _ToolItem(
+    label: 'Bupe micro-dosing',
+    tagline: 'Bernese overlapping induction',
+    icon: Icons.timeline_outlined,
+    route: Routes.bupeMicrodosing,
+    keywords: <String>[
+      'buprenorphine', 'microdosing', 'micro-dosing', 'bernese',
+      'induction', 'fentanyl', 'methadone', 'subutex', 'suboxone',
+      'overlap',
+    ],
+  ),
+  _ToolItem(
     label: 'ECT work-up',
     tagline: 'Pre-ECT checklist + drug review',
     icon: Icons.electric_bolt_outlined,
