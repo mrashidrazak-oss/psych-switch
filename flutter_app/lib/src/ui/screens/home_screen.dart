@@ -1197,6 +1197,18 @@ class _ReferenceRail extends StatelessWidget {
         route: Routes.steroidPsychiatric,
       ),
       _RailRow(
+        label: 'Weight-gain ladder',
+        sub: 'Graded lifestyle → metformin → switch',
+        icon: Icons.monitor_weight_outlined,
+        route: Routes.metabolicWeight,
+      ),
+      _RailRow(
+        label: 'Clozapine GI',
+        sub: 'Hypomotility prophylaxis + ileus triage',
+        icon: Icons.sick_outlined,
+        route: Routes.clozapineGi,
+      ),
+      _RailRow(
         label: 'ECT work-up',
         sub: 'Pre-ECT checklist + drug-interaction review',
         icon: Icons.electric_bolt_outlined,

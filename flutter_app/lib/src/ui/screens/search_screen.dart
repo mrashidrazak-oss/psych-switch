@@ -580,6 +580,26 @@ const List<_ToolItem> _allTools = <_ToolItem>[
     ],
   ),
   _ToolItem(
+    label: 'Weight-gain ladder',
+    tagline: 'Lifestyle → metformin → switch',
+    icon: Icons.monitor_weight_outlined,
+    route: Routes.metabolicWeight,
+    keywords: <String>[
+      'weight', 'gain', 'metabolic', 'metformin', 'obesity',
+      'olanzapine', 'clozapine', 'lifestyle', 'bmi',
+    ],
+  ),
+  _ToolItem(
+    label: 'Clozapine GI',
+    tagline: 'Hypomotility prophylaxis + ileus triage',
+    icon: Icons.sick_outlined,
+    route: Routes.clozapineGi,
+    keywords: <String>[
+      'clozapine', 'constipation', 'ileus', 'bowel', 'gi',
+      'hypomotility', 'laxative', 'obstruction', 'gut',
+    ],
+  ),
+  _ToolItem(
     label: 'ECT work-up',
     tagline: 'Pre-ECT checklist + drug review',
     icon: Icons.electric_bolt_outlined,

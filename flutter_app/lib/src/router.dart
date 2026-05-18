@@ -33,6 +33,7 @@ import 'package:psychswitch/src/ui/screens/bupe_microdosing_screen.dart';
 import 'package:psychswitch/src/ui/screens/calculators_screen.dart';
 import 'package:psychswitch/src/ui/screens/capacity_screen.dart';
 import 'package:psychswitch/src/ui/screens/catatonia_screen.dart';
+import 'package:psychswitch/src/ui/screens/clozapine_gi_screen.dart';
 import 'package:psychswitch/src/ui/screens/clozapine_myocarditis_screen.dart';
 import 'package:psychswitch/src/ui/screens/clozapine_screen.dart';
 import 'package:psychswitch/src/ui/screens/compare_screen.dart';
@@ -58,6 +59,7 @@ import 'package:psychswitch/src/ui/screens/lithium_tapering_screen.dart';
 import 'package:psychswitch/src/ui/screens/lithium_toxicity_screen.dart';
 import 'package:psychswitch/src/ui/screens/maoi_diet_screen.dart';
 import 'package:psychswitch/src/ui/screens/metabolic_monitoring_screen.dart';
+import 'package:psychswitch/src/ui/screens/metabolic_weight_screen.dart';
 import 'package:psychswitch/src/ui/screens/mha_screen.dart';
 import 'package:psychswitch/src/ui/screens/mood_stabilizer_detail_screen.dart';
 import 'package:psychswitch/src/ui/screens/mood_stabilizer_home_screen.dart';
@@ -166,6 +168,8 @@ abstract final class Routes {
       'antipsychotic_parkinsonism';
   static const serotonergicOpioid = 'serotonergic_opioid';
   static const steroidPsychiatric = 'steroid_psychiatric';
+  static const metabolicWeight = 'metabolic_weight';
+  static const clozapineGi = 'clozapine_gi';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -738,6 +742,22 @@ GoRouter buildRouter() => GoRouter(
           pageBuilder: (context, state) => _fadeThroughPage(
             state: state,
             child: const SteroidPsychiatricScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.metabolicWeight,
+          path: '/metabolic-weight',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const MetabolicWeightScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.clozapineGi,
+          path: '/clozapine-gi',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const ClozapineGiScreen(),
           ),
         ),
         GoRoute(
