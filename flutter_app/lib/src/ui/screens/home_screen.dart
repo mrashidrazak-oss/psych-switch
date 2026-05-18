@@ -1119,6 +1119,18 @@ class _ReferenceRail extends StatelessWidget {
         route: Routes.thiamine,
       ),
       _RailRow(
+        label: 'Hyponatraemia / SIADH',
+        sub: 'Sodium + symptom-graded plan, correction cap',
+        icon: Icons.water_drop_outlined,
+        route: Routes.hyponatraemia,
+      ),
+      _RailRow(
+        label: 'Hyperprolactinaemia',
+        sub: 'Prolactin band + prolactinoma threshold',
+        icon: Icons.science_outlined,
+        route: Routes.hyperprolactinaemia,
+      ),
+      _RailRow(
         label: 'ECT work-up',
         sub: 'Pre-ECT checklist + drug-interaction review',
         icon: Icons.electric_bolt_outlined,

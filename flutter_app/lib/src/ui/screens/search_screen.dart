@@ -444,6 +444,27 @@ const List<_ToolItem> _allTools = <_ToolItem>[
     ],
   ),
   _ToolItem(
+    label: 'Hyponatraemia / SIADH',
+    tagline: 'Sodium + symptom-graded plan',
+    icon: Icons.water_drop_outlined,
+    route: Routes.hyponatraemia,
+    keywords: <String>[
+      'hyponatraemia', 'hyponatremia', 'sodium', 'na', 'siadh',
+      'ssri', 'snri', 'carbamazepine', 'demyelination',
+    ],
+  ),
+  _ToolItem(
+    label: 'Hyperprolactinaemia',
+    tagline: 'Prolactin band + prolactinoma threshold',
+    icon: Icons.science_outlined,
+    route: Routes.hyperprolactinaemia,
+    keywords: <String>[
+      'prolactin', 'hyperprolactinaemia', 'hyperprolactinemia',
+      'galactorrhoea', 'risperidone', 'amisulpride', 'aripiprazole',
+      'prolactinoma',
+    ],
+  ),
+  _ToolItem(
     label: 'ECT work-up',
     tagline: 'Pre-ECT checklist + drug review',
     icon: Icons.electric_bolt_outlined,

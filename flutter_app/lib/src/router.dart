@@ -46,7 +46,9 @@ import 'package:psychswitch/src/ui/screens/errata_screen.dart';
 import 'package:psychswitch/src/ui/screens/glossary_screen.dart';
 import 'package:psychswitch/src/ui/screens/history_screen.dart';
 import 'package:psychswitch/src/ui/screens/home_screen.dart';
+import 'package:psychswitch/src/ui/screens/hyperprolactinaemia_screen.dart';
 import 'package:psychswitch/src/ui/screens/hyperthermic_dx_screen.dart';
+import 'package:psychswitch/src/ui/screens/hyponatraemia_screen.dart';
 import 'package:psychswitch/src/ui/screens/lab_screen.dart';
 import 'package:psychswitch/src/ui/screens/lithium_tapering_screen.dart';
 import 'package:psychswitch/src/ui/screens/lithium_toxicity_screen.dart';
@@ -139,6 +141,8 @@ abstract final class Routes {
   static const alcoholWithdrawal = 'alcohol_withdrawal';
   static const ostInduction = 'ost_induction';
   static const thiamine = 'thiamine';
+  static const hyponatraemia = 'hyponatraemia';
+  static const hyperprolactinaemia = 'hyperprolactinaemia';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -607,6 +611,22 @@ GoRouter buildRouter() => GoRouter(
           pageBuilder: (context, state) => _fadeThroughPage(
             state: state,
             child: const ThiamineScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.hyponatraemia,
+          path: '/hyponatraemia',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const HyponatraemiaScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.hyperprolactinaemia,
+          path: '/hyperprolactinaemia',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const HyperprolactinaemiaScreen(),
           ),
         ),
         GoRoute(
