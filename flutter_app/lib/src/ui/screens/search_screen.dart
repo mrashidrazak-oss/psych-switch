@@ -600,6 +600,26 @@ const List<_ToolItem> _allTools = <_ToolItem>[
     ],
   ),
   _ToolItem(
+    label: 'Sexual dysfunction',
+    tagline: 'Antidepressant SD staged management',
+    icon: Icons.favorite_outline,
+    route: Routes.ssriSexualDysfunction,
+    keywords: <String>[
+      'sexual', 'libido', 'erectile', 'anorgasmia', 'ssri',
+      'antidepressant', 'bupropion', 'sildenafil', 'adherence',
+    ],
+  ),
+  _ToolItem(
+    label: 'Lamotrigine titration',
+    tagline: 'Schedule + rash / SJS rule',
+    icon: Icons.medication_outlined,
+    route: Routes.lamotrigineTitration,
+    keywords: <String>[
+      'lamotrigine', 'lamictal', 'titration', 'rash', 'sjs',
+      'stevens-johnson', 'dress', 'valproate', 'taper',
+    ],
+  ),
+  _ToolItem(
     label: 'ECT work-up',
     tagline: 'Pre-ECT checklist + drug review',
     icon: Icons.electric_bolt_outlined,

@@ -1209,6 +1209,18 @@ class _ReferenceRail extends StatelessWidget {
         route: Routes.clozapineGi,
       ),
       _RailRow(
+        label: 'Sexual dysfunction',
+        sub: 'Antidepressant SD staged management',
+        icon: Icons.favorite_outline,
+        route: Routes.ssriSexualDysfunction,
+      ),
+      _RailRow(
+        label: 'Lamotrigine titration',
+        sub: 'Comed-correct schedule + rash/SJS rule',
+        icon: Icons.medication_outlined,
+        route: Routes.lamotrigineTitration,
+      ),
+      _RailRow(
         label: 'ECT work-up',
         sub: 'Pre-ECT checklist + drug-interaction review',
         icon: Icons.electric_bolt_outlined,

@@ -55,6 +55,7 @@ import 'package:psychswitch/src/ui/screens/hyperprolactinaemia_screen.dart';
 import 'package:psychswitch/src/ui/screens/hyperthermic_dx_screen.dart';
 import 'package:psychswitch/src/ui/screens/hyponatraemia_screen.dart';
 import 'package:psychswitch/src/ui/screens/lab_screen.dart';
+import 'package:psychswitch/src/ui/screens/lamotrigine_titration_screen.dart';
 import 'package:psychswitch/src/ui/screens/lithium_tapering_screen.dart';
 import 'package:psychswitch/src/ui/screens/lithium_toxicity_screen.dart';
 import 'package:psychswitch/src/ui/screens/maoi_diet_screen.dart';
@@ -86,6 +87,7 @@ import 'package:psychswitch/src/ui/screens/serotonergic_opioid_screen.dart';
 import 'package:psychswitch/src/ui/screens/serotonin_screen.dart';
 import 'package:psychswitch/src/ui/screens/settings_screen.dart';
 import 'package:psychswitch/src/ui/screens/smoking_adjustment_screen.dart';
+import 'package:psychswitch/src/ui/screens/ssri_sexual_dysfunction_screen.dart';
 import 'package:psychswitch/src/ui/screens/steroid_psychiatric_screen.dart';
 import 'package:psychswitch/src/ui/screens/stimulant_cardiac_screen_screen.dart';
 import 'package:psychswitch/src/ui/screens/stopp_start_screen.dart';
@@ -170,6 +172,8 @@ abstract final class Routes {
   static const steroidPsychiatric = 'steroid_psychiatric';
   static const metabolicWeight = 'metabolic_weight';
   static const clozapineGi = 'clozapine_gi';
+  static const ssriSexualDysfunction = 'ssri_sexual_dysfunction';
+  static const lamotrigineTitration = 'lamotrigine_titration';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -758,6 +762,22 @@ GoRouter buildRouter() => GoRouter(
           pageBuilder: (context, state) => _fadeThroughPage(
             state: state,
             child: const ClozapineGiScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.ssriSexualDysfunction,
+          path: '/ssri-sexual-dysfunction',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const SsriSexualDysfunctionScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.lamotrigineTitration,
+          path: '/lamotrigine-titration',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const LamotrigineTitrationScreen(),
           ),
         ),
         GoRoute(
