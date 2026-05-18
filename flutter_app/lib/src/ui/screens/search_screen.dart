@@ -486,6 +486,38 @@ const List<_ToolItem> _allTools = <_ToolItem>[
     ],
   ),
   _ToolItem(
+    label: 'Olanzapine LAI — PDSS',
+    tagline: 'Post-injection observation + triage',
+    icon: Icons.timer_outlined,
+    route: Routes.postInjectionSyndrome,
+    keywords: <String>[
+      'olanzapine', 'pamoate', 'lai', 'depot', 'pdss', 'pios',
+      'post-injection', 'post injection', 'sedation', 'delirium',
+      'zypadhera',
+    ],
+  ),
+  _ToolItem(
+    label: 'Opioid overdose',
+    tagline: 'Naloxone + airway + observation',
+    icon: Icons.emergency_outlined,
+    route: Routes.opioidOverdose,
+    keywords: <String>[
+      'opioid', 'overdose', 'naloxone', 'narcan', 'heroin',
+      'methadone', 'fentanyl', 'take-home', 'reversal',
+      'respiratory',
+    ],
+  ),
+  _ToolItem(
+    label: 'Pre-stimulant cardiac',
+    tagline: 'ADHD cardiovascular screening gate',
+    icon: Icons.favorite_border,
+    route: Routes.stimulantCardiac,
+    keywords: <String>[
+      'stimulant', 'adhd', 'methylphenidate', 'lisdexamfetamine',
+      'cardiac', 'cardiovascular', 'ecg', 'screening', 'atomoxetine',
+    ],
+  ),
+  _ToolItem(
     label: 'ECT work-up',
     tagline: 'Pre-ECT checklist + drug review',
     icon: Icons.electric_bolt_outlined,

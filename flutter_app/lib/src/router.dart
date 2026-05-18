@@ -61,10 +61,12 @@ import 'package:psychswitch/src/ui/screens/mood_stabilizer_home_screen.dart';
 import 'package:psychswitch/src/ui/screens/movement_disorder_screen.dart';
 import 'package:psychswitch/src/ui/screens/mse_screen.dart';
 import 'package:psychswitch/src/ui/screens/nms_screen.dart';
+import 'package:psychswitch/src/ui/screens/opioid_overdose_screen.dart';
 import 'package:psychswitch/src/ui/screens/ost_induction_screen.dart';
 import 'package:psychswitch/src/ui/screens/perinatal_screen.dart';
 import 'package:psychswitch/src/ui/screens/pharmacogenomics_screen.dart';
 import 'package:psychswitch/src/ui/screens/polypharmacy_screen.dart';
+import 'package:psychswitch/src/ui/screens/post_injection_syndrome_screen.dart';
 import 'package:psychswitch/src/ui/screens/qtc_stacker_screen.dart';
 import 'package:psychswitch/src/ui/screens/ramadan_screen.dart';
 import 'package:psychswitch/src/ui/screens/refeeding_screen.dart';
@@ -77,6 +79,7 @@ import 'package:psychswitch/src/ui/screens/self_care_screen.dart';
 import 'package:psychswitch/src/ui/screens/serotonin_screen.dart';
 import 'package:psychswitch/src/ui/screens/settings_screen.dart';
 import 'package:psychswitch/src/ui/screens/smoking_adjustment_screen.dart';
+import 'package:psychswitch/src/ui/screens/stimulant_cardiac_screen_screen.dart';
 import 'package:psychswitch/src/ui/screens/stopp_start_screen.dart';
 import 'package:psychswitch/src/ui/screens/switch_screen.dart';
 import 'package:psychswitch/src/ui/screens/tdm_screen.dart';
@@ -147,6 +150,9 @@ abstract final class Routes {
   static const hyperprolactinaemia = 'hyperprolactinaemia';
   static const clozapineMyocarditis = 'clozapine_myocarditis';
   static const valproatePpp = 'valproate_ppp';
+  static const postInjectionSyndrome = 'post_injection_syndrome';
+  static const opioidOverdose = 'opioid_overdose';
+  static const stimulantCardiac = 'stimulant_cardiac';
 }
 
 /// Custom fade-through page builder. Mirrors Material's fade-through
@@ -647,6 +653,30 @@ GoRouter buildRouter() => GoRouter(
           pageBuilder: (context, state) => _fadeThroughPage(
             state: state,
             child: const ValproatePppScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.postInjectionSyndrome,
+          path: '/post-injection-syndrome',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const PostInjectionSyndromeScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.opioidOverdose,
+          path: '/opioid-overdose',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const OpioidOverdoseScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.stimulantCardiac,
+          path: '/stimulant-cardiac',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const StimulantCardiacScreen(),
           ),
         ),
         GoRoute(

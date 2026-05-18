@@ -1143,6 +1143,24 @@ class _ReferenceRail extends StatelessWidget {
         route: Routes.valproatePpp,
       ),
       _RailRow(
+        label: 'Olanzapine LAI — PDSS',
+        sub: 'Post-injection observation + delirium triage',
+        icon: Icons.timer_outlined,
+        route: Routes.postInjectionSyndrome,
+      ),
+      _RailRow(
+        label: 'Opioid overdose',
+        sub: 'Naloxone + airway + re-narcotisation net',
+        icon: Icons.emergency_outlined,
+        route: Routes.opioidOverdose,
+      ),
+      _RailRow(
+        label: 'Pre-stimulant cardiac',
+        sub: 'ADHD cardiovascular screening gate',
+        icon: Icons.favorite_border,
+        route: Routes.stimulantCardiac,
+      ),
+      _RailRow(
         label: 'ECT work-up',
         sub: 'Pre-ECT checklist + drug-interaction review',
         icon: Icons.electric_bolt_outlined,
