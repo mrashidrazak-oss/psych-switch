@@ -2,10 +2,10 @@ name: psychswitch
 description: "PsychSwitch — clinical decision-support for psychotropic cross-titration. Built for Malaysian psychiatrists."
 publish_to: 'none'
 
-# Mirrors the version in /app.json for the existing React Native build.
-# Flutter v0.5.0 starts after Phase 8 cutover; until then both branches
-# co-exist. Build number auto-increments per release.
-version: 0.5.0-alpha.0+1
+# Launch versioning. versionName.versionCode — Play requires a unique,
+# monotonically increasing build number (+N) for every upload.
+# 1.0.0+1 = first closed-testing build.
+version: 1.0.0+1
 
 environment:
   sdk: ^3.7.0
