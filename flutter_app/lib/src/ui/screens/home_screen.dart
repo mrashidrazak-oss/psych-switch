@@ -29,6 +29,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:psychswitch/src/launch_gate.dart';
 import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/providers/preferences_provider.dart';
 import 'package:psychswitch/src/providers/saved_cases_provider.dart';
@@ -117,18 +118,27 @@ class _HomeBody extends ConsumerWidget {
               const _RecentCasesStrip(),
               const _PearlCard(),
               const SizedBox(height: ClinicalSpace.lg),
-              const _QuickActions(),
-              const SizedBox(height: ClinicalSpace.lg + 4),
-              const _SectionLabel(
-                label: 'Browse by class',
-                tagline: 'Tap to open the matching reference',
-              ),
-              const SizedBox(height: ClinicalSpace.md),
-              const _CategoryGrid(),
-              const SizedBox(height: ClinicalSpace.lg + 4),
-              const _SectionLabel(label: 'Reference', tagline: null),
-              const SizedBox(height: ClinicalSpace.md),
-              const _ReferenceRail(),
+              if (LaunchGate.staged) ...<Widget>[
+                const _SectionLabel(
+                  label: 'Clinical tools',
+                  tagline: 'Core toolkit — more added in future updates',
+                ),
+                const SizedBox(height: ClinicalSpace.md),
+                const _LaunchRail(),
+              ] else ...<Widget>[
+                const _QuickActions(),
+                const SizedBox(height: ClinicalSpace.lg + 4),
+                const _SectionLabel(
+                  label: 'Browse by class',
+                  tagline: 'Tap to open the matching reference',
+                ),
+                const SizedBox(height: ClinicalSpace.md),
+                const _CategoryGrid(),
+                const SizedBox(height: ClinicalSpace.lg + 4),
+                const _SectionLabel(label: 'Reference', tagline: null),
+                const SizedBox(height: ClinicalSpace.md),
+                const _ReferenceRail(),
+              ],
               const SizedBox(height: ClinicalSpace.xl),
               const _Footer(),
             ],
@@ -1002,6 +1012,68 @@ class _CategoryCard extends StatelessWidget {
             ),
             maxLines: 2,
           ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Launch rail (staged) ────────────────────────────────────────────
+
+/// Curated launch toolkit: the five tools surfaced alongside the
+/// Switch hero while [LaunchGate.staged] is true. Every other screen
+/// is still routed — just hidden until the gate is lifted.
+class _LaunchRail extends StatelessWidget {
+  const _LaunchRail();
+
+  @override
+  Widget build(BuildContext context) {
+    const rows = <_RailRow>[
+      _RailRow(
+        label: 'Dose equivalency',
+        sub: 'Chlorpromazine / olanzapine & antidepressant equivalents',
+        icon: Icons.balance_outlined,
+        route: Routes.equivalency,
+      ),
+      _RailRow(
+        label: 'Adverse-effect profile',
+        sub: 'Predicted AE burden + management by drug',
+        icon: Icons.health_and_safety_outlined,
+        route: Routes.adverseEffects,
+      ),
+      _RailRow(
+        label: 'Interactions & burden',
+        sub: 'Drug–drug interactions + sedative/anticholinergic load',
+        icon: Icons.account_tree_outlined,
+        route: Routes.polypharmacy,
+      ),
+      _RailRow(
+        label: 'TDM interpreter',
+        sub: 'Therapeutic levels — lithium · clozapine · valproate',
+        icon: Icons.biotech_outlined,
+        route: Routes.tdm,
+      ),
+      _RailRow(
+        label: 'Rating scales',
+        sub: '17 scales — PHQ · GAD · MADRS · HAM · CIWA · COWS · more',
+        icon: Icons.assignment_turned_in_outlined,
+        route: Routes.scales,
+      ),
+    ];
+    return SquircleCard(
+      padding: EdgeInsets.zero,
+      child: Column(
+        children: <Widget>[
+          for (var i = 0; i < rows.length; i++) ...<Widget>[
+            if (i > 0)
+              const Divider(
+                height: 0.5,
+                thickness: 0.5,
+                indent: ClinicalSpace.lg + 4 + 30 + ClinicalSpace.md,
+                color: ClinicalPalette.border,
+              ),
+            _RailRowView(row: rows[i]),
+          ],
         ],
       ),
     );

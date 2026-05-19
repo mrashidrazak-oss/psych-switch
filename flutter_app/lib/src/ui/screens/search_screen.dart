@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:psychswitch/src/launch_gate.dart';
 import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
@@ -895,6 +896,7 @@ const List<_ToolItem> _allTools = <_ToolItem>[
 List<_ToolItem> _searchTools(String q) {
   final hits = <_ToolItem>[];
   for (final t in _allTools) {
+    if (!LaunchGate.isVisible(t.route)) continue;
     if (t.label.toLowerCase().contains(q) ||
         t.tagline.toLowerCase().contains(q)) {
       hits.add(t);
