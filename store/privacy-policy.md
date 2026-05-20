@@ -1,6 +1,6 @@
 # PsychSwitch — Privacy Policy (draft)
 
-_Last updated: TODO_DATE_
+_Last updated: 20 May 2026_
 
 PsychSwitch ("the app") is a clinical decision-support and educational
 reference tool for healthcare professionals.
@@ -40,10 +40,8 @@ Settings:
 ## Information processed on the device
 - App preferences (e.g. settings, locale) are stored locally on the
   device only.
-- TODO: If optional anonymous crash reporting is enabled, state the
-  provider here and confirm it contains no clinical inputs and is
-  opt-in / off by default. If no crash reporting ships, delete this
-  section.
+- No crash-reporting or analytics SDK is active in this release; no
+  diagnostic data is collected or transmitted.
 
 ## Data sharing
 We do not sell data and we never share patient information with
@@ -67,14 +65,12 @@ We may update this policy; the "last updated" date will change
 accordingly.
 
 ## Contact
-TODO_founder_email
+mrashidrazak@gmail.com
 
 ---
-NOTE TO FOUNDER: Host this (after filling the TODOs and reconciling the
-crash-reporting section with what actually ships) at a stable public
-URL and put that URL in the Play Console listing and Data safety form.
-The optional Google sign-in adds Name / Email / Profile photo to the
-Data safety declaration — see store/FIREBASE_SETUP.md for the exact
-form entries. If you decide NOT to ship sign-in for the closed beta,
-delete the "Optional account sign-in" section and revert the sign-in
-mentions in Summary / Data sharing above.
+NOTE TO FOUNDER: This file is the source of truth. It is published at:
+https://docs.google.com/document/d/e/2PACX-1vTdAHB5uo8A7kbancrJ4gruB4MGn5VnFncV6_jhFKz_UgfvmmQTYAoEAGK3plVCKtH8GroUFVcPHANu/pub
+If you change this file, re-paste the updated text into that published
+Google Doc so the two stay in sync. The optional Google sign-in adds
+Name / Email / Profile photo to the Play Data safety declaration — see
+store/FIREBASE_SETUP.md for the exact form entries.
