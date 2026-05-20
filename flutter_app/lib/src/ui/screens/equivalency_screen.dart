@@ -14,6 +14,7 @@ import 'package:go_router/go_router.dart';
 import 'package:psychswitch/src/ui/theme/breakpoints.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
+import 'package:psychswitch/src/ui/widgets/tool_hero.dart';
 import 'package:psychswitch_engine/dose_equivalents.dart';
 
 class EquivalencyScreen extends StatefulWidget {
@@ -70,8 +71,34 @@ class _EquivalencyScreenState extends State<EquivalencyScreen> {
             ? convertWithinFamily(_family, _fromId!, fromDose, _toId!)
             : null;
 
+    final totalDrugs = equivalencyFamilies.values
+        .fold<int>(0, (sum, m) => sum + m.entries.length);
+
     // Form column — picker + dose input + family tabs + meta.
     final form = <Widget>[
+            ToolHero(
+              icon: Icons.balance_outlined,
+              title: 'Dose equivalency',
+              tagline: 'Cross-class dose conversion',
+              tone: ClinicalPalette.accent,
+              stats: <ToolHeroStat>[
+                ToolHeroStat(
+                  label: 'FAMILIES',
+                  value: '${_tabs.length}',
+                  unit: 'classes',
+                ),
+                ToolHeroStat(
+                  label: 'CATALOGUE',
+                  value: '$totalDrugs',
+                  unit: 'drugs',
+                ),
+              ],
+              rationale: 'Convert a dose within a drug family against '
+                  'its reference standard — chlorpromazine, fluoxetine '
+                  'or diazepam equivalents. Pick a family, a from-drug '
+                  'and dose; add a to-drug to convert directly.',
+            ),
+            const Gap.v(ClinicalSpace.lg),
             // Family tabs.
             Container(
               decoration: BoxDecoration(

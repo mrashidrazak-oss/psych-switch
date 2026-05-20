@@ -12,6 +12,7 @@ import 'package:psychswitch/src/ui/theme/breakpoints.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/status_pill.dart';
+import 'package:psychswitch/src/ui/widgets/tool_hero.dart';
 import 'package:psychswitch_engine/adverse_effects.dart';
 
 const List<AdverseEffectCategory> _categoryOrder = <AdverseEffectCategory>[
@@ -48,10 +49,26 @@ class _AdverseEffectsScreenState extends State<AdverseEffectsScreen> {
       grouped.putIfAbsent(ae.category, () => <AdverseEffect>[]).add(ae);
     }
 
-    final intro = Text(
-      'Find the cause and a candidate switch target for common '
-      'problems.',
-      style: ClinicalText.caption.copyWith(height: 1.55),
+    final hero = ToolHero(
+      icon: Icons.health_and_safety_outlined,
+      title: 'Adverse-effect lookup',
+      tagline: 'Cause → candidate switch target',
+      tone: ClinicalPalette.warning,
+      stats: <ToolHeroStat>[
+        ToolHeroStat(
+          label: 'PROBLEMS',
+          value: '${adverseEffects.length}',
+          unit: 'effects',
+        ),
+        ToolHeroStat(
+          label: 'CATEGORIES',
+          value: '${grouped.length}',
+          unit: 'groups',
+        ),
+      ],
+      rationale: 'Reverse lookup — pick a side effect to see the '
+          'likely culprit drugs, candidate switch targets and '
+          'management notes.',
     );
 
     final categorisedList = <Widget>[
@@ -127,7 +144,7 @@ class _AdverseEffectsScreenState extends State<AdverseEffectsScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            intro,
+                            hero,
                             const Gap.v(ClinicalSpace.md),
                             ...categorisedList,
                           ],
@@ -161,7 +178,7 @@ class _AdverseEffectsScreenState extends State<AdverseEffectsScreen> {
                   ClinicalSpace.xl,
                 ),
                 children: <Widget>[
-                  intro,
+                  hero,
                   const Gap.v(ClinicalSpace.md),
                   AnimatedSize(
                     duration: const Duration(milliseconds: 240),
