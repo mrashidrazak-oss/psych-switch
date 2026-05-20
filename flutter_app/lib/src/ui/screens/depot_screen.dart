@@ -1,0 +1,1867 @@
+// Depot LAI module — Phase 7D.
+//
+// Two surfaces:
+//   • DepotIndexScreen  — `/depot`. Cards for the three reviewed
+//     once-monthly / quarterly LAI protocols: Invega Sustenna (PP1M),
+//     Invega Trinza (PP3M), Abilify Maintena.
+//   • DepotProtocolScreen — `/depot/<id>`. Renders one of the three
+//     protocols. Sections vary by agent (eligibility on Trinza, two
+//     initiation methods on Maintena, drug-interaction table on
+//     Maintena, etc.) but every protocol gets:
+//       overview · oral pre-treatment · initiation · maintenance ·
+//       needle guide · missed-dose flows · organ-function notes ·
+//       PK notes · key warnings · citations.
+//
+// All clinical content lives in psychswitch_engine/lib/src/depot_lai.dart
+// as `const` instances — this screen is purely presentational.
+
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import 'package:psychswitch/src/router.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
+import 'package:psychswitch/src/ui/theme/tokens.dart';
+import 'package:psychswitch_engine/depot_lai.dart';
+
+/// Identifies one of the three depot protocols. Used as the `:id` URL
+/// segment for `/depot/:id`.
+enum DepotKind {
+  sustenna,
+  trinza,
+  maintena;
+
+  static DepotKind? parse(String? raw) {
+    if (raw == null) return null;
+    for (final v in DepotKind.values) {
+      if (v.name == raw) return v;
+    }
+    return null;
+  }
+}
+
+// ── INDEX ─────────────────────────────────────────────────────────────
+
+class DepotIndexScreen extends StatelessWidget {
+  const DepotIndexScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Depot LAI'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
+        ),
+      ),
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(
+            ClinicalSpace.xl,
+            ClinicalSpace.xl - 4,
+            ClinicalSpace.xl,
+            ClinicalSpace.xl,
+          ),
+          children: <Widget>[
+            // ── Section eyebrow + hero blurb ──────────────────────
+            const Text(
+              'LONG-ACTING INJECTABLES',
+              style: TextStyle(
+                color: ClinicalPalette.muted,
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.6,
+              ),
+            ),
+            const Gap.v(ClinicalSpace.sm),
+            const Text(
+              'Three reviewed depot protocols.',
+              style: TextStyle(
+                color: ClinicalPalette.text,
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.5,
+                height: 1.2,
+              ),
+            ),
+            const Gap.v(ClinicalSpace.sm + 2),
+            Text(
+              'Once-monthly and quarterly antipsychotics, reviewed '
+              'against FDA labelling and Maudsley 15. Each protocol has '
+              'its own initiation, missed-dose flows, and needle guide '
+              '— read the agent before mixing them up.',
+              style: ClinicalText.caption.copyWith(height: 1.6),
+            ),
+            const Gap.v(ClinicalSpace.xl - 2),
+            _DepotIndexCard(
+              brandName: sustenna.brandName,
+              genericName: sustenna.genericName,
+              indication: sustenna.indication,
+              injectionInterval: sustenna.injectionInterval,
+              tone: ClinicalPalette.toneLavenderInk,
+              cadenceLabel: 'MONTHLY',
+              codeLabel: 'PP1M',
+              onTap: () => _open(context, DepotKind.sustenna),
+            ),
+            const Gap.v(ClinicalSpace.md),
+            _DepotIndexCard(
+              brandName: trinza.brandName,
+              genericName: trinza.genericName,
+              indication: trinza.indication,
+              injectionInterval: trinza.injectionInterval,
+              tone: ClinicalPalette.toneMintInk,
+              cadenceLabel: 'QUARTERLY',
+              codeLabel: 'PP3M',
+              onTap: () => _open(context, DepotKind.trinza),
+            ),
+            const Gap.v(ClinicalSpace.md),
+            _DepotIndexCard(
+              brandName: maintena.brandName,
+              genericName: maintena.genericName,
+              indication: maintena.indication,
+              injectionInterval: maintena.injectionInterval,
+              tone: ClinicalPalette.accent,
+              cadenceLabel: 'MONTHLY',
+              codeLabel: 'AOM',
+              onTap: () => _open(context, DepotKind.maintena),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _open(BuildContext context, DepotKind k) {
+    context.pushNamed(
+      Routes.depot,
+      pathParameters: <String, String>{'id': k.name},
+    );
+  }
+}
+
+/// Depot LAI index card.
+///
+/// Composition:
+///   • Tone-tinted top band (per-agent identity colour) showing the
+///     brand name as a confident hero, the generic underneath, and
+///     the cadence chip ("MONTHLY" / "QUARTERLY") on the right.
+///   • Body: indication paragraph.
+///   • Footer row: agent code (PP1M / PP3M / AOM), interval label,
+///     trailing chevron.
+class _DepotIndexCard extends StatelessWidget {
+  const _DepotIndexCard({
+    required this.brandName,
+    required this.genericName,
+    required this.indication,
+    required this.injectionInterval,
+    required this.tone,
+    required this.cadenceLabel,
+    required this.codeLabel,
+    required this.onTap,
+  });
+
+  final String brandName;
+  final String genericName;
+  final String indication;
+  final String injectionInterval;
+  final Color tone;
+  final String cadenceLabel;
+  final String codeLabel;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: ClinicalPalette.surface,
+      borderRadius: BorderRadius.circular(ClinicalRadii.card),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Ink(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: ClinicalPalette.border.withValues(alpha: 0.7),
+              width: 0.5,
+            ),
+            borderRadius: BorderRadius.circular(ClinicalRadii.card),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              // ── Identity band (tone-tinted) ─────────────────────
+              Container(
+                color: tone.withValues(alpha: 0.08),
+                padding: const EdgeInsets.fromLTRB(
+                  ClinicalSpace.lg,
+                  ClinicalSpace.md + 2,
+                  ClinicalSpace.md - 2,
+                  ClinicalSpace.md + 2,
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            children: <Widget>[
+                              Container(
+                                width: 7,
+                                height: 7,
+                                decoration: BoxDecoration(
+                                  color: tone,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const Gap.h(ClinicalSpace.sm + 2),
+                              Flexible(
+                                child: Text(
+                                  brandName,
+                                  style: const TextStyle(
+                                    color: ClinicalPalette.text,
+                                    fontSize: 19,
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: -0.4,
+                                    height: 1.15,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Gap.v(ClinicalSpace.xs - 1),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 15),
+                            child: Text(
+                              genericName,
+                              style: const TextStyle(
+                                color: ClinicalPalette.muted,
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 0.1,
+                                height: 1.3,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Gap.h(ClinicalSpace.sm),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 9,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: tone.withValues(alpha: 0.18),
+                        borderRadius: BorderRadius.circular(ClinicalRadii.pill),
+                      ),
+                      child: Text(
+                        cadenceLabel,
+                        style: TextStyle(
+                          color: tone,
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // ── Indication body ─────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  ClinicalSpace.lg,
+                  ClinicalSpace.md + 2,
+                  ClinicalSpace.lg,
+                  ClinicalSpace.md - 2,
+                ),
+                child: Text(
+                  indication,
+                  style: const TextStyle(
+                    color: ClinicalPalette.text,
+                    fontSize: 13,
+                    height: 1.55,
+                  ),
+                ),
+              ),
+              // ── Footer meta row ─────────────────────────────────
+              Container(
+                color: ClinicalPalette.bg.withValues(alpha: 0.4),
+                padding: const EdgeInsets.fromLTRB(
+                  ClinicalSpace.lg,
+                  ClinicalSpace.sm + 2,
+                  ClinicalSpace.md - 2,
+                  ClinicalSpace.sm + 2,
+                ),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      codeLabel,
+                      style: TextStyle(
+                        color: tone,
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                    const Gap.h(ClinicalSpace.sm + 2),
+                    const Text(
+                      '·',
+                      style: TextStyle(color: ClinicalPalette.muted),
+                    ),
+                    const Gap.h(ClinicalSpace.sm + 2),
+                    Expanded(
+                      child: Row(
+                        children: <Widget>[
+                          const Icon(
+                            Icons.schedule_rounded,
+                            size: 13,
+                            color: ClinicalPalette.muted,
+                          ),
+                          const Gap.h(ClinicalSpace.xs + 1),
+                          Flexible(
+                            child: Text(
+                              injectionInterval,
+                              style: const TextStyle(
+                                color: ClinicalPalette.mutedStrong,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                letterSpacing: 0.1,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(
+                      Icons.chevron_right_rounded,
+                      color: ClinicalPalette.muted,
+                      size: 20,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── DETAIL ────────────────────────────────────────────────────────────
+
+class DepotProtocolScreen extends StatelessWidget {
+  const DepotProtocolScreen({super.key, required this.kind});
+
+  final DepotKind kind;
+
+  String get _title => switch (kind) {
+        DepotKind.sustenna => sustenna.brandName,
+        DepotKind.trinza => trinza.brandName,
+        DepotKind.maintena => maintena.brandName,
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(_title),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
+        ),
+      ),
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+          children: switch (kind) {
+            DepotKind.sustenna => _sustennaContent(),
+            DepotKind.trinza => _trinzaContent(),
+            DepotKind.maintena => _maintenaContent(),
+          },
+        ),
+      ),
+    );
+  }
+
+  // ── Sustenna (PP1M) ────────────────────────────────────────────────
+
+  List<Widget> _sustennaContent() {
+    return <Widget>[
+      _OverviewCard(
+        brandName: sustenna.brandName,
+        generic: sustenna.genericName,
+        active: sustenna.activeSubstance,
+        indication: sustenna.indication,
+        interval: sustenna.injectionInterval,
+        tone: ClinicalPalette.toneLavenderInk,
+        cadenceLabel: 'MONTHLY',
+        codeLabel: 'PP1M',
+      ),
+      const SizedBox(height: 16),
+      const _SectionHeader('AVAILABLE STRENGTHS'),
+      const SizedBox(height: 8),
+      _StrengthsTable(strengths: sustenna.availableStrengths),
+
+      const SizedBox(height: 20),
+      const _SectionHeader('ORAL PRE-TREATMENT'),
+      const SizedBox(height: 8),
+      _BodyCard(text: sustenna.oralPreTreatment),
+
+      const SizedBox(height: 20),
+      const _SectionHeader('INITIATION'),
+      const SizedBox(height: 8),
+      _InitiationStepsCard(steps: sustenna.initiationSteps),
+
+      const SizedBox(height: 20),
+      const _SectionHeader('MAINTENANCE'),
+      const SizedBox(height: 8),
+      _MaintenanceCard(
+        range: sustenna.maintenanceDoseRange,
+        unit: sustenna.maintenanceUnit,
+        window: sustenna.maintenanceWindow,
+      ),
+
+      const SizedBox(height: 20),
+      const _SectionHeader('NEEDLE GUIDE'),
+      const SizedBox(height: 8),
+      _NeedleGuideTable(guides: sustenna.needleGuide),
+      const SizedBox(height: 8),
+      _BodyCard(text: sustenna.injectionSiteNote),
+
+      const SizedBox(height: 20),
+      const _SectionHeader('MISSED DOSE · INITIATION'),
+      const SizedBox(height: 8),
+      _MissedDoseList(scenarios: sustenna.missedDoseInitiation),
+
+      const SizedBox(height: 20),
+      const _SectionHeader('MISSED DOSE · MAINTENANCE'),
+      const SizedBox(height: 8),
+      _MissedDoseList(scenarios: sustenna.missedDoseMaintenance),
+
+      const SizedBox(height: 20),
+      const _SectionHeader('RENAL ADJUSTMENT'),
+      const SizedBox(height: 8),
+      _PaliperidoneRenalTable(rows: sustenna.renalAdjustments),
+
+      const SizedBox(height: 20),
+      const _SectionHeader('KEY WARNINGS'),
+      const SizedBox(height: 8),
+      _BulletCard(items: sustenna.keyWarnings, tone: ClinicalPalette.warning),
+
+      const SizedBox(height: 20),
+      _CitationsList(citations: sustenna.citations),
+    ];
+  }
+
+  // ── Trinza (PP3M) ──────────────────────────────────────────────────
+
+  List<Widget> _trinzaContent() {
+    return <Widget>[
+      _OverviewCard(
+        brandName: trinza.brandName,
+        generic: trinza.genericName,
+        active: trinza.activeSubstance,
+        indication: trinza.indication,
+        interval: trinza.injectionInterval,
+        tone: ClinicalPalette.toneMintInk,
+        cadenceLabel: 'QUARTERLY',
+        codeLabel: 'PP3M',
+      ),
+      const SizedBox(height: 16),
+      const _SectionHeader('AVAILABLE STRENGTHS'),
+      const SizedBox(height: 8),
+      _StrengthsTable(strengths: trinza.availableStrengths),
+
+      const SizedBox(height: 20),
+      const _SectionHeader('ELIGIBILITY'),
+      const SizedBox(height: 8),
+      _BulletCard(items: trinza.eligibilityCriteria, tone: ClinicalPalette.danger),
+
+      const SizedBox(height: 20),
+      const _SectionHeader('PP1M → PP3M CONVERSION'),
+      const SizedBox(height: 8),
+      _ConversionTable(
+        rows: trinza.pp1mToTrinzaConversion
+            .map((r) => (r.pp1mMgEq, r.pp3mMgEq))
+            .toList(),
+        leftHeader: 'PP1M (mg eq)',
+        rightHeader: 'PP3M (mg eq)',
+      ),
+      const SizedBox(height: 8),
+      _BodyCard(text: trinza.firstDoseTiming),
+
+      const SizedBox(height: 20),
+      const _SectionHeader('MAINTENANCE'),
+      const SizedBox(height: 8),
+      _MaintenanceCard(
+        range: trinza.maintenanceDoseRange,
+        unit: trinza.maintenanceUnit,
+        window: trinza.maintenanceWindow,
+      ),
+
+      const SizedBox(height: 20),
+      const _SectionHeader('NEEDLE GUIDE'),
+      const SizedBox(height: 8),
+      _NeedleGuideTable(guides: trinza.needleGuide),
+      const SizedBox(height: 8),
+      _BodyCard(text: trinza.injectionSiteNote),
+
+      const SizedBox(height: 20),
+      const _SectionHeader('MISSED DOSE'),
+      const SizedBox(height: 8),
+      _MissedDoseList(scenarios: trinza.missedDoseScenarios),
+
+      const SizedBox(height: 20),
+      const _SectionHeader('PP1M BRIDGE TABLE'),
+      const SizedBox(height: 8),
+      _ConversionTable(
+        rows: trinza.pp1mBridgeTable
+            .map((r) => (r.pp3mStrengthMgEq, r.pp1mBridgeMgEq))
+            .toList(),
+        leftHeader: 'PP3M last dose',
+        rightHeader: 'PP1M bridge',
+      ),
+
+      const SizedBox(height: 20),
+      const _SectionHeader('RENAL ADJUSTMENT'),
+      const SizedBox(height: 8),
+      ...trinza.renalAdjustments.map(
+        (r) => Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: _LabelledNoteCard(
+            label: r.category,
+            sublabel: r.crcl,
+            body: r.notes,
+          ),
+        ),
+      ),
+
+      const SizedBox(height: 12),
+      const _SectionHeader('PK NOTES'),
+      const SizedBox(height: 8),
+      _BulletCard(items: trinza.pkNotes, tone: ClinicalPalette.muted),
+
+      const SizedBox(height: 20),
+      const _SectionHeader('KEY WARNINGS'),
+      const SizedBox(height: 8),
+      _BulletCard(items: trinza.keyWarnings, tone: ClinicalPalette.warning),
+
+      const SizedBox(height: 20),
+      _CitationsList(citations: trinza.citations),
+    ];
+  }
+
+  // ── Maintena ───────────────────────────────────────────────────────
+
+  List<Widget> _maintenaContent() {
+    return <Widget>[
+      _OverviewCard(
+        brandName: maintena.brandName,
+        generic: maintena.genericName,
+        active: maintena.activeSubstance,
+        indication: maintena.indication,
+        interval: maintena.injectionInterval,
+        tone: ClinicalPalette.accent,
+        cadenceLabel: 'MONTHLY',
+        codeLabel: 'AOM',
+      ),
+      const SizedBox(height: 16),
+      const _SectionHeader('AVAILABLE STRENGTHS'),
+      const SizedBox(height: 8),
+      _MaintenaStrengthsCard(strengths: maintena.availableStrengths),
+
+      const SizedBox(height: 20),
+      const _SectionHeader('ORAL PRE-TREATMENT'),
+      const SizedBox(height: 8),
+      _BodyCard(text: maintena.oralPreTreatment),
+
+      const SizedBox(height: 20),
+      const _SectionHeader('INITIATION METHODS'),
+      const SizedBox(height: 8),
+      _MaintenaMethodCard(method: maintena.initiationMethods.fourteenDay),
+      const SizedBox(height: 8),
+      _MaintenaMethodCard(method: maintena.initiationMethods.oneDay),
+      const SizedBox(height: 12),
+      _InitiationStepsCard(steps: maintena.initiationSteps),
+
+      const SizedBox(height: 20),
+      const _SectionHeader('MAINTENANCE'),
+      const SizedBox(height: 8),
+      _MaintenanceCard(
+        range: maintena.maintenanceDoseRange,
+        unit: maintena.maintenanceUnit,
+        window: maintena.maintenanceWindow,
+      ),
+
+      const SizedBox(height: 20),
+      const _SectionHeader('NEEDLE GUIDE'),
+      const SizedBox(height: 8),
+      _NeedleGuideTable(guides: maintena.needleGuide),
+      const SizedBox(height: 8),
+      _BodyCard(text: maintena.injectionSiteNote),
+
+      const SizedBox(height: 20),
+      const _SectionHeader('MISSED DOSE · 2nd OR 3rd'),
+      const SizedBox(height: 8),
+      _MissedDoseList(scenarios: maintena.missedDoseSecondThird),
+
+      const SizedBox(height: 20),
+      const _SectionHeader('MISSED DOSE · 4th ONWARD'),
+      const SizedBox(height: 8),
+      _MissedDoseList(scenarios: maintena.missedDoseFourthOnward),
+
+      const SizedBox(height: 20),
+      const _SectionHeader('DRUG INTERACTIONS'),
+      const SizedBox(height: 8),
+      ...maintena.drugInteractions.map(
+        (i) => Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: _DepotInteractionCard(adjustment: i),
+        ),
+      ),
+
+      const SizedBox(height: 12),
+      const _SectionHeader('ORGAN FUNCTION'),
+      const SizedBox(height: 8),
+      _LabelledNoteCard(
+        label: 'Renal',
+        sublabel: '',
+        body: maintena.renalNote,
+      ),
+      const SizedBox(height: 8),
+      _LabelledNoteCard(
+        label: 'Hepatic',
+        sublabel: '',
+        body: maintena.hepaticNote,
+      ),
+
+      const SizedBox(height: 16),
+      const _SectionHeader('PK NOTES'),
+      const SizedBox(height: 8),
+      _BulletCard(items: maintena.pkNotes, tone: ClinicalPalette.muted),
+
+      const SizedBox(height: 20),
+      const _SectionHeader('KEY WARNINGS'),
+      const SizedBox(height: 8),
+      _BulletCard(items: maintena.keyWarnings, tone: ClinicalPalette.warning),
+
+      const SizedBox(height: 20),
+      _CitationsList(citations: maintena.citations),
+    ];
+  }
+}
+
+// ── SHARED WIDGETS ────────────────────────────────────────────────────
+
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(text, style: ClinicalText.eyebrow);
+  }
+}
+
+/// Detail-screen overview card — same four-band clinical-poster
+/// chrome as the Clozapine titration header. Tone-tinted identity
+/// band at top, hero indication paragraph, key-fact stat row, and a
+/// tinted footer holding the injection interval.
+class _OverviewCard extends StatelessWidget {
+  const _OverviewCard({
+    required this.generic,
+    required this.active,
+    required this.indication,
+    required this.interval,
+    this.brandName,
+    this.tone,
+    this.cadenceLabel,
+    this.codeLabel,
+  });
+
+  final String generic;
+  final String active;
+  final String indication;
+  final String interval;
+  final String? brandName;
+  final Color? tone;
+  final String? cadenceLabel;
+  final String? codeLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final t = tone ?? ClinicalPalette.accent;
+    return Container(
+      decoration: BoxDecoration(
+        color: ClinicalPalette.surface,
+        border: Border.all(
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
+          width: 0.5,
+        ),
+        borderRadius: BorderRadius.circular(ClinicalRadii.card),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          // ── Identity band ──────────────────────────────────────
+          Container(
+            color: t.withValues(alpha: 0.08),
+            padding: const EdgeInsets.fromLTRB(
+              ClinicalSpace.lg,
+              ClinicalSpace.md + 2,
+              ClinicalSpace.md - 2,
+              ClinicalSpace.md + 2,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        children: <Widget>[
+                          Container(
+                            width: 7,
+                            height: 7,
+                            decoration: BoxDecoration(
+                              color: t,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          const Gap.h(ClinicalSpace.sm + 2),
+                          Flexible(
+                            child: Text(
+                              brandName ?? generic,
+                              style: const TextStyle(
+                                color: ClinicalPalette.text,
+                                fontSize: 19,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: -0.4,
+                                height: 1.15,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Gap.v(ClinicalSpace.xs - 1),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15),
+                        child: Text(
+                          generic,
+                          style: const TextStyle(
+                            color: ClinicalPalette.muted,
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.1,
+                            height: 1.3,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (cadenceLabel != null) ...<Widget>[
+                  const Gap.h(ClinicalSpace.sm),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 9,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: t.withValues(alpha: 0.18),
+                      borderRadius: BorderRadius.circular(ClinicalRadii.pill),
+                    ),
+                    child: Text(
+                      cadenceLabel!,
+                      style: TextStyle(
+                        color: t,
+                        fontSize: 10.5,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          // ── Body: indication ────────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              ClinicalSpace.lg,
+              ClinicalSpace.md + 2,
+              ClinicalSpace.lg,
+              ClinicalSpace.md - 2,
+            ),
+            child: Text(
+              indication,
+              style: const TextStyle(
+                color: ClinicalPalette.text,
+                fontSize: 13.5,
+                height: 1.55,
+              ),
+            ),
+          ),
+          // ── Key-fact stat row ───────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              ClinicalSpace.lg,
+              0,
+              ClinicalSpace.lg,
+              ClinicalSpace.md - 2,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  child: _OverviewMiniStat(
+                    eyebrow: 'ACTIVE SUBSTANCE',
+                    value: active,
+                  ),
+                ),
+                if (codeLabel != null) ...<Widget>[
+                  Container(
+                    width: 0.5,
+                    height: 32,
+                    color: ClinicalPalette.border.withValues(alpha: 0.6),
+                  ),
+                  Expanded(
+                    child: _OverviewMiniStat(
+                      eyebrow: 'AGENT CODE',
+                      value: codeLabel!,
+                      tone: t,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          // ── Footer: interval band ───────────────────────────────
+          Container(
+            color: ClinicalPalette.bg.withValues(alpha: 0.4),
+            padding: const EdgeInsets.fromLTRB(
+              ClinicalSpace.lg,
+              ClinicalSpace.sm + 2,
+              ClinicalSpace.lg,
+              ClinicalSpace.sm + 2,
+            ),
+            child: Row(
+              children: <Widget>[
+                Icon(
+                  Icons.schedule_rounded,
+                  size: 14,
+                  color: t,
+                ),
+                const Gap.h(ClinicalSpace.sm),
+                Expanded(
+                  child: Text(
+                    interval,
+                    style: const TextStyle(
+                      color: ClinicalPalette.mutedStrong,
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.1,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Mini stat for the overview card's middle band — eyebrow + value
+/// in a compact column. Reused for ACTIVE SUBSTANCE and AGENT CODE.
+class _OverviewMiniStat extends StatelessWidget {
+  const _OverviewMiniStat({
+    required this.eyebrow,
+    required this.value,
+    this.tone,
+  });
+
+  final String eyebrow;
+  final String value;
+  final Color? tone;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 2),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            eyebrow,
+            style: const TextStyle(
+              color: ClinicalPalette.muted,
+              fontSize: 9.5,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.3,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: TextStyle(
+              color: tone ?? ClinicalPalette.text,
+              fontSize: 13.5,
+              fontWeight: FontWeight.w700,
+              letterSpacing: tone != null ? 1.2 : -0.1,
+              height: 1.2,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BodyCard extends StatelessWidget {
+  const _BodyCard({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: ClinicalPalette.text,
+          fontSize: 13,
+          height: 1.55,
+        ),
+      ),
+    );
+  }
+}
+
+class _StrengthsTable extends StatelessWidget {
+  const _StrengthsTable({required this.strengths});
+
+  final List<StrengthEntry> strengths;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: <Widget>[
+          const _StrengthRow(
+            mgEq: 'mg eq',
+            mgPP: 'mg PP',
+            volume: 'mL',
+            isHeader: true,
+          ),
+          const Divider(height: 1, color: ClinicalPalette.border),
+          ...strengths.map(
+            (s) => Column(
+              children: <Widget>[
+                _StrengthRow(
+                  mgEq: s.mgEq.toString(),
+                  mgPP: s.mgPP.toString(),
+                  volume: s.volumeMl.toString(),
+                ),
+                const Divider(height: 1, color: ClinicalPalette.border),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _StrengthRow extends StatelessWidget {
+  const _StrengthRow({
+    required this.mgEq,
+    required this.mgPP,
+    required this.volume,
+    this.isHeader = false,
+  });
+
+  final String mgEq;
+  final String mgPP;
+  final String volume;
+  final bool isHeader;
+
+  @override
+  Widget build(BuildContext context) {
+    final style = TextStyle(
+      color: isHeader ? ClinicalPalette.muted : ClinicalPalette.text,
+      fontSize: isHeader ? 11 : 13,
+      fontWeight: isHeader ? FontWeight.w600 : FontWeight.w500,
+      letterSpacing: isHeader ? 1.3 : 0,
+      fontFamily: isHeader ? null : 'monospace',
+    );
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      child: Row(
+        children: <Widget>[
+          Expanded(child: Text(isHeader ? mgEq.toUpperCase() : mgEq, style: style)),
+          Expanded(child: Text(isHeader ? mgPP.toUpperCase() : mgPP, style: style)),
+          Expanded(child: Text(isHeader ? volume.toUpperCase() : volume, style: style)),
+        ],
+      ),
+    );
+  }
+}
+
+class _MaintenaStrengthsCard extends StatelessWidget {
+  const _MaintenaStrengthsCard({required this.strengths});
+
+  final List<MaintenaStrengthEntry> strengths;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: strengths.map((s) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(
+                  width: 80,
+                  child: Text(
+                    '${s.mgAripiprazole.toInt()} mg',
+                    style: const TextStyle(
+                      color: ClinicalPalette.text,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    s.formulation,
+                    style: const TextStyle(
+                      color: ClinicalPalette.muted,
+                      fontSize: 12,
+                      height: 1.45,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+class _InitiationStepsCard extends StatelessWidget {
+  const _InitiationStepsCard({required this.steps});
+
+  final List<DepotInitiationStep> steps;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: steps.map((s) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: ClinicalPalette.surface,
+              border: Border.all(color: ClinicalPalette.border),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Text(
+                      s.label.toUpperCase(),
+                      style: const TextStyle(
+                        color: ClinicalPalette.accent,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.3,
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      '${s.doseMgEq} mg',
+                      style: const TextStyle(
+                        color: ClinicalPalette.text,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Site: ${s.site}',
+                  style: const TextStyle(
+                    color: ClinicalPalette.text,
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                if (s.notes != null) ...<Widget>[
+                  const SizedBox(height: 4),
+                  Text(
+                    s.notes!,
+                    style: const TextStyle(
+                      color: ClinicalPalette.muted,
+                      fontSize: 12,
+                      height: 1.5,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class _MaintenanceCard extends StatelessWidget {
+  const _MaintenanceCard({
+    required this.range,
+    required this.unit,
+    required this.window,
+  });
+
+  final MaintenanceDoseRange range;
+  final String unit;
+  final String window;
+
+  @override
+  Widget build(BuildContext context) {
+    final recommended = range.recommended;
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: <Widget>[
+              Text(
+                '${range.min}–${range.max}',
+                style: const TextStyle(
+                  color: ClinicalPalette.text,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                unit,
+                style: const TextStyle(
+                  color: ClinicalPalette.muted,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+          if (recommended != null) ...<Widget>[
+            const SizedBox(height: 4),
+            Text(
+              'Recommended: $recommended $unit',
+              style: const TextStyle(
+                color: ClinicalPalette.accent,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+          const SizedBox(height: 10),
+          Text(
+            'Window: $window',
+            style: const TextStyle(
+              color: ClinicalPalette.muted,
+              fontSize: 12,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NeedleGuideTable extends StatelessWidget {
+  const _NeedleGuideTable({required this.guides});
+
+  final List<NeedleGuide> guides;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: <Widget>[
+          const _NeedleRow(
+            site: 'Site',
+            habitus: 'Habitus',
+            gauge: 'Gauge',
+            length: 'Length',
+            isHeader: true,
+          ),
+          const Divider(height: 1, color: ClinicalPalette.border),
+          ...guides.map(
+            (g) => Column(
+              children: <Widget>[
+                _NeedleRow(
+                  site: g.site,
+                  habitus: g.habitus,
+                  gauge: g.gauge,
+                  length: g.lengthInch,
+                ),
+                const Divider(height: 1, color: ClinicalPalette.border),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NeedleRow extends StatelessWidget {
+  const _NeedleRow({
+    required this.site,
+    required this.habitus,
+    required this.gauge,
+    required this.length,
+    this.isHeader = false,
+  });
+
+  final String site;
+  final String habitus;
+  final String gauge;
+  final String length;
+  final bool isHeader;
+
+  @override
+  Widget build(BuildContext context) {
+    final style = TextStyle(
+      color: isHeader ? ClinicalPalette.muted : ClinicalPalette.text,
+      fontSize: isHeader ? 11 : 12.5,
+      fontWeight: isHeader ? FontWeight.w600 : FontWeight.w500,
+      letterSpacing: isHeader ? 1.3 : 0,
+    );
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      child: Row(
+        children: <Widget>[
+          SizedBox(
+            width: 64,
+            child: Text(isHeader ? site.toUpperCase() : site, style: style),
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(
+              isHeader ? habitus.toUpperCase() : habitus,
+              style: style,
+            ),
+          ),
+          SizedBox(
+            width: 50,
+            child: Text(
+              isHeader ? gauge.toUpperCase() : gauge,
+              style: style,
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(
+              isHeader ? length.toUpperCase() : length,
+              style: style,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MissedDoseList extends StatelessWidget {
+  const _MissedDoseList({required this.scenarios});
+
+  final List<MissedDoseScenario> scenarios;
+
+  Color _color(DepotSeverity s) => switch (s) {
+        DepotSeverity.info => ClinicalPalette.toneMintInk,
+        DepotSeverity.warning => ClinicalPalette.warning,
+        DepotSeverity.danger => ClinicalPalette.danger,
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: scenarios.map((s) {
+        final c = _color(s.severity);
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Container(
+            decoration: BoxDecoration(
+              color: c.withValues(alpha: 0.06),
+              border: Border(left: BorderSide(color: c, width: 3)),
+              borderRadius: const BorderRadius.only(
+                topRight: Radius.circular(8),
+                bottomRight: Radius.circular(8),
+              ),
+            ),
+            padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  s.condition,
+                  style: TextStyle(
+                    color: c,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.2,
+                    height: 1.35,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  s.action,
+                  style: const TextStyle(
+                    color: ClinicalPalette.text,
+                    fontSize: 12.5,
+                    height: 1.55,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class _PaliperidoneRenalTable extends StatelessWidget {
+  const _PaliperidoneRenalTable({required this.rows});
+
+  final List<PaliperidoneRenalAdjustment> rows;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: rows.map((r) {
+        final isContra = r.day1 == 'CONTRAINDICATED';
+        final tone = isContra ? ClinicalPalette.danger : ClinicalPalette.text;
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: ClinicalPalette.surface,
+              border: Border.all(
+                color: isContra
+                    ? ClinicalPalette.danger.withValues(alpha: 0.4)
+                    : ClinicalPalette.border,
+              ),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Text(
+                        r.category,
+                        style: TextStyle(
+                          color: tone,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      r.crcl,
+                      style: const TextStyle(
+                        color: ClinicalPalette.muted,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                _RenalLine(label: 'Day 1', value: r.day1, isContra: isContra),
+                _RenalLine(label: 'Day 8', value: r.day8, isContra: isContra),
+                _RenalLine(
+                    label: 'Maintenance', value: r.maintenance, isContra: isContra),
+                _RenalLine(label: 'Max', value: r.max, isContra: isContra),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class _RenalLine extends StatelessWidget {
+  const _RenalLine({
+    required this.label,
+    required this.value,
+    required this.isContra,
+  });
+
+  final String label;
+  final String value;
+  final bool isContra;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 1),
+      child: Row(
+        children: <Widget>[
+          SizedBox(
+            width: 100,
+            child: Text(
+              label,
+              style: const TextStyle(
+                color: ClinicalPalette.muted,
+                fontSize: 12,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: TextStyle(
+                color: isContra ? ClinicalPalette.danger : ClinicalPalette.text,
+                fontSize: 12.5,
+                fontWeight:
+                    isContra ? FontWeight.w700 : FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LabelledNoteCard extends StatelessWidget {
+  const _LabelledNoteCard({
+    required this.label,
+    required this.sublabel,
+    required this.body,
+  });
+
+  final String label;
+  final String sublabel;
+  final String body;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Text(
+                label,
+                style: const TextStyle(
+                  color: ClinicalPalette.text,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              if (sublabel.isNotEmpty) ...<Widget>[
+                const SizedBox(width: 8),
+                Text(
+                  sublabel,
+                  style: const TextStyle(
+                    color: ClinicalPalette.muted,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            body,
+            style: const TextStyle(
+              color: ClinicalPalette.text,
+              fontSize: 12.5,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ConversionTable extends StatelessWidget {
+  const _ConversionTable({
+    required this.rows,
+    required this.leftHeader,
+    required this.rightHeader,
+  });
+
+  final List<(num, num)> rows;
+  final String leftHeader;
+  final String rightHeader;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: Text(
+                    leftHeader.toUpperCase(),
+                    style: const TextStyle(
+                      color: ClinicalPalette.muted,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1.3,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    rightHeader.toUpperCase(),
+                    style: const TextStyle(
+                      color: ClinicalPalette.muted,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1.3,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1, color: ClinicalPalette.border),
+          ...rows.map(
+            (r) => Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Text(
+                          r.$1.toString(),
+                          style: const TextStyle(
+                            color: ClinicalPalette.text,
+                            fontSize: 13,
+                            fontFamily: 'monospace',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          r.$2.toString(),
+                          style: const TextStyle(
+                            color: ClinicalPalette.text,
+                            fontSize: 13,
+                            fontFamily: 'monospace',
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(height: 1, color: ClinicalPalette.border),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MaintenaMethodCard extends StatelessWidget {
+  const _MaintenaMethodCard({required this.method});
+
+  final MaintenaInitiationMethod method;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: ClinicalPalette.surface,
+        border: Border.all(color: ClinicalPalette.border),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            method.label,
+            style: const TextStyle(
+              color: ClinicalPalette.text,
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              height: 1.35,
+            ),
+          ),
+          const SizedBox(height: 8),
+          _LabelLine(label: 'Injection', body: method.injection),
+          const SizedBox(height: 6),
+          _LabelLine(label: 'Oral', body: method.oral),
+          const SizedBox(height: 8),
+          Text(
+            method.notes,
+            style: const TextStyle(
+              color: ClinicalPalette.muted,
+              fontSize: 12,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LabelLine extends StatelessWidget {
+  const _LabelLine({required this.label, required this.body});
+
+  final String label;
+  final String body;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          label.toUpperCase(),
+          style: const TextStyle(
+            color: ClinicalPalette.muted,
+            fontSize: 10,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.3,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          body,
+          style: const TextStyle(
+            color: ClinicalPalette.text,
+            fontSize: 12.5,
+            height: 1.45,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _DepotInteractionCard extends StatelessWidget {
+  const _DepotInteractionCard({required this.adjustment});
+
+  final DrugInteractionAdjustment adjustment;
+
+  Color _color(DepotSeverity s) => switch (s) {
+        DepotSeverity.info => ClinicalPalette.toneMintInk,
+        DepotSeverity.warning => ClinicalPalette.warning,
+        DepotSeverity.danger => ClinicalPalette.danger,
+      };
+
+  @override
+  Widget build(BuildContext context) {
+    final c = _color(adjustment.severity);
+    return Container(
+      decoration: BoxDecoration(
+        color: c.withValues(alpha: 0.06),
+        border: Border(left: BorderSide(color: c, width: 3)),
+        borderRadius: const BorderRadius.only(
+          topRight: Radius.circular(8),
+          bottomRight: Radius.circular(8),
+        ),
+      ),
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            adjustment.situation,
+            style: TextStyle(
+              color: c,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              height: 1.35,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            adjustment.action,
+            style: const TextStyle(
+              color: ClinicalPalette.text,
+              fontSize: 12.5,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BulletCard extends StatelessWidget {
+  const _BulletCard({required this.items, required this.tone});
+
+  final List<String> items;
+  final Color tone;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: tone.withValues(alpha: 0.05),
+        border: Border.all(color: tone.withValues(alpha: 0.25)),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: items
+            .map(
+              (s) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      width: 4,
+                      height: 4,
+                      margin: const EdgeInsets.only(top: 7, right: 10),
+                      decoration: BoxDecoration(
+                        color: tone,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        s,
+                        style: const TextStyle(
+                          color: ClinicalPalette.text,
+                          fontSize: 12.5,
+                          height: 1.5,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+            .toList(),
+      ),
+    );
+  }
+}
+
+class _CitationsList extends StatelessWidget {
+  const _CitationsList({required this.citations});
+
+  final List<String> citations;
+
+  @override
+  Widget build(BuildContext context) {
+    if (citations.isEmpty) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        const _SectionHeader('CITATIONS'),
+        const SizedBox(height: 6),
+        ...citations.map(
+          (c) => Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            child: Text(
+              '• $c',
+              style: const TextStyle(
+                color: ClinicalPalette.muted,
+                fontSize: 11.5,
+                height: 1.4,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}

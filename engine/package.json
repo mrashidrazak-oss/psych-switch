@@ -1,4 +1,0 @@
-{
-  "_comment": "Marker file ONLY for Node ESM module-type resolution. The MCP server (mcp-server/) imports from this directory at runtime via tsx; without this sentinel Node treats the .ts files as CommonJS based on the project root and named exports break. React Native + Metro ignore this file (Metro bundles everything at the project level), so this is invisible to the mobile app.",
-  "type": "module"
-}

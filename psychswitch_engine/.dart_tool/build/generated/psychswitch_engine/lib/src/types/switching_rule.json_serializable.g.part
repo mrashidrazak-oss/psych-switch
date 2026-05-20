@@ -1,0 +1,60 @@
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+_$DoseRatiosImpl _$$DoseRatiosImplFromJson(Map<String, dynamic> json) =>
+    _$DoseRatiosImpl(
+      fromCurrentDoseMg: (json['fromCurrentDoseMg'] as num).toDouble(),
+      toTargetDoseMg: (json['toTargetDoseMg'] as num).toDouble(),
+      equivalencyNote: json['equivalencyNote'] as String,
+    );
+
+Map<String, dynamic> _$$DoseRatiosImplToJson(_$DoseRatiosImpl instance) =>
+    <String, dynamic>{
+      'fromCurrentDoseMg': instance.fromCurrentDoseMg,
+      'toTargetDoseMg': instance.toTargetDoseMg,
+      'equivalencyNote': instance.equivalencyNote,
+    };
+
+_$SwitchingRuleImpl _$$SwitchingRuleImplFromJson(
+  Map<String, dynamic> json,
+) => _$SwitchingRuleImpl(
+  id: json['id'] as String,
+  fromDrugId: json['fromDrugId'] as String,
+  toDrugId: json['toDrugId'] as String,
+  strategy: _strategyFromJson(json['strategy'] as String),
+  rationale: json['rationale'] as String,
+  durationDays: (json['durationDays'] as num).toInt(),
+  schedule:
+      (json['schedule'] as List<dynamic>)
+          .map((e) => ScheduleStep.fromJson(e as Map<String, dynamic>))
+          .toList(),
+  doseRatios: DoseRatios.fromJson(json['doseRatios'] as Map<String, dynamic>),
+  safetyFlags:
+      (json['safetyFlags'] as List<dynamic>).map((e) => e as String).toList(),
+  citations:
+      (json['citations'] as List<dynamic>).map((e) => e as String).toList(),
+  contraindications:
+      (json['contraindications'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+  lastReviewedISO: json['lastReviewedISO'] as String,
+  reviewedBy: json['reviewedBy'] as String,
+);
+
+Map<String, dynamic> _$$SwitchingRuleImplToJson(_$SwitchingRuleImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'fromDrugId': instance.fromDrugId,
+      'toDrugId': instance.toDrugId,
+      'strategy': _strategyToJson(instance.strategy),
+      'rationale': instance.rationale,
+      'durationDays': instance.durationDays,
+      'schedule': instance.schedule,
+      'doseRatios': instance.doseRatios,
+      'safetyFlags': instance.safetyFlags,
+      'citations': instance.citations,
+      'contraindications': instance.contraindications,
+      'lastReviewedISO': instance.lastReviewedISO,
+      'reviewedBy': instance.reviewedBy,
+    };

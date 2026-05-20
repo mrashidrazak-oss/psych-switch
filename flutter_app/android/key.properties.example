@@ -1,0 +1,15 @@
+# Copy this file to android/key.properties and fill in real values.
+# DO NOT commit android/key.properties or the .jks keystore.
+#
+# One-time keystore generation (keep the .jks + these secrets safe —
+# losing them means you can never update the app on Play):
+#
+#   keytool -genkey -v -keystore ~/psychswitch-upload.jks \
+#     -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+#
+# Then point storeFile at that .jks (absolute path is simplest).
+
+storePassword=CHANGE_ME
+keyPassword=CHANGE_ME
+keyAlias=upload
+storeFile=/absolute/path/to/psychswitch-upload.jks

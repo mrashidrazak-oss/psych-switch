@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "166044970078",
+    "project_id": "psychswi",
+    "storage_bucket": "psychswi.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:166044970078:android:d3c3d570489f8940c058cf",
+        "android_client_info": {
+          "package_name": "app.psychswitch.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBccgtaVFnOkqSgS70DnmxxR7cxr4mxGQI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

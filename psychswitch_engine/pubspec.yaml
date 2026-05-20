@@ -1,0 +1,20 @@
+name: psychswitch_engine
+description: "PsychSwitch engine — pure Dart clinical decision-support logic. Shared by the Flutter app and the MCP server."
+publish_to: 'none'
+version: 0.5.0-alpha.0+1
+
+environment:
+  sdk: ^3.7.0
+
+dependencies:
+  freezed_annotation: ^2.4.4
+  json_annotation: ^4.9.0
+
+dev_dependencies:
+  test: ^1.25.0
+  very_good_analysis: ^7.0.0
+
+  # ── Codegen ────────────────────────────────────────────────────────
+  build_runner: ^2.4.13
+  freezed: ^2.5.7
+  json_serializable: ^6.9.0

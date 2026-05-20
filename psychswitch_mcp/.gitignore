@@ -1,0 +1,6 @@
+# Compiled output (binary regenerable via `dart compile exe`).
+/build/
+
+# Dart tool caches
+.dart_tool/
+.packages

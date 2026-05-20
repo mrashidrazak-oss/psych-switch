@@ -1,0 +1,19 @@
+name: psychswitch_mcp
+description: "PsychSwitch MCP server — exposes the clinical engine as Model Context Protocol tools for AI assistants and EMR plugins."
+publish_to: 'none'
+version: 0.5.0-alpha.0+1
+
+environment:
+  sdk: ^3.7.0
+
+dependencies:
+  psychswitch_engine:
+    path: ../psychswitch_engine
+  path: ^1.9.0
+
+dev_dependencies:
+  test: ^1.25.0
+  very_good_analysis: ^7.0.0
+
+executables:
+  psychswitch_mcp: psychswitch_mcp

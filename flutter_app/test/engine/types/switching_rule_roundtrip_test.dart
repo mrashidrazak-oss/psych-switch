@@ -8,7 +8,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:psychswitch/src/engine/types/switching_rule.dart';
+import 'package:psychswitch_engine/types/switching_rule.dart';
 
 void main() {
   group('SwitchingRule round-trip', () {

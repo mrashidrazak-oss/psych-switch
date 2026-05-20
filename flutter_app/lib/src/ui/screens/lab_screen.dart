@@ -1,0 +1,346 @@
+// Lab interpreter screen — pick a test, enter the value, see the
+// tier + clinical action.
+
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
+
+import 'package:psychswitch/src/ui/haptics.dart';
+import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
+import 'package:psychswitch/src/ui/widgets/clinical_primitives.dart';
+import 'package:psychswitch_engine/lab_interpreter.dart';
+
+class LabScreen extends StatefulWidget {
+  const LabScreen({super.key});
+
+  @override
+  State<LabScreen> createState() => _LabScreenState();
+}
+
+class _LabScreenState extends State<LabScreen> {
+  LabTest _selected = kLabTests.first;
+  final _ctrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  LabInterpretation? _interpret() {
+    final v = double.tryParse(_ctrl.text.trim());
+    if (v == null || v < 0) return null;
+    return interpretLab(_selected, v);
+  }
+
+  void _pickTest(LabTest t) {
+    setState(() {
+      _selected = t;
+      _ctrl.clear();
+    });
+    unawaited(hapticsTap());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final result = _interpret();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Lab interpreter'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => context.pop(),
+        ),
+      ),
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(
+            ClinicalSpace.lg + 4,
+            ClinicalSpace.lg,
+            ClinicalSpace.lg + 4,
+            ClinicalSpace.xxl,
+          ),
+          children: <Widget>[
+            const _Hero(),
+            const SizedBox(height: ClinicalSpace.lg),
+            const Text('Test', style: ClinicalText.eyebrow),
+            const SizedBox(height: ClinicalSpace.sm),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: <Widget>[
+                for (final t in kLabTests)
+                  _TestChip(
+                    test: t,
+                    selected: _selected.id == t.id,
+                    onTap: () => _pickTest(t),
+                  ),
+              ],
+            ),
+            const SizedBox(height: ClinicalSpace.lg),
+            SquircleCard(
+              padding: const EdgeInsets.all(ClinicalSpace.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  const Text('VALUE', style: ClinicalText.eyebrow),
+                  const SizedBox(height: ClinicalSpace.sm),
+                  TextField(
+                    controller: _ctrl,
+                    keyboardType: const TextInputType
+                        .numberWithOptions(decimal: true),
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.allow(
+                          RegExp(r'^\d*\.?\d*')),
+                    ],
+                    decoration: InputDecoration(
+                      hintText: 'Enter result',
+                      suffixText: _selected.unit,
+                    ),
+                    onChanged: (_) => setState(() {}),
+                  ),
+                  const SizedBox(height: ClinicalSpace.sm + 2),
+                  Text(
+                    _selected.context,
+                    style: ClinicalText.caption.copyWith(height: 1.5),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: ClinicalSpace.lg),
+            if (result != null) _ResultCard(result: result),
+            const SizedBox(height: ClinicalSpace.md),
+            const _Disclaimer(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Hero extends StatelessWidget {
+  const _Hero();
+
+  @override
+  Widget build(BuildContext context) {
+    return SquircleCard(
+      tone: ClinicalPalette.toneSky,
+      padding: const EdgeInsets.all(ClinicalSpace.xl),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const TonePill(
+            label: 'Lab interpretation',
+            tone: Color(0xFFFFFFFF),
+          ),
+          const SizedBox(height: ClinicalSpace.md),
+          Text(
+            'Numbers in · action out',
+            style: ClinicalText.heading.copyWith(
+              color: ClinicalPalette.toneSkyInk,
+            ),
+          ),
+          const SizedBox(height: ClinicalSpace.sm),
+          Text(
+            'Common labs psychiatrists read every week — TSH · prolactin '
+            '· ANC · sodium · creatinine · HbA1c · LDL · CK · ALT — '
+            'with the action line ready to paste.',
+            style: ClinicalText.body.copyWith(
+              color: ClinicalPalette.toneSkyInk.withValues(alpha: 0.85),
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TestChip extends StatelessWidget {
+  const _TestChip({
+    required this.test,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final LabTest test;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: selected
+          ? ClinicalPalette.cta
+          : ClinicalPalette.surfaceMuted,
+      borderRadius: BorderRadius.circular(ClinicalRadii.pill),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(ClinicalRadii.pill),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: ClinicalSpace.md + 2,
+            vertical: ClinicalSpace.sm,
+          ),
+          child: Text(
+            test.name,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+              color: selected
+                  ? ClinicalPalette.ctaText
+                  : ClinicalPalette.text,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ResultCard extends StatelessWidget {
+  const _ResultCard({required this.result});
+  final LabInterpretation result;
+
+  ({Color tone, Color ink}) _palette() {
+    switch (result.tier) {
+      case LabTier.criticalLow:
+      case LabTier.criticalHigh:
+        return (
+          tone: ClinicalPalette.toneRose,
+          ink: ClinicalPalette.toneRoseInk
+        );
+      case LabTier.low:
+      case LabTier.high:
+        return (
+          tone: ClinicalPalette.toneSand,
+          ink: ClinicalPalette.toneSandInk
+        );
+      case LabTier.normal:
+        return (
+          tone: ClinicalPalette.toneMint,
+          ink: ClinicalPalette.toneMintInk
+        );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = _palette();
+    return SquircleCard(
+      tone: p.tone,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              Text(
+                result.value % 1 == 0
+                    ? result.value.toStringAsFixed(0)
+                    : result.value.toStringAsFixed(2),
+                style: TextStyle(
+                  fontSize: 38,
+                  fontWeight: FontWeight.w800,
+                  color: p.ink,
+                  height: 1,
+                  letterSpacing: -1,
+                  fontFeatures: const <FontFeature>[
+                    FontFeature.tabularFigures(),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 6),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Text(
+                  result.test.unit,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: p.ink.withValues(alpha: 0.7),
+                  ),
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: ClinicalSpace.md,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.7),
+                  borderRadius: BorderRadius.circular(ClinicalRadii.pill),
+                ),
+                child: Text(
+                  labTierLabel(result.tier),
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                    color: p.ink,
+                    letterSpacing: 0.2,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: ClinicalSpace.md),
+          Text(
+            result.action,
+            style: TextStyle(
+              fontSize: 14,
+              height: 1.55,
+              fontWeight: FontWeight.w600,
+              color: p.ink,
+            ),
+          ),
+          const SizedBox(height: ClinicalSpace.md),
+          PillButton(
+            label: 'Copy summary',
+            icon: Icons.copy_rounded,
+            expanded: true,
+            onPressed: () async {
+              await Clipboard.setData(
+                ClipboardData(text: result.clipboardSummary()),
+              );
+              unawaited(hapticsConfirm());
+              if (!context.mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Summary copied')),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Disclaimer extends StatelessWidget {
+  const _Disclaimer();
+
+  @override
+  Widget build(BuildContext context) {
+    return SquircleCard(
+      padding: const EdgeInsets.all(ClinicalSpace.md + 2),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Icon(Icons.shield_outlined,
+              size: 16, color: ClinicalPalette.mutedStrong),
+          const SizedBox(width: ClinicalSpace.sm + 2),
+          Expanded(
+            child: Text(
+              'Reference ranges are adult general targets. Always '
+              "correlate with the lab's own reference range, patient "
+              'context, and trend over time.',
+              style: ClinicalText.caption.copyWith(height: 1.55),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

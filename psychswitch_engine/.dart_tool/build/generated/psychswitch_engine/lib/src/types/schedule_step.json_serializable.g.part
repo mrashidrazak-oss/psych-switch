@@ -1,0 +1,24 @@
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+_$ScheduleStepImpl _$$ScheduleStepImplFromJson(Map<String, dynamic> json) =>
+    _$ScheduleStepImpl(
+      day: (json['day'] as num).toInt(),
+      fromDoseMg: (json['fromDoseMg'] as num).toDouble(),
+      toDoseMg: (json['toDoseMg'] as num).toDouble(),
+      notes: json['notes'] as String?,
+      citations:
+          (json['citations'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList(),
+    );
+
+Map<String, dynamic> _$$ScheduleStepImplToJson(_$ScheduleStepImpl instance) =>
+    <String, dynamic>{
+      'day': instance.day,
+      'fromDoseMg': instance.fromDoseMg,
+      'toDoseMg': instance.toDoseMg,
+      'notes': instance.notes,
+      'citations': instance.citations,
+    };
