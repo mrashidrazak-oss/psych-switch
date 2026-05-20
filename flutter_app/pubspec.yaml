@@ -45,6 +45,15 @@ dependencies:
   # ── HTTP (reserved; no current network calls) ──────────────────────
   dio: ^5.7.0
 
+  # ── Auth (optional Google sign-in) ─────────────────────────────────
+  # The app stays fully offline and account-free by default; sign-in
+  # is an opt-in affordance in Settings. Firebase Auth brokers the
+  # Google credential. Inert until a Firebase project is wired in —
+  # see store/FIREBASE_SETUP.md and lib/firebase_options.dart.
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.0
+  google_sign_in: ^6.2.1
+
   # ── PDF / share / print ────────────────────────────────────────────
   printing: ^5.13.4
   pdf: ^3.11.1

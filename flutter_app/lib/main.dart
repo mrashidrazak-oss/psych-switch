@@ -11,14 +11,18 @@
 // Cold-start work is kept light: rootBundle decoding happens later
 // inside `engineProvider`, off the main isolate via compute().
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:psychswitch/firebase_options.dart';
+import 'package:psychswitch/src/auth_config.dart';
 import 'package:psychswitch/src/observability/sentry_init.dart';
 import 'package:psychswitch/src/providers/disclaimer_provider.dart';
 import 'package:psychswitch/src/providers/onboarding_provider.dart';
 import 'package:psychswitch/src/router.dart';
+import 'package:psychswitch/src/services/auth_service.dart';
 import 'package:psychswitch/src/ui/screens/disclaimer_screen.dart';
 import 'package:psychswitch/src/ui/screens/onboarding_screen.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
@@ -37,6 +41,22 @@ void main() async {
       systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
+
+  // Optional Google sign-in. The app stays offline-first and account-
+  // free; this only readies Firebase so the opt-in Settings affordance
+  // can work. Skipped entirely on an unconfigured build, and any init
+  // failure is swallowed so the offline app is never blocked from
+  // booting.
+  if (AuthConfig.firebaseConfigured) {
+    try {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      firebaseInitialised = true;
+    } on Object catch (e) {
+      debugPrint('Firebase init skipped: $e');
+    }
+  }
 
   await initSentry(() async {
     runApp(

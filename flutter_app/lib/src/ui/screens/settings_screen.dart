@@ -11,9 +11,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:psychswitch/src/providers/auth_provider.dart';
 import 'package:psychswitch/src/providers/onboarding_provider.dart';
 import 'package:psychswitch/src/providers/preferences_provider.dart';
 import 'package:psychswitch/src/providers/saved_cases_provider.dart';
+import 'package:psychswitch/src/services/auth_service.dart';
 import 'package:psychswitch/src/services/notification_service.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
@@ -72,6 +74,10 @@ class SettingsScreen extends ConsumerWidget {
           children: <Widget>[
             const _SectionHeader(text: 'PROFILE'),
             const _ClinicianNameField(),
+
+            const Gap.v(ClinicalSpace.xl),
+            const _SectionHeader(text: 'ACCOUNT'),
+            const _AccountSection(),
 
             const Gap.v(ClinicalSpace.xl),
             const _SectionHeader(text: 'DISPLAY'),
@@ -548,5 +554,249 @@ class _ClinicianNameFieldState extends ConsumerState<_ClinicianNameField> {
         ],
       ),
     );
+  }
+}
+
+/// Optional Google sign-in surface.
+///
+/// The app is offline-first and account-free; signing in is a strictly
+/// opt-in convenience and never required. Renders one of three states:
+/// unavailable (no Firebase project wired in — see
+/// store/FIREBASE_SETUP.md), signed out, or signed in.
+class _AccountSection extends ConsumerStatefulWidget {
+  const _AccountSection();
+
+  @override
+  ConsumerState<_AccountSection> createState() => _AccountSectionState();
+}
+
+class _AccountSectionState extends ConsumerState<_AccountSection> {
+  bool _busy = false;
+
+  Future<void> _signIn() async {
+    unawaited(hapticsTap());
+    setState(() => _busy = true);
+    try {
+      final user = await ref.read(authServiceProvider).signInWithGoogle();
+      if (!mounted) return;
+      unawaited(hapticsConfirm());
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Signed in as ${user.label}.')),
+      );
+    } on AuthException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message)),
+      );
+    } on Object catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Sign-in failed. Please try again.'),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _signOut() async {
+    unawaited(hapticsTap());
+    setState(() => _busy = true);
+    try {
+      await ref.read(authServiceProvider).signOut();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Signed out.')),
+      );
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Unconfigured build — show an honest "coming soon" tile rather
+    // than a dead button.
+    if (!ref.watch(authAvailableProvider)) {
+      return const _AccountCard(
+        icon: Icons.lock_outline,
+        title: 'Sign in with Google',
+        description:
+            'Optional account sign-in. Becomes available in an '
+            'upcoming update once the cloud project is connected — '
+            'the app stays fully usable offline either way.',
+      );
+    }
+
+    final user = ref.watch(authStateProvider).asData?.value;
+
+    if (user == null) {
+      return _AccountCard(
+        icon: Icons.account_circle_outlined,
+        title: 'Sign in with Google',
+        description:
+            'Optional. Signing in stores only your Google name, '
+            'email and photo, to label this device. Patient data '
+            'never leaves the device — signed in or not. You can '
+            'sign out anytime.',
+        action: OutlinedButton.icon(
+          onPressed: _busy ? null : _signIn,
+          style: _accountButtonStyle(),
+          icon: _busy
+              ? const SizedBox.square(
+                  dimension: 14,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(Icons.login, size: 18),
+          label: Text(
+            _busy ? 'Signing in…' : 'Continue with Google',
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.1,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return _AccountCard(
+      photoUrl: user.photoUrl,
+      initials: clinicianInitials(user.label),
+      title: user.label,
+      description: user.email ?? 'Signed in with Google',
+      action: OutlinedButton(
+        onPressed: _busy ? null : _signOut,
+        style: _accountButtonStyle(),
+        child: Text(
+          _busy ? 'Signing out…' : 'Sign out',
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.1,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Shared outlined-button style for the account card — matches the
+/// accent-tinted affordance used by [_ActionTile].
+ButtonStyle _accountButtonStyle() => OutlinedButton.styleFrom(
+      foregroundColor: ClinicalPalette.accent,
+      side: BorderSide(
+        color: ClinicalPalette.accent.withValues(alpha: 0.5),
+      ),
+      padding: const EdgeInsets.symmetric(
+        horizontal: ClinicalSpace.lg - 2,
+        vertical: ClinicalSpace.xs + 2,
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(ClinicalRadii.chip),
+      ),
+    );
+
+/// Presentational card for the account section. Shows either a leading
+/// [icon] or a [photoUrl]/[initials] avatar, a [title], a [description]
+/// and an optional [action] button.
+class _AccountCard extends StatelessWidget {
+  const _AccountCard({
+    required this.title,
+    required this.description,
+    this.icon,
+    this.photoUrl,
+    this.initials,
+    this.action,
+  });
+
+  final String title;
+  final String description;
+  final IconData? icon;
+  final String? photoUrl;
+  final String? initials;
+  final Widget? action;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: ClinicalPalette.surface,
+        border: Border.all(
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
+          width: 0.5,
+        ),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
+      ),
+      padding: const EdgeInsets.fromLTRB(
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.md + 2,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              _leading(),
+              const Gap.h(ClinicalSpace.sm + 2),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    color: ClinicalPalette.text,
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.1,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const Gap.v(ClinicalSpace.xs + 1),
+          Text(
+            description,
+            style: ClinicalText.caption.copyWith(height: 1.55),
+          ),
+          if (action != null) ...<Widget>[
+            const Gap.v(ClinicalSpace.md),
+            Align(alignment: Alignment.centerLeft, child: action),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _leading() {
+    final url = photoUrl;
+    if (url != null && url.isNotEmpty) {
+      return CircleAvatar(
+        radius: 14,
+        backgroundColor: ClinicalPalette.accent.withValues(alpha: 0.12),
+        backgroundImage: NetworkImage(url),
+      );
+    }
+    if (initials != null) {
+      return Container(
+        width: 28,
+        height: 28,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: ClinicalPalette.accent.withValues(alpha: 0.12),
+          shape: BoxShape.circle,
+        ),
+        child: Text(
+          initials!,
+          style: const TextStyle(
+            color: ClinicalPalette.accent,
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      );
+    }
+    return Icon(icon, size: 18, color: ClinicalPalette.accent);
   }
 }

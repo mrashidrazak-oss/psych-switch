@@ -1,6 +1,7 @@
-// Settings screen — verifies the citations toggle is present + flips
-// state, and the danger tile renders. The actual delete-all flow
-// touches the database; we cover that in saved_cases_provider_test.
+// Settings screen — verifies the account section + citations toggle
+// render, the citations switch flips state, and the danger tile shows.
+// The actual delete-all flow touches the database; we cover that in
+// saved_cases_provider_test.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,22 +33,31 @@ void main() {
     SharedPreferences.setMockInitialValues(<String, Object>{});
   });
 
-  testWidgets('Settings — citations toggle + delete-all surfaces render',
-      (tester) async {
+  // The settings list is taller than the default 800×600 test
+  // viewport. Render it into a tall surface so every section is built
+  // and assertions don't depend on lazy-ListView scroll position.
+  Future<void> pumpSettings(WidgetTester tester) async {
+    tester.view.physicalSize = const Size(800, 2600);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
     await tester.pumpWidget(_harness());
     await tester.pumpAndSettle();
+  }
+
+  testWidgets('Settings — account + citations + delete-all surfaces render',
+      (tester) async {
+    await pumpSettings(tester);
 
     expect(find.text('Settings'), findsOneWidget);
     expect(find.text('DISPLAY'), findsOneWidget);
     expect(find.text('Show citation chips'), findsOneWidget);
-    // DATA section now sits below the new WELCOME (replay-tour)
-    // section which pushes it past the 800×600 test viewport — scroll
-    // to bring it on screen.
-    await tester.dragUntilVisible(
-      find.text('DATA'),
-      find.byType(ListView),
-      const Offset(0, -200),
-    );
+
+    // New optional-sign-in section. On a test build no Firebase
+    // project is wired in, so it shows the "coming soon" tile.
+    expect(find.text('ACCOUNT'), findsOneWidget);
+    expect(find.text('Sign in with Google'), findsOneWidget);
+
     expect(find.text('DATA'), findsOneWidget);
     // The danger label appears twice — header + button.
     expect(find.text('Delete all saved cases'), findsAtLeastNWidgets(1));
@@ -55,10 +65,9 @@ void main() {
 
   testWidgets('Settings — toggling the switch persists the new value',
       (tester) async {
-    await tester.pumpWidget(_harness());
-    await tester.pumpAndSettle();
+    await pumpSettings(tester);
 
-    // Two switches now: citations (default true) + reminders (default false).
+    // Two switches: citations (default true) + reminders (default false).
     final switches = find.byType(Switch);
     expect(switches, findsNWidgets(2));
 
