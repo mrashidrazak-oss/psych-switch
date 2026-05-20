@@ -1,8 +1,12 @@
-// Auth tests — verify the optional-sign-in layer behaves safely on an
-// unconfigured build (the shipped placeholder Firebase config). The
-// invariant under test: with no real project wired in, nothing touches
-// Firebase, no network call is made, and every entry point degrades to
-// a safe no-op or a friendly AuthException.
+// Auth tests — the optional-sign-in layer.
+//
+// Two things under test:
+//  1. AuthConfig correctly reports the (now wired-in) Firebase project.
+//  2. AuthService stays safe when Firebase has not been initialised in
+//     the running process — exactly the case in a unit-test process,
+//     since main() (and its Firebase.initializeApp) never runs. So
+//     isAvailable is false and every entry point degrades to a safe
+//     no-op or a friendly AuthException, never touching Firebase.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -41,18 +45,21 @@ void main() {
     });
   });
 
-  group('AuthConfig (shipped placeholder)', () {
-    test('firebaseConfigured is false until a real project is wired in',
-        () {
-      expect(AuthConfig.firebaseConfigured, isFalse);
+  group('AuthConfig (project wired in)', () {
+    test('firebaseConfigured is true once real options are present', () {
+      expect(AuthConfig.firebaseConfigured, isTrue);
     });
 
-    test('serverClientId is null while the placeholder stands', () {
-      expect(AuthConfig.serverClientId, isNull);
+    test('serverClientId returns the configured web client id', () {
+      expect(AuthConfig.serverClientId, isNotNull);
+      expect(
+        AuthConfig.serverClientId,
+        endsWith('.apps.googleusercontent.com'),
+      );
     });
   });
 
-  group('AuthService on an unconfigured build', () {
+  group('AuthService when Firebase is not initialised in-process', () {
     final auth = AuthService.instance;
 
     test('isAvailable is false', () {
@@ -90,7 +97,7 @@ void main() {
       );
     });
 
-    test('authAvailableProvider is false on an unconfigured build', () {
+    test('authAvailableProvider is false when Firebase is not inited', () {
       final container = ProviderContainer();
       addTearDown(container.dispose);
       expect(container.read(authAvailableProvider), isFalse);

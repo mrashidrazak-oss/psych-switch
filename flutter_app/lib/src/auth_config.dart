@@ -25,10 +25,12 @@ abstract final class AuthConfig {
   /// on Android needs this as its `serverClientId` so the returned ID
   /// token is one Firebase will accept.
   ///
-  /// May be left as the sentinel when `flutterfire configure` was used
-  /// AND the Google-services Gradle plugin is applied — google_sign_in
-  /// then reads the id from google-services.json automatically.
-  static const googleServerClientId = '__REPLACE_ME__WEB_CLIENT_ID';
+  /// Real value for project `psychswi` — the auto-created Web OAuth
+  /// client. Modern Firebase projects no longer carry this in
+  /// google-services.json, so it is set explicitly here.
+  static const googleServerClientId =
+      '166044970078-df0tu631rn0slt50mbh5n0mdu39tmm4u'
+      '.apps.googleusercontent.com';
 
   /// The [googleServerClientId] when set, else null (so google_sign_in
   /// falls back to its resource-file lookup).

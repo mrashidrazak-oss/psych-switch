@@ -1,18 +1,13 @@
 // Firebase configuration for PsychSwitch.
 //
-// PLACEHOLDER — the values below are NOT a real Firebase project.
-// Optional Google sign-in stays completely inert until a real project
-// is wired in. Two ways to do that (see store/FIREBASE_SETUP.md):
-//
-//   1. Run `flutterfire configure` — it overwrites this whole file
-//      with real values. The custom auth knobs the app keys off live
-//      in lib/src/auth_config.dart, so they survive that overwrite.
-//   2. Hand-fill the constants below with the values from the Firebase
-//      console (Project settings → Your apps).
+// The Android block below holds REAL values for the `psychswi` Firebase
+// project (written by `flutterfire configure`). iOS is still a
+// placeholder — fill it by re-running `flutterfire configure` with the
+// iOS platform when/if the app ships on iOS (see store/FIREBASE_SETUP.md).
 //
 // `AuthConfig.firebaseConfigured` (auth_config.dart) detects the
-// `__REPLACE_ME__` sentinel and gates every auth surface off it, so an
-// unconfigured build never shows a dead "Continue with Google" button.
+// `__REPLACE_ME__` sentinel; with Android now real, optional Google
+// sign-in is live on Android.
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart'
@@ -37,15 +32,16 @@ class DefaultFirebaseOptions {
     }
   }
 
-  /// Android project configuration (placeholder).
+  /// Android project configuration — real values for project `psychswi`.
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: '__REPLACE_ME__ANDROID_API_KEY',
-    appId: '__REPLACE_ME__ANDROID_APP_ID',
-    messagingSenderId: '__REPLACE_ME__SENDER_ID',
-    projectId: '__REPLACE_ME__PROJECT_ID',
+    apiKey: 'AIzaSyBccgtaVFnOkqSgS70DnmxxR7cxr4mxGQI',
+    appId: '1:166044970078:android:d3c3d570489f8940c058cf',
+    messagingSenderId: '166044970078',
+    projectId: 'psychswi',
+    storageBucket: 'psychswi.firebasestorage.app',
   );
 
-  /// iOS project configuration (placeholder).
+  /// iOS project configuration (placeholder — not yet configured).
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: '__REPLACE_ME__IOS_API_KEY',
     appId: '__REPLACE_ME__IOS_APP_ID',
