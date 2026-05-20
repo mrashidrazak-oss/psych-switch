@@ -123,7 +123,11 @@ class _Results extends StatelessWidget {
     if (query.isEmpty) return const _EmptyHint();
 
     final drugs = _searchDrugs(engine, query);
-    final terms = _searchGlossary(query);
+    // Glossary is dark-shipped during the staged launch — suppress its
+    // results so search never routes into a hidden screen.
+    final terms = LaunchGate.isVisible(Routes.glossary)
+        ? _searchGlossary(query)
+        : <GlossaryEntry>[];
     final tools = _searchTools(query);
 
     if (drugs.isEmpty && terms.isEmpty && tools.isEmpty) {

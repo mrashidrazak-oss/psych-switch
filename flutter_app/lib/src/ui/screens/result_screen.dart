@@ -16,6 +16,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:psychswitch/src/launch_gate.dart';
 import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/providers/patient_context_provider.dart';
 import 'package:psychswitch/src/providers/preferences_provider.dart';
@@ -1656,6 +1657,10 @@ class _ToneVerdict extends StatelessWidget {
 /// Clozapine redirect — same tone-tinted shape as `_ToneVerdict` but
 /// adds the "Open Clozapine module" CTA. Kept distinct so the button
 /// styling stays first-class.
+///
+/// During the staged launch the standalone Clozapine module is
+/// dark-shipped, so the CTA is suppressed and the card degrades to a
+/// guidance-only verdict — never a dead-end jump into a hidden screen.
 class _ClozapineVerdict extends StatelessWidget {
   const _ClozapineVerdict({required this.guidance});
 
@@ -1664,6 +1669,10 @@ class _ClozapineVerdict extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const tone = ClinicalPalette.warning;
+    // Staged launch: the standalone Clozapine module is dark-shipped,
+    // so suppress the in-app jump into it. The guidance text below
+    // still carries the clinical direction.
+    final showModule = LaunchGate.isVisible(Routes.clozapine);
     return Container(
       decoration: BoxDecoration(
         color: tone.withValues(alpha: 0.06),
@@ -1683,9 +1692,9 @@ class _ClozapineVerdict extends StatelessWidget {
             style: ClinicalText.eyebrow.copyWith(color: tone),
           ),
           const Gap.v(ClinicalSpace.xs + 2),
-          const Text(
-            'Use Clozapine module',
-            style: TextStyle(
+          Text(
+            showModule ? 'Use Clozapine module' : 'Clozapine initiation',
+            style: const TextStyle(
               color: ClinicalPalette.text,
               fontSize: 17,
               fontWeight: FontWeight.w700,
@@ -1702,23 +1711,25 @@ class _ClozapineVerdict extends StatelessWidget {
               height: 1.5,
             ),
           ),
-          const Gap.v(ClinicalSpace.md + 2),
-          FilledButton.icon(
-            onPressed: () => context.pushNamed(Routes.clozapine),
-            icon: const Icon(Icons.medical_services_outlined, size: 16),
-            label: const Text('Open Clozapine module'),
-            style: FilledButton.styleFrom(
-              backgroundColor: tone,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(
-                horizontal: ClinicalSpace.md + 2,
-                vertical: ClinicalSpace.sm + 2,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(ClinicalRadii.chip),
+          if (showModule) ...<Widget>[
+            const Gap.v(ClinicalSpace.md + 2),
+            FilledButton.icon(
+              onPressed: () => context.pushNamed(Routes.clozapine),
+              icon: const Icon(Icons.medical_services_outlined, size: 16),
+              label: const Text('Open Clozapine module'),
+              style: FilledButton.styleFrom(
+                backgroundColor: tone,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: ClinicalSpace.md + 2,
+                  vertical: ClinicalSpace.sm + 2,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(ClinicalRadii.chip),
+                ),
               ),
             ),
-          ),
+          ],
         ],
       ),
     );

@@ -183,12 +183,16 @@ class _Greeting extends StatelessWidget {
             ],
           ),
         ),
-        _IconBubble(
-          icon: Icons.notifications_none_rounded,
-          onTap: () => context.pushNamed(Routes.errata),
-          showDot: true,
-        ),
-        const SizedBox(width: ClinicalSpace.sm),
+        // Errata is dark-shipped during the staged launch — hide the
+        // notifications bell that opens it.
+        if (!LaunchGate.staged) ...<Widget>[
+          _IconBubble(
+            icon: Icons.notifications_none_rounded,
+            onTap: () => context.pushNamed(Routes.errata),
+            showDot: true,
+          ),
+          const SizedBox(width: ClinicalSpace.sm),
+        ],
         _IconBubble(
           icon: Icons.settings_outlined,
           onTap: () => context.pushNamed(Routes.settings),

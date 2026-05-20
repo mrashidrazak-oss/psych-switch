@@ -110,8 +110,12 @@ void main() {
           ),
         ),
       );
-      await _waitForReady(tester, find.text('Use Clozapine module'));
+      // Staged launch: the card degrades to guidance-only — the title
+      // is 'Clozapine initiation' and the module CTA is suppressed so a
+      // beta tester cannot jump into the dark-shipped Clozapine module.
+      await _waitForReady(tester, find.text('Clozapine initiation'));
       expect(find.text('CLOZAPINE INITIATION'), findsOneWidget);
+      expect(find.text('Open Clozapine module'), findsNothing);
 
       // ── 4. no_rule — unregistered drug id ─────────────────────────
       await tester.pumpWidget(
