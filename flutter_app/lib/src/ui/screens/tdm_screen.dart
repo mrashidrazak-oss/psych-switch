@@ -13,6 +13,7 @@ import 'package:go_router/go_router.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/widgets/clinical_primitives.dart';
+import 'package:psychswitch/src/ui/widgets/tool_hero.dart';
 import 'package:psychswitch_engine/tdm.dart';
 
 class TdmScreen extends StatefulWidget {
@@ -66,7 +67,28 @@ class _TdmScreenState extends State<TdmScreen> {
             ClinicalSpace.xxl,
           ),
           children: <Widget>[
-            const _Hero(),
+            ToolHero(
+              icon: Icons.biotech_outlined,
+              title: 'TDM interpreter',
+              tagline: 'Serum level → clear action',
+              tone: ClinicalPalette.toneMintInk,
+              stats: <ToolHeroStat>[
+                ToolHeroStat(
+                  label: 'ASSAYS',
+                  value: '${kTdmDrugs.length}',
+                  unit: 'drugs',
+                ),
+                const ToolHeroStat(
+                  label: 'BANDS',
+                  value: '4',
+                  unit: 'tiers',
+                ),
+              ],
+              rationale: 'Lithium, clozapine, valproate and lamotrigine. '
+                  'Enter a serum level and the interpreter returns the '
+                  'tier — subtherapeutic, therapeutic, supratherapeutic '
+                  'or toxic — with the standard action and timing note.',
+            ),
             const SizedBox(height: ClinicalSpace.lg),
             const Text('Drug', style: ClinicalText.eyebrow),
             const SizedBox(height: ClinicalSpace.sm),
@@ -123,45 +145,6 @@ class _TdmScreenState extends State<TdmScreen> {
             const _Disclaimer(),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _Hero extends StatelessWidget {
-  const _Hero();
-
-  @override
-  Widget build(BuildContext context) {
-    return SquircleCard(
-      tone: ClinicalPalette.toneMint,
-      padding: const EdgeInsets.all(ClinicalSpace.xl),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const TonePill(
-            label: 'Therapeutic monitoring',
-            tone: Color(0xFFFFFFFF),
-            ink: ClinicalPalette.toneMintInk,
-          ),
-          const SizedBox(height: ClinicalSpace.md),
-          Text(
-            'Map a serum level to a clear action',
-            style: ClinicalText.heading.copyWith(
-              color: ClinicalPalette.toneMintInk,
-            ),
-          ),
-          const SizedBox(height: ClinicalSpace.sm),
-          Text(
-            'Lithium · clozapine · valproate · lamotrigine. Returns the '
-            'tier (subtherapeutic / therapeutic / supratherapeutic / '
-            'toxic) plus the standard action and timing reminder.',
-            style: ClinicalText.body.copyWith(
-              color: ClinicalPalette.toneMintInk.withValues(alpha: 0.85),
-              height: 1.5,
-            ),
-          ),
-        ],
       ),
     );
   }

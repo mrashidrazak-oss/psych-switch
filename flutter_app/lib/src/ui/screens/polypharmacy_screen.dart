@@ -23,6 +23,7 @@ import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
+import 'package:psychswitch/src/ui/widgets/tool_hero.dart';
 import 'package:psychswitch_engine/anticholinergic.dart';
 import 'package:psychswitch_engine/ddi.dart';
 import 'package:psychswitch_engine/qtc_stacker.dart';
@@ -144,7 +145,33 @@ class _Body extends StatelessWidget {
         ClinicalSpace.xl,
       ),
       children: <Widget>[
-        _Hero(selectedCount: selected.length),
+        ToolHero(
+          icon: Icons.account_tree_outlined,
+          title: 'Regimen check',
+          tagline: 'QTc · anticholinergic · sedation · DDI',
+          tone: ClinicalPalette.accent,
+          stats: <ToolHeroStat>[
+            ToolHeroStat(
+              label: 'CATALOGUE',
+              value: '${visibleDrugs.length}',
+              unit: 'drugs',
+            ),
+            ToolHeroStat(
+              label: 'SELECTED',
+              value: '${selected.length}',
+              unit: selected.length == 1 ? 'drug' : 'drugs',
+            ),
+          ],
+          rationale: selected.isEmpty
+              ? "Pick everything the patient's on — psychotropics, "
+                  'anti-EPS, antihistamines, the lot. The engine '
+                  'returns a composite-risk report and flags drugs '
+                  'worth deprescribing.'
+              : '${selected.length} '
+                  'drug${selected.length == 1 ? '' : 's'} in the '
+                  'regimen. Scroll for the composite report or pick '
+                  'more below.',
+        ),
         const Gap.v(ClinicalSpace.lg),
         if (selected.isNotEmpty) ...<Widget>[
           _ScoreGrid(
@@ -179,113 +206,6 @@ class _Body extends StatelessWidget {
         const Gap.v(ClinicalSpace.lg),
         const _FooterNote(),
       ],
-    );
-  }
-}
-
-// ── Hero ──────────────────────────────────────────────────────────────
-
-class _Hero extends StatelessWidget {
-  const _Hero({required this.selectedCount});
-  final int selectedCount;
-
-  @override
-  Widget build(BuildContext context) {
-    const tone = ClinicalPalette.accent;
-    return Container(
-      decoration: BoxDecoration(
-        color: ClinicalPalette.surface,
-        border: Border.all(
-          color: ClinicalPalette.border.withValues(alpha: 0.7),
-          width: 0.5,
-        ),
-        borderRadius: BorderRadius.circular(ClinicalRadii.card),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Container(
-            color: tone.withValues(alpha: 0.08),
-            padding: const EdgeInsets.fromLTRB(
-              ClinicalSpace.lg,
-              ClinicalSpace.md + 2,
-              ClinicalSpace.md,
-              ClinicalSpace.md + 2,
-            ),
-            child: Row(
-              children: <Widget>[
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: tone.withValues(alpha: 0.12),
-                    border: Border.all(
-                      color: tone.withValues(alpha: 0.36),
-                      width: 0.5,
-                    ),
-                    borderRadius: BorderRadius.circular(ClinicalRadii.chip),
-                  ),
-                  child: const Icon(
-                    Icons.medication_outlined,
-                    size: 19,
-                    color: tone,
-                  ),
-                ),
-                const Gap.h(ClinicalSpace.md),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        'Regimen check',
-                        style: TextStyle(
-                          color: ClinicalPalette.text,
-                          fontSize: 19,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: -0.4,
-                          height: 1.15,
-                        ),
-                      ),
-                      Gap.v(ClinicalSpace.xs - 1),
-                      Text(
-                        'QTc · anticholinergic · sedation · DDI',
-                        style: TextStyle(
-                          color: ClinicalPalette.muted,
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 0.1,
-                          height: 1.3,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            color: ClinicalPalette.bg.withValues(alpha: 0.4),
-            padding: const EdgeInsets.fromLTRB(
-              ClinicalSpace.lg,
-              ClinicalSpace.sm + 2,
-              ClinicalSpace.lg,
-              ClinicalSpace.sm + 2,
-            ),
-            child: Text(
-              selectedCount == 0
-                  ? "Pick everything the patient's on — psychotropics, "
-                      'anti-EPS, antihistamines, the lot. The engine '
-                      'returns a composite-risk report and flags drugs '
-                      'worth deprescribing.'
-                  : '$selectedCount drug${selectedCount == 1 ? '' : 's'} '
-                      'in the regimen. Scroll for the composite report '
-                      'or pick more below.',
-              style: ClinicalText.caption.copyWith(height: 1.55),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

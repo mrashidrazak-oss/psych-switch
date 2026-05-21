@@ -19,6 +19,7 @@ import 'package:go_router/go_router.dart';
 import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/widgets/clinical_primitives.dart';
+import 'package:psychswitch/src/ui/widgets/tool_hero.dart';
 import 'package:psychswitch_engine/scales.dart';
 
 class ScalesScreen extends StatelessWidget {
@@ -43,7 +44,22 @@ class ScalesScreen extends StatelessWidget {
             ClinicalSpace.xl,
           ),
           children: <Widget>[
-            const _Hero(),
+            ToolHero(
+              icon: Icons.assignment_turned_in_outlined,
+              title: 'Rating scales',
+              tagline: 'Score, band, document',
+              tone: ClinicalPalette.toneSkyInk,
+              stats: <ToolHeroStat>[
+                ToolHeroStat(
+                  label: 'SCALES',
+                  value: '${kClinicalScales.length}',
+                  unit: 'ready',
+                ),
+              ],
+              rationale: 'Tap a scale to run it. Items carry anchor '
+                  'descriptors, the total updates live, and it lands on '
+                  'a severity band you can paste straight into notes.',
+            ),
             const SizedBox(height: ClinicalSpace.lg),
             for (var i = 0; i < kClinicalScales.length; i++) ...<Widget>[
               if (i > 0) const SizedBox(height: ClinicalSpace.md),
@@ -53,46 +69,6 @@ class ScalesScreen extends StatelessWidget {
             const _FooterNote(),
           ],
         ),
-      ),
-    );
-  }
-}
-
-// ── Hero ────────────────────────────────────────────────────────────
-
-class _Hero extends StatelessWidget {
-  const _Hero();
-
-  @override
-  Widget build(BuildContext context) {
-    return SquircleCard(
-      tone: ClinicalPalette.toneSky,
-      padding: const EdgeInsets.all(ClinicalSpace.xl),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const TonePill(
-            label: 'Symptom scoring',
-            tone: Color(0xFFFFFFFF),
-          ),
-          const SizedBox(height: ClinicalSpace.md),
-          Text(
-            'Score in seconds, document in plain numbers',
-            style: ClinicalText.heading.copyWith(
-              color: ClinicalPalette.toneSkyInk,
-            ),
-          ),
-          const SizedBox(height: ClinicalSpace.sm),
-          Text(
-            'Tap a scale to run it. Items have anchor descriptors; the '
-            'total updates live and lands on a severity band you can '
-            'paste straight into your notes.',
-            style: ClinicalText.body.copyWith(
-              color: ClinicalPalette.toneSkyInk.withValues(alpha: 0.85),
-              height: 1.5,
-            ),
-          ),
-        ],
       ),
     );
   }
