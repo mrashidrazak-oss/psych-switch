@@ -70,7 +70,7 @@ class _TdmScreenState extends State<TdmScreen> {
             ToolHero(
               icon: Icons.biotech_outlined,
               title: 'TDM interpreter',
-              tagline: 'Serum level → clear action',
+              tagline: 'Serum-level interpretation',
               tone: ClinicalPalette.toneMintInk,
               stats: <ToolHeroStat>[
                 ToolHeroStat(

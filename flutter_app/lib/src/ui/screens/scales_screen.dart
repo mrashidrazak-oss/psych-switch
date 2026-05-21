@@ -51,7 +51,7 @@ class ScalesScreen extends StatelessWidget {
             ToolHero(
               icon: Icons.assignment_turned_in_outlined,
               title: 'Rating scales',
-              tagline: 'Score, band, document',
+              tagline: 'Symptom scoring & severity bands',
               tone: ClinicalPalette.toneSkyInk,
               stats: <ToolHeroStat>[
                 ToolHeroStat(

@@ -148,7 +148,7 @@ class _Body extends StatelessWidget {
         ToolHero(
           icon: Icons.account_tree_outlined,
           title: 'Regimen check',
-          tagline: 'QTc · anticholinergic · sedation · DDI',
+          tagline: 'Composite regimen-risk screen',
           tone: ClinicalPalette.accent,
           stats: <ToolHeroStat>[
             ToolHeroStat(

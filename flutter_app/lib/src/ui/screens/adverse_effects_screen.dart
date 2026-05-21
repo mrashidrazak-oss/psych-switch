@@ -52,7 +52,7 @@ class _AdverseEffectsScreenState extends State<AdverseEffectsScreen> {
     final hero = ToolHero(
       icon: Icons.health_and_safety_outlined,
       title: 'Adverse-effect lookup',
-      tagline: 'Cause → candidate switch target',
+      tagline: 'Culprit drug & switch targets',
       tone: ClinicalPalette.warning,
       stats: <ToolHeroStat>[
         ToolHeroStat(
