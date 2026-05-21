@@ -229,7 +229,9 @@ class _EquivalencyScreenState extends State<EquivalencyScreen> {
                         toDoseMg: convResult.toDoseMg,
                       ),
                 fmt: _fmt,
-              ),
+              )
+            else
+              const _AwaitingResult(),
 
             const Gap.v(ClinicalSpace.lg),
 
@@ -488,6 +490,55 @@ class _ResultPanel extends StatelessWidget {
               ),
             ),
           ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Output-column placeholder shown before a from-drug and dose are
+/// entered — so the result area guides the clinician rather than
+/// sitting blank.
+class _AwaitingResult extends StatelessWidget {
+  const _AwaitingResult();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(ClinicalSpace.xl),
+      decoration: BoxDecoration(
+        color: ClinicalPalette.surface,
+        border: Border.all(
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
+          width: 0.5,
+        ),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Icon(
+            Icons.balance_outlined,
+            color: ClinicalPalette.muted,
+            size: 26,
+          ),
+          const Gap.v(ClinicalSpace.md),
+          const Text(
+            'Equivalent dose appears here',
+            style: TextStyle(
+              color: ClinicalPalette.text,
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.2,
+            ),
+          ),
+          const Gap.v(ClinicalSpace.xs),
+          Text(
+            'Pick a from-drug and enter a dose. Add an optional to-drug '
+            'to convert directly between two agents.',
+            style: ClinicalText.caption.copyWith(height: 1.5),
+          ),
         ],
       ),
     );
