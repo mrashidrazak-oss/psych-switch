@@ -140,7 +140,10 @@ class _TdmScreenState extends State<TdmScreen> {
               ),
             ),
             const SizedBox(height: ClinicalSpace.lg),
-            if (result != null) _ResultCard(result: result),
+            if (result != null)
+              _ResultCard(result: result)
+            else
+              const _AwaitingResult(),
             const SizedBox(height: ClinicalSpace.md),
             const _Disclaimer(),
           ],
@@ -350,6 +353,54 @@ class _Disclaimer extends StatelessWidget {
               'and the clinical context.',
               style: ClinicalText.caption.copyWith(height: 1.55),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Placeholder shown before a serum level is entered — so the result
+/// area guides the clinician rather than sitting blank.
+class _AwaitingResult extends StatelessWidget {
+  const _AwaitingResult();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(ClinicalSpace.xl),
+      decoration: BoxDecoration(
+        color: ClinicalPalette.surface,
+        border: Border.all(
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
+          width: 0.5,
+        ),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Icon(
+            Icons.biotech_outlined,
+            color: ClinicalPalette.muted,
+            size: 26,
+          ),
+          const SizedBox(height: ClinicalSpace.md),
+          const Text(
+            'Interpretation appears here',
+            style: TextStyle(
+              color: ClinicalPalette.text,
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.2,
+            ),
+          ),
+          const SizedBox(height: ClinicalSpace.xs),
+          Text(
+            'Pick the drug and enter a serum level above to see the '
+            'tier and the recommended clinical action.',
+            style: ClinicalText.caption.copyWith(height: 1.5),
           ),
         ],
       ),
