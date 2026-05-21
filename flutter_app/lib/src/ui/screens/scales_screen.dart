@@ -27,6 +27,10 @@ class ScalesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final totalItems = kClinicalScales.fold<int>(
+      0,
+      (sum, s) => sum + s.items.length,
+    );
     return Scaffold(
       appBar: AppBar(
         title: const Text('Rating scales'),
@@ -54,6 +58,11 @@ class ScalesScreen extends StatelessWidget {
                   label: 'SCALES',
                   value: '${kClinicalScales.length}',
                   unit: 'ready',
+                ),
+                ToolHeroStat(
+                  label: 'ITEMS',
+                  value: '$totalItems',
+                  unit: 'total',
                 ),
               ],
               rationale: 'Tap a scale to run it. Items carry anchor '
