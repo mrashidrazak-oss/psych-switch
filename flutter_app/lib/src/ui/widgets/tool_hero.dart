@@ -103,31 +103,38 @@ class ToolHero extends StatelessWidget {
                 ),
                 const Gap.h(ClinicalSpace.md),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          color: ClinicalPalette.text,
-                          fontSize: 19,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: -0.4,
-                          height: 1.15,
+                  // One screen-reader heading node — "<title>. <tagline>"
+                  // — instead of two loose text fragments.
+                  child: Semantics(
+                    header: true,
+                    label: '$title. $tagline',
+                    excludeSemantics: true,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            color: ClinicalPalette.text,
+                            fontSize: 19,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.4,
+                            height: 1.15,
+                          ),
                         ),
-                      ),
-                      const Gap.v(ClinicalSpace.xs - 1),
-                      Text(
-                        tagline,
-                        style: const TextStyle(
-                          color: ClinicalPalette.muted,
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 0.1,
-                          height: 1.3,
+                        const Gap.v(ClinicalSpace.xs - 1),
+                        Text(
+                          tagline,
+                          style: const TextStyle(
+                            color: ClinicalPalette.muted,
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 0.1,
+                            height: 1.3,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -183,58 +190,61 @@ class _StatCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 2),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            stat.label,
-            style: const TextStyle(
-              color: ClinicalPalette.muted,
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1.4,
+    return Semantics(
+      // Read the cell as one coherent phrase: "ASSAYS, 4 drugs".
+      label: '${stat.label}, ${stat.value} ${stat.unit}',
+      excludeSemantics: true,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 2),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              stat.label,
+              style: const TextStyle(
+                color: ClinicalPalette.muted,
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.4,
+              ),
             ),
-          ),
-          const SizedBox(height: 4),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: <Widget>[
-              Flexible(
-                child: Text(
-                  stat.value,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: ClinicalPalette.text,
-                    fontSize: 28,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.8,
-                    height: 1.05,
-                    fontFeatures: <FontFeature>[
-                      FontFeature.tabularFigures(),
-                    ],
+            const SizedBox(height: 4),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: <Widget>[
+                Flexible(
+                  child: Text(
+                    stat.value,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: ClinicalPalette.text,
+                      fontSize: 28,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.8,
+                      height: 1.05,
+                      fontFeatures: <FontFeature>[FontFeature.tabularFigures()],
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 5),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Text(
-                  stat.unit,
-                  style: const TextStyle(
-                    color: ClinicalPalette.muted,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.1,
+                const SizedBox(width: 5),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Text(
+                    stat.unit,
+                    style: const TextStyle(
+                      color: ClinicalPalette.muted,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 0.1,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
