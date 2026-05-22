@@ -1038,30 +1038,35 @@ class _LaunchRail extends StatelessWidget {
         sub: 'Chlorpromazine / olanzapine & antidepressant equivalents',
         icon: Icons.balance_outlined,
         route: Routes.equivalency,
+        tone: ClinicalPalette.accent,
       ),
       _RailRow(
         label: 'Adverse-effect profile',
         sub: 'Predicted AE burden + management by drug',
         icon: Icons.health_and_safety_outlined,
         route: Routes.adverseEffects,
+        tone: ClinicalPalette.warning,
       ),
       _RailRow(
         label: 'Interactions & burden',
         sub: 'Drug–drug interactions + sedative/anticholinergic load',
         icon: Icons.account_tree_outlined,
         route: Routes.polypharmacy,
+        tone: ClinicalPalette.accent,
       ),
       _RailRow(
         label: 'TDM interpreter',
         sub: 'Therapeutic levels — lithium · clozapine · valproate',
         icon: Icons.biotech_outlined,
         route: Routes.tdm,
+        tone: ClinicalPalette.toneMintInk,
       ),
       _RailRow(
         label: 'Rating scales',
         sub: '17 scales — PHQ · GAD · MADRS · HAM · CIWA · COWS · more',
         icon: Icons.assignment_turned_in_outlined,
         route: Routes.scales,
+        tone: ClinicalPalette.toneSkyInk,
       ),
     ];
     return SquircleCard(
@@ -1073,7 +1078,7 @@ class _LaunchRail extends StatelessWidget {
               const Divider(
                 height: 0.5,
                 thickness: 0.5,
-                indent: ClinicalSpace.lg + 4 + 30 + ClinicalSpace.md,
+                indent: ClinicalSpace.lg + 4 + 38 + ClinicalSpace.md + 2,
                 color: ClinicalPalette.border,
               ),
             _RailRowView(row: rows[i]),
@@ -1473,16 +1478,45 @@ class _RailRow {
     required this.sub,
     required this.icon,
     required this.route,
+    this.tone,
   });
   final String label;
   final String sub;
   final IconData icon;
   final String route;
+
+  /// Optional identity tone. When set, the row's icon renders as a
+  /// tinted badge echoing that tool screen's ToolHero header; null
+  /// keeps the flat muted icon.
+  final Color? tone;
 }
 
 class _RailRowView extends StatelessWidget {
   const _RailRowView({required this.row});
   final _RailRow row;
+
+  /// Leading icon — a tone-tinted badge (echoing the tool screen's
+  /// ToolHero) when [_RailRow.tone] is set, else a flat muted icon.
+  Widget _leading() {
+    final tone = row.tone;
+    if (tone == null) {
+      return Icon(row.icon, size: 20, color: ClinicalPalette.mutedStrong);
+    }
+    return Container(
+      width: 38,
+      height: 38,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: tone.withValues(alpha: 0.12),
+        border: Border.all(
+          color: tone.withValues(alpha: 0.34),
+          width: 0.5,
+        ),
+        borderRadius: BorderRadius.circular(ClinicalRadii.chip),
+      ),
+      child: Icon(row.icon, size: 19, color: tone),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1495,7 +1529,7 @@ class _RailRowView extends StatelessWidget {
         ),
         child: Row(
           children: <Widget>[
-            Icon(row.icon, size: 20, color: ClinicalPalette.mutedStrong),
+            _leading(),
             const SizedBox(width: ClinicalSpace.md + 2),
             Expanded(
               child: Column(
