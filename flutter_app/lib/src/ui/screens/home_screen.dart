@@ -364,18 +364,34 @@ class _Hero extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: ClinicalSpace.md),
-              ProgressRing(
-                value: 1,
-                label: '$drugCount',
-                size: 56,
-                thickness: 5,
-                tone: ClinicalPalette.toneLavenderInk,
-                labelStyle: const TextStyle(
-                  color: ClinicalPalette.toneLavenderInk,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 16,
-                  letterSpacing: -0.4,
-                ),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  ProgressRing(
+                    value: 1,
+                    label: '$drugCount',
+                    size: 56,
+                    thickness: 5,
+                    tone: ClinicalPalette.toneLavenderInk,
+                    labelStyle: const TextStyle(
+                      color: ClinicalPalette.toneLavenderInk,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 16,
+                      letterSpacing: -0.4,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    'DRUGS',
+                    style: TextStyle(
+                      color: ClinicalPalette.toneLavenderInk
+                          .withValues(alpha: 0.75),
+                      fontSize: 9,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
