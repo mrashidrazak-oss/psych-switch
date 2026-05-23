@@ -25,6 +25,8 @@
 // still uses the dark default. As more screens migrate we promote the
 // clinical theme to the app root.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -34,6 +36,7 @@ import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/providers/preferences_provider.dart';
 import 'package:psychswitch/src/providers/saved_cases_provider.dart';
 import 'package:psychswitch/src/router.dart';
+import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/screens/result_screen.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/widgets/clinical_primitives.dart';
@@ -1521,7 +1524,10 @@ class _RailRowView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => context.pushNamed(row.route),
+      onTap: () {
+        unawaited(hapticsTap());
+        context.pushNamed(row.route);
+      },
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: ClinicalSpace.lg + 4,
