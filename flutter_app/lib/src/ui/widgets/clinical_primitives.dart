@@ -17,10 +17,12 @@
 // pick the colour family from the screen-level intent and the
 // primitive handles the shade + ink + border calculation.
 
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 
 /// A 28-pt squircle card. `tone` paints the entire surface (used on
@@ -96,7 +98,12 @@ class PillButton extends StatelessWidget {
       color: disabled ? ClinicalPalette.ctaDisabled : ClinicalPalette.cta,
       borderRadius: BorderRadius.circular(ClinicalRadii.pill),
       child: InkWell(
-        onTap: onPressed,
+        onTap: disabled
+            ? null
+            : () {
+                unawaited(hapticsTap());
+                onPressed!();
+              },
         borderRadius: BorderRadius.circular(ClinicalRadii.pill),
         splashColor: Colors.white.withValues(alpha: 0.08),
         highlightColor: Colors.white.withValues(alpha: 0.04),
@@ -161,7 +168,12 @@ class GhostPillButton extends StatelessWidget {
         ),
       ),
       child: InkWell(
-        onTap: onPressed,
+        onTap: disabled
+            ? null
+            : () {
+                unawaited(hapticsTap());
+                onPressed!();
+              },
         customBorder: const StadiumBorder(),
         child: Padding(
           padding: EdgeInsets.symmetric(
