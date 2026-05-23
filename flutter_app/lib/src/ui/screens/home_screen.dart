@@ -128,7 +128,8 @@ class _HomeBody extends ConsumerWidget {
               if (LaunchGate.staged) ...<Widget>[
                 const _SectionLabel(
                   label: 'Clinical tools',
-                  tagline: 'Core toolkit — more added in future updates',
+                  tagline:
+                      'Reviewed against Maudsley 15th and primary literature',
                 ),
                 const SizedBox(height: ClinicalSpace.md),
                 const _LaunchRail(),
@@ -137,7 +138,8 @@ class _HomeBody extends ConsumerWidget {
                 const SizedBox(height: ClinicalSpace.lg + 4),
                 const _SectionLabel(
                   label: 'Browse by class',
-                  tagline: 'Tap to open the matching reference',
+                  tagline:
+                      'Antidepressants · antipsychotics · mood stabilisers · clozapine',
                 ),
                 const SizedBox(height: ClinicalSpace.md),
                 const _CategoryGrid(),

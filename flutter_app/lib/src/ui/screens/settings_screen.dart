@@ -699,7 +699,7 @@ class _AccountSectionState extends ConsumerState<_AccountSection> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Sign-in failed. Please try again.'),
+          content: Text("Couldn't sign in. Try again."),
         ),
       );
     } finally {
