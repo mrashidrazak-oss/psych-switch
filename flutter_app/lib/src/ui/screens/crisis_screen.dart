@@ -184,8 +184,8 @@ class _CrisisScreenState extends State<CrisisScreen> {
             ),
             _PlanField(
               eyebrow: '6. Means restriction',
-              hint: 'How to make the environment safer (lock medications, '
-                  'give car keys to family, etc.)',
+              hint: 'How to make the environment safer — lock medications, '
+                  'give car keys to family, anything that adds friction.',
               controller: _meansCtl,
             ),
             const SizedBox(height: ClinicalSpace.md),

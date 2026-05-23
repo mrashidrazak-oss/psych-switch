@@ -114,9 +114,9 @@ class SettingsScreen extends ConsumerWidget {
               icon: Icons.replay_circle_filled_rounded,
               label: 'Replay onboarding tour',
               description:
-                  'Replays the three-card walkthrough next time the app '
-                  'opens (or right now). Useful for showing colleagues '
-                  'what the app does without a fresh install.',
+                  'Replays the three-card walkthrough next time you '
+                  'open PsychSwitch — or right now. Useful for showing '
+                  "colleagues what's inside without a fresh install.",
               actionLabel: 'Replay tour',
               onPressed: () => _onReplayTour(context, ref),
             ),
@@ -732,7 +732,7 @@ class _AccountSectionState extends ConsumerState<_AccountSection> {
         description:
             'Optional account sign-in. Becomes available in an '
             'upcoming update once the cloud project is connected — '
-            'the app stays fully usable offline either way.',
+            'PsychSwitch stays fully usable offline either way.',
       );
     }
 
