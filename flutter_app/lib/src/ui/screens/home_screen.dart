@@ -41,6 +41,7 @@ import 'package:psychswitch/src/ui/screens/result_screen.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/widgets/clinical_primitives.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
+import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
 import 'package:psychswitch_engine/case_pulse.dart' show SavedCase;
 import 'package:psychswitch_engine/switching_engine.dart' show SwitchInput;
 
@@ -111,45 +112,62 @@ class _HomeBody extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              _Greeting(
-                greeting: greeting,
-                salutation: salutation,
-                subtitle: subtitle,
-                initials: initials,
+              // ── Stagger: each major section unfolds in sequence on
+              //    first paint (60ms apart). EntranceFade self-skips
+              //    when reduced-motion is on.
+              EntranceFade(
+                child: _Greeting(
+                  greeting: greeting,
+                  salutation: salutation,
+                  subtitle: subtitle,
+                  initials: initials,
+                ),
               ),
               const SizedBox(height: ClinicalSpace.lg + 4),
-              const _SearchField(),
+              const EntranceFade(index: 1, child: _SearchField()),
               const SizedBox(height: ClinicalSpace.lg),
-              _Hero(drugCount: drugCount, ruleCount: ruleCount),
+              EntranceFade(
+                index: 2,
+                child: _Hero(drugCount: drugCount, ruleCount: ruleCount),
+              ),
               const SizedBox(height: ClinicalSpace.lg),
-              const _RecentCasesStrip(),
-              const _PearlCard(),
+              const EntranceFade(index: 3, child: _RecentCasesStrip()),
+              const EntranceFade(index: 4, child: _PearlCard()),
               const SizedBox(height: ClinicalSpace.lg),
               if (LaunchGate.staged) ...<Widget>[
-                const _SectionLabel(
-                  label: 'Clinical tools',
-                  tagline:
-                      'Reviewed against Maudsley 15th and primary literature',
+                const EntranceFade(
+                  index: 5,
+                  child: _SectionLabel(
+                    label: 'Clinical tools',
+                    tagline:
+                        'Reviewed against Maudsley 15th and primary literature',
+                  ),
                 ),
                 const SizedBox(height: ClinicalSpace.md),
-                const _LaunchRail(),
+                const EntranceFade(index: 6, child: _LaunchRail()),
               ] else ...<Widget>[
-                const _QuickActions(),
+                const EntranceFade(index: 5, child: _QuickActions()),
                 const SizedBox(height: ClinicalSpace.lg + 4),
-                const _SectionLabel(
-                  label: 'Browse by class',
-                  tagline:
-                      'Antidepressants · antipsychotics · mood stabilisers · clozapine',
+                const EntranceFade(
+                  index: 6,
+                  child: _SectionLabel(
+                    label: 'Browse by class',
+                    tagline:
+                        'Antidepressants · antipsychotics · mood stabilisers · clozapine',
+                  ),
                 ),
                 const SizedBox(height: ClinicalSpace.md),
-                const _CategoryGrid(),
+                const EntranceFade(index: 7, child: _CategoryGrid()),
                 const SizedBox(height: ClinicalSpace.lg + 4),
-                const _SectionLabel(label: 'Reference', tagline: null),
+                const EntranceFade(
+                  index: 8,
+                  child: _SectionLabel(label: 'Reference', tagline: null),
+                ),
                 const SizedBox(height: ClinicalSpace.md),
-                const _ReferenceRail(),
+                const EntranceFade(index: 9, child: _ReferenceRail()),
               ],
               const SizedBox(height: ClinicalSpace.xl),
-              const _Footer(),
+              const EntranceFade(index: 10, child: _Footer()),
             ],
           ),
         ),
@@ -382,17 +400,26 @@ class _Hero extends StatelessWidget {
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  ProgressRing(
-                    value: 1,
-                    label: '$drugCount',
-                    size: 56,
-                    thickness: 5,
-                    tone: ClinicalPalette.toneLavenderInk,
-                    labelStyle: const TextStyle(
-                      color: ClinicalPalette.toneLavenderInk,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 16,
-                      letterSpacing: -0.4,
+                  // Number ticker — counts up from 0 → drugCount over
+                  // 900ms on first paint, then stays put. The ring's
+                  // value=1 (fully drawn) frames a number that earns
+                  // its position by climbing into place.
+                  TweenAnimationBuilder<double>(
+                    tween: Tween<double>(begin: 0, end: drugCount.toDouble()),
+                    duration: const Duration(milliseconds: 900),
+                    curve: Curves.easeOutCubic,
+                    builder: (_, value, __) => ProgressRing(
+                      value: 1,
+                      label: '${value.round()}',
+                      size: 56,
+                      thickness: 5,
+                      tone: ClinicalPalette.toneLavenderInk,
+                      labelStyle: const TextStyle(
+                        color: ClinicalPalette.toneLavenderInk,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 16,
+                        letterSpacing: -0.4,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 6),
