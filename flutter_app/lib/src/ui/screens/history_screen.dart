@@ -315,46 +315,67 @@ class _CaseList extends ConsumerWidget {
       ),
     );
 
+    // Pull-to-refresh — invalidates the saved-cases provider so any
+    // external write (e.g. case added on another device with sync, or
+    // a saved-case-delete from a deep link) reflects immediately. The
+    // brief 300ms hold keeps the spinner visible enough to register
+    // as a deliberate gesture, even though the local DB read returns
+    // instantly.
+    Future<void> onRefresh() async {
+      ref.invalidate(savedCasesProvider);
+      await Future<void>.delayed(const Duration(milliseconds: 300));
+    }
+
     if (context.isWide) {
-      return CustomScrollView(
-        slivers: <Widget>[
-          SliverToBoxAdapter(child: header),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(
-              ClinicalSpace.lg,
-              0,
-              ClinicalSpace.lg,
-              ClinicalSpace.xl,
-            ),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 460,
-                crossAxisSpacing: ClinicalSpace.md,
-                mainAxisSpacing: ClinicalSpace.md,
-                childAspectRatio: 3.4,
+      return RefreshIndicator(
+        onRefresh: onRefresh,
+        color: ClinicalPalette.accent,
+        backgroundColor: ClinicalPalette.surface,
+        child: CustomScrollView(
+          slivers: <Widget>[
+            SliverToBoxAdapter(child: header),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(
+                ClinicalSpace.lg,
+                0,
+                ClinicalSpace.lg,
+                ClinicalSpace.xl,
               ),
-              delegate: SliverChildBuilderDelegate(
-                (_, i) => _buildTile(context, ref, i),
-                childCount: cases.length,
+              sliver: SliverGrid(
+                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: 460,
+                  crossAxisSpacing: ClinicalSpace.md,
+                  mainAxisSpacing: ClinicalSpace.md,
+                  childAspectRatio: 3.4,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (_, i) => _buildTile(context, ref, i),
+                  childCount: cases.length,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       );
     }
-    return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(
-        ClinicalSpace.lg,
-        0,
-        ClinicalSpace.lg,
-        ClinicalSpace.xl,
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      color: ClinicalPalette.accent,
+      backgroundColor: ClinicalPalette.surface,
+      child: ListView.separated(
+        padding: const EdgeInsets.fromLTRB(
+          ClinicalSpace.lg,
+          0,
+          ClinicalSpace.lg,
+          ClinicalSpace.xl,
+        ),
+        itemCount: cases.length + 1,
+        separatorBuilder: (_, __) => const Gap.v(ClinicalSpace.sm + 2),
+        itemBuilder: (_, i) {
+          if (i == 0) return header;
+          return _buildTile(context, ref, i - 1);
+        },
       ),
-      itemCount: cases.length + 1,
-      separatorBuilder: (_, __) => const Gap.v(ClinicalSpace.sm + 2),
-      itemBuilder: (_, i) {
-        if (i == 0) return header;
-        return _buildTile(context, ref, i - 1);
-      },
     );
   }
 }
