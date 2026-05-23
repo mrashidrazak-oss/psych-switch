@@ -420,43 +420,52 @@ class _Hero extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: ClinicalSpace.md),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  // Number ticker — counts up from 0 → drugCount over
-                  // 900ms on first paint, then stays put. The ring's
-                  // value=1 (fully drawn) frames a number that earns
-                  // its position by climbing into place.
-                  TweenAnimationBuilder<double>(
-                    tween: Tween<double>(begin: 0, end: drugCount.toDouble()),
-                    duration: const Duration(milliseconds: 900),
-                    curve: Curves.easeOutCubic,
-                    builder: (_, value, __) => ProgressRing(
-                      value: 1,
-                      label: '${value.round()}',
-                      size: 56,
-                      thickness: 5,
-                      tone: ClinicalPalette.toneLavenderInk,
-                      labelStyle: const TextStyle(
-                        color: ClinicalPalette.toneLavenderInk,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 16,
-                        letterSpacing: -0.4,
+              // The ring + "DRUGS" label are decorative when read
+               // separately — wrap them as one Semantics node so screen
+               // readers announce "165 drugs reviewed" instead of two
+               // disconnected fragments.
+              Semantics(
+                label: '$drugCount drugs reviewed',
+                excludeSemantics: true,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    // Number ticker — counts up from 0 → drugCount over
+                    // 900ms on first paint, then stays put. The ring's
+                    // value=1 (fully drawn) frames a number that earns
+                    // its position by climbing into place.
+                    TweenAnimationBuilder<double>(
+                      tween:
+                          Tween<double>(begin: 0, end: drugCount.toDouble()),
+                      duration: const Duration(milliseconds: 900),
+                      curve: Curves.easeOutCubic,
+                      builder: (_, value, __) => ProgressRing(
+                        value: 1,
+                        label: '${value.round()}',
+                        size: 56,
+                        thickness: 5,
+                        tone: ClinicalPalette.toneLavenderInk,
+                        labelStyle: const TextStyle(
+                          color: ClinicalPalette.toneLavenderInk,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 16,
+                          letterSpacing: -0.4,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    'DRUGS',
-                    style: TextStyle(
-                      color: ClinicalPalette.toneLavenderInk
-                          .withValues(alpha: 0.75),
-                      fontSize: 9,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1.2,
+                    const SizedBox(height: 6),
+                    Text(
+                      'DRUGS',
+                      style: TextStyle(
+                        color: ClinicalPalette.toneLavenderInk
+                            .withValues(alpha: 0.75),
+                        fontSize: 9,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.2,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ],
           ),
@@ -873,7 +882,13 @@ class _PearlCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = _pearlOfTheDay();
-    return SquircleCard(
+    // Single coherent semantic node — VoiceOver hears the whole pearl
+    // as one digestible unit ("Today's pearl: Title — body — source")
+    // instead of four disconnected fragments.
+    return Semantics(
+      label: "Today's pearl. ${p.title}. ${p.body} Source: ${p.source}.",
+      excludeSemantics: true,
+      child: SquircleCard(
       tone: ClinicalPalette.toneSand,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -921,6 +936,7 @@ class _PearlCard extends StatelessWidget {
           ),
         ],
       ),
+    ),
     );
   }
 }
