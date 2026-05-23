@@ -184,9 +184,20 @@ abstract final class Routes {
   static const clozapineFever = 'clozapine_fever';
 }
 
-/// Custom fade-through page builder. Mirrors Material's fade-through
-/// motion spec — incoming page fades in from 92% scale, outgoing page
-/// fades out — but kept short (200ms) so it never feels in the way.
+/// Custom shared-axis (horizontal) page builder. Material 3 spatial
+/// motion: forward navigation pushes the new page in from the right
+/// while the old page slides out to the left; pop reverses both. The
+/// app reads as *spatial* — drug profile is "to the right" of home,
+/// home is "to the left of" everywhere — rather than a deck of cards
+/// fading through each other.
+///
+/// Subtle slide (4% of screen width), short duration (220ms forward /
+/// 180ms reverse), no scale — pure fade + lateral motion. The slide
+/// is gentle enough that pop gestures still feel like fade-throughs
+/// to the eye, but the directional intent registers subconsciously.
+///
+/// Auto-disables under MediaQuery.disableAnimations (system reduced-
+/// motion) — accessibility-correct without ceremony.
 CustomTransitionPage<T> _fadeThroughPage<T>({
   required GoRouterState state,
   required Widget child,
@@ -200,22 +211,38 @@ CustomTransitionPage<T> _fadeThroughPage<T>({
       // Honour system reduced-motion preference.
       if (MediaQuery.disableAnimationsOf(context)) return child;
 
+      // ── Incoming page ─────────────────────────────────────────
       final fadeIn = CurvedAnimation(
         parent: animation,
         curve: const Interval(0.3, 1, curve: Curves.easeOutCubic),
       );
-      final scaleIn = Tween<double>(begin: 0.985, end: 1).animate(
+      final slideIn = Tween<Offset>(
+        begin: const Offset(0.04, 0),
+        end: Offset.zero,
+      ).animate(
         CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
       );
+
+      // ── Outgoing page (the one being covered) ─────────────────
       final fadeOut = CurvedAnimation(
         parent: secondaryAnimation,
         curve: const Interval(0, 0.6, curve: Curves.easeIn),
       );
-      return FadeTransition(
-        opacity: ReverseAnimation(fadeOut),
+      final slideOut = Tween<Offset>(
+        begin: Offset.zero,
+        end: const Offset(-0.04, 0),
+      ).animate(
+        CurvedAnimation(parent: secondaryAnimation, curve: Curves.easeIn),
+      );
+
+      return SlideTransition(
+        position: slideOut,
         child: FadeTransition(
-          opacity: fadeIn,
-          child: ScaleTransition(scale: scaleIn, child: child),
+          opacity: ReverseAnimation(fadeOut),
+          child: SlideTransition(
+            position: slideIn,
+            child: FadeTransition(opacity: fadeIn, child: child),
+          ),
         ),
       );
     },
