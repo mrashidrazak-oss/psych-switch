@@ -39,6 +39,7 @@ import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/screens/result_screen.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
+import 'package:psychswitch/src/ui/widgets/breath.dart';
 import 'package:psychswitch/src/ui/widgets/clinical_primitives.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
@@ -123,6 +124,13 @@ class _HomeBody extends ConsumerWidget {
                   initials: initials,
                 ),
               ),
+              // Soft self-introduce nudge — only visible when the
+              // clinician hasn't set a name yet. Fades in 2s after
+              // arrival so it doesn't compete with the cascade.
+              if (name.trim().isEmpty) ...<Widget>[
+                const SizedBox(height: ClinicalSpace.sm + 2),
+                const _NamePrompt(),
+              ],
               const SizedBox(height: ClinicalSpace.lg + 4),
               const EntranceFade(index: 1, child: _SearchField()),
               const SizedBox(height: ClinicalSpace.lg),
@@ -132,7 +140,10 @@ class _HomeBody extends ConsumerWidget {
               ),
               const SizedBox(height: ClinicalSpace.lg),
               const EntranceFade(index: 3, child: _RecentCasesStrip()),
-              const EntranceFade(index: 4, child: _PearlCard()),
+              const EntranceFade(
+                index: 4,
+                child: Breath(child: _PearlCard()),
+              ),
               const SizedBox(height: ClinicalSpace.lg),
               if (LaunchGate.staged) ...<Widget>[
                 const EntranceFade(
@@ -1613,6 +1624,79 @@ class _RailRowView extends StatelessWidget {
               color: ClinicalPalette.muted,
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Name prompt ─────────────────────────────────────────────────────
+
+/// Soft "Add your name" affordance shown under the greeting when the
+/// clinician hasn't entered a name yet. Fades in 2s after Home arrives
+/// (after the cascade has settled) so it suggests rather than nags.
+/// Tap routes to Settings. Disappears the moment a name is saved.
+class _NamePrompt extends StatefulWidget {
+  const _NamePrompt();
+
+  @override
+  State<_NamePrompt> createState() => _NamePromptState();
+}
+
+class _NamePromptState extends State<_NamePrompt> {
+  double _opacity = 0;
+  Timer? _delay;
+
+  @override
+  void initState() {
+    super.initState();
+    _delay = Timer(const Duration(milliseconds: 2000), () {
+      if (mounted) setState(() => _opacity = 1);
+    });
+  }
+
+  @override
+  void dispose() {
+    _delay?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 60), // avatar width + gap
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeOutCubic,
+        opacity: _opacity,
+        child: InkWell(
+          onTap: () => context.pushNamed(Routes.settings),
+          borderRadius: BorderRadius.circular(ClinicalRadii.pill),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: ClinicalSpace.sm,
+              vertical: 4,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  'Add your name',
+                  style: ClinicalText.caption.copyWith(
+                    color: ClinicalPalette.accent,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.1,
+                  ),
+                ),
+                const SizedBox(width: 2),
+                const Icon(
+                  Icons.arrow_forward_rounded,
+                  size: 13,
+                  color: ClinicalPalette.accent,
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
