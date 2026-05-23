@@ -281,7 +281,12 @@ class _ToggleTile extends StatelessWidget {
           ),
           Switch(
             value: value,
-            onChanged: loading ? null : onChanged,
+            onChanged: loading
+                ? null
+                : (v) {
+                    unawaited(hapticsTap());
+                    onChanged(v);
+                  },
           ),
         ],
       ),
