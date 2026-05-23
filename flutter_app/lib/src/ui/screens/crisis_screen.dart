@@ -14,6 +14,7 @@ import 'package:go_router/go_router.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/widgets/clinical_primitives.dart';
+import 'package:psychswitch/src/ui/widgets/polished_toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CrisisScreen extends StatefulWidget {
@@ -199,9 +200,7 @@ class _CrisisScreenState extends State<CrisisScreen> {
                 );
                 unawaited(hapticsConfirm());
                 if (!context.mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Safety plan copied')),
-                );
+                showCopiedToast(context, label: 'Safety plan');
               },
             ),
             const SizedBox(height: ClinicalSpace.md),

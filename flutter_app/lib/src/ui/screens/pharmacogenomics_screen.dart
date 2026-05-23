@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/widgets/clinical_primitives.dart';
+import 'package:psychswitch/src/ui/widgets/polished_toast.dart';
 import 'package:psychswitch_engine/pharmacogenomics.dart';
 
 class PharmacogenomicsScreen extends StatefulWidget {
@@ -247,9 +248,7 @@ class _EntryCard extends StatelessWidget {
               await Clipboard.setData(ClipboardData(text: summary));
               unawaited(hapticsConfirm());
               if (!context.mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Recommendation copied')),
-              );
+              showCopiedToast(context, label: 'Recommendation');
             },
           ),
         ],

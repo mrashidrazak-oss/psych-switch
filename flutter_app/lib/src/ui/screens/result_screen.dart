@@ -34,6 +34,7 @@ import 'package:psychswitch/src/ui/widgets/discontinuation_card.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
 import 'package:psychswitch/src/ui/widgets/overlap_intensity_card.dart';
+import 'package:psychswitch/src/ui/widgets/polished_toast.dart';
 import 'package:psychswitch/src/ui/widgets/predicted_ae_card.dart';
 import 'package:psychswitch/src/ui/widgets/rationale_panel.dart';
 import 'package:psychswitch/src/ui/widgets/rule_provenance_card.dart';
@@ -221,16 +222,7 @@ class ResultScreen extends ConsumerWidget {
     }
 
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: ClinicalPalette.surface,
-        content: Text(
-          'Saved as "$label"',
-          style: const TextStyle(color: ClinicalPalette.text),
-        ),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+    showSavedToast(context, label: label);
   }
 }
 

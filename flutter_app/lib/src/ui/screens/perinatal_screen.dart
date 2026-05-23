@@ -12,6 +12,7 @@ import 'package:go_router/go_router.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/widgets/clinical_primitives.dart';
+import 'package:psychswitch/src/ui/widgets/polished_toast.dart';
 import 'package:psychswitch_engine/pregnancy_lactation.dart';
 
 class PerinatalScreen extends StatefulWidget {
@@ -260,9 +261,7 @@ class _ProfileTile extends StatelessWidget {
                       await Clipboard.setData(ClipboardData(text: text));
                       unawaited(hapticsConfirm());
                       if (!context.mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Summary copied')),
-                      );
+                      showCopiedToast(context, label: 'Summary');
                     },
                   ),
                 ],

@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/widgets/clinical_primitives.dart';
+import 'package:psychswitch/src/ui/widgets/polished_toast.dart';
 import 'package:psychswitch_engine/lab_interpreter.dart';
 
 class LabScreen extends StatefulWidget {
@@ -307,9 +308,7 @@ class _ResultCard extends StatelessWidget {
               );
               unawaited(hapticsConfirm());
               if (!context.mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Summary copied')),
-              );
+              showCopiedToast(context, label: 'Summary');
             },
           ),
         ],

@@ -17,6 +17,7 @@ import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
+import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
 import 'package:psychswitch_engine/types/drug.dart';
 import 'package:psychswitch_engine/types/enums.dart';
 
@@ -114,38 +115,55 @@ class _DrugProfileBody extends StatelessWidget {
         ClinicalSpace.xl,
       ),
       children: <Widget>[
-        _IdentityCard(drug: drug, tone: tone, categoryLabel: _categoryLabel()),
+        // Cascade-in matches About + Home. 60ms stagger across up to
+        // 9 cards = the page arrives in ~600ms even at max length.
+        EntranceFade(
+          child: _IdentityCard(
+              drug: drug, tone: tone, categoryLabel: _categoryLabel()),
+        ),
         const Gap.v(ClinicalSpace.lg),
-        _PharmacokineticsCard(drug: drug),
+        EntranceFade(index: 1, child: _PharmacokineticsCard(drug: drug)),
         const Gap.v(ClinicalSpace.lg),
-        _DosingCard(drug: drug, tone: tone),
+        EntranceFade(
+          index: 2,
+          child: _DosingCard(drug: drug, tone: tone),
+        ),
         const Gap.v(ClinicalSpace.lg),
-        _RiskProfileCard(drug: drug),
+        EntranceFade(index: 3, child: _RiskProfileCard(drug: drug)),
         const Gap.v(ClinicalSpace.lg),
         if (drug.maoiClearanceDays != null ||
             (drug.isMAOI ?? false) ||
             drug.maoiWashout != null) ...<Widget>[
-          _MaoiCard(drug: drug),
+          EntranceFade(index: 4, child: _MaoiCard(drug: drug)),
           const Gap.v(ClinicalSpace.lg),
         ],
-        _CypInteractionsCard(drug: drug),
+        EntranceFade(index: 5, child: _CypInteractionsCard(drug: drug)),
         const Gap.v(ClinicalSpace.lg),
         if (drug.malaysianBrandNames.isNotEmpty) ...<Widget>[
-          _BrandsCard(brands: drug.malaysianBrandNames),
+          EntranceFade(
+            index: 6,
+            child: _BrandsCard(brands: drug.malaysianBrandNames),
+          ),
           const Gap.v(ClinicalSpace.lg),
         ],
         if (drug.formulationNotes.isNotEmpty) ...<Widget>[
-          _NoteCard(
-            eyebrow: 'FORMULATION NOTES',
-            body: drug.formulationNotes,
+          EntranceFade(
+            index: 7,
+            child: _NoteCard(
+              eyebrow: 'FORMULATION NOTES',
+              body: drug.formulationNotes,
+            ),
           ),
           const Gap.v(ClinicalSpace.lg),
         ],
         if (drug.citations.isNotEmpty) ...<Widget>[
-          _CitationsCard(citations: drug.citations),
+          EntranceFade(
+            index: 8,
+            child: _CitationsCard(citations: drug.citations),
+          ),
           const Gap.v(ClinicalSpace.lg),
         ],
-        _ProvenanceFooter(drug: drug),
+        EntranceFade(index: 9, child: _ProvenanceFooter(drug: drug)),
       ],
     );
   }

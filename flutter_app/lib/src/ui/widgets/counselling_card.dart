@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
+import 'package:psychswitch/src/ui/widgets/polished_toast.dart';
 import 'package:share_plus/share_plus.dart';
 
 class CounsellingCard extends StatefulWidget {
@@ -39,9 +40,7 @@ class _CounsellingCardState extends State<CounsellingCard> {
     unawaited(hapticsTap());
     await Clipboard.setData(ClipboardData(text: widget.text));
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Counselling card copied')),
-    );
+    showCopiedToast(context, label: 'Counselling card');
   }
 
   @override
