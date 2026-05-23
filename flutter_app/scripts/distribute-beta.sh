@@ -26,7 +26,10 @@
 # This script is checked in; it contains no secrets. The keystore +
 # key.properties stay gitignored.
 
-set -euo pipefail
+set -uo pipefail
+# Don't `set -e` — we want to inspect firebase's exit code so we can
+# show a friendly hint when the group doesn't exist yet (the first-
+# run gotcha — see the "404 → create group" handling below).
 
 # ── Config ──────────────────────────────────────────────────────────
 APP_ID="1:166044970078:android:d3c3d570489f8940c058cf"
@@ -65,12 +68,41 @@ fi
 
 # ── Distribute ──────────────────────────────────────────────────────
 echo "▶ Uploading to Firebase App Distribution → group: $GROUP"
+DIST_LOG=$(mktemp)
 firebase appdistribution:distribute "$APK_PATH" \
   --app "$APP_ID" \
   --project "$PROJECT_ID" \
   --release-notes "$NOTES" \
-  --groups "$GROUP"
+  --groups "$GROUP" 2>&1 | tee "$DIST_LOG"
+DIST_EXIT=${PIPESTATUS[0]}
 
 echo ""
-echo "✔ Distribution complete."
+if [[ "$DIST_EXIT" -eq 0 ]]; then
+  echo "✔ Build uploaded + distributed to group: $GROUP"
+elif grep -q "Requested entity was not found" "$DIST_LOG"; then
+  # Upload itself succeeded — only the group-distribute step 404'd
+  # because the group doesn't exist yet. Friendly hint, exit 0.
+  cat <<EOF
+
+⚠  Build uploaded to App Distribution, but the group "$GROUP" doesn't
+   exist yet — that's why the final step 404'd. The release IS live in
+   the console.
+
+   One-time fix (~2 min):
+     1. Open https://console.firebase.google.com/project/$PROJECT_ID/appdistribution
+     2. Testers & Groups → Add group → alias: $GROUP
+     3. Add tester emails to the group
+     4. Re-run this script with --skip-build to push to the new group:
+          bash scripts/distribute-beta.sh "Notes" --skip-build
+
+✔ Build is safely uploaded — no need to re-build.
+EOF
+  exit 0
+else
+  echo "✗ Distribution failed — see log above."
+  rm -f "$DIST_LOG"
+  exit "$DIST_EXIT"
+fi
+rm -f "$DIST_LOG"
+
 echo "  Console: https://console.firebase.google.com/project/$PROJECT_ID/appdistribution"
