@@ -58,7 +58,7 @@ class AboutScreen extends ConsumerWidget {
                     ClinicalSpace.xxl,
                   ),
                   children: <Widget>[
-                    _Hero(version: '$version+$build'),
+                    const _Hero(),
                     const SizedBox(height: ClinicalSpace.lg),
                     _StatGrid(
                       stats: <_Stat>[
@@ -83,7 +83,7 @@ class AboutScreen extends ConsumerWidget {
                         ),
                         _Stat(
                           label: 'Build',
-                          value: 'v$version',
+                          value: 'v$version+$build',
                           tone: ClinicalPalette.toneRose,
                           ink: ClinicalPalette.toneRoseInk,
                         ),
@@ -103,11 +103,11 @@ class AboutScreen extends ConsumerWidget {
                     const _SectionCard(
                       eyebrow: 'Intended use',
                       body:
-                          'Decision support for psychiatrists, not a '
-                          'substitute for clinical judgement. Every switch '
-                          'should still be reviewed against the patient in '
-                          'front of you and the primary references the rule '
-                          'cites.',
+                          'Decision support for healthcare professionals, '
+                          'not a substitute for clinical judgement. Every '
+                          'switch should still be reviewed against the '
+                          'patient in front of you and the primary '
+                          'references the rule cites.',
                     ),
                     const SizedBox(height: ClinicalSpace.md),
                     const _SectionCard(
@@ -129,8 +129,8 @@ class AboutScreen extends ConsumerWidget {
                     const SizedBox(height: ClinicalSpace.md),
                     const _SectionCard(
                       eyebrow: 'Contact',
-                      body: 'errata@psychswitch.health · '
-                          'privacy@psychswitch.health',
+                      body: 'Errata  ·  errata@psychswitch.health\n'
+                          'Privacy  ·  privacy@psychswitch.health',
                     ),
                   ],
                 );
@@ -146,8 +146,7 @@ class AboutScreen extends ConsumerWidget {
 // ── Hero ─────────────────────────────────────────────────────────────
 
 class _Hero extends StatelessWidget {
-  const _Hero({required this.version});
-  final String version;
+  const _Hero();
 
   @override
   Widget build(BuildContext context) {
@@ -186,7 +185,7 @@ class _Hero extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  'Reviewed cross-titration · $version',
+                  'Reviewed cross-titration',
                   style: ClinicalText.caption.copyWith(
                     color: ClinicalPalette.toneLavenderInk
                         .withValues(alpha: 0.8),
