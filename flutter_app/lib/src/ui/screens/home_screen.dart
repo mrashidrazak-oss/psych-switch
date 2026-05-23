@@ -44,7 +44,8 @@ import 'package:psychswitch/src/ui/widgets/clinical_primitives.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
 import 'package:psychswitch_engine/case_pulse.dart' show SavedCase;
-import 'package:psychswitch_engine/switching_engine.dart' show SwitchInput;
+import 'package:psychswitch_engine/switching_engine.dart'
+    show SwitchInput, SwitchingEngine;
 
 /// Maximum content-column width on wide screens. Anything wider gets
 /// flanked by whitespace so we never stretch a CTA across a 7.6" panel.
@@ -205,7 +206,18 @@ class _Greeting extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        AvatarCircle(initials: initials),
+        // Tap the avatar to jump to Settings (where name/role live).
+        // Discoverable affordance, zero noise. Semantics labelled for
+        // screen readers since the visual is just initials.
+        Semantics(
+          button: true,
+          label: 'Edit your profile',
+          child: InkResponse(
+            onTap: () => context.pushNamed(Routes.settings),
+            radius: 28,
+            child: AvatarCircle(initials: initials),
+          ),
+        ),
         const SizedBox(width: ClinicalSpace.md + 2),
         Expanded(
           child: Column(
@@ -491,7 +503,6 @@ class _RecentCasesStrip extends ConsumerWidget {
       data: (list) => list.take(3).toList(),
       orElse: () => const <SavedCase>[],
     );
-    if (cases.isEmpty) return const SizedBox.shrink();
 
     final engineAsync = ref.watch(engineProvider);
     final engine = engineAsync.maybeWhen(
@@ -499,6 +510,49 @@ class _RecentCasesStrip extends ConsumerWidget {
       orElse: () => null,
     );
 
+    // Empty → populated transition: when the user saves their first
+    // case, the strip fades+slides in instead of popping into existence.
+    // AnimatedSwitcher with a non-empty/empty key tells the framework
+    // these are distinct trees worth animating between.
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 320),
+      switchInCurve: Curves.easeOutCubic,
+      switchOutCurve: Curves.easeInCubic,
+      transitionBuilder: (child, animation) => FadeTransition(
+        opacity: animation,
+        child: SizeTransition(
+          axisAlignment: -1,
+          sizeFactor: animation,
+          child: child,
+        ),
+      ),
+      child: cases.isEmpty
+          ? const SizedBox.shrink(key: ValueKey<String>('empty'))
+          : _RecentCasesStripPopulated(
+              key: const ValueKey<String>('populated'),
+              cases: cases,
+              engine: engine,
+            ),
+    );
+  }
+}
+
+/// Extracted populated body so AnimatedSwitcher can swap whole subtrees
+/// rather than diff-rebuild the same widget. Key on the parent
+/// (`ValueKey<'populated'>`) is what tells the switcher the tree is
+/// distinct from the empty SizedBox.
+class _RecentCasesStripPopulated extends StatelessWidget {
+  const _RecentCasesStripPopulated({
+    required this.cases,
+    required this.engine,
+    super.key,
+  });
+
+  final List<SavedCase> cases;
+  final SwitchingEngine? engine;
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: ClinicalSpace.lg),
       child: Column(
