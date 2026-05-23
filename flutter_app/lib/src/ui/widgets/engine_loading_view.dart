@@ -4,6 +4,8 @@
 // uses these for the loading and error branches. Centralising them
 // keeps the look consistent and prevents per-screen boilerplate.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -11,11 +13,62 @@ import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 
 /// Splash shown while `assets/content_bundle.json` is decoding into a
-/// `SwitchingEngine`. Cold-start typically resolves in <100 ms, but
-/// when it does flash we want users to see a deliberate brand surface
-/// rather than a bare spinner.
-class EngineLoadingView extends StatelessWidget {
+/// `SwitchingEngine`. Cold-start typically resolves in <100 ms; when
+/// it does flash we want users to see a deliberate brand surface plus
+/// a sense of *progress*, not a stuck spinner.
+///
+/// Stateful so we can cycle the subtitle through progress fragments
+/// ("Loading drugs…" → "Loading rules…" → "Loading citations…") while
+/// the bundle is still in flight. AnimatedSwitcher cross-fades between
+/// fragments at 280ms each so the cycle reads as deliberate progress,
+/// not a flicker.
+class EngineLoadingView extends StatefulWidget {
   const EngineLoadingView({super.key});
+
+  @override
+  State<EngineLoadingView> createState() => _EngineLoadingViewState();
+}
+
+class _EngineLoadingViewState extends State<EngineLoadingView> {
+  static const List<String> _fragments = <String>[
+    'Loading drugs…',
+    'Loading rules…',
+    'Loading citations…',
+  ];
+
+  /// First fragment shows immediately. After 360ms the cycle starts —
+  /// next fragment every 360ms. Even on the rare slow load (e.g.
+  /// release-mode first install on cold CPU), the user sees movement
+  /// instead of a static "Loading clinical registry…".
+  int _fragmentIndex = 0;
+  Timer? _cycleTimer;
+  bool _timerStarted = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // MediaQuery only reads safely here / in build, not initState.
+    if (_timerStarted) return;
+    _timerStarted = true;
+    if (MediaQuery.disableAnimationsOf(context)) {
+      return; // reduced-motion: keep first fragment static
+    }
+    _cycleTimer = Timer.periodic(
+      const Duration(milliseconds: 360),
+      (_) {
+        if (!mounted) return;
+        setState(() {
+          _fragmentIndex = (_fragmentIndex + 1) % _fragments.length;
+        });
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _cycleTimer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +93,18 @@ class EngineLoadingView extends StatelessWidget {
           const Gap.v(ClinicalSpace.lg),
           const Text('PsychSwitch', style: ClinicalText.subtitle),
           const Gap.v(ClinicalSpace.xs),
-          const Text(
-            'Loading clinical registry…',
-            style: ClinicalText.caption,
+          // Cycling subtitle — cross-fades through the progress
+          // fragments. ValueKey on the inner Text so AnimatedSwitcher
+          // recognises each fragment as a fresh widget worth fading.
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 280),
+            switchInCurve: Curves.easeOutCubic,
+            switchOutCurve: Curves.easeInCubic,
+            child: Text(
+              _fragments[_fragmentIndex],
+              key: ValueKey<int>(_fragmentIndex),
+              style: ClinicalText.caption,
+            ),
           ),
           const Gap.v(ClinicalSpace.xl),
           const RepaintBoundary(

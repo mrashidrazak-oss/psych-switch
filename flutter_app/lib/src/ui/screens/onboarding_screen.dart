@@ -20,6 +20,7 @@ import 'package:psychswitch/src/providers/onboarding_provider.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
+import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({super.key});
@@ -38,7 +39,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       tone: ClinicalPalette.accent,
       title: 'Plan a cross-titration',
       body:
-          'PsychSwitch carries reviewed cross-taper rules from Maudsley 15, '
+          'PsychSwitch carries reviewed cross-taper rules from Maudsley 15th, '
           'BAP 2020, NICE, and the Malaysian CPGs. Pick a from-drug, a '
           'to-drug, and the doses — the engine returns a day-by-day '
           'schedule with safety flags, monitoring touchpoints, and an '
@@ -242,60 +243,73 @@ class _OnboardingPageView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           const Spacer(flex: 2),
-          // Big rounded-square icon with tone-tinted background + soft
-          // dual-tone glow matching the brand mark on home / disclaimer.
-          DecoratedBox(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(ClinicalRadii.card),
-              boxShadow: <BoxShadow>[
-                BoxShadow(
-                  color: page.tone.withValues(alpha: 0.32),
-                  blurRadius: 36,
-                  spreadRadius: -8,
-                  offset: const Offset(0, 12),
-                ),
-              ],
-            ),
-            child: Container(
-              width: 86,
-              height: 86,
+          // Icon → title → body cascade-in on first paint of the page.
+          // 80ms stagger so the read order is reinforced visually.
+          EntranceFade(
+            stagger: const Duration(milliseconds: 80),
+            // Big rounded-square icon with tone-tinted background + soft
+            // glow matching the brand mark on home / disclaimer.
+            child: DecoratedBox(
               decoration: BoxDecoration(
-                color: page.tone.withValues(alpha: 0.12),
-                border: Border.all(
-                  color: page.tone.withValues(alpha: 0.36),
-                  width: 0.5,
-                ),
                 borderRadius: BorderRadius.circular(ClinicalRadii.card),
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                    color: page.tone.withValues(alpha: 0.32),
+                    blurRadius: 36,
+                    spreadRadius: -8,
+                    offset: const Offset(0, 12),
+                  ),
+                ],
               ),
-              child: Center(
-                child: Icon(
-                  page.icon,
-                  size: 38,
-                  color: page.tone,
+              child: Container(
+                width: 86,
+                height: 86,
+                decoration: BoxDecoration(
+                  color: page.tone.withValues(alpha: 0.12),
+                  border: Border.all(
+                    color: page.tone.withValues(alpha: 0.36),
+                    width: 0.5,
+                  ),
+                  borderRadius: BorderRadius.circular(ClinicalRadii.card),
+                ),
+                child: Center(
+                  child: Icon(
+                    page.icon,
+                    size: 38,
+                    color: page.tone,
+                  ),
                 ),
               ),
             ),
           ),
           const Gap.v(ClinicalSpace.xl),
-          Text(
-            page.title,
-            style: const TextStyle(
-              color: ClinicalPalette.text,
-              fontSize: 30,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -0.8,
-              height: 1.15,
+          EntranceFade(
+            index: 1,
+            stagger: const Duration(milliseconds: 80),
+            child: Text(
+              page.title,
+              style: const TextStyle(
+                color: ClinicalPalette.text,
+                fontSize: 30,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.8,
+                height: 1.15,
+              ),
             ),
           ),
           const Gap.v(ClinicalSpace.md + 2),
-          Text(
-            page.body,
-            style: const TextStyle(
-              color: ClinicalPalette.mutedStrong,
-              fontSize: 15,
-              fontWeight: FontWeight.w400,
-              height: 1.6,
-              letterSpacing: 0.1,
+          EntranceFade(
+            index: 2,
+            stagger: const Duration(milliseconds: 80),
+            child: Text(
+              page.body,
+              style: const TextStyle(
+                color: ClinicalPalette.mutedStrong,
+                fontSize: 15,
+                fontWeight: FontWeight.w400,
+                height: 1.6,
+                letterSpacing: 0.1,
+              ),
             ),
           ),
           const Spacer(flex: 3),
