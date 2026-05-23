@@ -269,7 +269,10 @@ class _SearchField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () => context.pushNamed(Routes.search),
+      onTap: () {
+        unawaited(hapticsTap());
+        context.pushNamed(Routes.search);
+      },
       borderRadius: BorderRadius.circular(ClinicalRadii.pill),
       child: Container(
         height: 52,
