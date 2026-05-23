@@ -181,7 +181,7 @@ class _Greeting extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 2),
-              const Text('Consultant Psychiatrist',
+              const Text('Healthcare professional',
                   style: ClinicalText.caption),
             ],
           ),
