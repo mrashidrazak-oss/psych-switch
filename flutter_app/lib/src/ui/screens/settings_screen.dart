@@ -74,6 +74,8 @@ class SettingsScreen extends ConsumerWidget {
           children: <Widget>[
             const _SectionHeader(text: 'PROFILE'),
             const _ClinicianNameField(),
+            const Gap.v(ClinicalSpace.md),
+            const _ClinicianRoleField(),
 
             const Gap.v(ClinicalSpace.xl),
             const _SectionHeader(text: 'ACCOUNT'),
@@ -555,6 +557,106 @@ class _ClinicianNameFieldState extends ConsumerState<_ClinicianNameField> {
                 ref.read(clinicianNameProvider.notifier).set(v),
             onChanged: (v) =>
                 ref.read(clinicianNameProvider.notifier).set(v),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Clinician role / title editor — surfaces under the Home greeting.
+/// Optional. Empty falls back to the generic "Healthcare professional"
+/// subtitle. Stored locally via [clinicianRoleProvider]; never
+/// transmitted.
+class _ClinicianRoleField extends ConsumerStatefulWidget {
+  const _ClinicianRoleField();
+
+  @override
+  ConsumerState<_ClinicianRoleField> createState() =>
+      _ClinicianRoleFieldState();
+}
+
+class _ClinicianRoleFieldState extends ConsumerState<_ClinicianRoleField> {
+  late final TextEditingController _ctrl;
+  bool _seeded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ref.watch(clinicianRoleProvider).whenData((current) {
+      if (!_seeded) {
+        _ctrl.text = current;
+        _seeded = true;
+      }
+    });
+
+    return Container(
+      decoration: BoxDecoration(
+        color: ClinicalPalette.surface,
+        border: Border.all(
+          color: ClinicalPalette.border.withValues(alpha: 0.7),
+          width: 0.5,
+        ),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
+      ),
+      padding: const EdgeInsets.fromLTRB(
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.lg - 2,
+        ClinicalSpace.md + 2,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Row(
+            children: <Widget>[
+              Icon(Icons.badge_outlined, size: 18, color: ClinicalPalette.accent),
+              Gap.h(ClinicalSpace.sm + 2),
+              Expanded(
+                child: Text(
+                  'Your role',
+                  style: TextStyle(
+                    color: ClinicalPalette.text,
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.1,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const Gap.v(ClinicalSpace.xs + 1),
+          Text(
+            'Shown under your name on the Home greeting. Optional — '
+            'leave blank for a generic salutation.',
+            style: ClinicalText.caption.copyWith(height: 1.55),
+          ),
+          const Gap.v(ClinicalSpace.md),
+          TextField(
+            controller: _ctrl,
+            textCapitalization: TextCapitalization.words,
+            textInputAction: TextInputAction.done,
+            maxLength: 32,
+            decoration: const InputDecoration(
+              hintText: 'Consultant Psychiatrist',
+              counterText: '',
+              isDense: true,
+            ),
+            onSubmitted: (v) =>
+                ref.read(clinicianRoleProvider.notifier).set(v),
+            onChanged: (v) =>
+                ref.read(clinicianRoleProvider.notifier).set(v),
           ),
         ],
       ),

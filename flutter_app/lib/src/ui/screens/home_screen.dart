@@ -93,6 +93,9 @@ class _HomeBody extends ConsumerWidget {
     final name = nameAsync.maybeWhen(data: (n) => n, orElse: () => '');
     final salutation = clinicianSalutation(name);
     final initials = clinicianInitials(name);
+    final roleAsync = ref.watch(clinicianRoleProvider);
+    final role = roleAsync.maybeWhen(data: (r) => r, orElse: () => '').trim();
+    final subtitle = role.isEmpty ? 'Healthcare professional' : role;
 
     return Center(
       child: ConstrainedBox(
@@ -111,6 +114,7 @@ class _HomeBody extends ConsumerWidget {
               _Greeting(
                 greeting: greeting,
                 salutation: salutation,
+                subtitle: subtitle,
                 initials: initials,
               ),
               const SizedBox(height: ClinicalSpace.lg + 4),
@@ -158,10 +162,12 @@ class _Greeting extends StatelessWidget {
   const _Greeting({
     required this.greeting,
     required this.salutation,
+    required this.subtitle,
     required this.initials,
   });
   final String greeting;
   final String salutation;
+  final String subtitle;
   final String initials;
 
   @override
@@ -181,8 +187,12 @@ class _Greeting extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(height: 2),
-              const Text('Healthcare professional',
-                  style: ClinicalText.caption),
+              Text(
+                subtitle,
+                style: ClinicalText.caption,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ],
           ),
         ),

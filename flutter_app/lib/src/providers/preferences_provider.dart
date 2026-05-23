@@ -91,6 +91,30 @@ String clinicianSalutation(String name) {
   return 'Dr $trimmed';
 }
 
+/// Clinician role / title — surfaces under the greeting on Home. Empty
+/// string means "not set"; the UI falls back to a generic "Healthcare
+/// professional" subtitle so the layout never collapses or leaks an
+/// example placeholder.
+final clinicianRoleProvider =
+    AsyncNotifierProvider<_RolePref, String>(_RolePref.new);
+
+class _RolePref extends AsyncNotifier<String> {
+  static const _key = 'pref_clinician_role';
+
+  @override
+  Future<String> build() async {
+    final prefs = await ref.watch(sharedPreferencesProvider.future);
+    return prefs.getString(_key) ?? '';
+  }
+
+  Future<void> set(String value) async {
+    final trimmed = value.trim();
+    state = AsyncValue.data(trimmed);
+    final prefs = await ref.read(sharedPreferencesProvider.future);
+    await prefs.setString(_key, trimmed);
+  }
+}
+
 /// Whether monitoring-reminder notifications fire on saved cases.
 /// Default: false — opt-in. Toggling off cancels every pending
 /// reminder via `NotificationService.cancelAll`.
