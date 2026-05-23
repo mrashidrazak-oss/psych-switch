@@ -38,9 +38,9 @@ void main() {
     expect(find.text('not medical advice.'), findsOneWidget);
 
     // Three bullet titles.
-    expect(find.text('For qualified clinicians'), findsOneWidget);
+    expect(find.text('Grounded in primary sources'), findsOneWidget);
     expect(
-      find.text('Not a substitute for clinical judgment'),
+      find.text('Not a substitute for clinical judgement'),
       findsOneWidget,
     );
     expect(find.text('Cross-check primary sources'), findsOneWidget);

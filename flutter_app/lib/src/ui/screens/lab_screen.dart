@@ -144,9 +144,9 @@ class _Hero extends StatelessWidget {
           ),
           const SizedBox(height: ClinicalSpace.sm),
           Text(
-            'Common labs psychiatrists read every week — TSH · prolactin '
-            '· ANC · sodium · creatinine · HbA1c · LDL · CK · ALT — '
-            'with the action line ready to paste.',
+            'Common labs in psychiatric care — TSH · prolactin · ANC · '
+            'sodium · creatinine · HbA1c · LDL · CK · ALT — each with '
+            'the action line ready to paste.',
             style: ClinicalText.body.copyWith(
               color: ClinicalPalette.toneSkyInk.withValues(alpha: 0.85),
               height: 1.5,

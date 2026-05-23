@@ -1601,7 +1601,7 @@ class _Footer extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: ClinicalSpace.lg),
         child: Text(
-          'PsychSwitch · Decision support for licensed clinicians.\n'
+          'PsychSwitch · Decision support for healthcare professionals.\n'
           'Always confirm with the most current product label.',
           textAlign: TextAlign.center,
           style: ClinicalText.caption.copyWith(

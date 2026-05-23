@@ -266,12 +266,13 @@ class _BulletBlock extends StatelessWidget {
 
   static const _bullets = <(String, String)>[
     (
-      'For qualified clinicians',
-      'Reference cross-titration schedules drawn from Maudsley 15th, '
-          'BAP 2020, NICE, and the Malaysian CPGs.',
+      'Grounded in primary sources',
+      'Cross-titration schedules drawn from Maudsley 15th, BAP 2020, '
+          'NICE, and the Malaysian CPGs — every rule cites where it '
+          'came from.',
     ),
     (
-      'Not a substitute for clinical judgment',
+      'Not a substitute for clinical judgement',
       'Final prescribing decisions always rest with the treating '
           'clinician — patient factors, comorbidities, and local '
           'guidance take precedence.',
