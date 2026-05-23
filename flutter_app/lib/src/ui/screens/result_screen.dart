@@ -2611,13 +2611,21 @@ class _ScheduleCard extends StatelessWidget {
                 color: ClinicalPalette.border.withValues(alpha: 0.5),
                 margin: const EdgeInsets.symmetric(vertical: ClinicalSpace.sm + 2),
               ),
-            _ScheduleStepBlock(
-              step: schedule[i],
-              fromMax: fromMax,
-              toMax: toMax,
-              isFinal: i == schedule.length - 1,
-              isSoftened: day1Softened &&
-                  _isInDay1Plateau(schedule, i),
+            // Tighter stagger than Home (30ms) — a long schedule still
+            // unfolds inside the first half-second. Each row fades+slides
+            // into place sequentially so the plan reads as "generated"
+            // rather than "displayed".
+            EntranceFade(
+              index: i,
+              stagger: const Duration(milliseconds: 30),
+              child: _ScheduleStepBlock(
+                step: schedule[i],
+                fromMax: fromMax,
+                toMax: toMax,
+                isFinal: i == schedule.length - 1,
+                isSoftened: day1Softened &&
+                    _isInDay1Plateau(schedule, i),
+              ),
             ),
           ],
         ],

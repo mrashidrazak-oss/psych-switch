@@ -18,6 +18,7 @@ import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/widgets/clinical_primitives.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
+import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
 import 'package:psychswitch_engine/errata.dart';
 
 final _packageInfoProvider = FutureProvider<PackageInfo>(
@@ -58,79 +59,102 @@ class AboutScreen extends ConsumerWidget {
                     ClinicalSpace.xxl,
                   ),
                   children: <Widget>[
-                    const _Hero(),
+                    const EntranceFade(child: _Hero()),
                     const SizedBox(height: ClinicalSpace.lg),
-                    _StatGrid(
-                      stats: <_Stat>[
-                        _Stat(
-                          label: 'Drugs',
-                          value:
-                              '${engine.listAllDrugs().length} (${engine.listDrugs().length} visible)',
-                          tone: ClinicalPalette.toneSky,
-                          ink: ClinicalPalette.toneSkyInk,
-                        ),
-                        _Stat(
-                          label: 'Reviewed rules',
-                          value: '${engine.listRules().length}',
-                          tone: ClinicalPalette.toneMint,
-                          ink: ClinicalPalette.toneMintInk,
-                        ),
-                        _Stat(
-                          label: 'Errata logged',
-                          value: '${errataCount()}',
-                          tone: ClinicalPalette.tonePeach,
-                          ink: ClinicalPalette.tonePeachInk,
-                        ),
-                        _Stat(
-                          label: 'Build',
-                          value: 'v$version+$build',
-                          tone: ClinicalPalette.toneRose,
-                          ink: ClinicalPalette.toneRoseInk,
-                        ),
-                      ],
+                    EntranceFade(
+                      index: 1,
+                      child: _StatGrid(
+                        stats: <_Stat>[
+                          _Stat(
+                            label: 'Drugs',
+                            value:
+                                '${engine.listAllDrugs().length} (${engine.listDrugs().length} visible)',
+                            target: engine.listAllDrugs().length,
+                            format: (n) =>
+                                '$n (${engine.listDrugs().length} visible)',
+                            tone: ClinicalPalette.toneSky,
+                            ink: ClinicalPalette.toneSkyInk,
+                          ),
+                          _Stat(
+                            label: 'Reviewed rules',
+                            value: '${engine.listRules().length}',
+                            target: engine.listRules().length,
+                            tone: ClinicalPalette.toneMint,
+                            ink: ClinicalPalette.toneMintInk,
+                          ),
+                          _Stat(
+                            label: 'Errata logged',
+                            value: '${errataCount()}',
+                            target: errataCount(),
+                            tone: ClinicalPalette.tonePeach,
+                            ink: ClinicalPalette.tonePeachInk,
+                          ),
+                          _Stat(
+                            label: 'Build',
+                            value: 'v$version+$build',
+                            tone: ClinicalPalette.toneRose,
+                            ink: ClinicalPalette.toneRoseInk,
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: ClinicalSpace.lg),
-                    const _SectionCard(
-                      eyebrow: 'Clinical scope',
-                      body:
-                          'Antidepressants and oral antipsychotics. Mood '
-                          'stabilisers and LAI depot protocols are also in '
-                          'the registry but the switch picker keeps them '
-                          'gated — both classes need more clinical research '
-                          'before generic templating is safe.',
+                    const EntranceFade(
+                      index: 2,
+                      child: _SectionCard(
+                        eyebrow: 'Clinical scope',
+                        body:
+                            'Antidepressants and oral antipsychotics. Mood '
+                            'stabilisers and LAI depot protocols are also in '
+                            'the registry but the switch picker keeps them '
+                            'gated — both classes need more clinical research '
+                            'before generic templating is safe.',
+                      ),
                     ),
                     const SizedBox(height: ClinicalSpace.md),
-                    const _SectionCard(
-                      eyebrow: 'Intended use',
-                      body:
-                          'Decision support for healthcare professionals, '
-                          'not a substitute for clinical judgement. Every '
-                          'switch should still be reviewed against the '
-                          'patient in front of you and the primary '
-                          'references the rule cites.',
+                    const EntranceFade(
+                      index: 3,
+                      child: _SectionCard(
+                        eyebrow: 'Intended use',
+                        body:
+                            'Decision support for healthcare professionals, '
+                            'not a substitute for clinical judgement. Every '
+                            'switch should still be reviewed against the '
+                            'patient in front of you and the primary '
+                            'references the rule cites.',
+                      ),
                     ),
                     const SizedBox(height: ClinicalSpace.md),
-                    const _SectionCard(
-                      eyebrow: 'Privacy',
-                      body:
-                          'On-device only. Saved cases live in a local '
-                          'SQLite database. The optional crash-reporting '
-                          'toggle (Sentry) never transmits clinical inputs. '
-                          'No network calls are made by the engine itself.',
+                    const EntranceFade(
+                      index: 4,
+                      child: _SectionCard(
+                        eyebrow: 'Privacy',
+                        body:
+                            'On-device only. Saved cases live in a local '
+                            'SQLite database. The optional crash-reporting '
+                            'toggle (Sentry) never transmits clinical inputs. '
+                            'No network calls are made by the engine itself.',
+                      ),
                     ),
                     const SizedBox(height: ClinicalSpace.md),
-                    const _SectionCard(
-                      eyebrow: 'Licensing',
-                      body:
-                          'App source: MIT. Clinical content (drug '
-                          'profiles, switching rules, citations, errata): '
-                          'CC BY-NC-SA 4.0.',
+                    const EntranceFade(
+                      index: 5,
+                      child: _SectionCard(
+                        eyebrow: 'Licensing',
+                        body:
+                            'App source: MIT. Clinical content (drug '
+                            'profiles, switching rules, citations, errata): '
+                            'CC BY-NC-SA 4.0.',
+                      ),
                     ),
                     const SizedBox(height: ClinicalSpace.md),
-                    const _SectionCard(
-                      eyebrow: 'Contact',
-                      body: 'Errata  ·  errata@psychswitch.health\n'
-                          'Privacy  ·  privacy@psychswitch.health',
+                    const EntranceFade(
+                      index: 6,
+                      child: _SectionCard(
+                        eyebrow: 'Contact',
+                        body: 'Errata  ·  errata@psychswitch.health\n'
+                            'Privacy  ·  privacy@psychswitch.health',
+                      ),
                     ),
                   ],
                 );
@@ -214,11 +238,25 @@ class _Stat {
     required this.value,
     required this.tone,
     required this.ink,
+    this.target,
+    this.format,
   });
   final String label;
+
+  /// Static fallback shown when [target] is null (and during the very
+  /// first frame before the tween runs, on reduced-motion devices).
   final String value;
   final Color tone;
   final Color ink;
+
+  /// When non-null, the tile renders an animated 0 → [target] counter
+  /// over ~900ms on first build instead of the static [value].
+  final int? target;
+
+  /// Optional formatter — receives each tweened step and returns the
+  /// label string. Defaults to `'$n'`. Used when the headline number
+  /// is wrapped in additional context (e.g. "138 (visible 128)").
+  final String Function(int n)? format;
 }
 
 class _StatGrid extends StatelessWidget {
@@ -255,6 +293,45 @@ class _StatTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final valueStyle = TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w800,
+      color: stat.ink,
+      height: 1.2,
+      letterSpacing: -0.2,
+      fontFeatures: const <FontFeature>[
+        FontFeature.tabularFigures(),
+      ],
+    );
+
+    final Widget valueText;
+    final target = stat.target;
+    if (target != null) {
+      // Tick the headline number from 0 → target over 900ms.
+      valueText = TweenAnimationBuilder<double>(
+        tween: Tween<double>(begin: 0, end: target.toDouble()),
+        duration: const Duration(milliseconds: 900),
+        curve: Curves.easeOutCubic,
+        builder: (_, value, __) {
+          final n = value.round();
+          final label = stat.format != null ? stat.format!(n) : '$n';
+          return Text(
+            label,
+            style: valueStyle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          );
+        },
+      );
+    } else {
+      valueText = Text(
+        stat.value,
+        style: valueStyle,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      );
+    }
+
     return SquircleCard(
       tone: stat.tone,
       radius: ClinicalRadii.tile,
@@ -273,21 +350,7 @@ class _StatTile extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          Text(
-            stat.value,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w800,
-              color: stat.ink,
-              height: 1.2,
-              letterSpacing: -0.2,
-              fontFeatures: const <FontFeature>[
-                FontFeature.tabularFigures(),
-              ],
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
+          valueText,
         ],
       ),
     );
