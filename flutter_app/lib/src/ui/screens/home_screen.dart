@@ -219,7 +219,10 @@ class _IconBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkResponse(
-      onTap: onTap,
+      onTap: () {
+        unawaited(hapticsTap());
+        onTap();
+      },
       radius: 28,
       child: Stack(
         clipBehavior: Clip.none,
