@@ -24,6 +24,7 @@ import 'package:flutter/material.dart';
 
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
+import 'package:psychswitch/src/ui/widgets/press_scale.dart';
 
 /// A 28-pt squircle card. `tone` paints the entire surface (used on
 /// hero / category cards); when `tone` is null the card defaults to
@@ -60,15 +61,17 @@ class SquircleCard extends StatelessWidget {
       child: Padding(padding: padding, child: child),
     );
     if (onTap == null) return card;
-    return Material(
-      color: Colors.transparent,
-      borderRadius: BorderRadius.circular(radius),
-      child: InkWell(
-        onTap: onTap,
+    return PressScale(
+      child: Material(
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(radius),
-        splashColor: ClinicalPalette.text.withValues(alpha: 0.04),
-        highlightColor: ClinicalPalette.text.withValues(alpha: 0.02),
-        child: card,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(radius),
+          splashColor: ClinicalPalette.text.withValues(alpha: 0.04),
+          highlightColor: ClinicalPalette.text.withValues(alpha: 0.02),
+          child: card,
+        ),
       ),
     );
   }
@@ -134,7 +137,8 @@ class PillButton extends StatelessWidget {
         ),
       ),
     );
-    return expanded ? SizedBox(width: double.infinity, child: btn) : btn;
+    final scaled = PressScale(enabled: !disabled, child: btn);
+    return expanded ? SizedBox(width: double.infinity, child: scaled) : scaled;
   }
 }
 
@@ -202,7 +206,8 @@ class GhostPillButton extends StatelessWidget {
         ),
       ),
     );
-    return expanded ? SizedBox(width: double.infinity, child: btn) : btn;
+    final scaled = PressScale(enabled: !disabled, child: btn);
+    return expanded ? SizedBox(width: double.infinity, child: scaled) : scaled;
   }
 }
 
@@ -372,45 +377,47 @@ class ToneTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: tone,
-      borderRadius: BorderRadius.circular(ClinicalRadii.tile),
-      child: InkWell(
-        onTap: onTap,
+    return PressScale(
+      child: Material(
+        color: tone,
         borderRadius: BorderRadius.circular(ClinicalRadii.tile),
-        splashColor: ink.withValues(alpha: 0.08),
-        highlightColor: ink.withValues(alpha: 0.04),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: ClinicalSpace.md,
-            vertical: ClinicalSpace.md + 2,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              Container(
-                width: 32,
-                height: 32,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.7),
-                  borderRadius: BorderRadius.circular(ClinicalRadii.chip),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(ClinicalRadii.tile),
+          splashColor: ink.withValues(alpha: 0.08),
+          highlightColor: ink.withValues(alpha: 0.04),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: ClinicalSpace.md,
+              vertical: ClinicalSpace.md + 2,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Container(
+                  width: 32,
+                  height: 32,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.7),
+                    borderRadius: BorderRadius.circular(ClinicalRadii.chip),
+                  ),
+                  child: Icon(icon, size: 18, color: ink),
                 ),
-                child: Icon(icon, size: 18, color: ink),
-              ),
-              const SizedBox(height: ClinicalSpace.md),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w700,
-                  color: ink,
-                  height: 16 / 13,
+                const SizedBox(height: ClinicalSpace.md),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: ink,
+                    height: 16 / 13,
+                  ),
+                  maxLines: 2,
                 ),
-                maxLines: 2,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
