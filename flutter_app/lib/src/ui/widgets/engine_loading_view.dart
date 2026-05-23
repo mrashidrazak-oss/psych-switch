@@ -57,38 +57,42 @@ class EngineLoadingView extends StatelessWidget {
   }
 }
 
+/// Real brand mark — matches the dual-tone glow treatment used by the
+/// Disclaimer's `_BrandHero`. Three cold-start surfaces (loading,
+/// disclaimer, about) now share one mark instead of three.
 class _BrandMark extends StatelessWidget {
   const _BrandMark();
 
+  static const double _size = 56;
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 56,
-      height: 56,
+    return DecoratedBox(
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: <Color>[ClinicalPalette.toneLavenderInk, ClinicalPalette.toneMintInk],
-        ),
         borderRadius: BorderRadius.circular(ClinicalRadii.tile),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: ClinicalPalette.accent.withValues(alpha: 0.25),
-            blurRadius: 16,
-            spreadRadius: -2,
+            color: ClinicalPalette.toneLavenderInk.withValues(alpha: 0.28),
+            blurRadius: 30,
+            spreadRadius: -8,
+            offset: const Offset(-5, 6),
+          ),
+          BoxShadow(
+            color: ClinicalPalette.toneMintInk.withValues(alpha: 0.28),
+            blurRadius: 30,
+            spreadRadius: -8,
+            offset: const Offset(5, 6),
           ),
         ],
       ),
-      child: const Center(
-        child: Text(
-          'PS',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
-            letterSpacing: -0.5,
-          ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
+        child: Image.asset(
+          'assets/icon.png',
+          width: _size,
+          height: _size,
+          fit: BoxFit.cover,
+          filterQuality: FilterQuality.high,
         ),
       ),
     );
