@@ -547,7 +547,7 @@ class _ClinicianNameFieldState extends ConsumerState<_ClinicianNameField> {
             textInputAction: TextInputAction.done,
             maxLength: 40,
             decoration: const InputDecoration(
-              hintText: 'e.g. Rashid Razak',
+              hintText: 'Full name',
               counterText: '',
               isDense: true,
             ),
