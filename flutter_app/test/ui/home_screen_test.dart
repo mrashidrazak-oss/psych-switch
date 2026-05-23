@@ -61,8 +61,9 @@ void main() {
 
       await _waitForEngine(tester);
 
-      // Greeting (Dr R appears in any time-of-day variant).
-      expect(find.textContaining('Dr R'), findsOneWidget);
+      // Greeting ("Doctor" is the empty-clinician-name default,
+      // appearing in any time-of-day variant).
+      expect(find.textContaining('Doctor'), findsOneWidget);
       // Hero copy.
       expect(find.text('Plan a safe cross-titration'), findsOneWidget);
       // Drug/rule signal line — verify the trailing source. (May appear

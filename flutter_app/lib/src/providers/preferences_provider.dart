@@ -78,11 +78,12 @@ String clinicianInitials(String name) {
 
 /// Salutation form for the greeting — strips/prefixes "Dr" as needed
 /// so the greeting reads naturally regardless of how the user typed
-/// their name in. Returns "Dr R" when the name is empty (matches the
-/// pre-personalisation default).
+/// their name in. Returns "Doctor" when the name is empty so the
+/// greeting reads "Good afternoon, Doctor" — a polished pre-personal-
+/// isation default, rather than the truncated-looking "Dr R".
 String clinicianSalutation(String name) {
   final trimmed = name.trim();
-  if (trimmed.isEmpty) return 'Dr R';
+  if (trimmed.isEmpty) return 'Doctor';
   // Already starts with "Dr" / "dr" / "DR" — pass through.
   if (RegExp(r'^Dr\.?\b', caseSensitive: false).hasMatch(trimmed)) {
     return trimmed;
