@@ -21,6 +21,7 @@ import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/polished_toast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 final _versionProvider = FutureProvider<PackageInfo>(
   (_) => PackageInfo.fromPlatform(),
@@ -37,6 +38,27 @@ class SettingsScreen extends ConsumerWidget {
     } else {
       // Off → cancel everything pending.
       await NotificationService.instance.cancelAll();
+    }
+  }
+
+  Future<void> _onSendFeedback(
+    BuildContext context,
+    AsyncValue<PackageInfo> asyncPkg,
+  ) async {
+    unawaited(hapticsTap());
+    final v = asyncPkg.value;
+    final version = v != null ? 'v${v.version}+${v.buildNumber}' : '';
+    final subject = Uri.encodeComponent('PsychSwitch feedback · $version');
+    final uri = Uri.parse('mailto:feedback@psychswitch.health?subject=$subject');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else if (context.mounted) {
+      showStatusToast(
+        context,
+        eyebrow: 'No mail app',
+        label: 'Email feedback@psychswitch.health',
+        kind: StatusToastKind.error,
+      );
     }
   }
 
@@ -120,6 +142,19 @@ class SettingsScreen extends ConsumerWidget {
                   "colleagues what's inside without a fresh install.",
               actionLabel: 'Replay tour',
               onPressed: () => _onReplayTour(context, ref),
+            ),
+
+            const Gap.v(ClinicalSpace.xl),
+            const _SectionHeader(text: 'FEEDBACK'),
+            _ActionTile(
+              icon: Icons.email_outlined,
+              label: 'Send feedback',
+              description:
+                  'Spotted a typo, a bug, or a clinical edge case the '
+                  'engine missed? Drop a line. The version + build number '
+                  'are pre-filled so we can reproduce.',
+              actionLabel: 'Email feedback',
+              onPressed: () => _onSendFeedback(context, asyncPkg),
             ),
 
             const Gap.v(ClinicalSpace.xl),

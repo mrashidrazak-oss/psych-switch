@@ -21,6 +21,7 @@ import 'package:psychswitch/src/ui/screens/result_screen.dart';
 import 'package:psychswitch/src/ui/theme/breakpoints.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
+import 'package:psychswitch/src/ui/widgets/empty_state.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
 import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
 import 'package:psychswitch_engine/case_pulse.dart' show SavedCase;
@@ -65,106 +66,17 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        ClinicalSpace.xxl,
-        ClinicalSpace.xl,
-        ClinicalSpace.xxl,
-        ClinicalSpace.xxl,
-      ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            // ── Illustrative mark — bookmark glyph cradled in the
-            //     brand's two-tone gradient ring, dual-tone glow.
-            DecoratedBox(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                boxShadow: <BoxShadow>[
-                  BoxShadow(
-                    color: ClinicalPalette.toneLavenderInk.withValues(alpha: 0.22),
-                    blurRadius: 36,
-                    spreadRadius: -10,
-                    offset: const Offset(-6, 8),
-                  ),
-                  BoxShadow(
-                    color: ClinicalPalette.toneMintInk.withValues(alpha: 0.22),
-                    blurRadius: 36,
-                    spreadRadius: -10,
-                    offset: const Offset(6, 8),
-                  ),
-                ],
-              ),
-              child: Container(
-                width: 88,
-                height: 88,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: <Color>[
-                      ClinicalPalette.toneLavenderInk,
-                      ClinicalPalette.toneMintInk,
-                    ],
-                  ),
-                  shape: BoxShape.circle,
-                ),
-                child: const Center(
-                  child: Icon(
-                    Icons.bookmark_rounded,
-                    color: Colors.white,
-                    size: 34,
-                  ),
-                ),
-              ),
-            ),
-            const Gap.v(ClinicalSpace.xl),
-            const Text(
-              'No saved cases yet',
-              style: TextStyle(
-                color: ClinicalPalette.text,
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.4,
-              ),
-            ),
-            const Gap.v(ClinicalSpace.sm + 2),
-            Text(
-              "Save a case from the result screen — it'll appear here "
-              'with a day counter so you can pick the patient back up '
-              'at the next visit.',
-              style: ClinicalText.caption.copyWith(height: 1.55),
-              textAlign: TextAlign.center,
-            ),
-            const Gap.v(ClinicalSpace.xl),
-            FilledButton.icon(
-              onPressed: () {
-                unawaited(hapticsTap());
-                context.pushNamed(Routes.switch_);
-              },
-              icon: const Icon(Icons.arrow_forward_rounded, size: 18),
-              label: const Text('Start a switch'),
-              style: FilledButton.styleFrom(
-                backgroundColor: ClinicalPalette.accent,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: ClinicalSpace.xl,
-                  vertical: ClinicalSpace.md + 2,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(ClinicalRadii.card),
-                ),
-                textStyle: const TextStyle(
-                  fontSize: 14.5,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.1,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+    return EmptyState(
+      icon: Icons.bookmark_rounded,
+      headline: 'No saved cases yet',
+      body: "Save a case from the result screen — it'll appear here "
+          'with a day counter so you can pick the patient back up '
+          'at the next visit.',
+      ctaLabel: 'Start a switch',
+      onCta: () {
+        unawaited(hapticsTap());
+        context.pushNamed(Routes.switch_);
+      },
     );
   }
 }

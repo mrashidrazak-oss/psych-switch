@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:psychswitch/src/ui/theme/breakpoints.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
+import 'package:psychswitch/src/ui/widgets/empty_state.dart';
 import 'package:psychswitch_engine/glossary.dart';
 
 class GlossaryScreen extends StatefulWidget {
@@ -160,34 +161,11 @@ class _GlossaryEmpty extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              color: ClinicalPalette.surface,
-              border: Border.all(color: ClinicalPalette.border),
-              borderRadius: BorderRadius.circular(ClinicalRadii.card),
-            ),
-            child: const Icon(
-              Icons.search_off_rounded,
-              color: ClinicalPalette.muted,
-              size: 24,
-            ),
-          ),
-          const Gap.v(ClinicalSpace.md),
-          const Text('No matching terms', style: ClinicalText.subtitle),
-          const Gap.v(ClinicalSpace.xs),
-          Text(
-            'Try a shorter query or another acronym.',
-            style: ClinicalText.caption.copyWith(height: 1.5),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
+    return const EmptyState(
+      icon: Icons.search_off_rounded,
+      headline: 'No matching terms',
+      body: 'Try a shorter query or another acronym — the glossary is '
+          'searchable by full term, abbreviation, or substring.',
     );
   }
 }
