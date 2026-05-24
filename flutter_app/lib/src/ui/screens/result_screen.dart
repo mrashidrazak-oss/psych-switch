@@ -222,7 +222,12 @@ class ResultScreen extends ConsumerWidget {
     }
 
     if (!context.mounted) return;
-    showSavedToast(context, label: label);
+    showSavedToast(
+      context,
+      label: label,
+      actionLabel: 'Open',
+      onAction: () => context.pushNamed(Routes.history),
+    );
   }
 }
 

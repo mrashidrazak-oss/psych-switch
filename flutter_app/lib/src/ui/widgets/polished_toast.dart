@@ -36,11 +36,13 @@ void showCopiedToast(
 }
 
 /// Show a mint-tinted "Saved · <label>" toast for case saves +
-/// kindred affirmations. Slightly different ink so the user knows
-/// "this is now mine" vs "I just copied something".
+/// kindred affirmations. Optional [actionLabel] + [onAction] surface
+/// a tap-to-jump shortcut (e.g. "Open" to see the saved case).
 void showSavedToast(
   BuildContext context, {
   required String label,
+  String? actionLabel,
+  VoidCallback? onAction,
 }) {
   _show(
     context,
@@ -48,6 +50,31 @@ void showSavedToast(
     eyebrow: 'Saved',
     label: label,
     tone: ClinicalPalette.toneMintInk,
+    actionLabel: actionLabel,
+    onAction: onAction,
+  );
+}
+
+/// Success vs error styling for status toasts. Success uses the
+/// accent + check glyph; error uses danger + exclamation glyph.
+enum StatusToastKind { success, error }
+
+/// Show a status toast for app-state events — sign-in / sign-out /
+/// connection state etc. [kind] picks the tone + glyph.
+
+void showStatusToast(
+  BuildContext context, {
+  required String eyebrow,
+  required String label,
+  StatusToastKind kind = StatusToastKind.success,
+}) {
+  final isError = kind == StatusToastKind.error;
+  _show(
+    context,
+    icon: isError ? Icons.error_outline_rounded : Icons.check_rounded,
+    eyebrow: eyebrow,
+    label: label,
+    tone: isError ? ClinicalPalette.danger : ClinicalPalette.accent,
   );
 }
 
@@ -57,6 +84,8 @@ void _show(
   required String eyebrow,
   required String label,
   required Color tone,
+  String? actionLabel,
+  VoidCallback? onAction,
 }) {
   final messenger = ScaffoldMessenger.maybeOf(context);
   if (messenger == null) return;
@@ -82,7 +111,9 @@ void _show(
           ),
           borderRadius: BorderRadius.circular(ClinicalRadii.card),
         ),
-        duration: const Duration(seconds: 2),
+        duration: Duration(
+          seconds: actionLabel != null ? 3 : 2,
+        ),
         content: Row(
           children: <Widget>[
             // Leading tinted-tone glyph.
@@ -129,6 +160,32 @@ void _show(
                 ],
               ),
             ),
+            // Trailing action — tap-to-jump affordance.
+            if (actionLabel != null && onAction != null) ...<Widget>[
+              const Gap.h(ClinicalSpace.sm),
+              InkWell(
+                onTap: () {
+                  messenger.hideCurrentSnackBar();
+                  onAction();
+                },
+                borderRadius: BorderRadius.circular(ClinicalRadii.pill),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: ClinicalSpace.sm + 2,
+                    vertical: 6,
+                  ),
+                  child: Text(
+                    actionLabel,
+                    style: TextStyle(
+                      color: tone,
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),

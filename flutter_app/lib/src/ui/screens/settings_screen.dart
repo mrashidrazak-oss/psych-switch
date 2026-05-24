@@ -20,6 +20,7 @@ import 'package:psychswitch/src/services/notification_service.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
+import 'package:psychswitch/src/ui/widgets/polished_toast.dart';
 
 final _versionProvider = FutureProvider<PackageInfo>(
   (_) => PackageInfo.fromPlatform(),
@@ -687,20 +688,26 @@ class _AccountSectionState extends ConsumerState<_AccountSection> {
       final user = await ref.read(authServiceProvider).signInWithGoogle();
       if (!mounted) return;
       unawaited(hapticsConfirm());
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Signed in as ${user.label}.')),
+      showStatusToast(
+        context,
+        eyebrow: 'Signed in',
+        label: user.label,
       );
     } on AuthException catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message)),
+      showStatusToast(
+        context,
+        eyebrow: 'Sign-in failed',
+        label: e.message,
+        kind: StatusToastKind.error,
       );
     } on Object catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Couldn't sign in. Try again."),
-        ),
+      showStatusToast(
+        context,
+        eyebrow: 'Sign-in failed',
+        label: "Couldn't sign in. Try again.",
+        kind: StatusToastKind.error,
       );
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -713,8 +720,10 @@ class _AccountSectionState extends ConsumerState<_AccountSection> {
     try {
       await ref.read(authServiceProvider).signOut();
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Signed out.')),
+      showStatusToast(
+        context,
+        eyebrow: 'Signed out',
+        label: 'See you next time.',
       );
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -723,10 +732,16 @@ class _AccountSectionState extends ConsumerState<_AccountSection> {
 
   @override
   Widget build(BuildContext context) {
-    // Unconfigured build — show an honest "coming soon" tile rather
-    // than a dead button.
-    if (!ref.watch(authAvailableProvider)) {
-      return const _AccountCard(
+    final available = ref.watch(authAvailableProvider);
+    final user = ref.watch(authStateProvider).asData?.value;
+
+    // Pick which branch + a stable key so AnimatedSwitcher recognises
+    // sign-in / sign-out as distinct subtrees worth cross-fading.
+    final Widget card;
+    final String key;
+    if (!available) {
+      key = 'unconfigured';
+      card = const _AccountCard(
         icon: Icons.lock_outline,
         title: 'Sign in with Google',
         description:
@@ -734,12 +749,9 @@ class _AccountSectionState extends ConsumerState<_AccountSection> {
             'upcoming update once the cloud project is connected — '
             'PsychSwitch stays fully usable offline either way.',
       );
-    }
-
-    final user = ref.watch(authStateProvider).asData?.value;
-
-    if (user == null) {
-      return _AccountCard(
+    } else if (user == null) {
+      key = 'signed-out';
+      card = _AccountCard(
         icon: Icons.account_circle_outlined,
         title: 'Sign in with Google',
         description:
@@ -766,25 +778,46 @@ class _AccountSectionState extends ConsumerState<_AccountSection> {
           ),
         ),
       );
-    }
-
-    return _AccountCard(
-      photoUrl: user.photoUrl,
-      initials: clinicianInitials(user.label),
-      title: user.label,
-      description: user.email ?? 'Signed in with Google',
-      action: OutlinedButton(
-        onPressed: _busy ? null : _signOut,
-        style: _accountButtonStyle(),
-        child: Text(
-          _busy ? 'Signing out…' : 'Sign out',
-          style: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.1,
+    } else {
+      key = 'signed-in';
+      card = _AccountCard(
+        photoUrl: user.photoUrl,
+        initials: clinicianInitials(user.label),
+        title: user.label,
+        description: user.email ?? 'Signed in with Google',
+        action: OutlinedButton(
+          onPressed: _busy ? null : _signOut,
+          style: _accountButtonStyle(),
+          child: Text(
+            _busy ? 'Signing out…' : 'Sign out',
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.1,
+            ),
           ),
         ),
+      );
+    }
+
+    // Fade + slight rise on state transition. Matches the rest of the
+    // app's motion language — same easeOutCubic, same ~280ms beat as
+    // the engine-loading fragment cycle and AnimatedSwitcher patterns.
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 280),
+      switchInCurve: Curves.easeOutCubic,
+      switchOutCurve: Curves.easeInCubic,
+      transitionBuilder: (child, animation) => FadeTransition(
+        opacity: animation,
+        child: SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, 0.04),
+            end: Offset.zero,
+          ).animate(animation),
+          child: child,
+        ),
       ),
+      child: KeyedSubtree(key: ValueKey<String>(key), child: card),
     );
   }
 }
