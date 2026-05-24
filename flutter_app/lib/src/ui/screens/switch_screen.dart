@@ -1,4 +1,5 @@
-// Switch screen.
+// Switch screen — the app's primary clinical workflow. Rewritten
+// 2026-05-23.
 //
 // One card. One cross-titration. One beat.
 //
@@ -6,35 +7,36 @@
 // between them is the journey itself: when the form is empty, it's
 // a quiet hairline with a directional badge. When the form is
 // valid, the connector EXPANDS to reveal the engine's verdict —
-// strategy, duration, score, safety counts. This is the preflight,
-// inlined. There is no separate "preflight card" competing with the
-// hero, because the hero IS the preflight, the moment both ends are
-// filled.
+// strategy, duration, score, safety counts. The hero IS the
+// preflight, the moment both ends are filled. No separate preflight
+// card competes with it.
 //
-// Restraint pass over the previous design:
-//   • Drops the heavy drop-shadow. The card is a tinted surface
-//     against the scaffold; that's contrast enough.
-//   • Hairline 0.5-px border. The card holds itself; chrome is
-//     for navigation, not decoration.
-//   • Drug name typography upgraded to 24-pt w800 with -0.6
-//     letter-spacing — the drug is the focal point of each
-//     section.
-//   • Dose row presented as a quiet form line, no shouting label.
-//   • The tier badge on the TO drug, the swap button on the
-//     connector, the patient-context AppBar action — all kept,
-//     all calm.
+// Architecture (top → bottom of the file mirrors top → bottom of
+// the rendered UI):
+//   - SwitchScreen        Route widget; theme wrapper + engine async.
+//   - _SwitchForm         Stateful body; owns drugs + dose controllers.
+//   - _PatientContextAct  AppBar action with badge dot when context set.
+//   - _ContextChip        Top "Adjusts for: ..." summary chip.
+//   - _Recents row        Horizontal recently-used drug chips.
+//   - _Hero               FROM-section + Journey-band + TO-section.
+//   - _DrugSection        Eyebrow + picker tile + dose field per side.
+//   - _DrugPickerTile     Empty/filled placeholder tile.
+//   - _DoseField          Numeric input + range hint.
+//   - _Journey            Connector; expands with preflight on valid.
+//   - _OkJourney          Success path: strategy + score + meta chips.
+//   - _ToneJourney        Non-OK paths: washout / guidance / no-rule.
+//   - _MetaChip           Tinted info chip.
+//   - _SwapBadge          Circular swap affordance.
+//   - _SameDrugWarning    Soft warning when from == to.
+//   - _PrimaryCta         Bottom-pinned "Generate plan" pill.
+//   - _DrugPickerSheet    Bottom sheet picker; search + tier-grouped rows.
+//   - _formatDose         Integer/decimal display helper.
 //
-// Function layer (preserved from prior pass):
-//   • Recently-used drug chips above the hero. Tap fills the
-//     next-empty slot.
-//   • Auto-prefill typical starting dose on pick. Range hint
-//     under the field.
-//   • Tier badge persists on TO once picked.
-//   • Same-drug guard renders soft warning callout.
-//   • Live engine preflight inside the connector (this is the
-//     redesign's core move).
-//   • One-tap swap on the connector when both ends filled.
-//   • One-tap clear in the AppBar.
+// Motion language:
+//   - Top-level sections cascade in (EntranceFade 60ms stagger).
+//   - Journey band expands/collapses via AnimatedSize (280ms easeOut).
+//   - Tappables inherit PressScale via primitives (SquircleCard,
+//     PillButton, ToneTile).
 
 import 'dart:async';
 
@@ -42,6 +44,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/providers/patient_context_provider.dart';
 import 'package:psychswitch/src/providers/saved_cases_provider.dart';
@@ -53,6 +56,7 @@ import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/clinical_primitives.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
+import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
 import 'package:psychswitch/src/ui/widgets/patient_context_sheet.dart';
 import 'package:psychswitch/src/ui/widgets/score_ring.dart';
 import 'package:psychswitch/src/ui/widgets/status_pill.dart';
@@ -68,9 +72,9 @@ import 'package:psychswitch_engine/types/drug.dart';
 import 'package:psychswitch_engine/types/enums.dart';
 import 'package:psychswitch_engine/types/switching_rule.dart';
 
-const double _maxFormWidth = 720;
-const Key _fromDoseKey = ValueKey<String>('switch.fromDose');
-const Key _toDoseKey = ValueKey<String>('switch.toDose');
+const double _kMaxFormWidth = 720;
+const Key _kFromDoseKey = ValueKey<String>('switch.fromDose');
+const Key _kToDoseKey = ValueKey<String>('switch.toDose');
 
 class SwitchScreen extends ConsumerWidget {
   const SwitchScreen({super.key});
@@ -118,6 +122,8 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
     super.dispose();
   }
 
+  // ── Form state predicates ─────────────────────────────────────────
+
   bool get _hasAny =>
       _from != null ||
       _to != null ||
@@ -147,10 +153,14 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
     );
   }
 
+  // ── Mutators ──────────────────────────────────────────────────────
+
   void _setFrom(Drug d) {
     setState(() {
       _from = d;
       _fromDoseCtl.text = _formatDose(d.dosing.startingDoseMg);
+      // If the to-drug equals the new from-drug, clear it so the same-
+      // drug guard doesn't fire on a confusing prior selection.
       if (_to?.id == d.id) {
         _to = null;
         _toDoseCtl.clear();
@@ -193,11 +203,10 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
     final input = _input;
     if (input == null) return;
     unawaited(hapticsConfirm());
-    context.pushNamed(
-      Routes.result,
-      extra: ResultScreenArgs(input: input),
-    );
+    context.pushNamed(Routes.result, extra: ResultScreenArgs(input: input));
   }
+
+  // ── Async actions ─────────────────────────────────────────────────
 
   Future<void> _openPatientContextSheet() async {
     final current = ref.read(patientContextProvider);
@@ -234,6 +243,8 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
     }
   }
 
+  // ── Engine derivation ─────────────────────────────────────────────
+
   ({SwitchPlan plan, RankedDrug? toRank})? _engineOutput() {
     final input = _input;
     if (input == null) return null;
@@ -248,19 +259,25 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
     return (plan: plan, toRank: ranked.firstOrNull);
   }
 
+  // ── Build ─────────────────────────────────────────────────────────
+
   @override
   Widget build(BuildContext context) {
-    // Pre-release catalogue: antidepressants + oral antipsychotics
-    // only. LAI (depot) injectables and mood-stabilisers are gated
-    // off the switch flow until their dedicated rules + monitoring
-    // surfaces are clinically reviewed. Filter applied to both the
-    // FROM and TO pickers AND the recents row so a stale saved case
-    // can't reintroduce a hidden category.
-    final visibleDrugs = widget.engine.listDrugs().where((d) {
-      if (d.formulation == Formulation.lai) return false;
-      if (d.category == DrugCategory.moodStabilizer) return false;
-      return true;
-    }).toList();
+    // Pre-release catalogue: antidepressants + oral antipsychotics only.
+    // LAI depot injectables and mood-stabilisers are gated off the
+    // switch flow until their dedicated rules + monitoring surfaces are
+    // clinically reviewed. Filter applied to both pickers AND the
+    // recents row so a stale saved case can't reintroduce a hidden
+    // category via the back door.
+    final visibleDrugs = widget.engine
+        .listDrugs()
+        .where(
+          (d) =>
+              d.formulation != Formulation.lai &&
+              d.category != DrugCategory.moodStabilizer,
+        )
+        .toList();
+
     final ctx = ref.watch(patientContextProvider);
     final ctxSummary = summarisePatientContext(ctx);
     final hasCtx = ctxSummary.isNotEmpty;
@@ -283,7 +300,7 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
               onPressed: _clearAll,
               icon: const Icon(Icons.refresh_rounded),
             ),
-          _PatientContextAction(
+          _PatientContextAct(
             hasContext: hasCtx,
             onPressed: _openPatientContextSheet,
           ),
@@ -295,7 +312,7 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
           physics: const BouncingScrollPhysics(),
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: _maxFormWidth),
+              constraints: const BoxConstraints(maxWidth: _kMaxFormWidth),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(
                   ClinicalSpace.xl,
@@ -306,59 +323,72 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    if (hasCtx)
-                      _ContextSummaryChip(
-                        summary: ctxSummary,
-                        onTap: _openPatientContextSheet,
+                    // Cascade-in: each section arrives in sequence on
+                    // first paint (60ms stagger). Honours reduced-
+                    // motion via EntranceFade's MediaQuery check.
+                    if (hasCtx) ...<Widget>[
+                      EntranceFade(
+                        child: _ContextChip(
+                          summary: ctxSummary,
+                          onTap: _openPatientContextSheet,
+                        ),
                       ),
-                    if (hasCtx) const Gap.v(ClinicalSpace.lg),
-
+                      const Gap.v(ClinicalSpace.lg),
+                    ],
                     if (recents.isNotEmpty) ...<Widget>[
-                      _RecentsRow(
-                        drugs: recents,
-                        onTap: _onRecentTap,
+                      EntranceFade(
+                        index: hasCtx ? 1 : 0,
+                        child: _Recents(
+                          drugs: recents,
+                          onTap: _onRecentTap,
+                        ),
                       ),
                       const Gap.v(ClinicalSpace.md + 2),
                     ],
-
-                    _HeroCard(
-                      from: _from,
-                      to: _to,
-                      toRank: engineOut?.toRank,
-                      plan: engineOut?.plan,
-                      ctx: ctx,
-                      fromDoseCtl: _fromDoseCtl,
-                      toDoseCtl: _toDoseCtl,
-                      onPickFrom: () async {
-                        final picked = await _openPicker(
-                          drugs: visibleDrugs,
-                          rules: widget.engine.listRules(),
-                        );
-                        if (picked != null) _setFrom(picked);
-                      },
-                      onPickTo: () async {
-                        final picked = await _openPicker(
-                          drugs: visibleDrugs
-                              .where((d) => d.id != _from?.id)
-                              .toList(),
-                          rules: widget.engine.listRules(),
-                          fromDrugId: _from?.id,
-                        );
-                        if (picked != null) _setTo(picked);
-                      },
-                      onSwap: _swap,
-                      onDoseChanged: () => setState(() {}),
+                    EntranceFade(
+                      index: (hasCtx ? 1 : 0) + (recents.isNotEmpty ? 1 : 0),
+                      child: _Hero(
+                        from: _from,
+                        to: _to,
+                        toRank: engineOut?.toRank,
+                        plan: engineOut?.plan,
+                        ctx: ctx,
+                        fromDoseCtl: _fromDoseCtl,
+                        toDoseCtl: _toDoseCtl,
+                        onPickFrom: () async {
+                          final picked = await _openPicker(
+                            drugs: visibleDrugs,
+                            rules: widget.engine.listRules(),
+                          );
+                          if (picked != null) _setFrom(picked);
+                        },
+                        onPickTo: () async {
+                          final picked = await _openPicker(
+                            drugs: visibleDrugs
+                                .where((d) => d.id != _from?.id)
+                                .toList(),
+                            rules: widget.engine.listRules(),
+                            fromDrugId: _from?.id,
+                          );
+                          if (picked != null) _setTo(picked);
+                        },
+                        onSwap: _swap,
+                        onDoseChanged: () => setState(() {}),
+                      ),
                     ),
-
                     if (_sameDrug) ...<Widget>[
                       const Gap.v(ClinicalSpace.md),
                       const _SameDrugWarning(),
                     ],
-
                     const Gap.v(ClinicalSpace.xl),
-                    _PrimaryCta(
-                      enabled: _ready,
-                      onPressed: _onContinue,
+                    EntranceFade(
+                      index: (hasCtx ? 1 : 0) +
+                          (recents.isNotEmpty ? 1 : 0) +
+                          1,
+                      child: _PrimaryCta(
+                        enabled: _ready,
+                        onPressed: _onContinue,
+                      ),
                     ),
                     const Gap.v(ClinicalSpace.xl),
                   ],
@@ -371,6 +401,10 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
     );
   }
 
+  /// Build a deduped list of the 5 most-recently-touched drugs from the
+  /// saved-cases provider, filtered to the same visibility gate as the
+  /// pickers (no LAI, no mood-stabilisers). Pulls from both sides of
+  /// each saved case so a from-only drug surfaces too.
   static List<Drug> _recentDrugs(
     List<SavedCase>? cases,
     SwitchingEngine engine,
@@ -384,9 +418,6 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
         seen.add(id);
         final d = engine.getDrug(id);
         if (d == null) continue;
-        // Same gate as the pickers — a saved case for a hidden
-        // category (LAI / mood-stabiliser) shouldn't smuggle the
-        // drug back into the switch flow via recents.
         if (d.formulation == Formulation.lai) continue;
         if (d.category == DrugCategory.moodStabilizer) continue;
         out.add(d);
@@ -399,8 +430,11 @@ class _SwitchFormState extends ConsumerState<_SwitchForm> {
 
 // ── AppBar action ───────────────────────────────────────────────────
 
-class _PatientContextAction extends StatelessWidget {
-  const _PatientContextAction({
+/// Patient-context AppBar icon. When context is set: filled person
+/// glyph + a small accent dot in the corner. When unset: outline glyph,
+/// no dot. Tooltip adapts.
+class _PatientContextAct extends StatelessWidget {
+  const _PatientContextAct({
     required this.hasContext,
     required this.onPressed,
   });
@@ -419,7 +453,8 @@ class _PatientContextAction extends StatelessWidget {
           children: <Widget>[
             Icon(
               hasContext ? Icons.person : Icons.person_outline,
-              color: hasContext ? ClinicalPalette.accent : ClinicalPalette.text,
+              color:
+                  hasContext ? ClinicalPalette.accent : ClinicalPalette.text,
             ),
             if (hasContext)
               Positioned(
@@ -431,7 +466,8 @@ class _PatientContextAction extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: ClinicalPalette.accent,
                     shape: BoxShape.circle,
-                    border: Border.all(color: ClinicalPalette.bg, width: 1.5),
+                    border:
+                        Border.all(color: ClinicalPalette.bg, width: 1.5),
                   ),
                 ),
               ),
@@ -442,8 +478,12 @@ class _PatientContextAction extends StatelessWidget {
   }
 }
 
-class _ContextSummaryChip extends StatelessWidget {
-  const _ContextSummaryChip({required this.summary, required this.onTap});
+// ── Context chip ────────────────────────────────────────────────────
+
+/// Sub-AppBar chip summarising what patient context is currently
+/// adjusting the plan. Tap re-opens the context sheet for editing.
+class _ContextChip extends StatelessWidget {
+  const _ContextChip({required this.summary, required this.onTap});
 
   final String summary;
   final VoidCallback onTap;
@@ -471,7 +511,11 @@ class _ContextSummaryChip extends StatelessWidget {
           ),
           child: Row(
             children: <Widget>[
-              const Icon(Icons.person, size: 14, color: ClinicalPalette.accent),
+              const Icon(
+                Icons.person,
+                size: 14,
+                color: ClinicalPalette.accent,
+              ),
               const Gap.h(ClinicalSpace.sm),
               Expanded(
                 child: Text(
@@ -485,7 +529,11 @@ class _ContextSummaryChip extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const Icon(Icons.tune, size: 14, color: ClinicalPalette.accent),
+              const Icon(
+                Icons.tune,
+                size: 14,
+                color: ClinicalPalette.accent,
+              ),
               const Gap.h(ClinicalSpace.xs),
             ],
           ),
@@ -497,8 +545,10 @@ class _ContextSummaryChip extends StatelessWidget {
 
 // ── Recents row ─────────────────────────────────────────────────────
 
-class _RecentsRow extends StatelessWidget {
-  const _RecentsRow({required this.drugs, required this.onTap});
+/// Horizontal "RECENT" strip of category-tinted drug chips. Tap fills
+/// the next-empty slot in the form (from → to → swap-to).
+class _Recents extends StatelessWidget {
+  const _Recents({required this.drugs, required this.onTap});
 
   final List<Drug> drugs;
   final ValueChanged<Drug> onTap;
@@ -536,17 +586,16 @@ class _RecentChip extends StatelessWidget {
   final Drug drug;
   final VoidCallback onTap;
 
-  /// Category tone — at-a-glance scanning across the recents row.
-  /// Antidepressants pick up `from`-blue, antipsychotics `to`-green.
-  /// Mood-stabilisers stay muted (defensive — they're gated upstream).
-  Color _categoryTone() {
+  /// Category tone — antidepressants pick up the FROM-blue, antipsy-
+  /// chotics the TO-green. Helps the eye scan the strip by class. Mood-
+  /// stabilisers stay muted (defensive — they're gated upstream).
+  Color get _tone {
     switch (drug.category) {
       case DrugCategory.antidepressant:
         return ClinicalPalette.toneLavenderInk;
       case DrugCategory.antipsychotic:
         return ClinicalPalette.toneMintInk;
       case DrugCategory.moodStabilizer:
-        return ClinicalPalette.muted;
       case null:
         return ClinicalPalette.muted;
     }
@@ -554,7 +603,6 @@ class _RecentChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tone = _categoryTone();
     return Material(
       color: ClinicalPalette.surface,
       borderRadius: BorderRadius.circular(ClinicalRadii.pill),
@@ -580,7 +628,7 @@ class _RecentChip extends StatelessWidget {
                 width: 6,
                 height: 6,
                 decoration: BoxDecoration(
-                  color: tone,
+                  color: _tone,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -601,10 +649,14 @@ class _RecentChip extends StatelessWidget {
   }
 }
 
-// ── Hero card ───────────────────────────────────────────────────────
+// ── Hero ────────────────────────────────────────────────────────────
 
-class _HeroCard extends StatelessWidget {
-  const _HeroCard({
+/// The main from-to card. Lays out FROM | journey | TO horizontally
+/// on wide layouts and FROM / journey / TO vertically on phones. The
+/// journey band is the connector that becomes the preflight; see
+/// _Journey.
+class _Hero extends StatelessWidget {
+  const _Hero({
     required this.from,
     required this.to,
     required this.toRank,
@@ -639,7 +691,7 @@ class _HeroCard extends StatelessWidget {
       tone: ClinicalPalette.toneLavenderInk,
       drug: from,
       doseCtl: fromDoseCtl,
-      doseFieldKey: _fromDoseKey,
+      doseFieldKey: _kFromDoseKey,
       onPick: onPickFrom,
       onDoseChanged: onDoseChanged,
     );
@@ -648,7 +700,7 @@ class _HeroCard extends StatelessWidget {
       tone: ClinicalPalette.toneMintInk,
       drug: to,
       doseCtl: toDoseCtl,
-      doseFieldKey: _toDoseKey,
+      doseFieldKey: _kToDoseKey,
       onPick: onPickTo,
       onDoseChanged: onDoseChanged,
       tier: toRank?.tier,
@@ -692,6 +744,11 @@ class _HeroCard extends StatelessWidget {
   }
 }
 
+// ── Drug section ────────────────────────────────────────────────────
+
+/// One side of the hero — eyebrow ("FROM DRUG" / "TO DRUG"), picker
+/// tile, and dose field (once a drug is picked). Lives inside a soft
+/// pastel fill so the hero reads as a from→to gradient.
 class _DrugSection extends StatelessWidget {
   const _DrugSection({
     required this.side,
@@ -715,9 +772,9 @@ class _DrugSection extends StatelessWidget {
   final RelevanceTier? tier;
   final String? tierTag;
 
-  /// Soft pastel fill behind the section so the hero reads as a
-  /// from→to gradient. Picks the family that matches the `tone` ink.
-  Color _toneFill() {
+  /// Soft pastel fill behind the section. Picks the family that
+  /// matches the `tone` ink.
+  Color get _toneFill {
     if (tone == ClinicalPalette.toneLavenderInk) {
       return ClinicalPalette.toneLavender.withValues(alpha: 0.45);
     }
@@ -730,7 +787,7 @@ class _DrugSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ColoredBox(
-      color: _toneFill(),
+      color: _toneFill,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
           ClinicalSpace.xl - 2,
@@ -799,6 +856,12 @@ class _DrugSection extends StatelessWidget {
   }
 }
 
+// ── Drug picker tile ────────────────────────────────────────────────
+
+/// The "Choose drug" / picked-drug tile. Two states animated via
+/// AnimatedContainer:
+///   • Empty: bordered placeholder with + icon and "Choose drug".
+///   • Filled: large 24-pt drug name + class subtitle + expand glyph.
 class _DrugPickerTile extends StatelessWidget {
   const _DrugPickerTile({required this.drug, required this.onPick});
 
@@ -822,9 +885,8 @@ class _DrugPickerTile extends StatelessWidget {
             vertical: hasDrug ? ClinicalSpace.xs : ClinicalSpace.sm + 2,
           ),
           decoration: BoxDecoration(
-            color: hasDrug
-                ? Colors.transparent
-                : ClinicalPalette.surfaceMuted,
+            color:
+                hasDrug ? Colors.transparent : ClinicalPalette.surfaceMuted,
             border: hasDrug
                 ? null
                 : Border.all(
@@ -836,52 +898,7 @@ class _DrugPickerTile extends StatelessWidget {
           child: Row(
             children: <Widget>[
               Expanded(
-                child: hasDrug
-                    ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                            drug!.genericName,
-                            style: const TextStyle(
-                              color: ClinicalPalette.text,
-                              fontSize: 24,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: -0.6,
-                              height: 1.05,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const Gap.v(ClinicalSpace.xs),
-                          Text(
-                            drug!.drugClass,
-                            style: ClinicalText.caption.copyWith(
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.2,
-                            ),
-                          ),
-                        ],
-                      )
-                    : const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Icon(
-                            Icons.add_rounded,
-                            color: ClinicalPalette.mutedStrong,
-                            size: 18,
-                          ),
-                          Gap.h(ClinicalSpace.sm),
-                          Text(
-                            'Choose drug',
-                            style: TextStyle(
-                              color: ClinicalPalette.mutedStrong,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: -0.2,
-                            ),
-                          ),
-                        ],
-                      ),
+                child: hasDrug ? _filled(drug!) : const _EmptyDrugRow(),
               ),
               Icon(
                 hasDrug
@@ -896,8 +913,72 @@ class _DrugPickerTile extends StatelessWidget {
       ),
     );
   }
+
+  Widget _filled(Drug d) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Text(
+          d.genericName,
+          style: const TextStyle(
+            color: ClinicalPalette.text,
+            fontSize: 24,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.6,
+            height: 1.05,
+          ),
+          overflow: TextOverflow.ellipsis,
+        ),
+        const Gap.v(ClinicalSpace.xs),
+        Text(
+          d.drugClass,
+          style: ClinicalText.caption.copyWith(
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.2,
+          ),
+        ),
+      ],
+    );
+  }
 }
 
+/// Empty-state inner row of the drug picker tile — extracted so it can
+/// be a const widget (the filled state can't be const since it depends
+/// on the picked drug).
+class _EmptyDrugRow extends StatelessWidget {
+  const _EmptyDrugRow();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Icon(
+          Icons.add_rounded,
+          color: ClinicalPalette.mutedStrong,
+          size: 18,
+        ),
+        Gap.h(ClinicalSpace.sm),
+        Text(
+          'Choose drug',
+          style: TextStyle(
+            color: ClinicalPalette.mutedStrong,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            letterSpacing: -0.2,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ── Dose field ──────────────────────────────────────────────────────
+
+/// Numeric dose input with a permanent "mg" suffix and a small below-
+/// the-field range hint ("typical 50-200 mg"). Tabular figures so dose
+/// digits column-align as the user types.
 class _DoseField extends StatelessWidget {
   const _DoseField({
     required this.drug,
@@ -910,7 +991,7 @@ class _DoseField extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onChanged;
 
-  String _rangeLabel() {
+  String get _rangeLabel {
     final r = drug.dosing.typicalTargetRangeMg;
     if (r.length < 2) return '';
     return 'typical ${_formatDose(r[0])}–${_formatDose(r[1])} mg';
@@ -923,7 +1004,8 @@ class _DoseField extends StatelessWidget {
       children: <Widget>[
         TextField(
           controller: controller,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          keyboardType:
+              const TextInputType.numberWithOptions(decimal: true),
           inputFormatters: <TextInputFormatter>[
             FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
           ],
@@ -946,29 +1028,26 @@ class _DoseField extends StatelessWidget {
         const Gap.v(ClinicalSpace.xs),
         Padding(
           padding: const EdgeInsets.only(left: ClinicalSpace.md),
-          child: Text(_rangeLabel(), style: ClinicalText.caption),
+          child: Text(_rangeLabel, style: ClinicalText.caption),
         ),
       ],
     );
   }
 }
 
-// ── Journey (the connector that becomes the preflight) ─────────────
+// ── Journey ─────────────────────────────────────────────────────────
 
 /// The connector between FROM and TO. Three states:
 ///
 ///   • Empty / partial form → minimal hairline + directional badge.
-///   • Form complete + valid SwitchPlanOk → expanded "journey" band
-///     showing strategy + duration + score + safety counts. The
-///     connector earns its place by carrying meaning, not by being a
-///     divider.
+///   • Form complete + valid SwitchPlanOk → expanded band with
+///     strategy + duration + score + safety counts.
 ///   • Form complete but plan is washout / Maudsley / clozapine /
 ///     no-rule → tinted band with the engine's verdict in plain
 ///     language.
 ///
-/// The expand-collapse animation is AnimatedSize with easeOutCubic.
-/// Vertical on phones; horizontal on the foldable inner / tablet
-/// (the relationship reads as a left-to-right journey on wide).
+/// AnimatedSize handles the expand/collapse. Vertical on phones;
+/// horizontal on foldable inner / tablet.
 class _Journey extends StatelessWidget {
   const _Journey({
     required this.plan,
@@ -997,15 +1076,19 @@ class _Journey extends StatelessWidget {
         border: Border(
           top: isWide
               ? BorderSide.none
-              : const BorderSide(color: ClinicalPalette.border, width: 0.5),
+              : const BorderSide(
+                  color: ClinicalPalette.border, width: 0.5),
           bottom: isWide
               ? BorderSide.none
-              : const BorderSide(color: ClinicalPalette.border, width: 0.5),
+              : const BorderSide(
+                  color: ClinicalPalette.border, width: 0.5),
           left: isWide
-              ? const BorderSide(color: ClinicalPalette.border, width: 0.5)
+              ? const BorderSide(
+                  color: ClinicalPalette.border, width: 0.5)
               : BorderSide.none,
           right: isWide
-              ? const BorderSide(color: ClinicalPalette.border, width: 0.5)
+              ? const BorderSide(
+                  color: ClinicalPalette.border, width: 0.5)
               : BorderSide.none,
         ),
       ),
@@ -1317,6 +1400,10 @@ class _ToneJourney extends StatelessWidget {
   }
 }
 
+// ── Meta chip ───────────────────────────────────────────────────────
+
+/// Tinted info chip used in the OK journey band — DDI count, safety
+/// flag count, dose-adapted, or "reviewed schedule".
 class _MetaChip extends StatelessWidget {
   const _MetaChip({
     required this.icon,
@@ -1360,6 +1447,11 @@ class _MetaChip extends StatelessWidget {
   }
 }
 
+// ── Swap badge ──────────────────────────────────────────────────────
+
+/// Circular swap affordance on the journey connector. When both FROM
+/// and TO are picked, the icon switches from a directional arrow to a
+/// double-headed swap glyph and the badge becomes tappable.
 class _SwapBadge extends StatelessWidget {
   const _SwapBadge({
     required this.horizontal,
@@ -1404,7 +1496,8 @@ class _SwapBadge extends StatelessWidget {
                       ? Icons.arrow_forward_rounded
                       : Icons.arrow_downward_rounded),
               size: 15,
-              color: canSwap ? ClinicalPalette.accent : ClinicalPalette.muted,
+              color:
+                  canSwap ? ClinicalPalette.accent : ClinicalPalette.muted,
             ),
           ),
         ),
@@ -1413,7 +1506,7 @@ class _SwapBadge extends StatelessWidget {
   }
 }
 
-// ── Same-drug warning ──────────────────────────────────────────────
+// ── Same-drug warning ───────────────────────────────────────────────
 
 class _SameDrugWarning extends StatelessWidget {
   const _SameDrugWarning();
@@ -1482,6 +1575,11 @@ class _PrimaryCta extends StatelessWidget {
 
 // ── Drug picker sheet ───────────────────────────────────────────────
 
+/// Bottom-sheet drug picker. Search field on top, then a list of
+/// ranked drugs grouped by their RelevanceTier (top / reviewed /
+/// fallback / caution / avoid) with a small section header per tier
+/// when more than one tier is present. The "i" trailing button on
+/// each row opens the drug profile without committing the pick.
 class _DrugPickerSheet extends StatefulWidget {
   const _DrugPickerSheet({
     required this.drugs,
@@ -1515,9 +1613,11 @@ class _DrugPickerSheetState extends State<_DrugPickerSheet> {
     final q = _searchCtl.text.trim().toLowerCase();
     if (q.isEmpty) return ranked;
     return ranked
-        .where((r) =>
-            r.drug.genericName.toLowerCase().contains(q) ||
-            r.drug.id.toLowerCase().contains(q))
+        .where(
+          (r) =>
+              r.drug.genericName.toLowerCase().contains(q) ||
+              r.drug.id.toLowerCase().contains(q),
+        )
         .toList();
   }
 
@@ -1525,6 +1625,14 @@ class _DrugPickerSheetState extends State<_DrugPickerSheet> {
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
     final ranked = _ranked();
+    // Group rows by tier so the sheet reads as a curated list (top
+    // picks → reviewed → fallback → cautions). Only inserts tier
+    // headers when more than one tier is present in the filtered set;
+    // a search that narrows to one tier doesn't need the chrome.
+    final tiers = ranked.map((r) => r.tier).toSet().toList()
+      ..sort((a, b) => a.index.compareTo(b.index));
+    final showHeaders = tiers.length > 1;
+
     return Padding(
       padding: EdgeInsets.only(bottom: mq.viewInsets.bottom),
       child: SizedBox(
@@ -1551,7 +1659,9 @@ class _DrugPickerSheetState extends State<_DrugPickerSheet> {
               child: Row(
                 children: <Widget>[
                   Text(
-                    widget.fromDrugId == null ? 'Pick from-drug' : 'Pick to-drug',
+                    widget.fromDrugId == null
+                        ? 'Pick from-drug'
+                        : 'Pick to-drug',
                     style: ClinicalText.subtitle,
                   ),
                   const Spacer(),
@@ -1563,11 +1673,13 @@ class _DrugPickerSheetState extends State<_DrugPickerSheet> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: ClinicalSpace.lg),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: ClinicalSpace.lg),
               child: TextField(
                 controller: _searchCtl,
                 autofocus: true,
-                style: const TextStyle(color: ClinicalPalette.text, fontSize: 15),
+                style: const TextStyle(
+                    color: ClinicalPalette.text, fontSize: 15),
                 decoration: const InputDecoration(
                   hintText: 'Search drugs',
                   prefixIcon: Icon(
@@ -1581,16 +1693,10 @@ class _DrugPickerSheetState extends State<_DrugPickerSheet> {
             ),
             const Gap.v(ClinicalSpace.md),
             Expanded(
-              child: ListView.separated(
-                padding: const EdgeInsets.fromLTRB(
-                  ClinicalSpace.lg,
-                  0,
-                  ClinicalSpace.lg,
-                  ClinicalSpace.lg,
-                ),
-                itemCount: ranked.length,
-                separatorBuilder: (_, __) => const Divider(height: 1),
-                itemBuilder: (_, i) => _DrugRow(ranked: ranked[i]),
+              child: _PickerList(
+                ranked: ranked,
+                tiers: tiers,
+                showHeaders: showHeaders,
               ),
             ),
           ],
@@ -1600,6 +1706,121 @@ class _DrugPickerSheetState extends State<_DrugPickerSheet> {
   }
 }
 
+/// List body for the picker sheet. Either a flat ListView (no tier
+/// grouping) or a sectioned list with eyebrow headers per tier.
+class _PickerList extends StatelessWidget {
+  const _PickerList({
+    required this.ranked,
+    required this.tiers,
+    required this.showHeaders,
+  });
+
+  final List<RankedDrug> ranked;
+  final List<RelevanceTier> tiers;
+  final bool showHeaders;
+
+  String _headerFor(RelevanceTier t) {
+    switch (t) {
+      case RelevanceTier.top:
+        return 'TOP PICKS';
+      case RelevanceTier.reviewed:
+        return 'REVIEWED';
+      case RelevanceTier.fallback:
+        return 'OTHER';
+      case RelevanceTier.caution:
+        return 'CAUTION';
+      case RelevanceTier.avoid:
+        return 'AVOID';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!showHeaders) {
+      return ListView.separated(
+        padding: const EdgeInsets.fromLTRB(
+          ClinicalSpace.lg,
+          0,
+          ClinicalSpace.lg,
+          ClinicalSpace.lg,
+        ),
+        itemCount: ranked.length,
+        separatorBuilder: (_, __) => const Divider(height: 1),
+        itemBuilder: (_, i) => _DrugRow(ranked: ranked[i]),
+      );
+    }
+    // Sectioned: flatten [header? + rows...] per tier into a single
+    // index space for the ListView.builder.
+    final entries = <_PickerListEntry>[];
+    for (final t in tiers) {
+      final rows = ranked.where((r) => r.tier == t).toList();
+      if (rows.isEmpty) continue;
+      entries.add(_PickerListEntry.header(_headerFor(t)));
+      for (final r in rows) {
+        entries.add(_PickerListEntry.row(r));
+      }
+    }
+    return ListView.separated(
+      padding: const EdgeInsets.fromLTRB(
+        ClinicalSpace.lg,
+        0,
+        ClinicalSpace.lg,
+        ClinicalSpace.lg,
+      ),
+      itemCount: entries.length,
+      separatorBuilder: (_, i) {
+        // No divider between header→first-row of a section, or after
+        // any row that's followed by a header.
+        if (entries[i].isHeader) return const SizedBox.shrink();
+        if (i + 1 < entries.length && entries[i + 1].isHeader) {
+          return const SizedBox.shrink();
+        }
+        return const Divider(height: 1);
+      },
+      itemBuilder: (_, i) {
+        final e = entries[i];
+        if (e.isHeader) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(
+              2,
+              ClinicalSpace.md + 2,
+              0,
+              ClinicalSpace.sm,
+            ),
+            child: Text(e.headerLabel!, style: ClinicalText.eyebrow),
+          );
+        }
+        return _DrugRow(ranked: e.row!);
+      },
+    );
+  }
+}
+
+/// Sum-type entry in the sectioned picker list — either a tier
+/// header or a ranked-drug row.
+class _PickerListEntry {
+  const _PickerListEntry._({this.headerLabel, this.row})
+      : assert(
+          (headerLabel == null) != (row == null),
+          'Exactly one of headerLabel or row must be set.',
+        );
+
+  factory _PickerListEntry.header(String label) =>
+      _PickerListEntry._(headerLabel: label);
+
+  factory _PickerListEntry.row(RankedDrug row) =>
+      _PickerListEntry._(row: row);
+
+  final String? headerLabel;
+  final RankedDrug? row;
+
+  bool get isHeader => headerLabel != null;
+}
+
+/// One ranked-drug row in the picker sheet. Tap → commit selection +
+/// pop the sheet. "i" button → open drug profile without picking
+/// (lets the clinician scan PK / risk / interactions before
+/// committing).
 class _DrugRow extends StatelessWidget {
   const _DrugRow({required this.ranked});
 
@@ -1610,7 +1831,8 @@ class _DrugRow extends StatelessWidget {
     return InkWell(
       onTap: () => Navigator.of(context).pop(ranked.drug),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: ClinicalSpace.md + 2),
+        padding:
+            const EdgeInsets.symmetric(vertical: ClinicalSpace.md + 2),
         child: Row(
           children: <Widget>[
             Expanded(
@@ -1640,9 +1862,6 @@ class _DrugRow extends StatelessWidget {
                 compact: true,
               ),
             const Gap.h(ClinicalSpace.sm),
-            // "i" button — open drug profile without picking the drug.
-            // Lets the clinician scan PK / risk / interactions before
-            // committing to the selection.
             Tooltip(
               message: 'Drug profile',
               child: InkWell(
@@ -1684,6 +1903,8 @@ class _DrugRow extends StatelessWidget {
 
 // ── Helpers ─────────────────────────────────────────────────────────
 
+/// Display formatter — strips the decimal when the dose is whole.
+/// "100.0 mg" → "100 mg"; "12.5 mg" stays as-is.
 String _formatDose(num n) {
   if (n is int || n == n.toInt()) return n.toInt().toString();
   return n.toString();
