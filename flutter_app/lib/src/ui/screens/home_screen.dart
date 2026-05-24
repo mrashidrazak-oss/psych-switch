@@ -1,29 +1,35 @@
-// Home screen — redesigned 2026-05-15 in the new "Clinical Light"
-// visual language. See `lib/src/ui/theme/clinical_theme.dart` for the
-// palette + spacing tokens, and `lib/src/ui/widgets/clinical_primitives.dart`
-// for the reusable squircle / pill / ring widgets.
+// Home screen — the app's entry surface. Rebuilt from scratch
+// 2026-05-23 to drop the staged-launch alternative branches (1,300+
+// lines of widgets never rendered because LaunchGate.staged is always
+// true today) and tighten the visual rhythm of what actually ships.
 //
-// Structure (top → bottom):
+// Architecture:
+//   - HomeScreen    Route widget. Wraps body in the Clinical Light
+//                   theme + handles the engine FutureProvider's
+//                   loading / error states.
+//   - _HomeBody     Receives the resolved engine + clinician name +
+//                   role; lays out the sectioned page.
 //
-//   1. Greeting header — circular avatar (initials), good-time-of-day
-//      greeting + clinician role, notification bell.
-//   2. Search field — taps through to the global search screen
-//      (`Routes.search`).
-//   3. Hero "Start a switch" — large lavender-tone squircle with the
-//      primary CTA, optional drug-count chip.
-//   4. Quick actions — 4 tone-tinted tiles (Compare · Regimen check ·
-//      Calculators · Adverse-effect lookup).
-//   5. Category grid — 2×2 of large tone-tinted cards
-//      (Antidepressants · Antipsychotics · Mood stabilisers ·
-//      Clozapine), each routes to the relevant browsing surface.
-//   6. Reference rail — clean list of supporting tools (Glossary,
-//      Errata, Ramadan, Depot, History).
-//   7. Footer — version + clinician disclaimer line, dimmed.
+// Sections (top → bottom):
+//   1. _Greeting       Avatar (tap → Settings) + greeting + subtitle.
+//   2. _NamePrompt     Soft "Add your name" fade-in if name is empty.
+//   3. _SearchField    Tappable search pill → /search.
+//   4. _Hero           Switch-wizard CTA + drug-count ring + body
+//                      that names the Maudsley 15th source inline.
+//   5. _SectionLabel   "Clinical tools" + tagline.
+//   6. _LaunchRail     The 5 staged clinical tools (tone-tinted).
+//   7. _RecentCases    AnimatedSwitcher: empty hides, populated
+//                      reveals 3-tile horizontal strip.
+//   8. _PearlCard      Today's pearl, breathing 0.5% scale loop.
+//   9. _Footer         Brand line + clinician disclaimer.
 //
-// Wrapped in a `Theme(data: buildClinicalTheme(), …)` so this screen
-// renders in the new light language even though the rest of the app
-// still uses the dark default. As more screens migrate we promote the
-// clinical theme to the app root.
+// Motion language:
+//   - Sections cascade-in (60ms stagger) on first paint via
+//     EntranceFade.
+//   - Drug count ticks 0 → N over 900ms via TweenAnimationBuilder.
+//   - Pearl card breathes via Breath primitive.
+//   - Every tappable inherits the global PressScale baked into the
+//     primitives (SquircleCard / PillButton / GhostPillButton / ToneTile).
 
 import 'dart:async';
 
@@ -31,12 +37,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:psychswitch/src/launch_gate.dart';
 import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/providers/preferences_provider.dart';
 import 'package:psychswitch/src/providers/saved_cases_provider.dart';
 import 'package:psychswitch/src/router.dart';
-import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/screens/result_screen.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/widgets/breath.dart';
@@ -47,9 +51,9 @@ import 'package:psychswitch_engine/case_pulse.dart' show SavedCase;
 import 'package:psychswitch_engine/switching_engine.dart'
     show SwitchInput, SwitchingEngine;
 
-/// Maximum content-column width on wide screens. Anything wider gets
-/// flanked by whitespace so we never stretch a CTA across a 7.6" panel.
-const double _maxContentWidth = 640;
+/// Maximum content-column width. Anything wider gets flanked by white-
+/// space so the primary CTA never stretches across a 7.6" foldable.
+const double _kMaxContentWidth = 640;
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -92,17 +96,20 @@ class _HomeBody extends ConsumerWidget {
         : hour < 18
             ? 'Good afternoon'
             : 'Good evening';
-    final nameAsync = ref.watch(clinicianNameProvider);
-    final name = nameAsync.maybeWhen(data: (n) => n, orElse: () => '');
+    final name = ref
+        .watch(clinicianNameProvider)
+        .maybeWhen(data: (n) => n, orElse: () => '');
     final salutation = clinicianSalutation(name);
     final initials = clinicianInitials(name);
-    final roleAsync = ref.watch(clinicianRoleProvider);
-    final role = roleAsync.maybeWhen(data: (r) => r, orElse: () => '').trim();
+    final role = ref
+        .watch(clinicianRoleProvider)
+        .maybeWhen(data: (r) => r, orElse: () => '')
+        .trim();
     final subtitle = role.isEmpty ? 'Healthcare professional' : role;
 
     return Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: _maxContentWidth),
+        constraints: const BoxConstraints(maxWidth: _kMaxContentWidth),
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
           padding: const EdgeInsets.fromLTRB(
@@ -114,9 +121,6 @@ class _HomeBody extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              // ── Stagger: each major section unfolds in sequence on
-              //    first paint (60ms apart). EntranceFade self-skips
-              //    when reduced-motion is on.
               EntranceFade(
                 child: _Greeting(
                   greeting: greeting,
@@ -125,9 +129,6 @@ class _HomeBody extends ConsumerWidget {
                   initials: initials,
                 ),
               ),
-              // Soft self-introduce nudge — only visible when the
-              // clinician hasn't set a name yet. Fades in 2s after
-              // arrival so it doesn't compete with the cascade.
               if (name.trim().isEmpty) ...<Widget>[
                 const SizedBox(height: ClinicalSpace.sm + 2),
                 const _NamePrompt(),
@@ -140,46 +141,24 @@ class _HomeBody extends ConsumerWidget {
                 child: _Hero(drugCount: drugCount, ruleCount: ruleCount),
               ),
               const SizedBox(height: ClinicalSpace.lg),
-              const EntranceFade(index: 3, child: _RecentCasesStrip()),
               const EntranceFade(
-                index: 4,
+                index: 3,
+                child: _SectionLabel(
+                  label: 'Clinical tools',
+                  tagline:
+                      'Reviewed against Maudsley 15th and primary literature',
+                ),
+              ),
+              const SizedBox(height: ClinicalSpace.md),
+              const EntranceFade(index: 4, child: _LaunchRail()),
+              const SizedBox(height: ClinicalSpace.lg),
+              const EntranceFade(index: 5, child: _RecentCases()),
+              const EntranceFade(
+                index: 6,
                 child: Breath(child: _PearlCard()),
               ),
-              const SizedBox(height: ClinicalSpace.lg),
-              if (LaunchGate.staged) ...<Widget>[
-                const EntranceFade(
-                  index: 5,
-                  child: _SectionLabel(
-                    label: 'Clinical tools',
-                    tagline:
-                        'Reviewed against Maudsley 15th and primary literature',
-                  ),
-                ),
-                const SizedBox(height: ClinicalSpace.md),
-                const EntranceFade(index: 6, child: _LaunchRail()),
-              ] else ...<Widget>[
-                const EntranceFade(index: 5, child: _QuickActions()),
-                const SizedBox(height: ClinicalSpace.lg + 4),
-                const EntranceFade(
-                  index: 6,
-                  child: _SectionLabel(
-                    label: 'Browse by class',
-                    tagline:
-                        'Antidepressants · antipsychotics · mood stabilisers · clozapine',
-                  ),
-                ),
-                const SizedBox(height: ClinicalSpace.md),
-                const EntranceFade(index: 7, child: _CategoryGrid()),
-                const SizedBox(height: ClinicalSpace.lg + 4),
-                const EntranceFade(
-                  index: 8,
-                  child: _SectionLabel(label: 'Reference', tagline: null),
-                ),
-                const SizedBox(height: ClinicalSpace.md),
-                const EntranceFade(index: 9, child: _ReferenceRail()),
-              ],
               const SizedBox(height: ClinicalSpace.xl),
-              const EntranceFade(index: 10, child: _Footer()),
+              const EntranceFade(index: 7, child: _Footer()),
             ],
           ),
         ),
@@ -188,8 +167,12 @@ class _HomeBody extends ConsumerWidget {
   }
 }
 
-// ── Greeting header ─────────────────────────────────────────────────
+// ── Greeting ────────────────────────────────────────────────────────
 
+/// Greeting row — avatar bubble (tap → Settings) + two-line text block.
+/// No icon-bubble cluster: the single avatar tap is the discoverable
+/// affordance to settings; clean header, no chrome competing with the
+/// time-of-day greeting.
 class _Greeting extends StatelessWidget {
   const _Greeting({
     required this.greeting,
@@ -197,6 +180,7 @@ class _Greeting extends StatelessWidget {
     required this.subtitle,
     required this.initials,
   });
+
   final String greeting;
   final String salutation;
   final String subtitle;
@@ -206,9 +190,6 @@ class _Greeting extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        // Tap the avatar to jump to Settings (where name/role live).
-        // Discoverable affordance, zero noise. Semantics labelled for
-        // screen readers since the visual is just initials.
         Semantics(
           button: true,
           label: 'Edit your profile',
@@ -239,93 +220,98 @@ class _Greeting extends StatelessWidget {
             ],
           ),
         ),
-        // Errata is dark-shipped during the staged launch — hide the
-        // notifications bell that opens it.
-        if (!LaunchGate.staged) ...<Widget>[
-          _IconBubble(
-            icon: Icons.notifications_none_rounded,
-            onTap: () => context.pushNamed(Routes.errata),
-            showDot: true,
-          ),
-          const SizedBox(width: ClinicalSpace.sm),
-        ],
-        _IconBubble(
-          icon: Icons.settings_outlined,
-          onTap: () => context.pushNamed(Routes.settings),
-        ),
       ],
     );
   }
 }
 
-class _IconBubble extends StatelessWidget {
-  const _IconBubble({
-    required this.icon,
-    required this.onTap,
-    this.showDot = false,
-  });
+// ── Name prompt ─────────────────────────────────────────────────────
 
-  final IconData icon;
-  final VoidCallback onTap;
-  final bool showDot;
+/// Soft "Add your name" affordance, surfaced beneath the greeting only
+/// while the clinician hasn't entered a name. Fades in 2s after Home
+/// arrives so it doesn't compete with the cascade entrance — suggests
+/// rather than nags. Disappears the instant a name is saved.
+class _NamePrompt extends StatefulWidget {
+  const _NamePrompt();
+
+  @override
+  State<_NamePrompt> createState() => _NamePromptState();
+}
+
+class _NamePromptState extends State<_NamePrompt> {
+  double _opacity = 0;
+  Timer? _delay;
+
+  @override
+  void initState() {
+    super.initState();
+    _delay = Timer(const Duration(milliseconds: 2000), () {
+      if (mounted) setState(() => _opacity = 1);
+    });
+  }
+
+  @override
+  void dispose() {
+    _delay?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return InkResponse(
-      onTap: () {
-        unawaited(hapticsTap());
-        onTap();
-      },
-      radius: 28,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: <Widget>[
-          Container(
-            width: 44,
-            height: 44,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: ClinicalPalette.surface,
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: ClinicalPalette.border,
-                width: 0.5,
-              ),
+    return Padding(
+      // Aligned under the greeting text column, past the avatar gutter.
+      padding: const EdgeInsets.only(left: 60),
+      child: AnimatedOpacity(
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeOutCubic,
+        opacity: _opacity,
+        child: InkWell(
+          onTap: () => context.pushNamed(Routes.settings),
+          borderRadius: BorderRadius.circular(ClinicalRadii.pill),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: ClinicalSpace.sm,
+              vertical: 4,
             ),
-            child: Icon(icon, size: 20, color: ClinicalPalette.text),
-          ),
-          if (showDot)
-            Positioned(
-              right: 4,
-              top: 4,
-              child: Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  color: ClinicalPalette.danger,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: ClinicalPalette.bg, width: 2),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  'Add your name',
+                  style: ClinicalText.caption.copyWith(
+                    color: ClinicalPalette.accent,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.1,
+                  ),
                 ),
-              ),
+                const SizedBox(width: 2),
+                const Icon(
+                  Icons.arrow_forward_rounded,
+                  size: 13,
+                  color: ClinicalPalette.accent,
+                ),
+              ],
             ),
-        ],
+          ),
+        ),
       ),
     );
   }
 }
 
-// ── Search ─────────────────────────────────────────────────────────
+// ── Search ──────────────────────────────────────────────────────────
 
+/// Search pill — tappable, navigates to the global search screen.
+/// Looks like a text field but is a button; gives the field its
+/// visual prominence without forcing the user to focus it before
+/// typing (search route opens a focused input).
 class _SearchField extends StatelessWidget {
   const _SearchField();
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        unawaited(hapticsTap());
-        context.pushNamed(Routes.search);
-      },
+      onTap: () => context.pushNamed(Routes.search),
       borderRadius: BorderRadius.circular(ClinicalRadii.pill),
       child: Container(
         height: 52,
@@ -340,8 +326,11 @@ class _SearchField extends StatelessWidget {
         ),
         child: Row(
           children: <Widget>[
-            const Icon(Icons.search,
-                size: 20, color: ClinicalPalette.mutedStrong),
+            const Icon(
+              Icons.search,
+              size: 20,
+              color: ClinicalPalette.mutedStrong,
+            ),
             const SizedBox(width: ClinicalSpace.md),
             Expanded(
               child: Text(
@@ -374,6 +363,12 @@ class _SearchField extends StatelessWidget {
 
 // ── Hero ────────────────────────────────────────────────────────────
 
+/// The primary action surface. Lavender tone, switch-wizard pill,
+/// CTA copy + body, drug-count ticker on the right, and primary +
+/// secondary pill buttons. The Maudsley 15th citation is now woven
+/// into the body sentence instead of a separate signal line under
+/// the buttons — one fewer text node, the citation reads as part of
+/// what the wizard does.
 class _Hero extends StatelessWidget {
   const _Hero({required this.drugCount, required this.ruleCount});
 
@@ -410,7 +405,7 @@ class _Hero extends StatelessWidget {
                     const SizedBox(height: ClinicalSpace.sm),
                     Text(
                       'Day-by-day schedule, half-life maths, MAOI '
-                      'washout, citations — all in one tap.',
+                      'washout — reviewed against Maudsley 15th ed.',
                       style: ClinicalText.body.copyWith(
                         color: ClinicalPalette.toneLavenderInk
                             .withValues(alpha: 0.85),
@@ -420,23 +415,21 @@ class _Hero extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: ClinicalSpace.md),
-              // The ring + "DRUGS" label are decorative when read
-               // separately — wrap them as one Semantics node so screen
-               // readers announce "165 drugs reviewed" instead of two
-               // disconnected fragments.
+              // Drug-count ring — wrapped in a Semantics so VoiceOver
+              // hears "165 drugs reviewed" as one fact instead of
+              // separate "165" + "DRUGS" fragments. Ring + label
+              // are decorative; the synthesised label is the truth.
               Semantics(
-                label: '$drugCount drugs reviewed',
+                label: '$drugCount drugs · $ruleCount rules reviewed',
                 excludeSemantics: true,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    // Number ticker — counts up from 0 → drugCount over
-                    // 900ms on first paint, then stays put. The ring's
-                    // value=1 (fully drawn) frames a number that earns
-                    // its position by climbing into place.
                     TweenAnimationBuilder<double>(
-                      tween:
-                          Tween<double>(begin: 0, end: drugCount.toDouble()),
+                      tween: Tween<double>(
+                        begin: 0,
+                        end: drugCount.toDouble(),
+                      ),
                       duration: const Duration(milliseconds: 900),
                       curve: Curves.easeOutCubic,
                       builder: (_, value, __) => ProgressRing(
@@ -484,45 +477,203 @@ class _Hero extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: ClinicalSpace.md),
-          Text(
-            '$drugCount drugs · $ruleCount rules · Maudsley 15th ed.',
-            style: ClinicalText.caption.copyWith(
-              color: ClinicalPalette.toneLavenderInk.withValues(alpha: 0.7),
-            ),
-          ),
         ],
       ),
     );
   }
 }
 
-// ── Recent cases strip ──────────────────────────────────────────────
+// ── Section label ───────────────────────────────────────────────────
 
-/// Horizontal mini-strip of the three most-recent saved cases. Hides
-/// itself silently when there are no cases (so first-launch and clean
-/// installs don't show an empty row).
-class _RecentCasesStrip extends ConsumerWidget {
-  const _RecentCasesStrip();
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel({required this.label, required this.tagline});
+
+  final String label;
+  final String? tagline;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: ClinicalSpace.xs),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(label, style: ClinicalText.title),
+          if (tagline != null) ...<Widget>[
+            const SizedBox(height: 2),
+            Text(tagline!, style: ClinicalText.caption),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+// ── Launch rail ─────────────────────────────────────────────────────
+
+/// Curated 5-tool rail. Each row: tone-tinted badge icon + label +
+/// sub + chevron. Rows are tapped via the underlying InkWell; the
+/// PressScale baked into the InkWell ripple gives the same tactile
+/// feedback as every other surface in the app.
+class _LaunchRail extends StatelessWidget {
+  const _LaunchRail();
+
+  static const _rows = <_RailRow>[
+    _RailRow(
+      label: 'Dose equivalency',
+      sub: 'Chlorpromazine / olanzapine & antidepressant equivalents',
+      icon: Icons.balance_outlined,
+      route: Routes.equivalency,
+      tone: ClinicalPalette.accent,
+    ),
+    _RailRow(
+      label: 'Adverse-effect profile',
+      sub: 'Predicted AE burden + management by drug',
+      icon: Icons.health_and_safety_outlined,
+      route: Routes.adverseEffects,
+      tone: ClinicalPalette.warning,
+    ),
+    _RailRow(
+      label: 'Interactions & burden',
+      sub: 'Drug-drug interactions + sedative/anticholinergic load',
+      icon: Icons.account_tree_outlined,
+      route: Routes.polypharmacy,
+      tone: ClinicalPalette.accent,
+    ),
+    _RailRow(
+      label: 'TDM interpreter',
+      sub: 'Therapeutic levels — lithium · clozapine · valproate',
+      icon: Icons.biotech_outlined,
+      route: Routes.tdm,
+      tone: ClinicalPalette.toneMintInk,
+    ),
+    _RailRow(
+      label: 'Rating scales',
+      sub: '17 scales — PHQ · GAD · MADRS · HAM · CIWA · COWS · more',
+      icon: Icons.assignment_turned_in_outlined,
+      route: Routes.scales,
+      tone: ClinicalPalette.toneSkyInk,
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return SquircleCard(
+      padding: EdgeInsets.zero,
+      child: Column(
+        children: <Widget>[
+          for (var i = 0; i < _rows.length; i++) ...<Widget>[
+            if (i > 0)
+              const Divider(
+                height: 0.5,
+                thickness: 0.5,
+                // Indent past the 38pt badge + its trailing gap so the
+                // divider visually separates the text columns only.
+                indent: ClinicalSpace.lg + 4 + 38 + ClinicalSpace.md + 2,
+                color: ClinicalPalette.border,
+              ),
+            _RailRowView(row: _rows[i]),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Immutable row data — keeps `_LaunchRail._rows` a single
+/// declarative constant list.
+class _RailRow {
+  const _RailRow({
+    required this.label,
+    required this.sub,
+    required this.icon,
+    required this.route,
+    required this.tone,
+  });
+
+  final String label;
+  final String sub;
+  final IconData icon;
+  final String route;
+
+  /// Identity tone — the rail row's badge tints to this, echoing the
+  /// destination screen's ToolHero so the user sees colour continuity
+  /// from tap to arrival.
+  final Color tone;
+}
+
+class _RailRowView extends StatelessWidget {
+  const _RailRowView({required this.row});
+
+  final _RailRow row;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => context.pushNamed(row.route),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: ClinicalSpace.lg + 4,
+          vertical: ClinicalSpace.md + 2,
+        ),
+        child: Row(
+          children: <Widget>[
+            Container(
+              width: 38,
+              height: 38,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: row.tone.withValues(alpha: 0.12),
+                border: Border.all(
+                  color: row.tone.withValues(alpha: 0.34),
+                  width: 0.5,
+                ),
+                borderRadius: BorderRadius.circular(ClinicalRadii.chip),
+              ),
+              child: Icon(row.icon, size: 19, color: row.tone),
+            ),
+            const SizedBox(width: ClinicalSpace.md + 2),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(row.label, style: ClinicalText.subtitle),
+                  Text(row.sub, style: ClinicalText.caption),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.chevron_right,
+              size: 18,
+              color: ClinicalPalette.muted,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Recent cases ────────────────────────────────────────────────────
+
+/// Horizontal strip of the three most-recent saved cases. Hides
+/// itself silently when the list is empty (so first-launch shows no
+/// dead slot); animates open the moment the first case is saved
+/// thanks to the AnimatedSwitcher empty/populated keying.
+class _RecentCases extends ConsumerWidget {
+  const _RecentCases();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final async = ref.watch(savedCasesProvider);
-    final cases = async.maybeWhen(
-      data: (list) => list.take(3).toList(),
-      orElse: () => const <SavedCase>[],
-    );
+    final cases = ref.watch(savedCasesProvider).maybeWhen(
+          data: (list) => list.take(3).toList(),
+          orElse: () => const <SavedCase>[],
+        );
+    final engine = ref.watch(engineProvider).maybeWhen(
+          data: (e) => e,
+          orElse: () => null,
+        );
 
-    final engineAsync = ref.watch(engineProvider);
-    final engine = engineAsync.maybeWhen(
-      data: (e) => e,
-      orElse: () => null,
-    );
-
-    // Empty → populated transition: when the user saves their first
-    // case, the strip fades+slides in instead of popping into existence.
-    // AnimatedSwitcher with a non-empty/empty key tells the framework
-    // these are distinct trees worth animating between.
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 320),
       switchInCurve: Curves.easeOutCubic,
@@ -537,7 +688,7 @@ class _RecentCasesStrip extends ConsumerWidget {
       ),
       child: cases.isEmpty
           ? const SizedBox.shrink(key: ValueKey<String>('empty'))
-          : _RecentCasesStripPopulated(
+          : _RecentCasesPopulated(
               key: const ValueKey<String>('populated'),
               cases: cases,
               engine: engine,
@@ -546,12 +697,8 @@ class _RecentCasesStrip extends ConsumerWidget {
   }
 }
 
-/// Extracted populated body so AnimatedSwitcher can swap whole subtrees
-/// rather than diff-rebuild the same widget. Key on the parent
-/// (`ValueKey<'populated'>`) is what tells the switcher the tree is
-/// distinct from the empty SizedBox.
-class _RecentCasesStripPopulated extends StatelessWidget {
-  const _RecentCasesStripPopulated({
+class _RecentCasesPopulated extends StatelessWidget {
+  const _RecentCasesPopulated({
     required this.cases,
     required this.engine,
     super.key,
@@ -578,8 +725,7 @@ class _RecentCasesStripPopulated extends StatelessWidget {
                 const Spacer(),
                 InkWell(
                   onTap: () => context.pushNamed(Routes.history),
-                  borderRadius:
-                      BorderRadius.circular(ClinicalRadii.pill),
+                  borderRadius: BorderRadius.circular(ClinicalRadii.pill),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: ClinicalSpace.sm,
@@ -595,8 +741,11 @@ class _RecentCasesStripPopulated extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 2),
-                        const Icon(Icons.chevron_right,
-                            size: 14, color: ClinicalPalette.text),
+                        const Icon(
+                          Icons.chevron_right,
+                          size: 14,
+                          color: ClinicalPalette.text,
+                        ),
                       ],
                     ),
                   ),
@@ -611,10 +760,12 @@ class _RecentCasesStripPopulated extends StatelessWidget {
                 Expanded(
                   child: _RecentCaseTile(
                     savedCase: cases[i],
-                    fromName: engine?.getDrug(cases[i].fromDrugId)?.genericName ??
-                        cases[i].fromDrugId,
-                    toName: engine?.getDrug(cases[i].toDrugId)?.genericName ??
-                        cases[i].toDrugId,
+                    fromName:
+                        engine?.getDrug(cases[i].fromDrugId)?.genericName ??
+                            cases[i].fromDrugId,
+                    toName:
+                        engine?.getDrug(cases[i].toDrugId)?.genericName ??
+                            cases[i].toDrugId,
                   ),
                 ),
               ],
@@ -637,8 +788,8 @@ class _RecentCaseTile extends StatelessWidget {
   final String fromName;
   final String toName;
 
-  /// Pick a tone family per case position so the strip reads as three
-  /// distinct cards (lavender / mint / peach in rotation).
+  /// Per-position tone rotation so the strip reads as three distinct
+  /// cards (lavender / mint / peach), not three copies.
   static const _tones = <({Color tone, Color ink})>[
     (tone: ClinicalPalette.toneLavender, ink: ClinicalPalette.toneLavenderInk),
     (tone: ClinicalPalette.toneMint, ink: ClinicalPalette.toneMintInk),
@@ -659,17 +810,17 @@ class _RecentCaseTile extends StatelessWidget {
     return '${(diff / 30).floor()}mo ago';
   }
 
-  String _hash(String s) {
+  int _hash(String s) {
     var h = 0;
     for (final c in s.codeUnits) {
       h = (h * 31 + c) & 0x7fffffff;
     }
-    return h.toString();
+    return h;
   }
 
   @override
   Widget build(BuildContext context) {
-    final palette = _tones[int.parse(_hash(savedCase.id)) % _tones.length];
+    final palette = _tones[_hash(savedCase.id) % _tones.length];
     return SquircleCard(
       tone: palette.tone,
       radius: ClinicalRadii.tile,
@@ -690,8 +841,11 @@ class _RecentCaseTile extends StatelessWidget {
         children: <Widget>[
           Row(
             children: <Widget>[
-              Icon(Icons.swap_horiz_rounded,
-                  size: 14, color: palette.ink.withValues(alpha: 0.7)),
+              Icon(
+                Icons.swap_horiz_rounded,
+                size: 14,
+                color: palette.ink.withValues(alpha: 0.7),
+              ),
               const SizedBox(width: 4),
               Expanded(
                 child: Text(
@@ -739,1038 +893,208 @@ class _RecentCaseTile extends StatelessWidget {
 
 // ── Today's pearl ───────────────────────────────────────────────────
 
-/// One bite of Maudsley-derived clinical wisdom, rotated daily.
-///
-/// Deterministic by date so two devices on the same day see the same
-/// pearl — the clinician can mention it to a colleague and they'll
-/// recognise it.
+/// A single bite of Maudsley-derived clinical wisdom, rotated daily.
+/// Deterministic by day-of-year so two devices on the same day see
+/// the same pearl — a clinician can mention "today's pearl" to a
+/// colleague and have them recognise it.
 class _PearlCard extends StatelessWidget {
   const _PearlCard();
 
-  static const List<({String title, String body, String source})> _pearls =
-      <({String title, String body, String source})>[
-    (
+  static const _pearls = <_Pearl>[
+    _Pearl(
       title: 'Fluoxetine washout',
-      body:
-          'Allow at least 5 weeks off fluoxetine before starting an '
-              'MAOI — its long-acting metabolite norfluoxetine has a '
-              'half-life of 7–15 days.',
+      body: 'Allow at least 5 weeks off fluoxetine before starting an '
+          'MAOI — its long-acting metabolite norfluoxetine has a '
+          'half-life of 7-15 days.',
       source: 'Maudsley 15th ed.',
     ),
-    (
+    _Pearl(
       title: 'Clozapine missed doses',
-      body:
-          'After ≥48 h off clozapine, restart from 12.5 mg and re-titrate. '
-              'Tolerance is rapidly lost; the original dose can precipitate '
-              'severe orthostasis or sedation.',
+      body: 'After ≥48 h off clozapine, restart from 12.5 mg and '
+          're-titrate. Tolerance is rapidly lost; the original dose '
+          'can precipitate severe orthostasis or sedation.',
       source: 'Maudsley 15th ed.',
     ),
-    (
+    _Pearl(
       title: 'Lithium + ACE inhibitors',
-      body:
-          'Adding an ACE inhibitor can raise lithium levels by 30–40%. '
-              'Recheck a level within 5–7 days and dose-reduce lithium '
-              'pre-emptively in the elderly.',
+      body: 'Adding an ACE inhibitor can raise lithium levels by '
+          '30-40%. Recheck a level within 5-7 days and dose-reduce '
+          'lithium pre-emptively in the elderly.',
       source: 'Stahl, 7e',
     ),
-    (
+    _Pearl(
       title: 'Paroxetine discontinuation',
-      body:
-          'Of the SSRIs, paroxetine has the highest discontinuation-syndrome '
-              'risk owing to its short half-life and potent muscarinic '
-              'rebound. Taper over ≥ 4 weeks; consider fluoxetine bridge.',
+      body: 'Of the SSRIs, paroxetine has the highest '
+          'discontinuation-syndrome risk owing to its short half-life '
+          'and potent muscarinic rebound. Taper over ≥ 4 weeks; '
+          'consider a fluoxetine bridge.',
       source: 'Maudsley 15th ed.',
     ),
-    (
+    _Pearl(
       title: 'Valproate in women of childbearing age',
-      body:
-          'Valproate is teratogenic and neurodevelopmentally toxic — avoid '
-              'unless there is no effective alternative AND a '
-              'pregnancy-prevention plan is documented.',
+      body: 'Valproate is teratogenic and neurodevelopmentally toxic '
+          '— avoid unless there is no effective alternative AND a '
+          'pregnancy-prevention plan is documented.',
       source: 'MHRA Toolkit',
     ),
-    (
+    _Pearl(
       title: 'Olanzapine + smoking cessation',
-      body:
-          'Stopping smoking raises olanzapine and clozapine levels by '
-              '~50% via CYP1A2 de-induction. Recheck levels within 1–2 '
-              'weeks of cessation and consider a 25–50% dose reduction.',
+      body: 'Stopping smoking raises olanzapine and clozapine levels '
+          'by ~50% via CYP1A2 de-induction. Recheck levels within 1-2 '
+          'weeks of cessation and consider a 25-50% dose reduction.',
       source: 'Stahl, 7e',
     ),
-    (
+    _Pearl(
       title: 'Aripiprazole partial agonism',
-      body:
-          'Cross-titrating onto aripiprazole from a full D2 antagonist '
-              'can unmask dopaminergic rebound (akathisia, agitation). '
-              'Slow the taper of the outgoing drug to mitigate.',
+      body: 'Cross-titrating onto aripiprazole from a full D2 '
+          'antagonist can unmask dopaminergic rebound (akathisia, '
+          'agitation). Slow the taper of the outgoing drug to '
+          'mitigate.',
       source: 'Maudsley 15th ed.',
     ),
-    (
+    _Pearl(
       title: 'Mirtazapine + sedation paradox',
-      body:
-          'At 15 mg mirtazapine is more sedating than at 45 mg — higher '
-              'doses recruit noradrenergic activity that offsets the H1 '
-              'antihistamine effect. Up-titrate to fix daytime drowsiness.',
+      body: 'At 15 mg mirtazapine is more sedating than at 45 mg — '
+          'higher doses recruit noradrenergic activity that offsets '
+          'the H1 antihistamine effect. Up-titrate to fix daytime '
+          'drowsiness.',
       source: 'Stahl, 7e',
     ),
-    (
+    _Pearl(
       title: 'Quetiapine QTc',
-      body:
-          'Quetiapine has a dose-dependent QTc effect that becomes '
-              'meaningful above 600 mg/day; combine with citalopram and '
-              'the additive risk crosses clinically significant thresholds.',
+      body: 'Quetiapine has a dose-dependent QTc effect that becomes '
+          'meaningful above 600 mg/day; combine with citalopram and '
+          'the additive risk crosses clinically significant '
+          'thresholds.',
       source: 'CredibleMeds',
     ),
-    (
+    _Pearl(
       title: 'SSRI bleeding risk',
-      body:
-          'Co-prescribed SSRI + NSAID raises GI bleed risk 4–5×. '
-              'Consider a PPI, especially in patients > 65 or on '
-              'anticoagulants.',
+      body: 'Co-prescribed SSRI + NSAID raises GI bleed risk 4-5×. '
+          'Consider a PPI, especially in patients > 65 or on '
+          'anticoagulants.',
       source: 'Maudsley 15th ed.',
     ),
-    (
+    _Pearl(
       title: 'Lamotrigine titration',
-      body:
-          'Slow up-titration (25 mg/day for weeks 1-2, then 50 mg/day for '
-              'weeks 3-4) is non-negotiable — fast titration drives the '
-              'Stevens-Johnson rate from 1:10,000 to 1:300.',
+      body: 'Slow up-titration (25 mg/day for weeks 1-2, then '
+          '50 mg/day for weeks 3-4) is non-negotiable — fast '
+          'titration drives the Stevens-Johnson rate from 1:10,000 '
+          'to 1:300.',
       source: 'Maudsley 15th ed.',
     ),
-    (
+    _Pearl(
       title: 'NaSSA + SSRI combo',
-      body:
-          'Mirtazapine + SSRI ("California rocket fuel") can be more '
-              'effective than monotherapy, but watch for sedation, weight '
-              'gain, and rare serotonin-syndrome reports at high SSRI '
-              'doses.',
+      body: 'Mirtazapine + SSRI ("California rocket fuel") can be '
+          'more effective than monotherapy, but watch for sedation, '
+          'weight gain, and rare serotonin-syndrome reports at high '
+          'SSRI doses.',
       source: 'Stahl, 7e',
     ),
-    (
+    _Pearl(
       title: 'Metformin for AP weight gain',
-      body:
-          'Metformin can blunt antipsychotic-induced weight gain by '
-              '3–5 kg over 12 weeks, especially in olanzapine/clozapine '
-              'users. Start at 500 mg BD with food.',
+      body: 'Metformin can blunt antipsychotic-induced weight gain by '
+          '3-5 kg over 12 weeks, especially in olanzapine/clozapine '
+          'users. Start at 500 mg BD with food.',
       source: 'BMJ Open 2022',
     ),
-    (
+    _Pearl(
       title: 'Carbamazepine auto-induction',
-      body:
-          'CBZ induces its own CYP3A4 metabolism over the first 2–4 '
-              'weeks — expect serum levels to fall after the first '
-              'dose-target hit, then re-uptitrate.',
+      body: 'CBZ induces its own CYP3A4 metabolism over the first '
+          '2-4 weeks — expect serum levels to fall after the first '
+          'dose-target hit, then re-uptitrate.',
       source: 'Maudsley 15th ed.',
     ),
-    (
+    _Pearl(
       title: 'Hyponatraemia with SSRIs',
-      body:
-          'SSRI-induced SIADH typically appears in the first 2–4 weeks. '
-              'Check sodium at baseline and at week 2 in patients ≥ 65 '
-              'or on diuretics.',
+      body: 'SSRI-induced SIADH typically appears in the first 2-4 '
+          'weeks. Check sodium at baseline and at week 2 in patients '
+          '≥ 65 or on diuretics.',
       source: 'Maudsley 15th ed.',
     ),
   ];
 
-  static ({String title, String body, String source}) _pearlOfTheDay() {
+  /// Deterministic pick by day-of-year so the same pearl shows for
+  /// every device on a given calendar day.
+  static _Pearl _pearlOfTheDay() {
     final now = DateTime.now();
-    final dayOfYear =
-        now.difference(DateTime(now.year)).inDays;
+    final dayOfYear = now.difference(DateTime(now.year)).inDays;
     return _pearls[dayOfYear % _pearls.length];
   }
 
   @override
   Widget build(BuildContext context) {
     final p = _pearlOfTheDay();
-    // Single coherent semantic node — VoiceOver hears the whole pearl
-    // as one digestible unit ("Today's pearl: Title — body — source")
-    // instead of four disconnected fragments.
+    // Synthesise the full pearl as one Semantics label so VoiceOver
+    // reads it as a digestible unit, not four disconnected fragments.
     return Semantics(
       label: "Today's pearl. ${p.title}. ${p.body} Source: ${p.source}.",
       excludeSemantics: true,
       child: SquircleCard(
-      tone: ClinicalPalette.toneSand,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          const Row(
-            children: <Widget>[
-              TonePill(
-                label: "Today's pearl",
-                tone: Color(0xFFFFFFFF),
-                ink: ClinicalPalette.toneSandInk,
-              ),
-              Spacer(),
-              Icon(
-                Icons.auto_awesome,
-                size: 16,
-                color: ClinicalPalette.toneSandInk,
-              ),
-            ],
-          ),
-          const SizedBox(height: ClinicalSpace.md),
-          Text(
-            p.title,
-            style: ClinicalText.subtitle.copyWith(
-              color: ClinicalPalette.toneSandInk,
-              fontSize: 16,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          const SizedBox(height: ClinicalSpace.xs + 2),
-          Text(
-            p.body,
-            style: ClinicalText.body.copyWith(
-              color: ClinicalPalette.toneSandInk.withValues(alpha: 0.9),
-              height: 1.45,
-            ),
-          ),
-          const SizedBox(height: ClinicalSpace.md),
-          Text(
-            p.source,
-            style: ClinicalText.caption.copyWith(
-              color: ClinicalPalette.toneSandInk.withValues(alpha: 0.7),
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.3,
-            ),
-          ),
-        ],
-      ),
-    ),
-    );
-  }
-}
-
-// ── Quick actions ───────────────────────────────────────────────────
-
-class _QuickActions extends StatelessWidget {
-  const _QuickActions();
-
-  @override
-  Widget build(BuildContext context) {
-    const items = <_QuickActionData>[
-      _QuickActionData(
-        icon: Icons.compare_arrows,
-        label: 'Compare',
-        tone: ClinicalPalette.toneSky,
-        ink: ClinicalPalette.toneSkyInk,
-        route: Routes.compare,
-      ),
-      _QuickActionData(
-        icon: Icons.medication_outlined,
-        label: 'Regimen',
-        tone: ClinicalPalette.tonePeach,
-        ink: ClinicalPalette.tonePeachInk,
-        route: Routes.polypharmacy,
-      ),
-      _QuickActionData(
-        icon: Icons.calculate_outlined,
-        label: 'Calculate',
-        tone: ClinicalPalette.toneMint,
-        ink: ClinicalPalette.toneMintInk,
-        route: Routes.calculators,
-      ),
-      _QuickActionData(
-        icon: Icons.health_and_safety_outlined,
-        label: 'AE lookup',
-        tone: ClinicalPalette.toneRose,
-        ink: ClinicalPalette.toneRoseInk,
-        route: Routes.adverseEffects,
-      ),
-    ];
-    return Row(
-      children: <Widget>[
-        for (var i = 0; i < items.length; i++) ...<Widget>[
-          if (i > 0) const SizedBox(width: ClinicalSpace.sm),
-          Expanded(
-            child: ToneTile(
-              icon: items[i].icon,
-              label: items[i].label,
-              tone: items[i].tone,
-              ink: items[i].ink,
-              onTap: () => context.pushNamed(items[i].route),
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-}
-
-class _QuickActionData {
-  const _QuickActionData({
-    required this.icon,
-    required this.label,
-    required this.tone,
-    required this.ink,
-    required this.route,
-  });
-  final IconData icon;
-  final String label;
-  final Color tone;
-  final Color ink;
-  final String route;
-}
-
-// ── Section label ───────────────────────────────────────────────────
-
-class _SectionLabel extends StatelessWidget {
-  const _SectionLabel({required this.label, required this.tagline});
-  final String label;
-  final String? tagline;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: ClinicalSpace.xs),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(label, style: ClinicalText.title),
-          if (tagline != null) ...<Widget>[
-            const SizedBox(height: 2),
-            Text(tagline!, style: ClinicalText.caption),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-// ── Category grid ───────────────────────────────────────────────────
-
-class _CategoryGrid extends StatelessWidget {
-  const _CategoryGrid();
-
-  @override
-  Widget build(BuildContext context) {
-    const items = <_CategoryData>[
-      _CategoryData(
-        label: 'Antidepressants',
-        sub: 'SSRI · SNRI · TCA · MAOI',
-        icon: Icons.brightness_low,
-        tone: ClinicalPalette.toneLavender,
-        ink: ClinicalPalette.toneLavenderInk,
-        route: Routes.equivalency,
-      ),
-      _CategoryData(
-        label: 'Antipsychotics',
-        sub: 'Typical · atypical · LAI',
-        icon: Icons.bubble_chart_outlined,
-        tone: ClinicalPalette.tonePeach,
-        ink: ClinicalPalette.tonePeachInk,
-        route: Routes.equivalency,
-      ),
-      _CategoryData(
-        label: 'Mood stabilisers',
-        sub: 'Lithium · valproate · lamotrigine',
-        icon: Icons.balance_outlined,
-        tone: ClinicalPalette.toneMint,
-        ink: ClinicalPalette.toneMintInk,
-        route: Routes.moodStabilizers,
-      ),
-      _CategoryData(
-        label: 'Clozapine',
-        sub: 'Titration · ANC · myocarditis',
-        icon: Icons.local_hospital_outlined,
-        tone: ClinicalPalette.toneRose,
-        ink: ClinicalPalette.toneRoseInk,
-        route: Routes.clozapine,
-      ),
-    ];
-
-    return Column(
-      children: <Widget>[
-        Row(
+        tone: ClinicalPalette.toneSand,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Expanded(child: _CategoryCard(data: items[0])),
-            const SizedBox(width: ClinicalSpace.sm + 2),
-            Expanded(child: _CategoryCard(data: items[1])),
-          ],
-        ),
-        const SizedBox(height: ClinicalSpace.sm + 2),
-        Row(
-          children: <Widget>[
-            Expanded(child: _CategoryCard(data: items[2])),
-            const SizedBox(width: ClinicalSpace.sm + 2),
-            Expanded(child: _CategoryCard(data: items[3])),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class _CategoryData {
-  const _CategoryData({
-    required this.label,
-    required this.sub,
-    required this.icon,
-    required this.tone,
-    required this.ink,
-    required this.route,
-  });
-  final String label;
-  final String sub;
-  final IconData icon;
-  final Color tone;
-  final Color ink;
-  final String route;
-}
-
-class _CategoryCard extends StatelessWidget {
-  const _CategoryCard({required this.data});
-  final _CategoryData data;
-
-  @override
-  Widget build(BuildContext context) {
-    return SquircleCard(
-      tone: data.tone,
-      onTap: () => context.pushNamed(data.route),
-      padding: const EdgeInsets.all(ClinicalSpace.lg),
-      radius: ClinicalRadii.tile + 4,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            width: 38,
-            height: 38,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.7),
-              borderRadius: BorderRadius.circular(ClinicalRadii.chip),
-            ),
-            child: Icon(data.icon, size: 20, color: data.ink),
-          ),
-          const SizedBox(height: ClinicalSpace.md + 2),
-          Text(
-            data.label,
-            style: ClinicalText.subtitle.copyWith(
-              color: data.ink,
-              fontSize: 14,
-              fontWeight: FontWeight.w800,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 2),
-          Text(
-            data.sub,
-            style: ClinicalText.caption.copyWith(
-              color: data.ink.withValues(alpha: 0.75),
-            ),
-            maxLines: 2,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ── Launch rail (staged) ────────────────────────────────────────────
-
-/// Curated launch toolkit: the five tools surfaced alongside the
-/// Switch hero while [LaunchGate.staged] is true. Every other screen
-/// is still routed — just hidden until the gate is lifted.
-class _LaunchRail extends StatelessWidget {
-  const _LaunchRail();
-
-  @override
-  Widget build(BuildContext context) {
-    const rows = <_RailRow>[
-      _RailRow(
-        label: 'Dose equivalency',
-        sub: 'Chlorpromazine / olanzapine & antidepressant equivalents',
-        icon: Icons.balance_outlined,
-        route: Routes.equivalency,
-        tone: ClinicalPalette.accent,
-      ),
-      _RailRow(
-        label: 'Adverse-effect profile',
-        sub: 'Predicted AE burden + management by drug',
-        icon: Icons.health_and_safety_outlined,
-        route: Routes.adverseEffects,
-        tone: ClinicalPalette.warning,
-      ),
-      _RailRow(
-        label: 'Interactions & burden',
-        sub: 'Drug–drug interactions + sedative/anticholinergic load',
-        icon: Icons.account_tree_outlined,
-        route: Routes.polypharmacy,
-        tone: ClinicalPalette.accent,
-      ),
-      _RailRow(
-        label: 'TDM interpreter',
-        sub: 'Therapeutic levels — lithium · clozapine · valproate',
-        icon: Icons.biotech_outlined,
-        route: Routes.tdm,
-        tone: ClinicalPalette.toneMintInk,
-      ),
-      _RailRow(
-        label: 'Rating scales',
-        sub: '17 scales — PHQ · GAD · MADRS · HAM · CIWA · COWS · more',
-        icon: Icons.assignment_turned_in_outlined,
-        route: Routes.scales,
-        tone: ClinicalPalette.toneSkyInk,
-      ),
-    ];
-    return SquircleCard(
-      padding: EdgeInsets.zero,
-      child: Column(
-        children: <Widget>[
-          for (var i = 0; i < rows.length; i++) ...<Widget>[
-            if (i > 0)
-              const Divider(
-                height: 0.5,
-                thickness: 0.5,
-                indent: ClinicalSpace.lg + 4 + 38 + ClinicalSpace.md + 2,
-                color: ClinicalPalette.border,
-              ),
-            _RailRowView(row: rows[i]),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-// ── Reference rail ──────────────────────────────────────────────────
-
-class _ReferenceRail extends StatelessWidget {
-  const _ReferenceRail();
-
-  @override
-  Widget build(BuildContext context) {
-    const rows = <_RailRow>[
-      _RailRow(
-        label: 'Rating scales',
-        sub: '17 scales — PHQ-2/9 · GAD-2/7 · MADRS · HAM · CIWA · COWS · CAGE-AID · Mini-Cog · more',
-        icon: Icons.assignment_turned_in_outlined,
-        route: Routes.scales,
-      ),
-      _RailRow(
-        label: 'Lab interpreter',
-        sub: 'TSH · prolactin · ANC · sodium · CK · HbA1c · more',
-        icon: Icons.biotech_outlined,
-        route: Routes.lab,
-      ),
-      _RailRow(
-        label: 'Movement disorder',
-        sub: 'EPS differentiator — parkinsonism · dystonia · akathisia · TD',
-        icon: Icons.accessibility_new,
-        route: Routes.movement,
-      ),
-      _RailRow(
-        label: 'Agitation management',
-        sub: 'De-escalation · oral PRN · IM rapid tranquillisation',
-        icon: Icons.flash_on_outlined,
-        route: Routes.agitation,
-      ),
-      _RailRow(
-        label: 'C-SSRS suicide screen',
-        sub: 'Columbia severity + risk tier',
-        icon: Icons.emergency_outlined,
-        route: Routes.cssrs,
-      ),
-      _RailRow(
-        label: 'NMS screener',
-        sub: 'Levenson criteria — neuroleptic malignant syndrome',
-        icon: Icons.local_fire_department_outlined,
-        route: Routes.nms,
-      ),
-      _RailRow(
-        label: 'Serotonin syndrome',
-        sub: 'Hunter toxicity criteria',
-        icon: Icons.bolt_outlined,
-        route: Routes.serotonin,
-      ),
-      _RailRow(
-        label: 'TDM interpreter',
-        sub: 'Lithium · clozapine · valproate · lamotrigine',
-        icon: Icons.science_outlined,
-        route: Routes.tdm,
-      ),
-      _RailRow(
-        label: 'AD deprescribing',
-        sub: 'Hyperbolic taper planner (Maudsley method)',
-        icon: Icons.trending_down,
-        route: Routes.deprescribing,
-      ),
-      _RailRow(
-        label: 'Benzo taper',
-        sub: 'Diazepam-equivalent + Ashton schedule',
-        icon: Icons.trending_down,
-        route: Routes.benzoTaper,
-      ),
-      _RailRow(
-        label: '4AT delirium',
-        sub: 'Rapid delirium assessment (Bellelli 2014)',
-        icon: Icons.psychology_alt_outlined,
-        route: Routes.delirium4at,
-      ),
-      _RailRow(
-        label: 'Catatonia screen',
-        sub: 'Bush-Francis + lorazepam challenge',
-        icon: Icons.accessibility_new,
-        route: Routes.catatonia,
-      ),
-      _RailRow(
-        label: 'Hyperthermic Dx',
-        sub: 'NMS vs serotonin vs catatonia vs anticholinergic',
-        icon: Icons.local_fire_department_outlined,
-        route: Routes.hyperthermicDx,
-      ),
-      _RailRow(
-        label: 'Lithium toxicity',
-        sub: 'Graded management + dialysis criteria',
-        icon: Icons.science_outlined,
-        route: Routes.lithiumToxicity,
-      ),
-      _RailRow(
-        label: 'Alcohol withdrawal',
-        sub: 'CIWA-driven regimen + thiamine plan',
-        icon: Icons.local_bar_outlined,
-        route: Routes.alcoholWithdrawal,
-      ),
-      _RailRow(
-        label: 'OST induction',
-        sub: 'Buprenorphine / methadone day-1 protocol',
-        icon: Icons.medication_liquid_outlined,
-        route: Routes.ostInduction,
-      ),
-      _RailRow(
-        label: 'Wernicke / thiamine',
-        sub: 'Prophylaxis vs treatment dosing',
-        icon: Icons.vaccines_outlined,
-        route: Routes.thiamine,
-      ),
-      _RailRow(
-        label: 'Hyponatraemia / SIADH',
-        sub: 'Sodium + symptom-graded plan, correction cap',
-        icon: Icons.water_drop_outlined,
-        route: Routes.hyponatraemia,
-      ),
-      _RailRow(
-        label: 'Hyperprolactinaemia',
-        sub: 'Prolactin band + prolactinoma threshold',
-        icon: Icons.science_outlined,
-        route: Routes.hyperprolactinaemia,
-      ),
-      _RailRow(
-        label: 'Clozapine myocarditis',
-        sub: 'First-weeks troponin/CRP surveillance + triage',
-        icon: Icons.monitor_heart_outlined,
-        route: Routes.clozapineMyocarditis,
-      ),
-      _RailRow(
-        label: 'Valproate PPP',
-        sub: 'Pregnancy Prevention Programme prescribing gate',
-        icon: Icons.pregnant_woman_outlined,
-        route: Routes.valproatePpp,
-      ),
-      _RailRow(
-        label: 'Olanzapine LAI — PDSS',
-        sub: 'Post-injection observation + delirium triage',
-        icon: Icons.timer_outlined,
-        route: Routes.postInjectionSyndrome,
-      ),
-      _RailRow(
-        label: 'Opioid overdose',
-        sub: 'Naloxone + airway + re-narcotisation net',
-        icon: Icons.emergency_outlined,
-        route: Routes.opioidOverdose,
-      ),
-      _RailRow(
-        label: 'Pre-stimulant cardiac',
-        sub: 'ADHD cardiovascular screening gate',
-        icon: Icons.favorite_border,
-        route: Routes.stimulantCardiac,
-      ),
-      _RailRow(
-        label: 'High-dose antipsychotic',
-        sub: 'Cumulative %-of-max + HDAT safeguards',
-        icon: Icons.stacked_line_chart_outlined,
-        route: Routes.antipsychoticHighDose,
-      ),
-      _RailRow(
-        label: 'Bupe micro-dosing',
-        sub: 'Bernese overlapping induction schedule',
-        icon: Icons.timeline_outlined,
-        route: Routes.bupeMicrodosing,
-      ),
-      _RailRow(
-        label: 'Acute pain on OST',
-        sub: 'Continue maintenance + additive analgesia',
-        icon: Icons.healing_outlined,
-        route: Routes.ostAcutePain,
-      ),
-      _RailRow(
-        label: 'Antipsychotic + Parkinsonism',
-        sub: 'Lewy-body sensitivity, safe choices, BPSD',
-        icon: Icons.psychology_outlined,
-        route: Routes.antipsychoticParkinsonism,
-      ),
-      _RailRow(
-        label: 'Serotonergic opioid',
-        sub: 'Opioid + serotonergic agent risk tier',
-        icon: Icons.merge_type_outlined,
-        route: Routes.serotonergicOpioid,
-      ),
-      _RailRow(
-        label: 'Steroid psychiatric',
-        sub: 'Steroid-induced mania / depression / delirium',
-        icon: Icons.medication_outlined,
-        route: Routes.steroidPsychiatric,
-      ),
-      _RailRow(
-        label: 'Weight-gain ladder',
-        sub: 'Graded lifestyle → metformin → switch',
-        icon: Icons.monitor_weight_outlined,
-        route: Routes.metabolicWeight,
-      ),
-      _RailRow(
-        label: 'Clozapine GI',
-        sub: 'Hypomotility prophylaxis + ileus triage',
-        icon: Icons.sick_outlined,
-        route: Routes.clozapineGi,
-      ),
-      _RailRow(
-        label: 'Sexual dysfunction',
-        sub: 'Antidepressant SD staged management',
-        icon: Icons.favorite_outline,
-        route: Routes.ssriSexualDysfunction,
-      ),
-      _RailRow(
-        label: 'Lamotrigine titration',
-        sub: 'Comed-correct schedule + rash/SJS rule',
-        icon: Icons.medication_outlined,
-        route: Routes.lamotrigineTitration,
-      ),
-      _RailRow(
-        label: 'Tardive dyskinesia',
-        sub: 'Stepwise: optimise → VMAT-2 → specialist',
-        icon: Icons.gesture_outlined,
-        route: Routes.tardiveDyskinesia,
-      ),
-      _RailRow(
-        label: 'NMS rechallenge',
-        sub: 'Restart-after-NMS readiness + safer protocol',
-        icon: Icons.restart_alt_outlined,
-        route: Routes.nmsRechallenge,
-      ),
-      _RailRow(
-        label: 'Perioperative meds',
-        sub: 'Continue / adjust psychotropics for surgery',
-        icon: Icons.local_hospital_outlined,
-        route: Routes.perioperative,
-      ),
-      _RailRow(
-        label: 'Febrile on clozapine',
-        sub: 'Myocarditis/agranulocytosis differential',
-        icon: Icons.thermostat_outlined,
-        route: Routes.clozapineFever,
-      ),
-      _RailRow(
-        label: 'ECT work-up',
-        sub: 'Pre-ECT checklist + drug-interaction review',
-        icon: Icons.electric_bolt_outlined,
-        route: Routes.ectWorkup,
-      ),
-      _RailRow(
-        label: 'MAOI diet',
-        sub: 'Tyramine food tiers + crisis script',
-        icon: Icons.restaurant_outlined,
-        route: Routes.maoiDiet,
-      ),
-      _RailRow(
-        label: 'Refeeding risk',
-        sub: 'NICE criteria + feeding / monitoring plan',
-        icon: Icons.monitor_weight_outlined,
-        route: Routes.refeeding,
-      ),
-      _RailRow(
-        label: 'Renal & hepatic dosing',
-        sub: 'eGFR / Child-Pugh adjustment reference',
-        icon: Icons.water_drop_outlined,
-        route: Routes.renalHepatic,
-      ),
-      _RailRow(
-        label: 'Pharmacogenomics',
-        sub: 'CYP2D6 / CYP2C19 dosing implications',
-        icon: Icons.biotech_outlined,
-        route: Routes.pharmacogenomics,
-      ),
-      _RailRow(
-        label: 'Metabolic monitoring',
-        sub: 'Antipsychotic monitoring calendar',
-        icon: Icons.event_available_outlined,
-        route: Routes.metabolicMonitoring,
-      ),
-      _RailRow(
-        label: 'Smoking & CYP1A2',
-        sub: 'Clozapine / olanzapine dose adjustment',
-        icon: Icons.smoke_free,
-        route: Routes.smokingAdjustment,
-      ),
-      _RailRow(
-        label: 'Capacity assessment',
-        sub: 'Four-limb ACE evaluation',
-        icon: Icons.balance,
-        route: Routes.capacity,
-      ),
-      _RailRow(
-        label: 'Clinician self-care',
-        sub: 'Weekly burnout check · for you',
-        icon: Icons.favorite_border,
-        route: Routes.selfCare,
-      ),
-      _RailRow(
-        label: 'MSE generator',
-        sub: 'Tap anchors · paste-ready paragraph',
-        icon: Icons.edit_note_rounded,
-        route: Routes.mse,
-      ),
-      _RailRow(
-        label: 'Crisis + safety plan',
-        sub: 'Talian Kasih · Befrienders · Stanley-Brown',
-        icon: Icons.phone_in_talk,
-        route: Routes.crisis,
-      ),
-      _RailRow(
-        label: 'MHA 2001 (MY)',
-        sub: 'Sections · durations · forms',
-        icon: Icons.gavel_outlined,
-        route: Routes.mha,
-      ),
-      _RailRow(
-        label: 'DSM-5-TR criteria',
-        sub: 'Tick-box criterion sets · live tally',
-        icon: Icons.checklist_rounded,
-        route: Routes.dsm,
-      ),
-      _RailRow(
-        label: 'Pregnancy & lactation',
-        sub: 'Per-drug perinatal safety atlas',
-        icon: Icons.pregnant_woman,
-        route: Routes.perinatal,
-      ),
-      _RailRow(
-        label: 'STOPP / START',
-        sub: 'Geriatric deprescribing prompts',
-        icon: Icons.elderly,
-        route: Routes.stoppStart,
-      ),
-      _RailRow(
-        label: 'QTc stacker',
-        sub: 'Aggregate QTc risk',
-        icon: Icons.monitor_heart_outlined,
-        route: Routes.qtcStacker,
-      ),
-      _RailRow(
-        label: 'Depot LAI',
-        sub: 'Long-acting injectable protocols',
-        icon: Icons.vaccines_outlined,
-        route: Routes.depotIndex,
-      ),
-      _RailRow(
-        label: 'Halal & Ramadan',
-        sub: 'Fasting-window dosing',
-        icon: Icons.dark_mode_outlined,
-        route: Routes.ramadan,
-      ),
-      _RailRow(
-        label: 'Glossary',
-        sub: 'Clinical-term lookup',
-        icon: Icons.menu_book_outlined,
-        route: Routes.glossary,
-      ),
-      _RailRow(
-        label: 'Errata',
-        sub: 'Content corrections',
-        icon: Icons.fact_check_outlined,
-        route: Routes.errata,
-      ),
-      _RailRow(
-        label: 'About',
-        sub: 'Version · licences',
-        icon: Icons.info_outline,
-        route: Routes.about,
-      ),
-    ];
-    return SquircleCard(
-      padding: EdgeInsets.zero,
-      child: Column(
-        children: <Widget>[
-          for (var i = 0; i < rows.length; i++) ...<Widget>[
-            if (i > 0)
-              const Divider(
-                height: 0.5,
-                thickness: 0.5,
-                indent: ClinicalSpace.lg + 4 + 30 + ClinicalSpace.md,
-                color: ClinicalPalette.border,
-              ),
-            _RailRowView(row: rows[i]),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class _RailRow {
-  const _RailRow({
-    required this.label,
-    required this.sub,
-    required this.icon,
-    required this.route,
-    this.tone,
-  });
-  final String label;
-  final String sub;
-  final IconData icon;
-  final String route;
-
-  /// Optional identity tone. When set, the row's icon renders as a
-  /// tinted badge echoing that tool screen's ToolHero header; null
-  /// keeps the flat muted icon.
-  final Color? tone;
-}
-
-class _RailRowView extends StatelessWidget {
-  const _RailRowView({required this.row});
-  final _RailRow row;
-
-  /// Leading icon — a tone-tinted badge (echoing the tool screen's
-  /// ToolHero) when [_RailRow.tone] is set, else a flat muted icon.
-  Widget _leading() {
-    final tone = row.tone;
-    if (tone == null) {
-      return Icon(row.icon, size: 20, color: ClinicalPalette.mutedStrong);
-    }
-    return Container(
-      width: 38,
-      height: 38,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: tone.withValues(alpha: 0.12),
-        border: Border.all(
-          color: tone.withValues(alpha: 0.34),
-          width: 0.5,
-        ),
-        borderRadius: BorderRadius.circular(ClinicalRadii.chip),
-      ),
-      child: Icon(row.icon, size: 19, color: tone),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        unawaited(hapticsTap());
-        context.pushNamed(row.route);
-      },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: ClinicalSpace.lg + 4,
-          vertical: ClinicalSpace.md + 2,
-        ),
-        child: Row(
-          children: <Widget>[
-            _leading(),
-            const SizedBox(width: ClinicalSpace.md + 2),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(row.label, style: ClinicalText.subtitle),
-                  Text(row.sub, style: ClinicalText.caption),
-                ],
-              ),
-            ),
-            const Icon(
-              Icons.chevron_right,
-              size: 18,
-              color: ClinicalPalette.muted,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ── Name prompt ─────────────────────────────────────────────────────
-
-/// Soft "Add your name" affordance shown under the greeting when the
-/// clinician hasn't entered a name yet. Fades in 2s after Home arrives
-/// (after the cascade has settled) so it suggests rather than nags.
-/// Tap routes to Settings. Disappears the moment a name is saved.
-class _NamePrompt extends StatefulWidget {
-  const _NamePrompt();
-
-  @override
-  State<_NamePrompt> createState() => _NamePromptState();
-}
-
-class _NamePromptState extends State<_NamePrompt> {
-  double _opacity = 0;
-  Timer? _delay;
-
-  @override
-  void initState() {
-    super.initState();
-    _delay = Timer(const Duration(milliseconds: 2000), () {
-      if (mounted) setState(() => _opacity = 1);
-    });
-  }
-
-  @override
-  void dispose() {
-    _delay?.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 60), // avatar width + gap
-      child: AnimatedOpacity(
-        duration: const Duration(milliseconds: 600),
-        curve: Curves.easeOutCubic,
-        opacity: _opacity,
-        child: InkWell(
-          onTap: () => context.pushNamed(Routes.settings),
-          borderRadius: BorderRadius.circular(ClinicalRadii.pill),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: ClinicalSpace.sm,
-              vertical: 4,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
+            const Row(
               children: <Widget>[
-                Text(
-                  'Add your name',
-                  style: ClinicalText.caption.copyWith(
-                    color: ClinicalPalette.accent,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.1,
-                  ),
+                TonePill(
+                  label: "Today's pearl",
+                  tone: Color(0xFFFFFFFF),
+                  ink: ClinicalPalette.toneSandInk,
                 ),
-                const SizedBox(width: 2),
-                const Icon(
-                  Icons.arrow_forward_rounded,
-                  size: 13,
-                  color: ClinicalPalette.accent,
+                Spacer(),
+                Icon(
+                  Icons.auto_awesome,
+                  size: 16,
+                  color: ClinicalPalette.toneSandInk,
                 ),
               ],
             ),
-          ),
+            const SizedBox(height: ClinicalSpace.md),
+            Text(
+              p.title,
+              style: ClinicalText.subtitle.copyWith(
+                color: ClinicalPalette.toneSandInk,
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: ClinicalSpace.xs + 2),
+            Text(
+              p.body,
+              style: ClinicalText.body.copyWith(
+                color: ClinicalPalette.toneSandInk.withValues(alpha: 0.9),
+                height: 1.45,
+              ),
+            ),
+            const SizedBox(height: ClinicalSpace.md),
+            Text(
+              p.source,
+              style: ClinicalText.caption.copyWith(
+                color: ClinicalPalette.toneSandInk.withValues(alpha: 0.7),
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.3,
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
+}
+
+/// Immutable pearl record — keeps the pearls list a single
+/// declarative constant.
+class _Pearl {
+  const _Pearl({
+    required this.title,
+    required this.body,
+    required this.source,
+  });
+
+  final String title;
+  final String body;
+  final String source;
 }
 
 // ── Footer ──────────────────────────────────────────────────────────
