@@ -281,12 +281,58 @@ class _CaseList extends ConsumerWidget {
           ClinicalSpace.lg,
           ClinicalSpace.xl,
         ),
-        itemCount: cases.length + 1,
+        // +2: header + end-of-list "all caught up" message
+        itemCount: cases.length + 2,
         separatorBuilder: (_, __) => const Gap.v(ClinicalSpace.sm + 2),
         itemBuilder: (_, i) {
           if (i == 0) return header;
+          if (i == cases.length + 1) {
+            return _EndOfListFooter(count: cases.length);
+          }
           return _buildTile(context, ref, i - 1);
         },
+      ),
+    );
+  }
+}
+
+/// End-of-list message — shown beneath the last History tile so the
+/// user has a visible "you've reached the end" signal instead of
+/// hitting whitespace and wondering if more is loading. Apple Calendar /
+/// Reminders use this pattern. Adapts grammar to the case count.
+class _EndOfListFooter extends StatelessWidget {
+  const _EndOfListFooter({required this.count});
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(
+        top: ClinicalSpace.lg,
+        bottom: ClinicalSpace.md,
+      ),
+      child: Center(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            const Icon(
+              Icons.check_circle_outline_rounded,
+              size: 14,
+              color: ClinicalPalette.muted,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              count == 1
+                  ? 'All caught up · 1 case'
+                  : 'All caught up · $count cases',
+              style: ClinicalText.caption.copyWith(
+                color: ClinicalPalette.muted,
+                letterSpacing: 0.2,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

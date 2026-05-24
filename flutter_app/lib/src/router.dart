@@ -211,13 +211,20 @@ CustomTransitionPage<T> _fadeThroughPage<T>({
       // Honour system reduced-motion preference.
       if (MediaQuery.disableAnimationsOf(context)) return child;
 
+      // Responsive slide amplitude — 4% reads on phones, ~30px on a
+      // 7.6" Fold inner which is below perceptual threshold. Bump to
+      // 6.5% on wide breakpoints (≥600px) so the spatial intent
+      // actually registers on the larger surface.
+      final isWide = MediaQuery.sizeOf(context).width >= 600;
+      final amplitude = isWide ? 0.065 : 0.04;
+
       // ── Incoming page ─────────────────────────────────────────
       final fadeIn = CurvedAnimation(
         parent: animation,
         curve: const Interval(0.3, 1, curve: Curves.easeOutCubic),
       );
       final slideIn = Tween<Offset>(
-        begin: const Offset(0.04, 0),
+        begin: Offset(amplitude, 0),
         end: Offset.zero,
       ).animate(
         CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
@@ -230,7 +237,7 @@ CustomTransitionPage<T> _fadeThroughPage<T>({
       );
       final slideOut = Tween<Offset>(
         begin: Offset.zero,
-        end: const Offset(-0.04, 0),
+        end: Offset(-amplitude, 0),
       ).animate(
         CurvedAnimation(parent: secondaryAnimation, curve: Curves.easeIn),
       );

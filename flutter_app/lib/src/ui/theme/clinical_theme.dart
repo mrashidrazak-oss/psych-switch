@@ -368,6 +368,17 @@ ThemeData buildClinicalTheme() {
           const WidgetStatePropertyAll(Colors.transparent),
     ),
 
+    // ── Text selection ──────────────────────────────────────────────
+    // Cursor + selection handles use brand accent instead of Material
+    // teal. The cursor is now part of brand identity, not a Flutter
+    // default. Selection highlight is the accent at 18% alpha so text
+    // remains readable through the wash.
+    textSelectionTheme: const TextSelectionThemeData(
+      cursorColor: ClinicalPalette.accent,
+      selectionColor: Color(0x2E3B82F6),
+      selectionHandleColor: ClinicalPalette.accent,
+    ),
+
     // ── Inputs ──────────────────────────────────────────────────────
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
