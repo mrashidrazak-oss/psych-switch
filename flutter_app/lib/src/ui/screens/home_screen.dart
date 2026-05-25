@@ -36,6 +36,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import 'package:psychswitch/src/providers/engine_provider.dart';
 import 'package:psychswitch/src/providers/preferences_provider.dart';
@@ -121,7 +122,13 @@ class _HomeBody extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+              // New angle: a temporal anchor above the greeting.
+              // Eyebrow-styled date stamp gives clinicians orientation
+              // for note-writing and scan-by-date workflows.
+              const EntranceFade(child: _DateEyebrow()),
+              const SizedBox(height: ClinicalSpace.sm),
               EntranceFade(
+                index: 1,
                 child: _Greeting(
                   greeting: greeting,
                   salutation: salutation,
@@ -134,15 +141,20 @@ class _HomeBody extends ConsumerWidget {
                 const _NamePrompt(),
               ],
               const SizedBox(height: ClinicalSpace.lg + 4),
-              const EntranceFade(index: 1, child: _SearchField()),
+              const EntranceFade(index: 2, child: _SearchField()),
               const SizedBox(height: ClinicalSpace.lg),
               EntranceFade(
-                index: 2,
+                index: 3,
                 child: _Hero(drugCount: drugCount, ruleCount: ruleCount),
               ),
               const SizedBox(height: ClinicalSpace.lg),
+              // Recent cases promoted ABOVE the tools rail. Returning
+              // users see their continuation surface first; new users
+              // (empty recents) see the rail directly since recents
+              // collapses to a zero-height SizedBox.
+              const EntranceFade(index: 4, child: _RecentCases()),
               const EntranceFade(
-                index: 3,
+                index: 5,
                 child: _SectionLabel(
                   label: 'Clinical tools',
                   tagline:
@@ -150,19 +162,38 @@ class _HomeBody extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: ClinicalSpace.md),
-              const EntranceFade(index: 4, child: _LaunchRail()),
+              const EntranceFade(index: 6, child: _LaunchRail()),
               const SizedBox(height: ClinicalSpace.lg),
-              const EntranceFade(index: 5, child: _RecentCases()),
               const EntranceFade(
-                index: 6,
+                index: 7,
                 child: Breath(child: _PearlCard()),
               ),
               const SizedBox(height: ClinicalSpace.xl),
-              const EntranceFade(index: 7, child: _Footer()),
+              const EntranceFade(index: 8, child: _Footer()),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+// ── Date eyebrow ────────────────────────────────────────────────────
+
+/// Small all-caps date stamp above the greeting — gives the clinician
+/// temporal orientation ("today is Tuesday, 23 May") for note-writing
+/// and date-anchored scanning. Muted, eyebrow-style, never competes
+/// with the greeting for primary attention.
+class _DateEyebrow extends StatelessWidget {
+  const _DateEyebrow();
+
+  @override
+  Widget build(BuildContext context) {
+    final now = DateTime.now();
+    final label = DateFormat('EEEE · d MMM').format(now).toUpperCase();
+    return Padding(
+      padding: const EdgeInsets.only(left: ClinicalSpace.xs),
+      child: Text(label, style: ClinicalText.eyebrow),
     );
   }
 }

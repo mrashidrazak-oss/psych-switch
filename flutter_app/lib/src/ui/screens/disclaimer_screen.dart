@@ -1,20 +1,35 @@
-// Disclaimer screen — first-launch legal/safety gate.
+// Disclaimer screen — first-launch legal/safety gate. Rewritten
+// 2026-05-23 to share the ambient backdrop with onboarding, add a
+// subtle "alive" pulse to the brand mark, and warm the final
+// microcopy with a privacy-respecting note.
 //
 // The user MUST tap "I am a healthcare professional" before any
-// clinical content surface becomes accessible. RN parity: same three
-// bullet points, same CTA copy, same persistence key (so a user who
-// acknowledged on RN doesn't get re-prompted on Flutter).
+// clinical content surface becomes accessible. Acknowledgement is
+// persisted via `disclaimerAcknowledgedProvider`; this screen never
+// re-shows for the same install (or for a returning RN user — same
+// persistence key).
 //
-// Polish layer beyond RN parity:
-//   • Ambient radial gradient backdrop (matches home).
-//   • Brand monogram + bullets stagger-fade-in via EntranceFade.
-//   • Haptic confirm on the CTA so the commit feels weighty.
-//   • Accessibility semantics — the bullet block reads as one phrase
-//     to VoiceOver / TalkBack rather than fragments.
-//   • Reduced-motion preference automatically disables the stagger.
+// Composition (top → bottom):
+//   1. _BrandHero        Icon + wordmark + two-tone-dot tagline.
+//                        Wrapped in Breath for a 0.5%/4s scale loop
+//                        so the brand mark reads as "alive" without
+//                        registering as motion.
+//   2. _Headline         "Decision support, / not medical advice."
+//   3. _BulletBlock      Three bullets in a card; named _Bullet
+//                        records keep the data declarative.
+//   4. _AcknowledgeButton  Primary accent pill — "I am a healthcare
+//                          professional."
+//   5. _BelowCta         Two-line microcopy: warmth + privacy.
 //
-// Wiring: main.dart routes to this screen when
-// `disclaimerAcknowledgedProvider` resolves to false.
+// Test contract preserved (test/ui/disclaimer_screen_test.dart):
+//   • 'PsychSwitch' wordmark
+//   • 'Reviewed cross-titration' tagline
+//   • 'Decision support,' + 'not medical advice.' headline
+//   • 'Grounded in primary sources' bullet 1
+//   • 'Not a substitute for clinical judgement' bullet 2
+//   • 'Cross-check primary sources' bullet 3
+//   • 'I am a healthcare professional' CTA
+//   • Tap acknowledges + flips the persisted flag.
 
 import 'dart:async';
 
@@ -25,6 +40,7 @@ import 'package:psychswitch/src/providers/disclaimer_provider.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
+import 'package:psychswitch/src/ui/widgets/ambient_backdrop.dart';
 import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
 
 class DisclaimerScreen extends ConsumerWidget {
@@ -35,8 +51,7 @@ class DisclaimerScreen extends ConsumerWidget {
     return Scaffold(
       body: Stack(
         children: <Widget>[
-          // Ambient backdrop — same family as the home screen.
-          const Positioned.fill(child: _AmbientBackdrop()),
+          const Positioned.fill(child: AmbientBackdrop()),
           SafeArea(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
@@ -73,18 +88,7 @@ class DisclaimerScreen extends ConsumerWidget {
                       ),
                     ),
                     const Gap.v(ClinicalSpace.md),
-                    EntranceFade(
-                      index: 4,
-                      child: Text(
-                        'By tapping above you confirm you understand '
-                        'the limitations.',
-                        style: ClinicalText.caption.copyWith(
-                          color: ClinicalPalette.muted,
-                          height: 1.5,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
+                    const EntranceFade(index: 4, child: _BelowCta()),
                   ],
                 ),
               ),
@@ -96,35 +100,11 @@ class DisclaimerScreen extends ConsumerWidget {
   }
 }
 
-class _AmbientBackdrop extends StatelessWidget {
-  const _AmbientBackdrop();
+// ── Brand hero ──────────────────────────────────────────────────────
 
-  @override
-  Widget build(BuildContext context) {
-    return IgnorePointer(
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: RadialGradient(
-            center: const Alignment(-0.4, -0.7),
-            radius: 1.2,
-            colors: <Color>[
-              ClinicalPalette.toneLavenderInk.withValues(alpha: 0.1),
-              ClinicalPalette.toneMintInk.withValues(alpha: 0.05),
-              Colors.transparent,
-            ],
-            stops: const <double>[0, 0.45, 1],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// Brand hero on the disclaimer gate. Same composition as the home
-/// screen's mark — real X-mark logo with a dual-tone soft glow, plus
-/// a confident 24-pt wordmark and a two-tone-dot tagline. Replaces
-/// the prior "PS" gradient-tile placeholder for brand parity across
-/// the two screens the clinician sees most.
+/// Real icon + wordmark + two-tone-dot tagline. The dual-tone glow on
+/// the mark + the Breath wrapper above this widget combine to make the
+/// brand feel present without ever calling attention to itself.
 class _BrandHero extends StatelessWidget {
   const _BrandHero();
 
@@ -138,19 +118,20 @@ class _BrandHero extends StatelessWidget {
       child: ExcludeSemantics(
         child: Row(
           children: <Widget>[
-            // ── Brand mark with dual-tone glow ──────────────────────
             DecoratedBox(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(ClinicalRadii.tile),
                 boxShadow: <BoxShadow>[
                   BoxShadow(
-                    color: ClinicalPalette.toneLavenderInk.withValues(alpha: 0.28),
+                    color: ClinicalPalette.toneLavenderInk
+                        .withValues(alpha: 0.28),
                     blurRadius: 30,
                     spreadRadius: -8,
                     offset: const Offset(-5, 6),
                   ),
                   BoxShadow(
-                    color: ClinicalPalette.toneMintInk.withValues(alpha: 0.28),
+                    color: ClinicalPalette.toneMintInk
+                        .withValues(alpha: 0.28),
                     blurRadius: 30,
                     spreadRadius: -8,
                     offset: const Offset(5, 6),
@@ -169,13 +150,12 @@ class _BrandHero extends StatelessWidget {
               ),
             ),
             const Gap.h(ClinicalSpace.md + 2),
-            // ── Wordmark + tagline ─────────────────────────────────
-            Expanded(
+            const Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  const Text(
+                  Text(
                     'PsychSwitch',
                     style: TextStyle(
                       color: ClinicalPalette.text,
@@ -185,39 +165,8 @@ class _BrandHero extends StatelessWidget {
                       height: 1.1,
                     ),
                   ),
-                  const Gap.v(ClinicalSpace.xs + 1),
-                  Row(
-                    children: <Widget>[
-                      Container(
-                        width: 5,
-                        height: 5,
-                        decoration: const BoxDecoration(
-                          color: ClinicalPalette.toneLavenderInk,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const Gap.h(3),
-                      Container(
-                        width: 5,
-                        height: 5,
-                        decoration: const BoxDecoration(
-                          color: ClinicalPalette.toneMintInk,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const Gap.h(ClinicalSpace.sm),
-                      const Text(
-                        'Reviewed cross-titration',
-                        style: TextStyle(
-                          color: ClinicalPalette.mutedStrong,
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 0.2,
-                          height: 1.2,
-                        ),
-                      ),
-                    ],
-                  ),
+                  Gap.v(ClinicalSpace.xs + 1),
+                  _Tagline(),
                 ],
               ),
             ),
@@ -227,6 +176,50 @@ class _BrandHero extends StatelessWidget {
     );
   }
 }
+
+/// Two-dot tagline ("● ● Reviewed cross-titration"). Dots picked up
+/// from the brand mark's gradient anchors (lavender + mint).
+class _Tagline extends StatelessWidget {
+  const _Tagline();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Row(
+      children: <Widget>[
+        _Dot(color: ClinicalPalette.toneLavenderInk),
+        Gap.h(3),
+        _Dot(color: ClinicalPalette.toneMintInk),
+        Gap.h(ClinicalSpace.sm),
+        Text(
+          'Reviewed cross-titration',
+          style: TextStyle(
+            color: ClinicalPalette.mutedStrong,
+            fontSize: 12.5,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 0.2,
+            height: 1.2,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Dot extends StatelessWidget {
+  const _Dot({required this.color});
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 5,
+      height: 5,
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+    );
+  }
+}
+
+// ── Headline ────────────────────────────────────────────────────────
 
 class _Headline extends StatelessWidget {
   const _Headline();
@@ -261,26 +254,31 @@ class _Headline extends StatelessWidget {
   }
 }
 
+// ── Bullet block ────────────────────────────────────────────────────
+
+/// Three bullets in a hairline-bordered card. Named _Bullet records
+/// instead of inline tuples — extends naturally if a fourth bullet
+/// ever lands.
 class _BulletBlock extends StatelessWidget {
   const _BulletBlock();
 
-  static const _bullets = <(String, String)>[
-    (
-      'Grounded in primary sources',
-      'Cross-titration schedules drawn from Maudsley 15th, BAP 2020, '
-          'NICE, and the Malaysian CPGs — every rule cites where it '
-          'came from.',
+  static const _bullets = <_Bullet>[
+    _Bullet(
+      title: 'Grounded in primary sources',
+      body: 'Cross-titration schedules drawn from Maudsley 15th, BAP '
+          '2020, NICE, and the Malaysian CPGs — every rule cites where '
+          'it came from.',
     ),
-    (
-      'Not a substitute for clinical judgement',
-      'Final prescribing decisions always rest with the treating '
+    _Bullet(
+      title: 'Not a substitute for clinical judgement',
+      body: 'Final prescribing decisions always rest with the treating '
           'clinician — patient factors, comorbidities, and local '
           'guidance take precedence.',
     ),
-    (
-      'Cross-check primary sources',
-      "Verify dosing against the original references and your patient's "
-          'individual context before acting on any plan.',
+    _Bullet(
+      title: 'Cross-check primary sources',
+      body: 'Verify dosing against the original references and your '
+          "patient's individual context before acting on any plan.",
     ),
   ];
 
@@ -292,17 +290,15 @@ class _BulletBlock extends StatelessWidget {
         border: Border.all(color: ClinicalPalette.border),
         borderRadius: BorderRadius.circular(ClinicalRadii.card),
       ),
-      padding: const EdgeInsets.fromLTRB(
-        ClinicalSpace.lg,
-        ClinicalSpace.md,
-        ClinicalSpace.lg,
-        ClinicalSpace.md,
+      padding: const EdgeInsets.symmetric(
+        horizontal: ClinicalSpace.lg,
+        vertical: ClinicalSpace.md,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           for (var i = 0; i < _bullets.length; i++) ...<Widget>[
-            _Bullet(title: _bullets[i].$1, body: _bullets[i].$2),
+            _BulletRow(bullet: _bullets[i]),
             if (i < _bullets.length - 1) ...<Widget>[
               const Gap.v(ClinicalSpace.md),
               const Divider(height: 1),
@@ -315,16 +311,22 @@ class _BulletBlock extends StatelessWidget {
   }
 }
 
-class _Bullet extends StatelessWidget {
+class _Bullet {
   const _Bullet({required this.title, required this.body});
 
   final String title;
   final String body;
+}
+
+class _BulletRow extends StatelessWidget {
+  const _BulletRow({required this.bullet});
+
+  final _Bullet bullet;
 
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: '$title. $body',
+      label: '${bullet.title}. ${bullet.body}',
       container: true,
       child: ExcludeSemantics(
         child: Row(
@@ -345,7 +347,7 @@ class _Bullet extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    title,
+                    bullet.title,
                     style: const TextStyle(
                       color: ClinicalPalette.text,
                       fontSize: 14,
@@ -355,7 +357,7 @@ class _Bullet extends StatelessWidget {
                   ),
                   const Gap.v(ClinicalSpace.xs),
                   Text(
-                    body,
+                    bullet.body,
                     style: ClinicalText.caption.copyWith(height: 1.5),
                   ),
                 ],
@@ -367,6 +369,8 @@ class _Bullet extends StatelessWidget {
     );
   }
 }
+
+// ── Acknowledge button ─────────────────────────────────────────────
 
 class _AcknowledgeButton extends StatelessWidget {
   const _AcknowledgeButton({required this.onPressed});
@@ -408,6 +412,43 @@ class _AcknowledgeButton extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+// ── Below CTA microcopy ─────────────────────────────────────────────
+
+/// Two-line microcopy under the CTA: the acknowledgement reminder plus
+/// a warm privacy reassurance. Previously a single legalistic line;
+/// the second line now earns space by telling the clinician the
+/// trust-signal that matters most ("your data stays on this device").
+class _BelowCta extends StatelessWidget {
+  const _BelowCta();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Text(
+          'By tapping above you confirm you understand the limitations.',
+          style: ClinicalText.caption.copyWith(
+            color: ClinicalPalette.muted,
+            height: 1.5,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const Gap.v(ClinicalSpace.xs),
+        Text(
+          'Your data stays on this device.',
+          style: ClinicalText.caption.copyWith(
+            color: ClinicalPalette.muted.withValues(alpha: 0.7),
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.1,
+            height: 1.5,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
 }
