@@ -23,6 +23,7 @@ abstract final class LaunchGate {
     'polypharmacy', // DDI / interaction + burden checker
     'clozapine', // clozapine module — titration / FBC / ANC / rechallenge
     'scales', // rating scales
+    'suicide_risk', // composite suicide risk assessment
   };
 
   /// True if [route] should be visible on Home / in search results.

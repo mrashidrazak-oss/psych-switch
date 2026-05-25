@@ -21,7 +21,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:psychswitch/src/ui/screens/about_screen.dart';
 import 'package:psychswitch/src/ui/screens/adverse_effects_screen.dart';
 import 'package:psychswitch/src/ui/screens/agitation_screen.dart';
@@ -94,6 +93,7 @@ import 'package:psychswitch/src/ui/screens/ssri_sexual_dysfunction_screen.dart';
 import 'package:psychswitch/src/ui/screens/steroid_psychiatric_screen.dart';
 import 'package:psychswitch/src/ui/screens/stimulant_cardiac_screen_screen.dart';
 import 'package:psychswitch/src/ui/screens/stopp_start_screen.dart';
+import 'package:psychswitch/src/ui/screens/suicide_risk_screen.dart';
 import 'package:psychswitch/src/ui/screens/switch_screen.dart';
 import 'package:psychswitch/src/ui/screens/tardive_dyskinesia_screen.dart';
 import 'package:psychswitch/src/ui/screens/tdm_screen.dart';
@@ -133,6 +133,7 @@ abstract final class Routes {
   static const perinatal = 'perinatal';
   static const stoppStart = 'stopp_start';
   static const cssrs = 'cssrs';
+  static const suicideRisk = 'suicide_risk';
   static const mse = 'mse';
   static const mha = 'mha';
   static const crisis = 'crisis';
@@ -468,6 +469,14 @@ GoRouter buildRouter() => GoRouter(
           pageBuilder: (context, state) => _fadeThroughPage(
             state: state,
             child: const CssrsScreen(),
+          ),
+        ),
+        GoRoute(
+          name: Routes.suicideRisk,
+          path: '/suicide-risk',
+          pageBuilder: (context, state) => _fadeThroughPage(
+            state: state,
+            child: const SuicideRiskScreen(),
           ),
         ),
         GoRoute(

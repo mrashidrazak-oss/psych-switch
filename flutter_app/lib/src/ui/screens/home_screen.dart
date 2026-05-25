@@ -585,6 +585,13 @@ class _LaunchRail extends StatelessWidget {
       route: Routes.scales,
       tone: ClinicalPalette.toneSkyInk,
     ),
+    _RailRow(
+      label: 'Suicide risk assessment',
+      sub: 'C-SSRS + risk/protective factors → tier + disposition',
+      icon: Icons.emergency_outlined,
+      route: Routes.suicideRisk,
+      tone: ClinicalPalette.danger,
+    ),
   ];
 
   @override

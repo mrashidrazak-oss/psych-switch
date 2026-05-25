@@ -17,17 +17,18 @@ void main() {
       Routes.polypharmacy,
       Routes.clozapine,
       Routes.scales,
+      Routes.suicideRisk,
     };
 
     test('staged mode is on for the closed beta', () {
       expect(LaunchGate.staged, isTrue);
     });
 
-    test('exactly the five curated tools are allowed', () {
+    test('exactly the six curated tools are allowed', () {
       expect(LaunchGate.allowed, curated);
     });
 
-    test('the five curated tools are visible', () {
+    test('the six curated tools are visible', () {
       for (final route in curated) {
         expect(LaunchGate.isVisible(route), isTrue, reason: route);
       }
