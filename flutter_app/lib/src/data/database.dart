@@ -13,13 +13,8 @@
 // (handled by [openConnection]). Tests construct an in-memory instance via
 // [AppDatabase.memory] so they're hermetic and fast.
 
-import 'dart:io';
-
 import 'package:drift/drift.dart';
-import 'package:drift/native.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
-
+import 'package:psychswitch/src/data/connection/connection.dart';
 import 'package:psychswitch_engine/case_pulse.dart' show SavedCase;
 
 part 'database.g.dart';
@@ -44,8 +39,8 @@ class Cases extends Table {
 
 @DriftDatabase(tables: <Type>[Cases])
 class AppDatabase extends _$AppDatabase {
-  AppDatabase() : super(_openOnDisk());
-  AppDatabase.memory() : super(NativeDatabase.memory());
+  AppDatabase() : super(openConnection());
+  AppDatabase.memory() : super(memoryConnection());
 
   /// Schema version. Bump this and add a `migrationStrategy` step when
   /// the table shape changes.
@@ -125,18 +120,7 @@ class AppDatabase extends _$AppDatabase {
       );
 }
 
-/// Open a sqlite file under the platform's per-app documents directory.
-/// `path_provider` resolves to:
-///   • Android  — `/data/data/<bundle>/app_flutter/`
-///   • iOS      — `<App>.app/Library/Application Support/`
-///   • macOS    — `~/Library/Containers/<bundle>/Data/Documents/`
-///
-/// Wrapped in [LazyDatabase] so the directory lookup happens lazily —
-/// the file is opened the first time a query hits it, not on import.
-LazyDatabase _openOnDisk() {
-  return LazyDatabase(() async {
-    final dir = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dir.path, 'psychswitch.sqlite'));
-    return NativeDatabase.createInBackground(file);
-  });
-}
+// Connection logic lives in `connection/connection.dart` (the
+// conditional-import shim) → `connection_native.dart` (sqlite file
+// under getApplicationDocumentsDirectory) or `connection_web.dart`
+// (sqlite3 WASM + IndexedDB persistence).

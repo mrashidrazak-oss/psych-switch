@@ -3,6 +3,11 @@
 *.log
 *.pyc
 *.swp
+
+# Drift web worker compile artefacts. The .js file IS checked in
+# (the web build needs it); the deps/map are tooling output.
+web/drift_worker.dart.js.deps
+web/drift_worker.dart.js.map
 .DS_Store
 .atom/
 .build/
