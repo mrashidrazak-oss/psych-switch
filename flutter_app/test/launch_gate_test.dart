@@ -15,7 +15,7 @@ void main() {
       Routes.equivalency,
       Routes.adverseEffects,
       Routes.polypharmacy,
-      Routes.tdm,
+      Routes.clozapine,
       Routes.scales,
     };
 
@@ -35,9 +35,10 @@ void main() {
 
     test('dark-shipped screens are not visible while staged', () {
       // These are the in-app jumps the leak audit closed off:
-      // result → clozapine, Home bell → errata, search → glossary.
+      // Home bell → errata, search → glossary, etc. Clozapine is now
+      // promoted to the curated launch surface (replacing TDM).
       for (final route in <String>[
-        Routes.clozapine,
+        Routes.tdm,
         Routes.errata,
         Routes.glossary,
         Routes.depotIndex,

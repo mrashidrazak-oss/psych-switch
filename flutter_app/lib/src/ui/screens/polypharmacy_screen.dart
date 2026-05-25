@@ -1,15 +1,34 @@
-// Polypharmacy regimen checker.
+// Polypharmacy regimen checker. Rewritten 2026-05-23.
 //
-// Pick 3–6 drugs from the registry → composite-risk report in a single
-// screen:
+// Pick 3-6 drugs from the registry → composite-risk report in a
+// single screen. Four signals:
 //
 //   • QTc-stacking score (reuses `qtc_stacker` engine)
 //   • Anticholinergic Burden (ACB) sum (Boustani 2008)
-//   • Sedation additive risk (counts drugs at moderate-or-above sedation)
+//   • Sedation additive risk (counts drugs at moderate-or-above)
 //   • DDI hits (`checkAll` from `ddi.dart`)
 //
-// One screen, four signals, daily-use power tool. The biggest single
+// One screen, four signals, daily-use power tool — the biggest single
 // "is this regimen safe?" review a psychiatrist runs at every visit.
+//
+// Architecture (top → bottom):
+//   - PolypharmacyScreen     Route widget; engine + qtc-data async.
+//   - _PolypharmacyForm      Stateful body; owns selected drug set.
+//   - _Body                  Renders hero + scores + DDI + drugs + picker.
+//   - _ScoreGrid             2×2 grid of composite-risk score tiles.
+//   - _ScoreTile             Single tinted score cell (eyebrow + big
+//                            number + subtitle).
+//   - _DdiCard               DDI hits grouped by severity tone.
+//   - _DdiRow                One interaction; severity-tinted.
+//   - _SelectedDrugsList     Picked drugs with per-row ACB / QTc /
+//                            sedation badges + remove action.
+//   - _RegimenRow            One picked-drug row.
+//   - _DrugPicker            Search field + flat list of drugs to add.
+//   - _PickerRow             One drug with check-state.
+//   - _FooterNote            Scope + citation footer.
+//
+// Motion: EntranceFade cascade on first paint (hero → scores → DDI →
+// selected list → picker → footer), 60ms stagger.
 
 import 'dart:async';
 
@@ -18,11 +37,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:psychswitch/src/providers/engine_provider.dart';
-import 'package:psychswitch/src/router.dart';
 import 'package:psychswitch/src/ui/haptics.dart';
 import 'package:psychswitch/src/ui/theme/clinical_theme.dart';
 import 'package:psychswitch/src/ui/theme/tokens.dart';
 import 'package:psychswitch/src/ui/widgets/engine_loading_view.dart';
+import 'package:psychswitch/src/ui/widgets/entrance_fade.dart';
 import 'package:psychswitch/src/ui/widgets/tool_hero.dart';
 import 'package:psychswitch_engine/anticholinergic.dart';
 import 'package:psychswitch_engine/ddi.dart';
@@ -42,7 +61,8 @@ class PolypharmacyScreen extends ConsumerStatefulWidget {
 class _PolypharmacyScreenState extends ConsumerState<PolypharmacyScreen> {
   final Set<String> _selected = <String>{};
 
-  /// Sum of sedation tiers above moderate.
+  /// Count of picked drugs at sedation tier moderate or above. Used
+  /// as the sedation-stacking score in the composite grid.
   int _sedationAdditiveCount(SwitchingEngine engine) {
     var n = 0;
     for (final id in _selected) {
@@ -56,6 +76,22 @@ class _PolypharmacyScreenState extends ConsumerState<PolypharmacyScreen> {
       }
     }
     return n;
+  }
+
+  void _toggle(String id) {
+    unawaited(hapticsTap());
+    setState(() {
+      if (_selected.contains(id)) {
+        _selected.remove(id);
+      } else {
+        _selected.add(id);
+      }
+    });
+  }
+
+  void _clear() {
+    unawaited(hapticsTap());
+    setState(_selected.clear);
   }
 
   @override
@@ -73,10 +109,7 @@ class _PolypharmacyScreenState extends ConsumerState<PolypharmacyScreen> {
           if (_selected.isNotEmpty)
             IconButton(
               tooltip: 'Clear',
-              onPressed: () {
-                unawaited(hapticsTap());
-                setState(_selected.clear);
-              },
+              onPressed: _clear,
               icon: const Icon(Icons.refresh_rounded),
             ),
           const Gap.h(ClinicalSpace.xs),
@@ -85,24 +118,15 @@ class _PolypharmacyScreenState extends ConsumerState<PolypharmacyScreen> {
       body: SafeArea(
         child: asyncEngine.when(
           loading: () => const EngineLoadingView(),
-          error: (e, st) => EngineErrorView(error: e),
+          error: (e, _) => EngineErrorView(error: e),
           data: (engine) => asyncQtc.when(
             loading: () => const EngineLoadingView(),
-            error: (e, st) => EngineErrorView(error: e),
+            error: (e, _) => EngineErrorView(error: e),
             data: (qtc) => _Body(
               engine: engine,
               qtc: qtc,
               selected: _selected,
-              onToggle: (id) {
-                unawaited(hapticsTap());
-                setState(() {
-                  if (_selected.contains(id)) {
-                    _selected.remove(id);
-                  } else {
-                    _selected.add(id);
-                  }
-                });
-              },
+              onToggle: _toggle,
               sedationAdditiveCount: _sedationAdditiveCount(engine),
             ),
           ),
@@ -111,6 +135,8 @@ class _PolypharmacyScreenState extends ConsumerState<PolypharmacyScreen> {
     );
   }
 }
+
+// ── Body ────────────────────────────────────────────────────────────
 
 class _Body extends StatelessWidget {
   const _Body({
@@ -129,14 +155,18 @@ class _Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final visibleDrugs = engine.listDrugs().where((d) {
-      // Hide LAI for now — same gate as the switch picker.
-      return d.formulation != Formulation.lai;
-    }).toList();
+    // Visibility gate: hide LAI from this screen for now — same
+    // pre-release scope as the switch picker. The full LAI module
+    // ships with its own monitoring requirements.
+    final visibleDrugs = engine
+        .listDrugs()
+        .where((d) => d.formulation != Formulation.lai)
+        .toList();
     final selectedIds = selected.toList();
     final acb = assessAnticholinergicBurden(selectedIds);
     final qtcAssessment = assessQtcRisk(selectedIds, qtc);
     final ddiHits = checkAll(selectedIds);
+
     return ListView(
       padding: const EdgeInsets.fromLTRB(
         ClinicalSpace.lg + 4,
@@ -144,74 +174,94 @@ class _Body extends StatelessWidget {
         ClinicalSpace.lg + 4,
         ClinicalSpace.xl,
       ),
+      physics: const BouncingScrollPhysics(),
       children: <Widget>[
-        ToolHero(
-          icon: Icons.account_tree_outlined,
-          title: 'Regimen check',
-          tagline: 'Composite regimen-risk screen',
-          tone: ClinicalPalette.accent,
-          stats: <ToolHeroStat>[
-            ToolHeroStat(
-              label: 'CATALOGUE',
-              value: '${visibleDrugs.length}',
-              unit: 'drugs',
-            ),
-            ToolHeroStat(
-              label: 'SELECTED',
-              value: '${selected.length}',
-              unit: selected.length == 1 ? 'drug' : 'drugs',
-            ),
-          ],
-          rationale: selected.isEmpty
-              ? "Pick everything the patient's on — psychotropics, "
-                  'anti-EPS, antihistamines, the lot. The engine '
-                  'returns a composite-risk report and flags drugs '
-                  'worth deprescribing.'
-              : '${selected.length} '
-                  'drug${selected.length == 1 ? '' : 's'} in the '
-                  'regimen. Scroll for the composite report or pick '
-                  'more below.',
+        EntranceFade(
+          child: ToolHero(
+            icon: Icons.account_tree_outlined,
+            title: 'Regimen check',
+            tagline: 'Composite regimen-risk screen',
+            tone: ClinicalPalette.accent,
+            stats: <ToolHeroStat>[
+              ToolHeroStat(
+                label: 'CATALOGUE',
+                value: '${visibleDrugs.length}',
+                unit: 'drugs',
+              ),
+              ToolHeroStat(
+                label: 'SELECTED',
+                value: '${selected.length}',
+                unit: selected.length == 1 ? 'drug' : 'drugs',
+              ),
+            ],
+            rationale: selected.isEmpty
+                ? "Pick everything the patient's on — psychotropics, "
+                    'anti-EPS, antihistamines, the lot. The engine '
+                    'returns a composite-risk report and flags drugs '
+                    'worth deprescribing.'
+                : '${selected.length} '
+                    'drug${selected.length == 1 ? '' : 's'} in the '
+                    'regimen. Scroll for the composite report or pick '
+                    'more below.',
+          ),
         ),
         const Gap.v(ClinicalSpace.lg),
         if (selected.isNotEmpty) ...<Widget>[
-          _ScoreGrid(
-            qtcOverall: qtcAssessment.overallRisk,
-            qtcScore: qtcAssessment.knownCount * 3 +
-                qtcAssessment.conditionalCount * 2 +
-                qtcAssessment.possibleCount,
-            acbTotal: acb.totalScore,
-            acbCategory: acb.category,
-            sedationAdditive: sedationAdditiveCount,
-            ddiHits: ddiHits.length,
+          EntranceFade(
+            index: 1,
+            child: _ScoreGrid(
+              qtcOverall: qtcAssessment.overallRisk,
+              qtcScore: qtcAssessment.knownCount * 3 +
+                  qtcAssessment.conditionalCount * 2 +
+                  qtcAssessment.possibleCount,
+              acbTotal: acb.totalScore,
+              acbCategory: acb.category,
+              sedationAdditive: sedationAdditiveCount,
+              ddiHits: ddiHits.length,
+            ),
           ),
           const Gap.v(ClinicalSpace.lg),
           if (ddiHits.isNotEmpty) ...<Widget>[
-            _DdiCard(hits: ddiHits, engine: engine),
+            EntranceFade(
+              index: 2,
+              child: _DdiCard(hits: ddiHits, engine: engine),
+            ),
             const Gap.v(ClinicalSpace.lg),
           ],
-          _SelectedDrugsList(
-            ids: selectedIds,
-            engine: engine,
-            acb: acb,
-            qtc: qtc,
-            onRemove: onToggle,
+          EntranceFade(
+            index: 3,
+            child: _SelectedDrugsList(
+              ids: selectedIds,
+              engine: engine,
+              acb: acb,
+              qtc: qtc,
+              onRemove: onToggle,
+            ),
           ),
           const Gap.v(ClinicalSpace.lg),
         ],
-        _DrugPicker(
-          drugs: visibleDrugs,
-          selected: selected,
-          onToggle: onToggle,
+        EntranceFade(
+          index: selected.isEmpty ? 1 : 4,
+          child: _DrugPicker(
+            drugs: visibleDrugs,
+            selected: selected,
+            onToggle: onToggle,
+          ),
         ),
         const Gap.v(ClinicalSpace.lg),
-        const _FooterNote(),
+        EntranceFade(
+          index: selected.isEmpty ? 2 : 5,
+          child: const _FooterNote(),
+        ),
       ],
     );
   }
 }
 
-// ── Composite score grid ──────────────────────────────────────────────
+// ── Composite score grid ────────────────────────────────────────────
 
+/// 2×2 grid of composite-risk score tiles. Each tile colour-codes its
+/// own concern level via tone-by-threshold mapping.
 class _ScoreGrid extends StatelessWidget {
   const _ScoreGrid({
     required this.qtcOverall,
@@ -296,60 +346,53 @@ class _ScoreGrid extends StatelessWidget {
       children: <Widget>[
         const Text('COMPOSITE RISK', style: ClinicalText.eyebrow),
         const Gap.v(ClinicalSpace.sm),
-        // Two-up grid.
-        LayoutBuilder(
-          builder: (context, constraints) {
-            final w = (constraints.maxWidth - ClinicalSpace.sm) / 2;
-            return Wrap(
-              spacing: ClinicalSpace.sm,
-              runSpacing: ClinicalSpace.sm,
-              children: <Widget>[
-                SizedBox(
-                  width: w,
-                  child: _ScoreTile(
-                    eyebrow: 'QTC STACK',
-                    value: '$qtcScore',
-                    unit: '/100',
-                    subtitle: _qtcLabel(),
-                    tone: _qtcTone(),
-                  ),
-                ),
-                SizedBox(
-                  width: w,
-                  child: _ScoreTile(
-                    eyebrow: 'ACB BURDEN',
-                    value: '$acbTotal',
-                    unit: acbTotal == 1 ? 'pt' : 'pts',
-                    subtitle: acbCategoryLabel(acbCategory),
-                    tone: _acbTone(),
-                  ),
-                ),
-                SizedBox(
-                  width: w,
-                  child: _ScoreTile(
-                    eyebrow: 'SEDATION',
-                    value: '$sedationAdditive',
-                    unit: sedationAdditive == 1 ? 'drug' : 'drugs',
-                    subtitle: _sedLabel(),
-                    tone: _sedTone(),
-                  ),
-                ),
-                SizedBox(
-                  width: w,
-                  child: _ScoreTile(
-                    eyebrow: 'DDI HITS',
-                    value: '$ddiHits',
-                    unit: ddiHits == 1 ? 'pair' : 'pairs',
-                    subtitle: ddiHits == 0
-                        ? 'No flagged pairs'
-                        : '$ddiHits interaction'
-                            '${ddiHits == 1 ? '' : 's'} found',
-                    tone: _ddiTone(),
-                  ),
-                ),
-              ],
-            );
-          },
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: _ScoreTile(
+                eyebrow: 'QTc STACKING',
+                value: '$qtcScore',
+                unit: 'pts',
+                subtitle: _qtcLabel(),
+                tone: _qtcTone(),
+              ),
+            ),
+            const Gap.h(ClinicalSpace.sm + 2),
+            Expanded(
+              child: _ScoreTile(
+                eyebrow: 'ANTICHOLINERGIC',
+                value: '$acbTotal',
+                unit: 'ACB',
+                subtitle: acbCategoryLabel(acbCategory),
+                tone: _acbTone(),
+              ),
+            ),
+          ],
+        ),
+        const Gap.v(ClinicalSpace.sm + 2),
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: _ScoreTile(
+                eyebrow: 'SEDATION',
+                value: '$sedationAdditive',
+                unit: 'agents',
+                subtitle: _sedLabel(),
+                tone: _sedTone(),
+              ),
+            ),
+            const Gap.h(ClinicalSpace.sm + 2),
+            Expanded(
+              child: _ScoreTile(
+                eyebrow: 'INTERACTIONS',
+                value: '$ddiHits',
+                unit: ddiHits == 1 ? 'hit' : 'hits',
+                subtitle:
+                    ddiHits == 0 ? 'No interactions' : 'See details below',
+                tone: _ddiTone(),
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -445,7 +488,7 @@ class _ScoreTile extends StatelessWidget {
   }
 }
 
-// ── DDI hits ─────────────────────────────────────────────────────────
+// ── DDI card ────────────────────────────────────────────────────────
 
 class _DdiCard extends StatelessWidget {
   const _DdiCard({required this.hits, required this.engine});
@@ -497,9 +540,12 @@ class _DdiCard extends StatelessWidget {
                 color: ClinicalPalette.border.withValues(alpha: 0.5),
                 margin: const EdgeInsets.symmetric(vertical: ClinicalSpace.sm),
               ),
-            _DdiRow(hit: hits[i], tone: _toneFor(hits[i].severity),
+            _DdiRow(
+              hit: hits[i],
+              tone: _toneFor(hits[i].severity),
               fromName: _name(hits[i].pair[0]),
-              toName: _name(hits[i].pair[1])),
+              toName: _name(hits[i].pair[1]),
+            ),
           ],
         ],
       ),
@@ -567,7 +613,7 @@ class _DdiRow extends StatelessWidget {
   }
 }
 
-// ── Selected drugs list ──────────────────────────────────────────────
+// ── Selected drugs list ─────────────────────────────────────────────
 
 class _SelectedDrugsList extends StatelessWidget {
   const _SelectedDrugsList({
@@ -680,10 +726,7 @@ class _RegimenRow extends StatelessWidget {
                 ),
                 if (drug?.drugClass.isNotEmpty ?? false) ...<Widget>[
                   const Gap.v(1),
-                  Text(
-                    drug!.drugClass,
-                    style: ClinicalText.caption,
-                  ),
+                  Text(drug!.drugClass, style: ClinicalText.caption),
                 ],
               ],
             ),
@@ -717,11 +760,7 @@ class _RegimenRow extends StatelessWidget {
               size: 18,
             ),
             tooltip: 'Remove',
-            constraints: const BoxConstraints(
-              minWidth: 32,
-              minHeight: 32,
-            ),
-            padding: EdgeInsets.zero,
+            visualDensity: VisualDensity.compact,
           ),
         ],
       ),
@@ -729,7 +768,7 @@ class _RegimenRow extends StatelessWidget {
   }
 }
 
-// ── Drug picker ──────────────────────────────────────────────────────
+// ── Drug picker ─────────────────────────────────────────────────────
 
 class _DrugPicker extends StatefulWidget {
   const _DrugPicker({
@@ -748,7 +787,6 @@ class _DrugPicker extends StatefulWidget {
 
 class _DrugPickerState extends State<_DrugPicker> {
   final _searchCtl = TextEditingController();
-  String _query = '';
 
   @override
   void dispose() {
@@ -758,13 +796,14 @@ class _DrugPickerState extends State<_DrugPicker> {
 
   @override
   Widget build(BuildContext context) {
-    final q = _query.trim().toLowerCase();
+    final q = _searchCtl.text.trim().toLowerCase();
     final filtered = q.isEmpty
         ? widget.drugs
-        : widget.drugs.where((d) {
-            return d.genericName.toLowerCase().contains(q) ||
-                d.drugClass.toLowerCase().contains(q);
-          }).toList();
+        : widget.drugs
+            .where((d) =>
+                d.genericName.toLowerCase().contains(q) ||
+                d.drugClass.toLowerCase().contains(q))
+            .toList();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -772,7 +811,7 @@ class _DrugPickerState extends State<_DrugPicker> {
         const Gap.v(ClinicalSpace.sm),
         TextField(
           controller: _searchCtl,
-          onChanged: (v) => setState(() => _query = v),
+          onChanged: (_) => setState(() {}),
           decoration: const InputDecoration(
             hintText: 'Search drugs',
             prefixIcon: Icon(
@@ -837,101 +876,90 @@ class _PickerRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: isSelected
-          ? ClinicalPalette.accent.withValues(alpha: 0.08)
-          : Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: ClinicalSpace.lg - 2,
-            vertical: ClinicalSpace.sm + 2,
-          ),
-          child: Row(
-            children: <Widget>[
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 160),
-                width: 20,
-                height: 20,
-                decoration: BoxDecoration(
-                  color: isSelected ? ClinicalPalette.accent : Colors.transparent,
-                  border: Border.all(
-                    color: isSelected
-                        ? ClinicalPalette.accent
-                        : ClinicalPalette.border.withValues(alpha: 0.7),
-                    width: isSelected ? 1.5 : 0.5,
-                  ),
-                  borderRadius: BorderRadius.circular(ClinicalRadii.chip - 2),
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: ClinicalSpace.md + 2,
+          vertical: ClinicalSpace.sm + 2,
+        ),
+        child: Row(
+          children: <Widget>[
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 160),
+              width: 22,
+              height: 22,
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? ClinicalPalette.accent
+                    : Colors.transparent,
+                border: Border.all(
+                  color: isSelected
+                      ? ClinicalPalette.accent
+                      : ClinicalPalette.borderStrong,
                 ),
-                child: isSelected
-                    ? const Icon(
-                        Icons.check_rounded,
-                        size: 14,
-                        color: Colors.white,
-                      )
-                    : null,
+                borderRadius: BorderRadius.circular(ClinicalRadii.chip),
               ),
-              const Gap.h(ClinicalSpace.md - 2),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      drug.genericName,
-                      style: const TextStyle(
-                        color: ClinicalPalette.text,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
+              child: isSelected
+                  ? const Icon(
+                      Icons.check_rounded,
+                      size: 14,
+                      color: Colors.white,
+                    )
+                  : null,
+            ),
+            const Gap.h(ClinicalSpace.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    drug.genericName,
+                    style: const TextStyle(
+                      color: ClinicalPalette.text,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
                     ),
-                    if (drug.drugClass.isNotEmpty) ...<Widget>[
-                      const Gap.v(1),
-                      Text(drug.drugClass, style: ClinicalText.caption),
-                    ],
-                  ],
-                ),
+                  ),
+                  const Gap.v(2),
+                  Text(drug.drugClass, style: ClinicalText.caption),
+                ],
               ),
-              IconButton(
-                onPressed: () => context.pushNamed(
-                  Routes.drugProfile,
-                  pathParameters: <String, String>{'id': drug.id},
-                ),
-                icon: const Icon(
-                  Icons.info_outline_rounded,
-                  size: 17,
-                  color: ClinicalPalette.muted,
-                ),
-                tooltip: 'Drug profile',
-                constraints: const BoxConstraints(
-                  minWidth: 32,
-                  minHeight: 32,
-                ),
-                padding: EdgeInsets.zero,
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
+// ── Footer note ─────────────────────────────────────────────────────
+
 class _FooterNote extends StatelessWidget {
   const _FooterNote();
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: ClinicalSpace.lg),
-        child: Text(
-          'Composite-risk heuristic. Final regimen review still '
-          'requires patient context — confirm against the chart, the '
-          'pharmacist, and any local DDI service before deprescribing.',
-          style: ClinicalText.caption.copyWith(height: 1.6),
-          textAlign: TextAlign.center,
+    return Container(
+      padding: const EdgeInsets.fromLTRB(
+        ClinicalSpace.md + 2,
+        ClinicalSpace.md,
+        ClinicalSpace.md + 2,
+        ClinicalSpace.md,
+      ),
+      decoration: BoxDecoration(
+        color: ClinicalPalette.surfaceMuted,
+        border: Border.all(
+          color: ClinicalPalette.border.withValues(alpha: 0.5),
+          width: 0.5,
         ),
+        borderRadius: BorderRadius.circular(ClinicalRadii.tile),
+      ),
+      child: Text(
+        'Composite-risk screen. QTc scoring after CredibleMeds; ACB '
+        'after Boustani 2008. Sedation tier is the drug-profile field. '
+        "DDI hits from the engine's pairwise checker.",
+        style: ClinicalText.caption.copyWith(height: 1.5),
       ),
     );
   }

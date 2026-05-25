@@ -110,12 +110,14 @@ void main() {
           ),
         ),
       );
-      // Staged launch: the card degrades to guidance-only — the title
-      // is 'Clozapine initiation' and the module CTA is suppressed so a
-      // beta tester cannot jump into the dark-shipped Clozapine module.
-      await _waitForReady(tester, find.text('Clozapine initiation'));
+      // Clozapine is now a curated launch tool — the redirect card
+      // surfaces the "Open Clozapine module" CTA so the clinician can
+      // jump straight to the titration / FBC / ANC tabs. The title
+      // changes from 'Clozapine initiation' (dark-shipped variant) to
+      // 'Use Clozapine module' (CTA variant).
+      await _waitForReady(tester, find.text('Use Clozapine module'));
       expect(find.text('CLOZAPINE INITIATION'), findsOneWidget);
-      expect(find.text('Open Clozapine module'), findsNothing);
+      expect(find.text('Open Clozapine module'), findsOneWidget);
 
       // ── 4. no_rule — unregistered drug id ─────────────────────────
       await tester.pumpWidget(

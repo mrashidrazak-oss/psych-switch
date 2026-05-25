@@ -21,7 +21,7 @@ abstract final class LaunchGate {
     'equivalency', // dose equivalents
     'adverse_effects', // AE profile
     'polypharmacy', // DDI / interaction + burden checker
-    'tdm', // therapeutic drug monitoring
+    'clozapine', // clozapine module — titration / FBC / ANC / rechallenge
     'scales', // rating scales
   };
 

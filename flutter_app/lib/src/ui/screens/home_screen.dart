@@ -572,11 +572,11 @@ class _LaunchRail extends StatelessWidget {
       tone: ClinicalPalette.accent,
     ),
     _RailRow(
-      label: 'TDM interpreter',
-      sub: 'Therapeutic levels — lithium · clozapine · valproate',
-      icon: Icons.biotech_outlined,
-      route: Routes.tdm,
-      tone: ClinicalPalette.toneMintInk,
+      label: 'Clozapine',
+      sub: 'Titration · FBC schedule · ANC zone · rechallenge',
+      icon: Icons.local_hospital_outlined,
+      route: Routes.clozapine,
+      tone: ClinicalPalette.warning,
     ),
     _RailRow(
       label: 'Rating scales',
